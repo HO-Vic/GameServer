@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{31cd749b-f7be-4bab-ba55-0e4d66a359e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThreadPool">
+      <UniqueIdentifier>{d1b43545-d296-463b-8343-dd3f768898f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JobQueue">
+      <UniqueIdentifier>{4c6dff11-3060-40e8-a272-6d02862ce413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JobQueue\LFJobQ">
+      <UniqueIdentifier>{fa54236d-10af-42a3-9d12-29e68e4e6632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JobQueue\JobQ">
+      <UniqueIdentifier>{698bc805-171b-4e23-af76-5ac63aa56b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton">
+      <UniqueIdentifier>{c21fb9d7-5b61-4497-946b-ef5b22838616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JobQueue\JopbPool">
+      <UniqueIdentifier>{57646bb3-6ef1-4024-a401-74b67e2717f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{a4726779-b968-4b49-867e-4965683dc140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log\LogManager">
+      <UniqueIdentifier>{fbdba11f-0ba8-42f1-9215-7b48a4cc47c5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool\ThreadPool.cpp">
+      <Filter>ThreadPool</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQueue\JobQ\JobQ.cpp">
+      <Filter>JobQueue\JobQ</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQueue\LFjobQ\LFJobQ.cpp">
+      <Filter>JobQueue\LFJobQ</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQueue\Job.cpp">
+      <Filter>JobQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQueue\JobPool\JobPool.cpp">
+      <Filter>JobQueue\JopbPool</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\LogManager.cpp">
+      <Filter>Log\LogManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool\ThreadPool.h">
+      <Filter>ThreadPool</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue\JobQ\JobQ.h">
+      <Filter>JobQueue\JobQ</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue\LFjobQ\LFJobQ.h">
+      <Filter>JobQueue\LFJobQ</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue\Job.h">
+      <Filter>JobQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="SingletonBase\Singleton.h">
+      <Filter>Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQueue\JobPool\JobPool.h">
+      <Filter>JobQueue\JopbPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\LogManager.h">
+      <Filter>Log\LogManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
