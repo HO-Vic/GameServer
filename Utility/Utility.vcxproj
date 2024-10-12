@@ -73,12 +73,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
     <ExternalIncludePath>$(ProjectDir)\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)lib\Debug</OutDir>
+    <OutDir>$(SolutionDir)lib\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LibraryPath>$(ProjectDir)\lib;$(LibraryPath)</LibraryPath>
     <ExternalIncludePath>$(ProjectDir)\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)\lib\Release</OutDir>
+    <OutDir>$(SolutionDir)\lib\Release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,20 +151,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="JobQueue\Job.h" />
-    <ClInclude Include="JobQueue\JobPool\JobPool.h" />
-    <ClInclude Include="JobQueue\JobQ\JobQ.h" />
-    <ClInclude Include="JobQueue\LFjobQ\LFJobQ.h" />
+    <ClInclude Include="Job\Job.h" />
+    <ClInclude Include="Job\JobPool\JobPoolBase.h" />
+    <ClInclude Include="Job\JobPool\JobPool_MT\JoobPool_MT.h" />
+    <ClInclude Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.h" />
+    <ClInclude Include="Job\JobPool\JobPool_ST\JoobPool_ST.h" />
+    <ClInclude Include="Job\JobQueue\JobQBase.h" />
+    <ClInclude Include="Job\JobQueue\JobQ_MT\JobQ_MT.h" />
+    <ClInclude Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.h" />
+    <ClInclude Include="Job\JobQueue\JobQ_ST\JobQ_ST.h" />
     <ClInclude Include="Log\LogManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SingletonBase\Singleton.h" />
+    <ClInclude Include="SpinLock\SpinLock.h" />
     <ClInclude Include="ThreadPool\ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="JobQueue\Job.cpp" />
-    <ClCompile Include="JobQueue\JobPool\JobPool.cpp" />
-    <ClCompile Include="JobQueue\JobQ\JobQ.cpp" />
-    <ClCompile Include="JobQueue\LFjobQ\LFJobQ.cpp" />
+    <ClCompile Include="Job\Job.cpp" />
+    <ClCompile Include="Job\JobPool\JobPoolBase.cpp" />
+    <ClCompile Include="Job\JobPool\JobPool_MT\JoobPool_MT.cpp" />
+    <ClCompile Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.cpp" />
+    <ClCompile Include="Job\JobPool\JobPool_ST\JoobPool_ST.cpp" />
+    <ClCompile Include="Job\JobQueue\JobQBase.cpp" />
+    <ClCompile Include="Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
+    <ClCompile Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp" />
+    <ClCompile Include="Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
     <ClCompile Include="Log\LogManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -11,26 +11,41 @@
     <Filter Include="ThreadPool">
       <UniqueIdentifier>{d1b43545-d296-463b-8343-dd3f768898f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="JobQueue">
-      <UniqueIdentifier>{4c6dff11-3060-40e8-a272-6d02862ce413}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="JobQueue\LFJobQ">
-      <UniqueIdentifier>{fa54236d-10af-42a3-9d12-29e68e4e6632}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="JobQueue\JobQ">
-      <UniqueIdentifier>{698bc805-171b-4e23-af76-5ac63aa56b87}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singleton">
       <UniqueIdentifier>{c21fb9d7-5b61-4497-946b-ef5b22838616}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="JobQueue\JopbPool">
-      <UniqueIdentifier>{57646bb3-6ef1-4024-a401-74b67e2717f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Log">
       <UniqueIdentifier>{a4726779-b968-4b49-867e-4965683dc140}</UniqueIdentifier>
     </Filter>
     <Filter Include="Log\LogManager">
       <UniqueIdentifier>{fbdba11f-0ba8-42f1-9215-7b48a4cc47c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job">
+      <UniqueIdentifier>{eb1277d7-b9c1-4a02-8c01-eda875b7a310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\Job">
+      <UniqueIdentifier>{c3938fc9-f72d-4993-b05e-420754620b47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobPool">
+      <UniqueIdentifier>{bba6a4e5-504a-43e7-b083-0e09a31ec84a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQueue">
+      <UniqueIdentifier>{6fac805c-972a-4fd2-b139-86c98072d75e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobPool\JobPool_ST">
+      <UniqueIdentifier>{b16945ab-f106-4415-87cc-e6d5d2fae133}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobPool\JobPool_MT">
+      <UniqueIdentifier>{f677c630-65c1-403a-acc8-0207fd05d43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQueue\JobQ_ST">
+      <UniqueIdentifier>{5d0b8434-eb75-47c7-905d-a7e1055e43f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQueue\jobQ_MT">
+      <UniqueIdentifier>{8ca104c4-a092-4745-985e-9ca53d407a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpinLock">
+      <UniqueIdentifier>{20721e6d-0ef8-4c7f-992d-dc256250d452}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,20 +55,35 @@
     <ClCompile Include="ThreadPool\ThreadPool.cpp">
       <Filter>ThreadPool</Filter>
     </ClCompile>
-    <ClCompile Include="JobQueue\JobQ\JobQ.cpp">
-      <Filter>JobQueue\JobQ</Filter>
-    </ClCompile>
-    <ClCompile Include="JobQueue\LFjobQ\LFJobQ.cpp">
-      <Filter>JobQueue\LFJobQ</Filter>
-    </ClCompile>
-    <ClCompile Include="JobQueue\Job.cpp">
-      <Filter>JobQueue</Filter>
-    </ClCompile>
-    <ClCompile Include="JobQueue\JobPool\JobPool.cpp">
-      <Filter>JobQueue\JopbPool</Filter>
-    </ClCompile>
     <ClCompile Include="Log\LogManager.cpp">
       <Filter>Log\LogManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Job.cpp">
+      <Filter>Job\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
+      <Filter>Job\JobQueue\jobQ_MT</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp">
+      <Filter>Job\JobQueue\jobQ_MT</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobQueue\JobQ_ST\JobQ_ST.cpp">
+      <Filter>Job\JobQueue\JobQ_ST</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobPool\JobPool_ST\JoobPool_ST.cpp">
+      <Filter>Job\JobPool\JobPool_ST</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobPool\JobPool_MT\JoobPool_MT.cpp">
+      <Filter>Job\JobPool\JobPool_MT</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.cpp">
+      <Filter>Job\JobPool\JobPool_MT</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobPool\JobPoolBase.cpp">
+      <Filter>Job\JobPool</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\JobQueue\JobQBase.cpp">
+      <Filter>Job\JobQueue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,23 +93,41 @@
     <ClInclude Include="ThreadPool\ThreadPool.h">
       <Filter>ThreadPool</Filter>
     </ClInclude>
-    <ClInclude Include="JobQueue\JobQ\JobQ.h">
-      <Filter>JobQueue\JobQ</Filter>
-    </ClInclude>
-    <ClInclude Include="JobQueue\LFjobQ\LFJobQ.h">
-      <Filter>JobQueue\LFJobQ</Filter>
-    </ClInclude>
-    <ClInclude Include="JobQueue\Job.h">
-      <Filter>JobQueue</Filter>
-    </ClInclude>
     <ClInclude Include="SingletonBase\Singleton.h">
       <Filter>Singleton</Filter>
     </ClInclude>
-    <ClInclude Include="JobQueue\JobPool\JobPool.h">
-      <Filter>JobQueue\JopbPool</Filter>
-    </ClInclude>
     <ClInclude Include="Log\LogManager.h">
       <Filter>Log\LogManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\Job.h">
+      <Filter>Job\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobQueue\JobQ_MT\JobQ_MT.h">
+      <Filter>Job\JobQueue\jobQ_MT</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.h">
+      <Filter>Job\JobQueue\jobQ_MT</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobQueue\JobQ_ST\JobQ_ST.h">
+      <Filter>Job\JobQueue\JobQ_ST</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobPool\JobPool_ST\JoobPool_ST.h">
+      <Filter>Job\JobPool\JobPool_ST</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobPool\JobPool_MT\JoobPool_MT.h">
+      <Filter>Job\JobPool\JobPool_MT</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.h">
+      <Filter>Job\JobPool\JobPool_MT</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobPool\JobPoolBase.h">
+      <Filter>Job\JobPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\JobQueue\JobQBase.h">
+      <Filter>Job\JobQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinLock\SpinLock.h">
+      <Filter>SpinLock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
