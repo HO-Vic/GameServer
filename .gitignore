@@ -1,13 +1,3 @@
-﻿GameServerEngine/.vs
-GameServerEngine/x64/Debug/GameServerEngine.tlog
-GameServerEngine/x64/Debug/GameServerEngine.exe
-GameServerEngine/x64/Debug/GameServerEngine.exe.recipe
-GameServerEngine/x64/Debug/GameServerEngine.ilk
-GameServerEngine/x64/Debug/GameServerEngine.log
-GameServerEngine/x64/Debug/GameServerEngine.pdb
-GameServerEngine/x64/Debug/GameServerEngine.vcxproj.FileListAbsolute.txt
-GameServerEngine/x64/Debug/main.obj
-GameServerEngine/x64/Debug/vc143.idb
-GameServerEngine/x64/Debug/vc143.pdb
-GameServerEngine/x64/Debug/vcpkg.applocal.log
-Utility/x64
+﻿/**/x64
+/**/.vs
+/**/Export_LIB
