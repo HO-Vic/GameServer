@@ -76,7 +76,7 @@
     <LibraryPath>$(ProjectDir)lib;$(LibraryPath)</LibraryPath>
     <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(ProjectDir)Export_LIB\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)public/PCH;$(ProjectDir)public;$(ProjectDir)include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,41 +158,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Job\Job.h" />
-    <ClInclude Include="Job\JobPool\JobPoolBase.h" />
-    <ClInclude Include="Job\JobPool\JobPool_MT\JoobPool_MT.h" />
-    <ClInclude Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.h" />
-    <ClInclude Include="Job\JobPool\JobPool_ST\JoobPool_ST.h" />
-    <ClInclude Include="Job\JobQueue\JobQBase.h" />
-    <ClInclude Include="Job\JobQueue\JobQ_MT\JobQ_MT.h" />
-    <ClInclude Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.h" />
-    <ClInclude Include="Job\JobQueue\JobQ_ST\JobQ_ST.h" />
-    <ClInclude Include="Log\LogManager.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="SingletonBase\Singleton.h" />
-    <ClInclude Include="SpinLock\SpinLock.h" />
-    <ClInclude Include="ThreadPool\ThreadPool.h" />
-    <ClInclude Include="TimeCalculator\TimeCalculator.h" />
+    <ClInclude Include="public\BuildMsg\BuildMsg.h" />
+    <ClInclude Include="public\Job\Job.h" />
+    <ClInclude Include="public\Job\JobPool\JobPoolBase.h" />
+    <ClInclude Include="public\Job\JobPool\JobPool_MT\JoobPool_MT.h" />
+    <ClInclude Include="public\Job\JobPool\JobPool_MT\LF_JobPool_MT.h" />
+    <ClInclude Include="public\Job\JobPool\JobPool_ST\JoobPool_ST.h" />
+    <ClInclude Include="public\Job\JobQueue\JobQBase.h" />
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h" />
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\LFJobQ_MT.h" />
+    <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h" />
+    <ClInclude Include="public\PCH\pch.h" />
+    <ClInclude Include="public\SingletonBase\Singleton.h" />
+    <ClInclude Include="public\SpinLock\SpinLock.h" />
+    <ClInclude Include="public\ThreadPool\ThreadPool.h" />
+    <ClInclude Include="public\TimeCalculator\TimeCalculator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Job\Job.cpp" />
-    <ClCompile Include="Job\JobPool\JobPoolBase.cpp" />
-    <ClCompile Include="Job\JobPool\JobPool_MT\JoobPool_MT.cpp" />
-    <ClCompile Include="Job\JobPool\JobPool_MT\LF_JobPool_MT.cpp" />
-    <ClCompile Include="Job\JobPool\JobPool_ST\JoobPool_ST.cpp" />
-    <ClCompile Include="Job\JobQueue\JobQBase.cpp" />
-    <ClCompile Include="Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
-    <ClCompile Include="Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp" />
-    <ClCompile Include="Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
-    <ClCompile Include="Log\LogManager.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="private\Job\Job.cpp" />
+    <ClCompile Include="private\Job\JobPool\JobPoolBase.cpp" />
+    <ClCompile Include="private\Job\JobPool\JobPool_MT\JoobPool_MT.cpp" />
+    <ClCompile Include="private\Job\JobPool\JobPool_MT\LF_JobPool_MT.cpp" />
+    <ClCompile Include="private\Job\JobPool\JobPool_ST\JoobPool_ST.cpp" />
+    <ClCompile Include="private\Job\JobQueue\JobQBase.cpp" />
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp" />
+    <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
+    <ClCompile Include="private\ThreadPool\ThreadPool.cpp" />
+    <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp" />
+    <ClCompile Include="public\PCH\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ThreadPool\ThreadPool.cpp" />
-    <ClCompile Include="TimeCalculator\TimeCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

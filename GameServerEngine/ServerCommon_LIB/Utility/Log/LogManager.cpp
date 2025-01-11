@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "LogManager.h"
+#include <pch.h>
+#include <Log/LogManager.h>
 
 namespace sh {
 	namespace Utility {
@@ -56,3 +56,6 @@ namespace sh {
 	}
 }
 
+//#ifdef _DEBUG
+//WRITE_LOG(spdlog::level::info, __FUNCTION__, __LINE__, "%s(),- line.%d, JobPoolName: %s, newPoolCnt: %d", m_name, ++m_newJobCnt);
+//#endif // _DEBUG
