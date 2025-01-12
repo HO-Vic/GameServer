@@ -47,6 +47,15 @@
     <Filter Include="BuildMsg">
       <UniqueIdentifier>{a4d4fb25-61be-475b-b069-7c48e68a7c8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pool">
+      <UniqueIdentifier>{c14aedc9-e47d-46e0-9989-96d2ec9322ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pool\MemoryPool">
+      <UniqueIdentifier>{4ad8db50-492e-4a43-b446-4c6be29489f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pool\ObjectPool">
+      <UniqueIdentifier>{ecd04716-d3e3-40f2-849d-728003073893}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Job\Job.cpp">
@@ -84,6 +93,12 @@
     </ClCompile>
     <ClCompile Include="public\PCH\pch.cpp">
       <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Pool\MemoryPool.cpp">
+      <Filter>Pool\MemoryPool</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Pool\ObjectPool.cpp">
+      <Filter>Pool\ObjectPool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="public\BuildMsg\BuildMsg.h">
       <Filter>BuildMsg</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Pool\MemoryPool.h">
+      <Filter>Pool\MemoryPool</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Pool\ObjectPool.h">
+      <Filter>Pool\ObjectPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
