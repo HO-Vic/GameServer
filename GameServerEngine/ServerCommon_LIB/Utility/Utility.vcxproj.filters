@@ -38,12 +38,6 @@
     <Filter Include="Job\JobQ\ST">
       <UniqueIdentifier>{f25922ee-d7fd-4fb1-bc91-63733a4f3845}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Job\JobPool\MT">
-      <UniqueIdentifier>{f7146c60-766d-4152-9811-b991085d6524}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Job\JobPool\ST">
-      <UniqueIdentifier>{89c6edee-b43b-4f71-8215-d8ae0a97352f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="BuildMsg">
       <UniqueIdentifier>{a4d4fb25-61be-475b-b069-7c48e68a7c8f}</UniqueIdentifier>
     </Filter>
@@ -70,7 +64,7 @@
     <ClCompile Include="private\Job\JobQueue\JobQBase.cpp">
       <Filter>Job\JobQ</Filter>
     </ClCompile>
-    <ClCompile Include="private\Job\JobPool\JobPoolBase.cpp">
+    <ClCompile Include="private\Job\JobPool\JobPool.cpp">
       <Filter>Job\JobPool</Filter>
     </ClCompile>
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
@@ -81,15 +75,6 @@
     </ClCompile>
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Job\JobPool\JobPool_MT\JoobPool_MT.cpp">
-      <Filter>Job\JobPool\MT</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Job\JobPool\JobPool_MT\LF_JobPool_MT.cpp">
-      <Filter>Job\JobPool\MT</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Job\JobPool\JobPool_ST\JoobPool_ST.cpp">
-      <Filter>Job\JobPool\ST</Filter>
     </ClCompile>
     <ClCompile Include="public\PCH\pch.cpp">
       <Filter>PCH</Filter>
@@ -114,7 +99,7 @@
     <ClInclude Include="public\Job\JobQueue\JobQBase.h">
       <Filter>Job\JobQ</Filter>
     </ClInclude>
-    <ClInclude Include="public\Job\JobPool\JobPoolBase.h">
+    <ClInclude Include="public\Job\JobPool\JobPool.h">
       <Filter>Job\JobPool</Filter>
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h">
@@ -125,15 +110,6 @@
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\LFJobQ_MT.h">
       <Filter>Job\JobQ\MT</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Job\JobPool\JobPool_MT\JoobPool_MT.h">
-      <Filter>Job\JobPool\MT</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Job\JobPool\JobPool_MT\LF_JobPool_MT.h">
-      <Filter>Job\JobPool\MT</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Job\JobPool\JobPool_ST\JoobPool_ST.h">
-      <Filter>Job\JobPool\ST</Filter>
     </ClInclude>
     <ClInclude Include="public\SpinLock\SpinLock.h">
       <Filter>SpinLock</Filter>

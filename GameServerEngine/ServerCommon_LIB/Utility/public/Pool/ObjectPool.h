@@ -21,7 +21,7 @@ class ObjectPool {
   }
 
   template <typename... Args>
-  std::shared_ptr<T> MakeShared(Args&& args) {
+  std::shared_ptr<T> MakeShared(Args&&... args) {
     T* ptr = nullptr;
     {
       std::lock_guard<std::mutex> lg(m_lock);
@@ -32,12 +32,13 @@ class ObjectPool {
     }
 
     if (nullptr == ptr) {
-      ptr = new T(std::forward(args...));
+      ptr = new T(std::forward<Args>(args)...);
+    } else {
+      std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
 
     return std::shared_ptr<T>(ptr, Release);
-    // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정
-    // 불가
+    // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
  private:
@@ -48,13 +49,13 @@ class ObjectPool {
 
  private:
   // static은 T마다 할당 됨
-  static std::mutex m_lock;
-  static std::stack<T*> m_pools;
+  std::mutex m_lock;
+  std::stack<T*> m_pools;
 
-  static std::atomic<uint32_t> m_totalCnt;       // 총 갯수
-  static std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
-  static std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
-  static std::atomic<uint32_t> m_addedCnt;       // 추가
+  std::atomic<uint32_t> m_totalCnt;       // 총 갯수
+  std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
+  std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
+  std::atomic<uint32_t> m_addedCnt;       // 추가
 };
 
 }  // namespace sh::Utility
