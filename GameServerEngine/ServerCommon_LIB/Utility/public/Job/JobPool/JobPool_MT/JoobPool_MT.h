@@ -1,5 +1,6 @@
 #pragma once
-#include "../JobPoolBase.h"
+#include <Job/JobPool/JobPoolBase.h>
+
 namespace sh::Utility {
 
 class Job;
@@ -7,7 +8,8 @@ class JoobPool_MT : public JobPoolBase {
  public:
   JoobPool_MT(std::string& name, const uint32_t poolSize);
 
-  virtual ~JoobPool_MT() {}
+  virtual ~JoobPool_MT() {
+  }
 
   virtual void PushJob(JobPtr jobPtr) override;
 

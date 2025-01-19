@@ -9,7 +9,8 @@ class LF_JobPool_MT : public JobPoolBase {
  public:
   LF_JobPool_MT(const std::string& name, const uint32_t poolSize);
 
-  virtual ~LF_JobPool_MT() {}
+  virtual ~LF_JobPool_MT() {
+  }
 
   virtual void PushJob(JobPtr jobPtr) override;
 

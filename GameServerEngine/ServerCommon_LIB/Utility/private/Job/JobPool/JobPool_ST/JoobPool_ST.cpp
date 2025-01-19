@@ -1,6 +1,6 @@
-#include <Job/Job.h>
-#include <Job/JobPool/JobPool_ST/JoobPool_ST.h>
 #include <pch.h>
+#include <Job/JobPool/JobPool_ST/JoobPool_ST.h>
+#include <Job/Job.h>
 
 namespace sh::Utility {
 JoobPool_ST::JoobPool_ST(std::string& name, const uint32_t poolSize)
@@ -10,7 +10,9 @@ JoobPool_ST::JoobPool_ST(std::string& name, const uint32_t poolSize)
   }
 }
 
-void JoobPool_ST::PushJob(JobPtr jobPtr) { m_jobs.push(jobPtr); }
+void JoobPool_ST::PushJob(JobPtr jobPtr) {
+  m_jobs.push(jobPtr);
+}
 
 JobPtr JoobPool_ST::GetJobObjectByPool() {
   auto jobPtr = m_jobs.front();

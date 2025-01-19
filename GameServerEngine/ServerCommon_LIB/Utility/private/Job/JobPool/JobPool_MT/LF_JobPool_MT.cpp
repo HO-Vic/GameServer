@@ -1,6 +1,6 @@
+#include <pch.h>
 #include <Job/Job.h>
 #include <Job/JobPool/JobPool_MT/LF_JobPool_MT.h>
-#include <pch.h>
 
 namespace sh::Utility {
 
@@ -11,7 +11,9 @@ LF_JobPool_MT::LF_JobPool_MT(const std::string& name, const uint32_t poolSize)
   }
 }
 
-void LF_JobPool_MT::PushJob(JobPtr jobPtr) { m_jobs.push(jobPtr); }
+void LF_JobPool_MT::PushJob(JobPtr jobPtr) {
+  m_jobs.push(jobPtr);
+}
 
 JobPtr LF_JobPool_MT::GetJobObjectByPool() {
   JobPtr returnJob;
