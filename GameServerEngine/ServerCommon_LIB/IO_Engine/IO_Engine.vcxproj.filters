@@ -4,15 +4,87 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{94620f69-0cf7-45a7-8f3e-7599beaaab8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{e1dbcc52-cf42-471d-b292-cc205eafc50d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\SendContext">
+      <UniqueIdentifier>{ac2e8145-62df-4cba-a79f-0028a0ffd490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\RecvContext">
+      <UniqueIdentifier>{aed1fe73-7ed7-43a2-9c2d-7fd1aec39af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{cf9da0b1-3813-4669-b575-71329af9cbd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer\SendBuffer">
+      <UniqueIdentifier>{b9d100a5-f831-4e1d-97f4-e4883a798dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\SendContext\SendContextImpl">
+      <UniqueIdentifier>{ed1e5a9c-0ded-4359-9c0d-858894645c1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
+    <ClCompile Include="PCH\pch.cpp">
       <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\ISession.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Buffer\SendBuffer.cpp">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Buffer\SendBufferPool.cpp">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\RecvContext.cpp">
+      <Filter>Session\RecvContext</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\SendContext.cpp">
+      <Filter>Session\SendContext</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\TCP_SendContextImpl.cpp">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\UDP_SendContextImpl.cpp">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\ISendContextImpl.cpp">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\ISession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Buffer\SendBuffer.h">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Buffer\SendBufferPool.h">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\RecvContext.h">
+      <Filter>Session\RecvContext</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SessionImpl.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\SendContext.h">
+      <Filter>Session\SendContext</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\TCP_SendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\UDP_SendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\ISendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>PCH</Filter>
-    </ClCompile>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

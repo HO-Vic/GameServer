@@ -1,9 +1,11 @@
-#include <ThreadPool/ThreadPool.h>
 #include <pch.h>
+#include <ThreadPool/ThreadPool.h>
 
 namespace sh::Utility {
 
-ThreadPool::ThreadPool(const int threadNum) { m_threads.reserve(threadNum); }
+ThreadPool::ThreadPool(const int threadNum) {
+  m_threads.reserve(threadNum);
+}
 
 ThreadPool::~ThreadPool() {
   for (auto& jth : m_threads) {
@@ -16,4 +18,5 @@ void ThreadPool::ForceStop() {
     jth.request_stop();
   }
 }
+
 }  // namespace sh::Utility
