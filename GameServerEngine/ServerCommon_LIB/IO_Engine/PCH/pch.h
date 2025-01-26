@@ -28,6 +28,8 @@
 
 #include <WinSock2.h>
 
+#include <CommonDefine.h>
+
 #ifdef _DEBUG
 #pragma comment (lib, "Debug/UtilityD.lib")
 #endif // _DEBUG

@@ -15,14 +15,9 @@
 
 namespace sh::IO_Engine {
 class ISendContextImpl;
-enum SEND_TYPE : char {
-  TCP = 1,
-  UDP = 2
-};
-
 class SendContext {
  public:
-  SendContext(SOCKET sock, const SEND_TYPE sendType);
+  SendContext(SOCKET sock, const IO_TYPE sendType);
 
   ~SendContext();
 

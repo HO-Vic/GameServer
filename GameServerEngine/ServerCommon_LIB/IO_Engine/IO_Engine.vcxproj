@@ -25,8 +25,9 @@
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
     <ClCompile Include="private\Buffer\SendBufferPool.cpp" />
     <ClCompile Include="private\Session\ISession.cpp" />
-    <ClCompile Include="private\Session\RecvContext.cpp" />
-    <ClCompile Include="private\Session\SendContext\ISendContextImpl.cpp" />
+    <ClCompile Include="private\Session\RecvContext\RecvContext.cpp" />
+    <ClCompile Include="private\Session\RecvContext\TCP_RecvContextImpl.cpp" />
+    <ClCompile Include="private\Session\RecvContext\UDP_RecvContextImpl.cpp" />
     <ClCompile Include="private\Session\SendContext\SendContext.cpp" />
     <ClCompile Include="private\Session\SendContext\TCP_SendContextImpl.cpp" />
     <ClCompile Include="private\Session\SendContext\UDP_SendContextImpl.cpp" />
@@ -35,8 +36,12 @@
     <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="public\Buffer\SendBuffer.h" />
     <ClInclude Include="public\Buffer\SendBufferPool.h" />
+    <ClInclude Include="public\CommonDefine.h" />
     <ClInclude Include="public\Session\ISession.h" />
-    <ClInclude Include="public\Session\RecvContext.h" />
+    <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />
+    <ClInclude Include="public\Session\RecvContext\RecvContext.h" />
+    <ClInclude Include="public\Session\RecvContext\TCP_RecvContextImpl.h" />
+    <ClInclude Include="public\Session\RecvContext\UDP_RecvContextImpl.h" />
     <ClInclude Include="public\Session\SendContext\ISendContextImpl.h" />
     <ClInclude Include="public\Session\SendContext\SendContext.h" />
     <ClInclude Include="public\Session\SendContext\TCP_SendContextImpl.h" />

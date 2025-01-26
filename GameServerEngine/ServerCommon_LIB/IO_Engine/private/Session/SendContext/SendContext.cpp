@@ -4,9 +4,9 @@
 #include <Session/SendContext/UDP_SendContextImpl.h>
 
 namespace sh::IO_Engine {
-SendContext::SendContext(SOCKET sock, const SEND_TYPE sendType)
+SendContext::SendContext(SOCKET sock, const IO_TYPE sendType)
     : m_sendContextImpl(nullptr) {
-  if (SEND_TYPE::UDP == sendType) {
+  if (IO_TYPE::UDP == sendType) {
     m_sendContextImpl = new UDP_SendContextImpl(sock);
     return;
   }
