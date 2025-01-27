@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include <pch.h>
 #include <Job/JobQueue/JobQBase.h>
 
 /*
-        ÇÔ¼öÀÚ¿¡ ´ëÇØ¼­ queue¿¡ ÀúÀåÇß´Ù°¡
-        ÇÑ¹ø¿¡ ¼öÇà
-        tbb::concurrent_queue¸¦ È°¿ëÇÏ¿© lfÇÏ°Ô
+        í•¨ìˆ˜ìì— ëŒ€í•´ì„œ queueì— ì €ì¥í–ˆë‹¤ê°€
+        í•œë²ˆì— ìˆ˜í–‰
+        tbb::concurrent_queueë¥¼ í™œìš©í•˜ì—¬ lfí•˜ê²Œ
 */
 
 namespace sh {

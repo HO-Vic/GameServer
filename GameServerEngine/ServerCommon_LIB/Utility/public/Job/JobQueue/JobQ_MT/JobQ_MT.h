@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <pch.h>
 #include <Job/JobQueue/JobQBase.h>
 #include <SpinLock/SpinLock.h>
@@ -17,7 +17,7 @@ class JobQ_MT
   virtual ~JobQ_MT() {
   }
 
-  virtual void DoJobs(const uint64_t execCnt = 0) override;  // ¼öÇàÇÒ °¹¼ö ÁöÁ¤: 0ÀÌ¸é ÀüºÎ ´Ù ¼öÇà
+  virtual void DoJobs(const uint64_t execCnt = 0) override;  // ìˆ˜í–‰í•  ê°¯ìˆ˜ ì§€ì •: 0ì´ë©´ ì „ë¶€ ë‹¤ ìˆ˜í–‰
 
   virtual void InsertJob(std::shared_ptr<Job>& job) override;
 

@@ -1,4 +1,4 @@
-#include <pch.h>
+ï»¿#include <pch.h>
 #include <Job/Job.h>
 #include <Job/JobQueue/JobQ_MT/JobQ_MT.h>
 
@@ -6,7 +6,7 @@ namespace sh {
 namespace Utility {
 
 void JobQ_MT::DoJobs(const uint64_t execCnt) {
-  static constexpr uint64_t MAX_EXEC_CNT = 100;  // °è¼Ó ´Ù¸¥ ¾²·¹µå¿¡¼­ ½ÇÇàÇÒ ¶§ ¸¶´Ù Ãß°¡ÇÏ¸é, ·çÇÁ°¡ ¾È ³¡³²,  Ãß°¡ end Á¶°Ç
+  static constexpr uint64_t MAX_EXEC_CNT = 100;  // ê³„ì† ë‹¤ë¥¸ ì“°ë ˆë“œì—ì„œ ì‹¤í–‰í•  ë•Œ ë§ˆë‹¤ ì¶”ê°€í•˜ë©´, ë£¨í”„ê°€ ì•ˆ ëë‚¨,  ì¶”ê°€ end ì¡°ê±´
   uint32_t executeCnt = 0;
   if (ALL_JOB_EXEC == execCnt && executeCnt != MAX_EXEC_CNT) {
     while (!m_jobs.empty()) {

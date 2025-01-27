@@ -61,9 +61,6 @@
     <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp">
       <Filter>TimeCalculator</Filter>
     </ClCompile>
-    <ClCompile Include="private\Job\JobQueue\JobQBase.cpp">
-      <Filter>Job\JobQ</Filter>
-    </ClCompile>
     <ClCompile Include="private\Job\JobPool\JobPool.cpp">
       <Filter>Job\JobPool</Filter>
     </ClCompile>
@@ -81,12 +78,6 @@
     </ClCompile>
     <ClCompile Include="private\Pool\MemoryPool.cpp">
       <Filter>Pool\MemoryPool</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Pool\ObjectPool.cpp">
-      <Filter>Pool\ObjectPool</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Pool\RawObjectPool.cpp">
-      <Filter>Pool\ObjectPool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

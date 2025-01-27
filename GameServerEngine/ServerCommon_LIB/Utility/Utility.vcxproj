@@ -127,6 +127,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -177,13 +178,10 @@
   <ItemGroup>
     <ClCompile Include="private\Job\Job.cpp" />
     <ClCompile Include="private\Job\JobPool\JobPool.cpp" />
-    <ClCompile Include="private\Job\JobQueue\JobQBase.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
     <ClCompile Include="private\Pool\MemoryPool.cpp" />
-    <ClCompile Include="private\Pool\ObjectPool.cpp" />
-    <ClCompile Include="private\Pool\RawObjectPool.cpp" />
     <ClCompile Include="private\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp" />
     <ClCompile Include="public\PCH\pch.cpp">

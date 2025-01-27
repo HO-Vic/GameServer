@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "Pool/MemoryPool.h"
+﻿#include <pch.h>
+#include <Pool/MemoryPool.h>
 
 namespace sh::Utility {
 MemoryPool::MemoryHeader* MemoryPool::MemoryHeader ::AttachHeader(void* allocPtr, const uint32_t size) {  // 할당된 ptr에 대해서 메모리 헤더 붙이기
@@ -42,28 +42,28 @@ bool MemoryPoolTable::Init() {
 
   uint16_t allocatedSize = 8;
   uint16_t idx = 0;
-  for (allocatedSize = 8; allocatedSize += 8; allocatedSize <= 256) {
+  for (allocatedSize = 8; allocatedSize <= 256; allocatedSize += 8) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;
     }
   }
 
-  for (allocatedSize = 256 + 32; allocatedSize += 32; allocatedSize <= 1024) {
+  for (allocatedSize = 256 + 32; allocatedSize <= 1024; allocatedSize += 32) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;
     }
   }
 
-  for (allocatedSize = 1024 + 128; allocatedSize += 128; allocatedSize <= 2048) {
+  for (allocatedSize = 1024 + 128; allocatedSize <= 2048; allocatedSize += 128) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;
     }
   }
 
-  for (allocatedSize = 2048 + 256; allocatedSize += 256; allocatedSize <= 4096) {
+  for (allocatedSize = 2048 + 256; allocatedSize <= 4096; allocatedSize += 256) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;

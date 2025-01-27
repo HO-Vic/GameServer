@@ -1,2 +1,2 @@
-#include <pch.h>
+﻿#include <pch.h>
 #include <TimeCalculator/TimeCalculator.h>

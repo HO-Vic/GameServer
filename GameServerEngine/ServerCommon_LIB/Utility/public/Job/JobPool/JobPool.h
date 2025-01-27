@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Pool/ObjectPool.h>
 
 namespace sh::Utility {
