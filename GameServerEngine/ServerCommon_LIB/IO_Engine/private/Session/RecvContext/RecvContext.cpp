@@ -20,4 +20,8 @@ RecvContext::~RecvContext() {
 int32_t RecvContext::RecvCompletion(size_t ioSize) {
   return m_recvContextImpl->RecvCompletion(ioSize);
 }
+
+int32_t RecvContext::DoRecv() {
+  return m_recvContextImpl->DoRecv();
+}
 }  // namespace sh::IO_Engine

@@ -3,13 +3,17 @@
 #include <Session/SendContext/SendContext.h>
 #include <Session/RecvContext/RecvContext.h>
 
-// Overlapped°¡ ÇÊ¿äÇÔ
+// Overlappedê°€ í•„ìš”í•¨
 namespace sh::IO_Engine {
 
 class SessionImpl {
  public:
-  SessionImpl(SOCKET sock, const IO_TYPE sendType, RecvHandler recvHandler)
-      : m_sendContext(sock, sendType), m_recvContext(sock, recvHandler) {
+  SessionImpl(SOCKET sock, const IO_TYPE ioType, RecvHandler&& recvHandler)
+      : m_sendContext(sock, ioType), m_recvContext(ioType, sock, recvHandler) {
+  }
+
+  void SendComplete(const size_t ioByte) {
+    m_sendContext.SendComplete(ioByte);
   }
 
   void DoSend(const BYTE* data, const size_t len) {
@@ -21,6 +25,14 @@ class SessionImpl {
       // Disconnent
     }
     int32_t recvError = m_recvContext.RecvCompletion(ioByte);
+    if (0 != recvError) {
+      // Error
+      // Disconnect
+    }
+  }
+
+  void DoRecv() {
+    int32_t recvError = m_recvContext.DoRecv();
     if (0 != recvError) {
       // Error
       // Disconnect

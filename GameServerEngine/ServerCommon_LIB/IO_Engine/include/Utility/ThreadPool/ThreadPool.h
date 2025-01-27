@@ -1,11 +1,11 @@
 #pragma once
-#include <PCH/pch.h>
+#include <pch.h>
 
 /*
-        ¾²·¹µå Ç®À» °ü¸®ÇÏ´Â ÄÁÅ×ÀÌ³Ê
-        ¾²·¹µå¸¦ Ãß°¡ »èÁ¦ => ÀÌ°Ç °í¹Î
-        »ı¼ºÀÚ¿¡¼­´Â thread vector °ø°£¸¸ Àâ°í, Add¿¡¼­ Ãß°¡ÇÏ´Â°Ô ³ª·Á³ª
-        µ¿½Ã¿¡ ¿©·¯ ¾²·¹µå¿¡¼­ ThreadPool¿¡ ¾²·¹µå Ãß°¡´Â »ı°¢ÇÏÁö ¾ÊÀ½.
+        ì“°ë ˆë“œ í’€ì„ ê´€ë¦¬í•˜ëŠ” ì»¨í…Œì´ë„ˆ
+        ì“°ë ˆë“œë¥¼ ì¶”ê°€ ì‚­ì œ => ì´ê±´ ê³ ë¯¼
+        ìƒì„±ìì—ì„œëŠ” thread vector ê³µê°„ë§Œ ì¡ê³ , Addì—ì„œ ì¶”ê°€í•˜ëŠ”ê²Œ ë‚˜ë ¤ë‚˜
+        ë™ì‹œì— ì—¬ëŸ¬ ì“°ë ˆë“œì—ì„œ ThreadPoolì— ì“°ë ˆë“œ ì¶”ê°€ëŠ” ìƒê°í•˜ì§€ ì•ŠìŒ.
 */
 
 // template<typename Args>
@@ -19,10 +19,10 @@ class ThreadPool {
 
   virtual ~ThreadPool();
 
-  // jthreadÀÇ stop_tokenÀ» ÀÎÀÚ·Î °¡Áú ¼ö ÀÖ°Ô
+  // jthreadì˜ stop_tokenì„ ì¸ìë¡œ ê°€ì§ˆ ìˆ˜ ìˆê²Œ
   template <typename... Args>
-  void InsertThread(std::function<void(std::stop_token&, Args...)>&& jthreadFunctor, Args&&... args) {
-    m_threads.push_back(std::jthread(std::forward(jthreadFunctor), std::forward<Args>(args)...));
+  void InsertThread(std::function<void(std::stop_token&, Args...)> jthreadFunctor, Args&&... args) {
+    m_threads.push_back(std::jthread(std::move(jthreadFunctor), std::forward<Args>(args)...));
   }
 
   void ForceStop();

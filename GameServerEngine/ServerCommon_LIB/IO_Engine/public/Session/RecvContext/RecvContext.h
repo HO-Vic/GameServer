@@ -13,6 +13,8 @@ class RecvContext {
 
   int32_t RecvCompletion(size_t ioSize);
 
+  int32_t DoRecv();
+
  private:
   IRecvContextImpl* m_recvContextImpl;
 };

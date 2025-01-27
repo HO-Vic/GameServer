@@ -10,7 +10,6 @@ class UDP_RecvContextImpl
   }
   virtual int32_t RecvCompletion(size_t ioSize) override;
 
- protected:
   virtual int32_t DoRecv() override;
 };
 }  // namespace sh::IO_Engine

@@ -21,8 +21,8 @@ void TCP_SendContextImpl::DoSend(const BYTE* data, const size_t len) {
 }
 
 void TCP_SendContextImpl::SendComplete(const size_t ioByte) {
-  // ¿©±â¼­´Â º¸³¾°Ô ¾øÀ» ¶§¸¸, sendAbleÀ» º¯°æÇÏ°í
-  // º¸³¾°Ô ÀÖ´Ù¸é ±×´ë·Î »óÅÂ À¯Áö
+  // ì—¬ê¸°ì„œëŠ” ë³´ë‚¼ê²Œ ì—†ì„ ë•Œë§Œ, sendAbleì„ ë³€ê²½í•˜ê³ 
+  // ë³´ë‚¼ê²Œ ìˆë‹¤ë©´ ê·¸ëŒ€ë¡œ ìƒíƒœ ìœ ì§€
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
     if (0 == m_sendQueue.size()) {
@@ -50,7 +50,7 @@ void TCP_SendContextImpl::SendExecute() {
             .len = static_cast<uint32_t>(sendBuffer->m_size),
             .buf = reinterpret_cast<char*>(sendBuffer->m_buffer)});
   }
-  WSASend(m_socket, sendBuffers.data(), sendBuffers.size(), nullptr, 0, nullptr, nullptr);
+  WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, nullptr, nullptr);
 }
 
 }  // namespace sh::IO_Engine

@@ -4,25 +4,25 @@
 
 namespace sh::IO_Engine {
 int32_t TCP_RecvContextImpl::RecvCompletion(size_t ioSize) {
-  int remainSize = ioSize + m_remainLen;
+  size_t remainSize = ioSize + m_remainLen;
   BYTE* bufferPosition = m_buffer;
 
   while (remainSize > sizeof(PacketHeader::size)) {
     PacketHeader* currentPacket = reinterpret_cast<PacketHeader*>(bufferPosition);
     if (currentPacket->size > remainSize) {
-      // ¿Ï¼ºµÈ ÆĞÅ¶ÀÌ ¸¸µé¾îÁöÁö ¾ÊÀ½.
+      // ì™„ì„±ëœ íŒ¨í‚·ì´ ë§Œë“¤ì–´ì§€ì§€ ì•ŠìŒ.
       break;
     }
-    // ¿Ï¼ºµÈ ÆĞÅ¶
+    // ì™„ì„±ëœ íŒ¨í‚·
     m_recvHandler(currentPacket->size, bufferPosition);
-    // ³²Àº ÆÛ¹ö Å©±â ÃÖ½ÅÈ­, ÇöÀç ¹öÆÛ À§Ä¡ ´ÙÀ½ ÆĞÅ¶ ½ÃÀÛ À§Ä¡·Î
+    // ë‚¨ì€ í¼ë²„ í¬ê¸° ìµœì‹ í™”, í˜„ì¬ ë²„í¼ ìœ„ì¹˜ ë‹¤ìŒ íŒ¨í‚· ì‹œì‘ ìœ„ì¹˜ë¡œ
     remainSize -= currentPacket->size;
     bufferPosition = bufferPosition + currentPacket->size;
   }
 
-  // ÇöÀç ³²Àº µ¥ÀÌÅÍ Å©±â ÀúÀå
+  // í˜„ì¬ ë‚¨ì€ ë°ì´í„° í¬ê¸° ì €ì¥
   m_remainLen = remainSize;
-  // ³²Àº ÆĞÅ¶ µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é, ¸Ç ¾ÕÀ¸·Î ´ç±â±â
+  // ë‚¨ì€ íŒ¨í‚· ë°ì´í„°ê°€ ìˆë‹¤ë©´, ë§¨ ì•ìœ¼ë¡œ ë‹¹ê¸°ê¸°
   if (remainSize > 0) {
     std::memcpy(m_buffer, bufferPosition, remainSize);
   }
@@ -31,9 +31,9 @@ int32_t TCP_RecvContextImpl::RecvCompletion(size_t ioSize) {
 }
 
 int32_t TCP_RecvContextImpl::DoRecv() {
-  // wsaBufÀÇ buf À§Ä¡¸¦ ¹Ù²Ş
+  // wsaBufì˜ buf ìœ„ì¹˜ë¥¼ ë°”ê¿ˆ
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
-  m_wsaBuf.len = m_remainLen;
+  m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   DWORD flag = 0;
   WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, nullptr, nullptr);
   return 0;

@@ -28,12 +28,21 @@
     <Filter Include="Session\RecvContext\RecvContextImpl">
       <UniqueIdentifier>{cadb90d1-b31f-4e3b-9984-dacc3a273cfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO_Core">
+      <UniqueIdentifier>{50cc62db-db6f-458b-babb-33088eb82492}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\OverlappedEx">
+      <UniqueIdentifier>{dc34b314-fc13-4791-b2ea-4fad67a5711b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\OveralppedEvent">
+      <UniqueIdentifier>{dbdf612c-42bb-4ebe-a6e5-acc33a949cb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="private\Session\ISession.cpp">
+    <ClCompile Include="private\Session\Session.cpp">
       <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp">
@@ -60,12 +69,21 @@
     <ClCompile Include="private\Session\RecvContext\UDP_RecvContextImpl.cpp">
       <Filter>Session\RecvContext\RecvContextImpl</Filter>
     </ClCompile>
+    <ClCompile Include="private\IO_Core\IO_Core.cpp">
+      <Filter>IO_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\OverlappedEvent\TerminateEvent.cpp">
+      <Filter>IO_Core\OveralppedEvent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="public\Session\ISession.h">
+    <ClInclude Include="public\Session\Session.h">
       <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="public\Buffer\SendBuffer.h">
@@ -103,6 +121,18 @@
     </ClInclude>
     <ClInclude Include="public\Session\RecvContext\UDP_RecvContextImpl.h">
       <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\IO_Core.h">
+      <Filter>IO_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h">
+      <Filter>IO_Core\OveralppedEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEvent\TerminateEvent.h">
+      <Filter>IO_Core\OveralppedEvent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
