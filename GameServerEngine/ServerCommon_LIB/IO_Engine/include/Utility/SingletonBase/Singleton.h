@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 namespace sh::Utility {
 template <class T>
@@ -6,8 +6,8 @@ class SingletonBase {
  protected:
   SingletonBase() = default;
   virtual ~SingletonBase() {
-  }  // »ó¼Ó ¹ŞÀº °´Ã¼¿¡ ´ëÇØ¼­ ¼Ò¸êÀÚ È£Ãâ
-  // ½Ì±ÛÅæÀÌ±â ¶§¹®¿¡, º¹»ç°¡ ÀÏ¾î³ª¸é ¾È µÊ.
+  }  // ìƒì† ë°›ì€ ê°ì²´ì— ëŒ€í•´ì„œ ì†Œë©¸ì í˜¸ì¶œ
+  // ì‹±ê¸€í†¤ì´ê¸° ë•Œë¬¸ì—, ë³µì‚¬ê°€ ì¼ì–´ë‚˜ë©´ ì•ˆ ë¨.
   SingletonBase(const SingletonBase&) = delete;
   SingletonBase& operator=(const SingletonBase&) = delete;
 

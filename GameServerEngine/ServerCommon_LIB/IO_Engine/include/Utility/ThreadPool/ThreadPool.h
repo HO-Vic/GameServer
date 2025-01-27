@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <pch.h>
 
 /*
@@ -21,8 +21,8 @@ class ThreadPool {
 
   // jthread의 stop_token을 인자로 가질 수 있게
   template <typename... Args>
-  void InsertThread(std::function<void(std::stop_token&, Args...)> jthreadFunctor, Args&&... args) {
-    m_threads.push_back(std::jthread(std::move(jthreadFunctor), std::forward<Args>(args)...));
+  void InsertThread(std::function<void(std::stop_token&, Args...)>&& jthreadFunctor, Args&&... args) {
+    m_threads.push_back(std::jthread(std::forward(jthreadFunctor), std::forward<Args>(args)...));
   }
 
   void ForceStop();

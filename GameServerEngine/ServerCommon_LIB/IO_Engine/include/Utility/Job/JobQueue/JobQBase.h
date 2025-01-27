@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <pch.h>
 
 namespace sh {
@@ -21,7 +21,7 @@ class JobQBase {
   virtual ~JobQBase() {
   }
 
-  virtual void DoJobs(const uint64_t execCnt = 0) = 0;  // ¼öÇàÇÒ °¹¼ö ÁöÁ¤: 0ÀÌ¸é ÀüºÎ ´Ù ¼öÇà
+  virtual void DoJobs(const uint64_t execCnt = 0) = 0;  // ìˆ˜í–‰í•  ê°¯ìˆ˜ ì§€ì •: 0ì´ë©´ ì „ë¶€ ë‹¤ ìˆ˜í–‰
 
   virtual void InsertJob(std::shared_ptr<Job>& job) = 0;
 

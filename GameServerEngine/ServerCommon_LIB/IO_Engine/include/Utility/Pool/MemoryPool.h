@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include <SingletonBase/Singleton.h>
 
 namespace sh::Utility {
-class MemoryPool  // ¸Ş¸ğ¸® Çì´õ ÁıÇÕ
+class MemoryPool  // ë©”ëª¨ë¦¬ í—¤ë” ì§‘í•©
 {
   struct MemoryHeader {
    public:

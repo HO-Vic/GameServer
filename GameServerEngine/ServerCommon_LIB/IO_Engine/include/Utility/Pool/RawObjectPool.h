@@ -1,18 +1,25 @@
-﻿#pragma once
+#pragma once
 #include <pch.h>
 
 namespace sh::Utility {
 template <typename T>
-class ObjectPool {
+class RawObjectPool {
  public:
-  ObjectPool(const uint32_t defaultPoolSize)
+  RawObjectPool()
+      : m_totalCnt(0),
+        m_totalUsingCnt(0),
+        m_addedCnt(0),
+        m_usingCnt(0) {
+  }
+
+  RawObjectPool(const uint32_t defaultPoolSize)
       : m_totalCnt(defaultPoolSize),
         m_totalUsingCnt(0),
         m_addedCnt(0),
         m_usingCnt(0) {
   }
 
-  virtual ~ObjectPool() {
+  virtual ~RawObjectPool() {
     std::lock_guard<std::mutex> lg(m_lock);
     while (!m_pools.empty()) {
       delete m_pools.top();
@@ -20,12 +27,12 @@ class ObjectPool {
     }
   }
 
-  void Init(const size_t poolSize) {
+  void Init(const uint32_t poolSize) {
     m_totalCnt = poolSize;
   }
 
   template <typename... Args>
-  std::shared_ptr<T> MakeShared(Args&&... args) {
+  T* GetObjectPtr(Args&&... args) {
     T* ptr = nullptr;
     {
       std::lock_guard<std::mutex> lg(m_lock);
@@ -41,9 +48,8 @@ class ObjectPool {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
 
-    return std::shared_ptr<T>(ptr, std::move([=](T* ptr) {
-                                Release(ptr);
-                              }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+    return ptr;
+    // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
  private:

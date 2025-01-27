@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include <PCH/pch.h>
 /*
-        ÇÔ¼öÀÚ¸¦ °¡Áú Å¬·¡½º ÀâÅ¥¸¦ À§ÇÑ ·¡ÆÛ
-        »ı¼ºÀÚ·Î, T, function Args¸¦ ¹Ş±â
+        í•¨ìˆ˜ìë¥¼ ê°€ì§ˆ í´ë˜ìŠ¤ ì¡íë¥¼ ìœ„í•œ ë˜í¼
+        ìƒì„±ìë¡œ, T, function Argsë¥¼ ë°›ê¸°
 */
 
 namespace sh::Utility {
@@ -29,11 +29,11 @@ class Job : public std::enable_shared_from_this<Job> {
   Caller m_job;
 
  public:
-  // ¼ÒÀ¯±ÇÀÌ ±Ã±İÇØÁö³×
-  // ¤¤ ¶÷´Ù Ä¸ÃÄ
-  // "[=]" : º¹»ç
-  // "[&]" : ÂüÁ¶
-  // ¾Æ·¡´Â shared_ptrÀÌ º¹»çÀÌ±â ¶§¹®¿¡, ¼ÒÀ¯±Ç À¯Áö
+  // ì†Œìœ ê¶Œì´ ê¶ê¸ˆí•´ì§€ë„¤
+  // ã„´ ëŒë‹¤ ìº¡ì³
+  // "[=]" : ë³µì‚¬
+  // "[&]" : ì°¸ì¡°
+  // ì•„ë˜ëŠ” shared_ptrì´ ë³µì‚¬ì´ê¸° ë•Œë¬¸ì—, ì†Œìœ ê¶Œ ìœ ì§€
   template <typename T, typename... Args>
   static Caller GenerateCaller(std::function<void(Args...)> func, std::shared_ptr<T>& owner, Args... args) {
     if (nullptr == owner) {

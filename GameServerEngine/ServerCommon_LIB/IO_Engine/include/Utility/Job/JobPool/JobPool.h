@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <Pool/ObjectPool.h>
 
 namespace sh::Utility {
 class Job;
 using JobPtr = std::shared_ptr<Job>;
-class JobPool : public ObjectPool<JobPtr>, std::enable_shared_from_this<JobPool> {
+class JobPool : public ObjectPool<JobPtr>, public std::enable_shared_from_this<JobPool> {
  public:
   JobPool(std::string name, const uint32_t defaultPoolSize)
       : m_name(name), ObjectPool<JobPtr>(defaultPoolSize) {
