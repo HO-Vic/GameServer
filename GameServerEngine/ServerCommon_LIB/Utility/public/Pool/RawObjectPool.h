@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <pch.h>
 
 namespace sh::Utility {
@@ -27,7 +27,7 @@ class RawObjectPool {
     }
   }
 
-  void Init(const size_t poolSize) {
+  void Init(const uint32_t poolSize) {
     m_totalCnt = poolSize;
   }
 
@@ -49,10 +49,8 @@ class RawObjectPool {
     }
 
     return ptr;
-    // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
- private:
   void Release(T* ptr) {
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
