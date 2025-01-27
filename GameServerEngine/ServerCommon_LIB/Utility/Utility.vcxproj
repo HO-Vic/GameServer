@@ -168,6 +168,7 @@
     <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Pool\MemoryPool.h" />
     <ClInclude Include="public\Pool\ObjectPool.h" />
+    <ClInclude Include="public\Pool\RawObjectPool.h" />
     <ClInclude Include="public\SingletonBase\Singleton.h" />
     <ClInclude Include="public\SpinLock\SpinLock.h" />
     <ClInclude Include="public\ThreadPool\ThreadPool.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
     <ClCompile Include="private\Pool\MemoryPool.cpp" />
     <ClCompile Include="private\Pool\ObjectPool.cpp" />
+    <ClCompile Include="private\Pool\RawObjectPool.cpp" />
     <ClCompile Include="private\ThreadPool\ThreadPool.cpp" />
     <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp" />
     <ClCompile Include="public\PCH\pch.cpp">

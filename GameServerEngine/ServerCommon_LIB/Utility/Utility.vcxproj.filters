@@ -85,6 +85,9 @@
     <ClCompile Include="private\Pool\ObjectPool.cpp">
       <Filter>Pool\ObjectPool</Filter>
     </ClCompile>
+    <ClCompile Include="private\Pool\RawObjectPool.cpp">
+      <Filter>Pool\ObjectPool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Job\Job.h">
@@ -127,6 +130,9 @@
       <Filter>Pool\MemoryPool</Filter>
     </ClInclude>
     <ClInclude Include="public\Pool\ObjectPool.h">
+      <Filter>Pool\ObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Pool\RawObjectPool.h">
       <Filter>Pool\ObjectPool</Filter>
     </ClInclude>
   </ItemGroup>

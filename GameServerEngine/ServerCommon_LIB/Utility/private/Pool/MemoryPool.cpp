@@ -2,14 +2,14 @@
 #include "Pool/MemoryPool.h"
 
 namespace sh::Utility {
-MemoryPool::MemoryHeader* MemoryPool::MemoryHeader ::AttachHeader(void* allocPtr, const uint32_t size) {  // ÇÒ´çµÈ ptr¿¡ ´ëÇØ¼­ ¸Ş¸ğ¸® Çì´õ ºÙÀÌ±â
+MemoryPool::MemoryHeader* MemoryPool::MemoryHeader ::AttachHeader(void* allocPtr, const uint32_t size) {  // í• ë‹¹ëœ ptrì— ëŒ€í•´ì„œ ë©”ëª¨ë¦¬ í—¤ë” ë¶™ì´ê¸°
   auto memHeader = reinterpret_cast<MemoryHeader*>(allocPtr);
-  std::construct_at(memHeader, size);  // c++20¿¡ Ãß°¡µÈ ±â´É, placement newº¸´Ù ¾ÈÀüÇÏ´Ù
-  return ++memHeader;                  // ¸Ş¸ğ¸® Çì´õ »ı¼ºÇßÀ¸´Ï, data½ÃÀÛÁ¡À» ¸®ÅÏ
+  std::construct_at(memHeader, size);  // c++20ì— ì¶”ê°€ëœ ê¸°ëŠ¥, placement newë³´ë‹¤ ì•ˆì „í•˜ë‹¤
+  return ++memHeader;                  // ë©”ëª¨ë¦¬ í—¤ë” ìƒì„±í–ˆìœ¼ë‹ˆ, dataì‹œì‘ì ì„ ë¦¬í„´
 }
 
 MemoryPool::MemoryHeader* MemoryPool::MemoryHeader::DetachHeader(void* dataPtr) {
-  return reinterpret_cast<MemoryHeader*>(dataPtr) - 1;  // µ¥ÀÌÅÍ ptr -> ¸Ş¸ğ¸® Çì´õ ptr·Î º¯È¯ ÀÇµµ
+  return reinterpret_cast<MemoryHeader*>(dataPtr) - 1;  // ë°ì´í„° ptr -> ë©”ëª¨ë¦¬ í—¤ë” ptrë¡œ ë³€í™˜ ì˜ë„
 }
 
 void MemoryPool::Push(void* ptr) {
@@ -32,8 +32,8 @@ void* MemoryPool::Get(const uint32_t allocSize) {
 }
 
 bool MemoryPoolTable::Init() {
-  // ¸Ş¸ğ¸® Àü·«
-  // ÇÒ´ç ¸Ş¸ğ¸® - ¿ÀÇÁ¼Â
+  // ë©”ëª¨ë¦¬ ì „ëµ
+  // í• ë‹¹ ë©”ëª¨ë¦¬ - ì˜¤í”„ì…‹
   // 8~256 => 8
   // 256+32 ~ 1024 => 32
   // 1024+128~2048 => 128
@@ -56,16 +56,14 @@ bool MemoryPoolTable::Init() {
     }
   }
 
-  for (allocatedSize = 1024 + 128; allocatedSize += 128;
-       allocatedSize <= 2048) {
+  for (allocatedSize = 1024 + 128; allocatedSize += 128; allocatedSize <= 2048) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;
     }
   }
 
-  for (allocatedSize = 2048 + 256; allocatedSize += 256;
-       allocatedSize <= 4096) {
+  for (allocatedSize = 2048 + 256; allocatedSize += 256; allocatedSize <= 4096) {
     auto memPool = std::make_shared<MemoryPool>(allocatedSize);
     for (; idx + 1 <= allocatedSize; idx++) {
       m_memoryPoolTable[idx] = memPool;
