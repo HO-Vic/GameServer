@@ -16,24 +16,16 @@ void Session::DoSend(const BYTE* data, const size_t len) {
   m_sessionImpl->DoSend(data, len);
 }
 
-void Session::SendComplete(const size_t ioByte) {
-  m_sessionImpl->SendComplete(ioByte);
+void Session::StartRecv() {
+  m_sessionImpl->StartRecv();
 }
-
-void Session::RecvComplete(const size_t ioByte) {
-  m_sessionImpl->RecvCompletion(ioByte);
-}
-
-void Session::DoRecv() {
-  m_sessionImpl->DoRecv();
-}
-void Session::Execute(const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
+void Session::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
   switch (type) {
     case RECV: {
-      RecvComplete(ioByte);
+      m_sessionImpl->RecvComplete(overlappedEx, ioByte);
     } break;
     case SEND: {
-      SendComplete(ioByte);
+      m_sessionImpl->SendComplete(overlappedEx, ioByte);
     } break;
     default: {
     } break;

@@ -4,6 +4,6 @@
 
 namespace sh::IO_Engine {
 void OverlappedEx::operator()(const size_t ioByte) {
-  m_overlappedEvent->Execute(m_type, ioByte);
+  m_overlappedEvent->Execute(this, m_type, ioByte);
 }
 }  // namespace sh::IO_Engine

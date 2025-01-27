@@ -3,7 +3,7 @@
 #include <Session/RecvContext/TCP_RecvContextImpl.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_RecvContextImpl::RecvCompletion(size_t ioSize) {
+int32_t TCP_RecvContextImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
   size_t remainSize = ioSize + m_remainLen;
   BYTE* bufferPosition = m_buffer;
 
@@ -27,15 +27,15 @@ int32_t TCP_RecvContextImpl::RecvCompletion(size_t ioSize) {
     std::memcpy(m_buffer, bufferPosition, remainSize);
   }
 
-  return DoRecv();
+  return DoRecv(overlappedEx);
 }
 
-int32_t TCP_RecvContextImpl::DoRecv() {
+int32_t TCP_RecvContextImpl::DoRecv(OverlappedEx* overlappedEx) {
   // wsaBuf의 buf 위치를 바꿈
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
   m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   DWORD flag = 0;
-  WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, nullptr, nullptr);
+  WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
   return 0;
 }
 }  // namespace sh::IO_Engine

@@ -2,6 +2,7 @@
 #include <pch.h>
 
 namespace sh::IO_Engine {
+class OverlappedEx;
 class ISendContextImpl {
  public:
   ISendContextImpl(SOCKET sock)
@@ -10,10 +11,10 @@ class ISendContextImpl {
 
   virtual void DoSend(const BYTE* data, const size_t len) = 0;
 
-  virtual void SendComplete(const size_t ioByte) = 0;
+  virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) = 0;
 
  protected:
-  virtual void SendExecute() = 0;
+  virtual void SendExecute(OverlappedEx* overlappedEx) = 0;
 
  protected:
   SOCKET m_socket;

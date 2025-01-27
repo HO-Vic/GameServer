@@ -2,6 +2,7 @@
 #include <Session/SendContext/TCP_SendContextImpl.h>
 #include <Utility/Pool/ObjectPool.h>
 #include <Buffer/SendBufferPool.h>
+#include <IO_Core/OverlappedEx/OveralppedExPool.h>
 
 namespace sh::IO_Engine {
 void TCP_SendContextImpl::DoSend(const BYTE* data, const size_t len) {
@@ -11,30 +12,34 @@ void TCP_SendContextImpl::DoSend(const BYTE* data, const size_t len) {
     std::lock_guard<std::mutex> lg(m_queueLock);
     m_sendQueue.push(sendData);
   }
+
   if (m_isSendAble) {
     bool expectedValue = true;
     bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
     if (isSendAbleThread) {
-      SendExecute();
+      auto overlappedEx = OveralppedExPool::GetInstance().GetObjectPtr();
+      SendExecute(overlappedEx);
     }
   }
 }
 
-void TCP_SendContextImpl::SendComplete(const size_t ioByte) {
+void TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
+  m_sendBuffer.clear();
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
     if (0 == m_sendQueue.size()) {
       m_isSendAble = true;
+      // 보낼게 없다면 overlappedEx 반납
+      OveralppedExPool::GetInstance().Release(overlappedEx);
       return;
     }
   }
-  SendExecute();
+  SendExecute(overlappedEx);
 }
 
-void TCP_SendContextImpl::SendExecute() {
-  m_sendBuffer.clear();
+void TCP_SendContextImpl::SendExecute(OverlappedEx* overlappedEx) {
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
     while (!m_sendQueue.empty()) {
@@ -50,7 +55,7 @@ void TCP_SendContextImpl::SendExecute() {
             .len = static_cast<uint32_t>(sendBuffer->m_size),
             .buf = reinterpret_cast<char*>(sendBuffer->m_buffer)});
   }
-  WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, nullptr, nullptr);
+  WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
 }
 
 }  // namespace sh::IO_Engine

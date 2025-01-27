@@ -21,7 +21,7 @@ void SendContext::DoSend(const BYTE* sendPacket, const size_t len) {
   m_sendContextImpl->DoSend(sendPacket, len);
 }
 
-void SendContext::SendComplete(const size_t ioByte) {
-  m_sendContextImpl->SendComplete(ioByte);
+void SendContext::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {
+  m_sendContextImpl->SendComplete(overlappedEx, ioByte);
 }
 }  // namespace sh::IO_Engine

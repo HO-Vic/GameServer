@@ -3,6 +3,7 @@
 
 namespace sh::IO_Engine {
 class SendBuffer;
+class OverlappedEx;
 class TCP_SendContextImpl final
     : public ISendContextImpl {
  public:
@@ -12,13 +13,13 @@ class TCP_SendContextImpl final
 
   virtual void DoSend(const BYTE* data, const size_t len) override;
 
-  virtual void SendComplete(const size_t ioByte) override;
+  virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
 
  private:
-  virtual void SendExecute() override;
+  virtual void SendExecute(OverlappedEx* overlappedEx) override;
 
  private:
-  std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send CompletionÀÌ ¿Ã ¶§±îÁö´Â µ¥ÀÌÅÍ°¡ ÀÖ¾î¾ß ÇÔ
+  std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send Completionì´ ì˜¬ ë•Œê¹Œì§€ëŠ” ë°ì´í„°ê°€ ìˆì–´ì•¼ í•¨
   std::queue<std::shared_ptr<SendBuffer>> m_sendQueue;
   std::mutex m_queueLock;
   std::atomic_bool m_isSendAble;

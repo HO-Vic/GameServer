@@ -49,10 +49,8 @@ class RawObjectPool {
     }
 
     return ptr;
-    // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
- private:
   void Release(T* ptr) {
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);

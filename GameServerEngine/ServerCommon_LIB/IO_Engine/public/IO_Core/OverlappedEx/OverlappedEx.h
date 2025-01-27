@@ -3,7 +3,8 @@
 
 namespace sh::IO_Engine {
 class IOverlappedEvent;
-struct OverlappedEx {
+class OverlappedEx {
+ public:
   OVERLAPPED overlapped;
   std::shared_ptr<IOverlappedEvent> m_overlappedEvent;
   OVERLAPPED_EVENT_TYPE m_type;

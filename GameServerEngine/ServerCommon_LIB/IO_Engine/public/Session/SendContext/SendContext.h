@@ -3,18 +3,19 @@
 // #include <Utility/SpinLock/SpinLock.h>
 
 /*
-        UDPµµ ÆĞÅ¶ ¹¶ÃÄ º¸³»´Â°Ô ÀÇ¹Ì ¾ø´Â°É·Î º¸ÀÓ.
-        ±×³É Send()ÇÒ ‹š, Send()ÇÏ´Â°Ô ¸Â¾Æº¸ÀÓ.
+        UDPë„ íŒ¨í‚· ë­‰ì³ ë³´ë‚´ëŠ”ê²Œ ì˜ë¯¸ ì—†ëŠ”ê±¸ë¡œ ë³´ì„.
+        ê·¸ëƒ¥ Send()í•  ë–„, Send()í•˜ëŠ”ê²Œ ë§ì•„ë³´ì„.
         ##
-        TCP´Â streanÀÌ´Ï±î ÀÌ¾î ºÙ¿©¼­ ÇÑ¹ø¿¡ ¹¶Ä¡´Â°Ô ¸ÂÀ»°É·Î º¸ÀÓ
-                ¤¤ ¹¶Ä¡´Â°É ¾î¶»°Ô ÇÒ°ÇÁö?
-                         ¤¤ 1. °×¼­¹ö ±¸ÇöºÎ¿¡¼­´Â shared_ptr<>(Ç®¸µµÈ ÇÁ·ÎÅä
-   ¹öÆÛ)¸¦ ¾µ°Çµ¥, ¿©±âµµ shared_ptr·Î ÇÏ´Â°Ç ¾Æ´Ï¶ó »ı°¢. ¤¤ 2. ÇØ´ç ¹öÆÛ °è¼Ó
-   ÇÒ´çÇÏ¸é heap ¸Ş¸ğ¸® ÆÄÆíÈ­ »ı°¢
+        TCPëŠ” streanì´ë‹ˆê¹Œ ì´ì–´ ë¶™ì—¬ì„œ í•œë²ˆì— ë­‰ì¹˜ëŠ”ê²Œ ë§ì„ê±¸ë¡œ ë³´ì„
+                ã„´ ë­‰ì¹˜ëŠ”ê±¸ ì–´ë–»ê²Œ í• ê±´ì§€?
+                         ã„´ 1. ê²œì„œë²„ êµ¬í˜„ë¶€ì—ì„œëŠ” shared_ptr<>(í’€ë§ëœ í”„ë¡œí† 
+   ë²„í¼)ë¥¼ ì“¸ê±´ë°, ì—¬ê¸°ë„ shared_ptrë¡œ í•˜ëŠ”ê±´ ì•„ë‹ˆë¼ ìƒê°. ã„´ 2. í•´ë‹¹ ë²„í¼ ê³„ì†
+   í• ë‹¹í•˜ë©´ heap ë©”ëª¨ë¦¬ íŒŒí¸í™” ìƒê°
 */
 
 namespace sh::IO_Engine {
 class ISendContextImpl;
+class OverlappedEx;
 class SendContext {
  public:
   SendContext(SOCKET sock, const IO_TYPE sendType);
@@ -23,7 +24,7 @@ class SendContext {
 
   void DoSend(const BYTE* sendPacket, const size_t len);
 
-  void SendComplete(const size_t ioByte);
+  void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
 
  private:
   ISendContextImpl* m_sendContextImpl;

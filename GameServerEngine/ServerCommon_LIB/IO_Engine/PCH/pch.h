@@ -4,7 +4,6 @@
 // 그러나 여기에 나열된 파일은 빌드 간 업데이트되는 경우 모두 다시 컴파일됩니다.
 // 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.
 
-
 #ifndef PCH_H
 #define PCH_H
 #include <memory>
@@ -22,7 +21,7 @@
 #include <unordered_set>
 #include <deque>
 
-#include<thread>
+#include <thread>
 #include <stop_token>
 #include <mutex>
 
@@ -32,9 +31,11 @@
 
 #include <CommonDefine.h>
 
+#include <Utility/BuildMsg/BuildMsg.h>
+
 #ifdef _DEBUG
-#pragma comment (lib, "Debug/UtilityD.lib")
-#endif // _DEBUG
+#pragma comment(lib, "Debug/UtilityD.lib")
+#endif  // _DEBUG
 
 #define IN
 
@@ -42,4 +43,4 @@
 
 #define IN_OUT
 
-#endif //PCH_H
+#endif  // PCH_H

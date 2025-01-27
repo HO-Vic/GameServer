@@ -3,7 +3,7 @@
 
 /*
 Scatter-Gather
-BroadCast -> shared_ptr<>::get()À¸·Î raw ptr ÂüÁ¶ °¡´É + SendContext¿¡¼­ ref ¸Ô°í ÀÖÀ¸¸é µÇ±ä ÇÔ
+BroadCast -> shared_ptr<>::get()ìœ¼ë¡œ raw ptr ì°¸ì¡° ê°€ëŠ¥ + SendContextì—ì„œ ref ë¨¹ê³  ìˆìœ¼ë©´ ë˜ê¸´ í•¨
 */
 
 namespace sh::IO_Engine {

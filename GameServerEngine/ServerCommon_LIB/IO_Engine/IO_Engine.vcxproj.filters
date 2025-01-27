@@ -78,6 +78,9 @@
     <ClCompile Include="private\IO_Core\OverlappedEvent\TerminateEvent.cpp">
       <Filter>IO_Core\OveralppedEvent</Filter>
     </ClCompile>
+    <ClCompile Include="private\IO_Core\OverlappedEx\OveralppedExPool.cpp">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\pch.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\OverlappedEvent\TerminateEvent.h">
       <Filter>IO_Core\OveralppedEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OveralppedExPool.h">
+      <Filter>IO_Core\OverlappedEx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,14 +13,10 @@ class Session
 
   void DoSend(const BYTE* data, const size_t len);
 
-  void DoRecv();
+ protected:
+  void StartRecv();
 
-  virtual void Execute(const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) override;
-
- private:
-  void SendComplete(const size_t ioByte);
-
-  void RecvComplete(const size_t ioByte);
+  virtual void Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) override;
 
  private:
   SessionImpl* m_sessionImpl;

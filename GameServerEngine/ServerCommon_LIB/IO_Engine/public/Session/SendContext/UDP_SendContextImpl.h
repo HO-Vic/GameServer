@@ -11,9 +11,9 @@ class UDP_SendContextImpl final
 
   virtual void DoSend(const BYTE* data, const size_t len) override;
 
-  virtual void SendComplete(const size_t ioByte) override;
+  virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
 
- private:
-  virtual void SendExecute() override;
+ protected:
+  virtual void SendExecute(OverlappedEx* overlappedEx) override;
 };
 }  // namespace sh::IO_Engine

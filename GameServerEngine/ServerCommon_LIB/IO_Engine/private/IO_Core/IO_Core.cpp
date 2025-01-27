@@ -29,6 +29,7 @@ void IO_Core::IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo) {
       overalppedEx(overlappedEntry[i].dwNumberOfBytesTransferred);
 
       if (OVERLAPPED_EVENT_TYPE::TERMINATE == overalppedEx.m_type) {
+        BUILD_MESSAGE(__FILE__, __LINE__, "TERMINATE가 호출 됐을 때, stopToken으로 모든 IO Thread 종료 기대");
         m_threadPool.ForceStop();
         return;
       }

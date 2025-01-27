@@ -26,6 +26,7 @@
     <ClCompile Include="private\Buffer\SendBufferPool.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
     <ClCompile Include="private\IO_Core\OverlappedEvent\TerminateEvent.cpp" />
+    <ClCompile Include="private\IO_Core\OverlappedEx\OveralppedExPool.cpp" />
     <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp" />
     <ClCompile Include="private\Session\Session.cpp" />
     <ClCompile Include="private\Session\RecvContext\RecvContext.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="public\IO_Core\IO_Core.h" />
     <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h" />
     <ClInclude Include="public\IO_Core\OverlappedEvent\TerminateEvent.h" />
+    <ClInclude Include="public\IO_Core\OverlappedEx\OveralppedExPool.h" />
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h" />
     <ClInclude Include="public\Session\Session.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />
@@ -158,6 +160,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
