@@ -2,7 +2,7 @@
 #include <Session/RecvContext/RecvContext.h>
 #include <Session/RecvContext/TCP_RecvContextImpl.h>
 #include <Session/RecvContext/UDP_RecvContextImpl.h>
-#include <IO_Core/OverlappedEx/OveralppedExPool.h>
+#include <IO_Core/OverlappedEx/OverlappedExPool.h>
 
 namespace sh::IO_Engine {
 RecvContext::RecvContext(const IO_TYPE ioType, SOCKET sock, RecvHandler recvHandler)
@@ -22,8 +22,8 @@ int32_t RecvContext::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
   return m_recvContextImpl->RecvComplete(overlappedEx, ioSize);
 }
 
-int32_t RecvContext::StartRecv() {
-  auto overlappedEx = OveralppedExPool::GetInstance().GetObjectPtr();
+int32_t RecvContext::StartRecv(OverlappedPtr& session) {
+  auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::RECV);
   return m_recvContextImpl->DoRecv(overlappedEx);
 }
 }  // namespace sh::IO_Engine

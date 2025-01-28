@@ -15,6 +15,16 @@ void IO_Core::Init() {
   }
 }
 
+void IO_Core::Start() {
+  for (uint32_t i = 0; i < m_ioThreadNo; ++i) {
+    m_threadPool.InsertThread(
+        [this](std::stop_token stopToken, const uint32_t threadNo) {
+          this->IO_Thread(stopToken, threadNo);
+        },
+        i + 1);
+  }
+}
+
 void IO_Core::IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo) {
   static constexpr uint16_t MAX_COMPLETION_CNT = 10;
   OVERLAPPED_ENTRY overlappedEntry[MAX_COMPLETION_CNT];
@@ -26,13 +36,14 @@ void IO_Core::IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo) {
     // execute overlapped
     for (uint8_t i = 0; i < getOverlappedCnt; ++i) {
       auto& overalppedEx = (*reinterpret_cast<OverlappedEx*>(&overlappedEntry[i].lpOverlapped));
-      overalppedEx(overlappedEntry[i].dwNumberOfBytesTransferred);
 
       if (OVERLAPPED_EVENT_TYPE::TERMINATE == overalppedEx.m_type) {
         BUILD_MESSAGE(__FILE__, __LINE__, "TERMINATE가 호출 됐을 때, stopToken으로 모든 IO Thread 종료 기대");
         m_threadPool.ForceStop();
         return;
       }
+
+      overalppedEx(overlappedEntry[i].dwNumberOfBytesTransferred);
     }
     if (stopToken.stop_requested()) {
       return;

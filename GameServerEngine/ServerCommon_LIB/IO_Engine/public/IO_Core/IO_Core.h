@@ -9,6 +9,8 @@ class IO_Core {
 
   void Init();
 
+  void Start();
+
   void IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo);
 
  private:

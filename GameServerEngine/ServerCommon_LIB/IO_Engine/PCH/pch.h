@@ -26,6 +26,7 @@
 #include <mutex>
 
 #include <WinSock2.h>
+#include <MSWSock.h>
 
 #include <cassert>
 

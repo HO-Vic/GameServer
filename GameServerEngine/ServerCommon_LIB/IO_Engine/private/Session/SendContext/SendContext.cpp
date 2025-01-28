@@ -17,8 +17,8 @@ SendContext::~SendContext() {
   delete m_sendContextImpl;
 }
 
-void SendContext::DoSend(const BYTE* sendPacket, const size_t len) {
-  m_sendContextImpl->DoSend(sendPacket, len);
+void SendContext::DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len) {
+  m_sendContextImpl->DoSend(session, sendPacket, len);
 }
 
 void SendContext::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {

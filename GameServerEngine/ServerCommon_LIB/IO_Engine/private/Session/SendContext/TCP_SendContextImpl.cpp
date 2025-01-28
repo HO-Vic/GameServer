@@ -2,10 +2,10 @@
 #include <Session/SendContext/TCP_SendContextImpl.h>
 #include <Utility/Pool/ObjectPool.h>
 #include <Buffer/SendBufferPool.h>
-#include <IO_Core/OverlappedEx/OveralppedExPool.h>
+#include <IO_Core/OverlappedEx/OverlappedExPool.h>
 
 namespace sh::IO_Engine {
-void TCP_SendContextImpl::DoSend(const BYTE* data, const size_t len) {
+void TCP_SendContextImpl::DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) {
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
   {
@@ -17,7 +17,7 @@ void TCP_SendContextImpl::DoSend(const BYTE* data, const size_t len) {
     bool expectedValue = true;
     bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
     if (isSendAbleThread) {
-      auto overlappedEx = OveralppedExPool::GetInstance().GetObjectPtr();
+      auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::SEND);
       SendExecute(overlappedEx);
     }
   }
@@ -32,7 +32,7 @@ void TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size_t 
     if (0 == m_sendQueue.size()) {
       m_isSendAble = true;
       // 보낼게 없다면 overlappedEx 반납
-      OveralppedExPool::GetInstance().Release(overlappedEx);
+      OverlappedExPool::GetInstance().Release(overlappedEx);
       return;
     }
   }

@@ -11,7 +11,7 @@ class TCP_SendContextImpl final
       : ISendContextImpl(sock) {
   }
 
-  virtual void DoSend(const BYTE* data, const size_t len) override;
+  virtual void DoSend(OverlappedPtr& session,const BYTE* data, const size_t len) override;
 
   virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
 

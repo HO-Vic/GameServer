@@ -16,13 +16,15 @@
 namespace sh::IO_Engine {
 class ISendContextImpl;
 class OverlappedEx;
+class IOverlappedEvent;
+using OverlappedPtr = std::shared_ptr<IOverlappedEvent>;
 class SendContext {
  public:
   SendContext(SOCKET sock, const IO_TYPE sendType);
 
   ~SendContext();
 
-  void DoSend(const BYTE* sendPacket, const size_t len);
+  void DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len);
 
   void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
 

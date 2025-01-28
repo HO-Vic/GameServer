@@ -5,9 +5,9 @@
 #include <Utility/SingletonBase/Singleton.h>
 
 namespace sh::IO_Engine {
-class OveralppedExPool
+class OverlappedExPool
     : public Utility::RawObjectPool<OverlappedEx>,
-      public Utility::SingletonBase<OveralppedExPool> {
+      public Utility::SingletonBase<OverlappedExPool> {
  public:
   void Init(const uint32_t poolSize) {
     Utility::RawObjectPool<OverlappedEx>::Init(poolSize);

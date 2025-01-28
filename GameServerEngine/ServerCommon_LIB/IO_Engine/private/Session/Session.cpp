@@ -13,11 +13,11 @@ Session::~Session() {
 }
 
 void Session::DoSend(const BYTE* data, const size_t len) {
-  m_sessionImpl->DoSend(data, len);
+  m_sessionImpl->DoSend(shared_from_this(), data, len);
 }
 
 void Session::StartRecv() {
-  m_sessionImpl->StartRecv();
+  m_sessionImpl->StartRecv(shared_from_this());
 }
 void Session::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
   switch (type) {
