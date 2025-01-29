@@ -35,7 +35,6 @@ int32_t TCP_RecvContextImpl::DoRecv(OverlappedEx* overlappedEx) {
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
   m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   DWORD flag = 0;
-  WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
-  return 0;
+  return WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
 }
 }  // namespace sh::IO_Engine

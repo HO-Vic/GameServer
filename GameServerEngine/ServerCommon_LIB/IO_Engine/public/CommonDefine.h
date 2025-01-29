@@ -12,6 +12,7 @@ enum OVERLAPPED_EVENT_TYPE : char {
   RECV = 2,
   TERMINATE = 3,
   ACCEPT = 4,
+  DISCONNECT = 5,
 };
 #pragma endregion
 
@@ -25,7 +26,7 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
 
 #pragma region FUNC_DEFINE
 using RecvHandler = std::function<void(size_t, BYTE*)>;
-using AcceptHandler = std::function<void(SOCKET, BYTE*)>;
+using AcceptCompleteHandler = std::function<void(SOCKET)>;
 #pragma endregion
 
 struct ConnectInfo {

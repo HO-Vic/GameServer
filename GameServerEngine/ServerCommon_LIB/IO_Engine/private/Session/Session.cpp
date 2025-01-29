@@ -3,9 +3,9 @@
 #include <Session/SessionImpl.h>
 
 namespace sh::IO_Engine {
-Session::Session(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler)
+Session::Session(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
     : m_sessionImpl(nullptr) {
-  m_sessionImpl = new SessionImpl(sock, ioType, std::move(recvHandler));
+  m_sessionImpl = new SessionImpl(sock, ioType, std::move(recvHandler), iocpHandle);
 }
 
 Session::~Session() {
@@ -26,6 +26,9 @@ void Session::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE ty
     } break;
     case SEND: {
       m_sessionImpl->SendComplete(overlappedEx, ioByte);
+    } break;
+    case DISCONNECT: {
+      Disconnect();
     } break;
     default: {
     } break;

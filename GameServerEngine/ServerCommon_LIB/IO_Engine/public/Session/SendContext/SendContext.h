@@ -24,9 +24,9 @@ class SendContext {
 
   ~SendContext();
 
-  void DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len);
+  int32_t DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len);
 
-  void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
+  int32_t SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
 
  private:
   ISendContextImpl* m_sendContextImpl;

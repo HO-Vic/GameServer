@@ -12,6 +12,8 @@ void AcceptEvent::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYP
   // Accept후처리
   auto connectedSocket = m_clientSocket;
   Start(overlappedEx);
+
   // m_clientSocket에 새 소켓 할당, AcceptEx() 호출 이후에 connectedSocket을 후처리 해야함
+  m_acceptCompleteHandle(connectedSocket);
 }
 }  // namespace sh::IO_Engine

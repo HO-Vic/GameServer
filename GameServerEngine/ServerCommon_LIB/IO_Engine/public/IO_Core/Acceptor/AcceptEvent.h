@@ -7,8 +7,8 @@ class OverlappedEx;
 class AcceptEvent
     : public IOverlappedEvent {
  public:
-  AcceptEvent(SOCKET listenSocket, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP)
-      : m_listenSocket(listenSocket), m_clientSocket(NULL), m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType) {
+  AcceptEvent(SOCKET listenSocket, AcceptCompleteHandler acceptHandle, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP)
+      : m_listenSocket(listenSocket), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType) {
     ZeroMemory(&m_connInfo, sizeof(ConnectInfo));
   }
 
@@ -20,8 +20,9 @@ class AcceptEvent
   SOCKET m_clientSocket;
   SOCKET m_listenSocket;
   ConnectInfo m_connInfo;
-  uint16_t m_inetType;
+  AcceptCompleteHandler m_acceptCompleteHandle;
   int m_socketType;
   int m_protocolType;
+  uint16_t m_inetType;
 };
 }  // namespace sh::IO_Engine

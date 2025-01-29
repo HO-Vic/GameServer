@@ -23,14 +23,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
-    <ClCompile Include="private\Buffer\SendBufferPool.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
     <ClCompile Include="private\IO_Core\Listener\Listener.cpp" />
-    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedExPool.cpp" />
     <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp" />
-    <ClCompile Include="private\Session\AcceptContext\AcceptContext.cpp" />
     <ClCompile Include="private\Session\DisconnectContext\DisconnectContext.cpp" />
     <ClCompile Include="private\Session\Session.cpp" />
     <ClCompile Include="private\Session\RecvContext\RecvContext.cpp" />
@@ -39,6 +36,7 @@
     <ClCompile Include="private\Session\SendContext\SendContext.cpp" />
     <ClCompile Include="private\Session\SendContext\TCP_SendContextImpl.cpp" />
     <ClCompile Include="private\Session\SendContext\UDP_SendContextImpl.cpp" />
+    <ClCompile Include="private\Session\SessionImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\pch.h" />
@@ -52,7 +50,6 @@
     <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h" />
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h" />
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h" />
-    <ClInclude Include="public\Session\AcceptContext\AcceptContext.h" />
     <ClInclude Include="public\Session\DisconnectContext\DisconnectContext.h" />
     <ClInclude Include="public\Session\Session.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />

@@ -11,12 +11,12 @@ class ISendContextImpl {
       : m_socket(sock) {
   }
 
-  virtual void DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) = 0;
+  virtual int32_t DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) = 0;
 
-  virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) = 0;
+  virtual int32_t SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) = 0;
 
  protected:
-  virtual void SendExecute(OverlappedEx* overlappedEx) = 0;
+  virtual int32_t SendExecute(OverlappedEx* overlappedEx) = 0;
 
  protected:
   SOCKET m_socket;

@@ -9,11 +9,11 @@ class UDP_SendContextImpl final
       : ISendContextImpl(sock) {
   }
 
-  virtual void DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) override;
+  virtual int32_t DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) override;
 
-  virtual void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
+  virtual int32_t SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
 
  protected:
-  virtual void SendExecute(OverlappedEx* overlappedEx) override;
+  virtual int32_t SendExecute(OverlappedEx* overlappedEx) override;
 };
 }  // namespace sh::IO_Engine
