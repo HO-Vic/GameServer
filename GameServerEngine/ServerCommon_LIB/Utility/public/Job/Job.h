@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <PCH/pch.h>
 /*
         함수자를 가질 클래스 잡큐를 위한 래퍼
@@ -6,9 +6,6 @@
 */
 
 namespace sh::Utility {
-
-class JobPoolBase;
-
 class Job : public std::enable_shared_from_this<Job> {
   using Caller = std::function<void()>;
 
