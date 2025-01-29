@@ -37,9 +37,6 @@
     <Filter Include="IO_Core\OveralppedEvent">
       <UniqueIdentifier>{dbdf612c-42bb-4ebe-a6e5-acc33a949cb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Session\DisconnectContext">
-      <UniqueIdentifier>{bab4f7d3-5d5d-462c-8640-d67fcd92b3e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="IO_Core\Acceptor">
       <UniqueIdentifier>{88a8b297-6176-41f6-950f-6826c6875374}</UniqueIdentifier>
     </Filter>
@@ -80,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">
       <Filter>IO_Core\OverlappedEx</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Session\DisconnectContext\DisconnectContext.cpp">
-      <Filter>Session\DisconnectContext</Filter>
     </ClCompile>
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp">
       <Filter>IO_Core\Acceptor</Filter>
@@ -151,9 +145,6 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h">
       <Filter>IO_Core\OverlappedEx</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Session\DisconnectContext\DisconnectContext.h">
-      <Filter>Session\DisconnectContext</Filter>
     </ClInclude>
     <ClInclude Include="public\IO_Core\Acceptor\Acceptor.h">
       <Filter>IO_Core\Acceptor</Filter>

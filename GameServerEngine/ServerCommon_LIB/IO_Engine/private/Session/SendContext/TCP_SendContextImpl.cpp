@@ -26,6 +26,7 @@ int32_t TCP_SendContextImpl::DoSend(OverlappedPtr& session, const BYTE* data, co
     auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::SEND);
     return SendExecute(overlappedEx);
   }
+  return 0;
 }
 
 int32_t TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {

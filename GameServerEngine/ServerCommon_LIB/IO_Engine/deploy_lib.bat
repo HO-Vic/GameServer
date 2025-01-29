@@ -9,7 +9,7 @@ echo [End Deploy Utility LIB]
 
 echo [Start Deploy IO_Engine Header File]
 if not exist ..\ServerCore\include (
-	mkdir ..\ServerCore\include\ServerCore
+	mkdir ..\ServerCore\include\IO_Engine
 )
-xcopy ".\public" "..\ServerCore\include\ServerCore\" /E /Y
+xcopy ".\public" "..\ServerCore\include\IO_Engine\" /E /Y
 echo [End Deploy IO_Engine Header File]

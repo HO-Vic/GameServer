@@ -3,7 +3,6 @@
 #include <pch.h>
 #include <Session/SendContext/SendContext.h>
 #include <Session/RecvContext/RecvContext.h>
-#include <Session/DisconnectContext/DisconnectContext.h>
 
 /*
 IO 에러 발생 상황
@@ -54,7 +53,6 @@ class SessionImpl {
  private:
   SendContext m_sendContext;
   RecvContext m_recvContext;
-  DisconnectContext m_disconnectContext;
   HANDLE m_iocpHandle;
   std::atomic<SESSION_STATE> m_state;
 };
