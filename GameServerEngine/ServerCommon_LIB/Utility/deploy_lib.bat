@@ -31,3 +31,12 @@ if not exist ..\ServerCore\include (
 xcopy ".\public" "..\ServerCore\include\Utility\" /E /Y
 xcopy ".\include" "..\ServerCore\include\" /E /Y
 echo [End Deploy Utility Header File]
+
+if not exist .\Export\Utility (
+	mkdir .\Export\Utility
+)
+if not exist .\Export\Debug (
+	mkdir .\Export\Debug
+)
+xcopy ".\public" ".\Export\Utility" /E /Y
+copy .\Export_LIB\Debug\Utility.lib .\Export\Debug\UtilityD.lib
