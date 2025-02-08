@@ -1,6 +1,9 @@
 #pragma once
-#include <pch.h>
-
+#include <WinSock2.h>
+#include <ws2def.h>
+#include <Windows.h>
+#include <cstdint>
+#include "../CommonDefine.h"
 /*
 1. IOCP에 Listen 등록
 2. Overlapped로 IOCP 워커에서 Accept 처리

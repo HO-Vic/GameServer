@@ -1,6 +1,5 @@
-﻿#pragma once
-#include <pch.h>
-#include <Job/JobQueue/JobQBase.h>
+#pragma once
+#include "../JobQBase.h"
 
 namespace sh {
 namespace Utility {

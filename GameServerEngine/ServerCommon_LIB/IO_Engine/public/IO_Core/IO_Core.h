@@ -1,5 +1,7 @@
 #pragma once
-#include <pch.h>
+#include <Windows.h>
+#include <cstdint>
+#include <stop_token>
 #include <Utility/ThreadPool/ThreadPool.h>
 
 namespace sh::IO_Engine {

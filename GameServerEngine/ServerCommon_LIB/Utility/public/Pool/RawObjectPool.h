@@ -1,5 +1,7 @@
 #pragma once
-#include <pch.h>
+#include <atomic>
+#include <mutex>
+#include <stack>
 
 namespace sh::Utility {
 template <typename T>

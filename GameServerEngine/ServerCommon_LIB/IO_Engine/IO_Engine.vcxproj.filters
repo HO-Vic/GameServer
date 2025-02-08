@@ -45,9 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PCH\pch.cpp">
-      <Filter>PCH</Filter>
-    </ClCompile>
     <ClCompile Include="private\Session\Session.cpp">
       <Filter>Session</Filter>
     </ClCompile>
@@ -92,9 +89,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCH\pch.h">
-      <Filter>PCH</Filter>
-    </ClInclude>
     <ClInclude Include="public\Session\Session.h">
       <Filter>Session</Filter>
     </ClInclude>
@@ -154,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\Listener\Listener.h">
       <Filter>IO_Core\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="public\PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

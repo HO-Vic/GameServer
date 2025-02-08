@@ -73,9 +73,6 @@
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
     </ClCompile>
-    <ClCompile Include="public\PCH\pch.cpp">
-      <Filter>PCH</Filter>
-    </ClCompile>
     <ClCompile Include="private\Pool\MemoryPool.cpp">
       <Filter>Pool\MemoryPool</Filter>
     </ClCompile>
@@ -111,9 +108,6 @@
     <ClInclude Include="public\SingletonBase\Singleton.h">
       <Filter>Singleton</Filter>
     </ClInclude>
-    <ClInclude Include="public\PCH\pch.h">
-      <Filter>PCH</Filter>
-    </ClInclude>
     <ClInclude Include="public\BuildMsg\BuildMsg.h">
       <Filter>BuildMsg</Filter>
     </ClInclude>
@@ -125,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="public\Pool\RawObjectPool.h">
       <Filter>Pool\ObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="public\PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

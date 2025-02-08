@@ -40,3 +40,7 @@ if not exist .\Export\Debug (
 )
 xcopy ".\public" ".\Export\Utility" /E /Y
 copy .\Export_LIB\Debug\Utility.lib .\Export\Debug\UtilityD.lib
+
+copy .\Export_LIB\Debug\Utility.lib ..\..\..\SimpleEcho\lib\Debug\UtilityD.lib
+copy .\Export_LIB\Debug\Utility.pdb ..\..\..\SimpleEcho\bin\x64\Debug\Utility.pdb
+xcopy ".\public" "..\..\..\SimpleEcho\include\Utility\" /E /Y

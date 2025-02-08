@@ -1,8 +1,7 @@
 #pragma once
 #pragma once
-#include <pch.h>
-#include <Session/SendContext/SendContext.h>
-#include <Session/RecvContext/RecvContext.h>
+#include "../Session/SendContext/SendContext.h"
+#include "../Session/RecvContext/RecvContext.h"
 
 /*
 IO 에러 발생 상황

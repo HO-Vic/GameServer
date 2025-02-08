@@ -1,5 +1,4 @@
-﻿#pragma once
-#include <pch.h>
+#pragma once
 
 namespace sh {
 namespace Utility {

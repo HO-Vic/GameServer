@@ -1,5 +1,7 @@
 #pragma once
-#include <pch.h>
+#include <memory>
+#include <WinSock2.h>
+#include "../CommonDefine.h"
 
 namespace sh::IO_Engine {
 class IOverlappedEvent;

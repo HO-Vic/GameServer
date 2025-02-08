@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PCH\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
@@ -38,7 +35,6 @@
     <ClCompile Include="private\Session\SessionImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="public\Buffer\SendBuffer.h" />
     <ClInclude Include="public\Buffer\SendBufferPool.h" />
     <ClInclude Include="public\CommonDefine.h" />
@@ -49,6 +45,7 @@
     <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h" />
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h" />
     <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h" />
+    <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Session\Session.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />
     <ClInclude Include="public\Session\RecvContext\RecvContext.h" />
@@ -117,7 +114,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(projectdir)lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)public;$(ProjectDir)include;$(ProjectDir)PCH;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)public\PCH;$(ProjectDir)public;$(ProjectDir)include;$(ProjectDir)PCH;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)Export_LIB\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -160,7 +157,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>

@@ -1,6 +1,5 @@
-﻿#pragma once
-#include <pch.h>
-#include <Job/JobQueue/JobQBase.h>
+#pragma once
+#include "../JobQBase.h"
 
 /*
         함수자에 대해서 queue에 저장했다가

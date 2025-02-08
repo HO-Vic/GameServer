@@ -1,5 +1,8 @@
 #pragma once
-#include <pch.h>
+#include <WinSock2.h>
+#include <ws2def.h>
+#include <Windows.h>
+#include <cstdint>
 
 namespace sh::IO_Engine {
 class Listener {

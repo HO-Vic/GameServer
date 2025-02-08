@@ -1,5 +1,6 @@
 #pragma once
-#include <pch.h>
+#include <vector>
+#include <thread>
 
 /*
         쓰레드 풀을 관리하는 컨테이너

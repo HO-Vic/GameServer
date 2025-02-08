@@ -1,5 +1,9 @@
 #pragma once
 #include "./ISendContextImpl.h"
+#include <vector>
+#include <queue>
+#include <mutex>
+#include <atomic>
 
 namespace sh::IO_Engine {
 class SendBuffer;

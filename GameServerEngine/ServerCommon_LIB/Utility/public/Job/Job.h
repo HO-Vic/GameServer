@@ -1,5 +1,4 @@
 #pragma once
-#include <PCH/pch.h>
 /*
         함수자를 가질 클래스 잡큐를 위한 래퍼
         생성자로, T, function Args를 받기

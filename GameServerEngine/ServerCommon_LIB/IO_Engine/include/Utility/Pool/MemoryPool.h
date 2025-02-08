@@ -1,5 +1,7 @@
-﻿#pragma once
+#pragma once
 #include <SingletonBase/Singleton.h>
+#include <stack>
+#include <mutex>
 
 namespace sh::Utility {
 class MemoryPool  // 메모리 헤더 집합

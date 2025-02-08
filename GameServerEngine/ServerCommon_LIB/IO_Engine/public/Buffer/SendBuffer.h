@@ -1,5 +1,6 @@
 #pragma once
-#include <pch.h>
+#include <minwindef.h>
+#include <cstdint>
 
 /*
 Scatter-Gather

@@ -1,6 +1,7 @@
 #include <functional>
 namespace sh::IO_Engine {
-
+#ifndef IO_ENGINE_DEFINE
+#define IO_ENGINE_DEFINE
 #pragma region TYPE
 enum IO_TYPE : char {
   TCP = 1,
@@ -37,5 +38,6 @@ struct ConnectInfo {
     ZeroMemory(remoteInfo, sizeof(SOCKADDR) + 16);
   }
 };
+#endif  // !IO_ENGINE_DEFINE
 
 }  // namespace sh::IO_Engine

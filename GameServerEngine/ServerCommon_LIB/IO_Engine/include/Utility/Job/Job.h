@@ -1,14 +1,10 @@
-﻿#pragma once
-#include <PCH/pch.h>
+#pragma once
 /*
         함수자를 가질 클래스 잡큐를 위한 래퍼
         생성자로, T, function Args를 받기
 */
 
 namespace sh::Utility {
-
-class JobPoolBase;
-
 class Job : public std::enable_shared_from_this<Job> {
   using Caller = std::function<void()>;
 

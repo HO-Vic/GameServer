@@ -1,7 +1,6 @@
-﻿#pragma once
-#include <pch.h>
-#include <Job/JobQueue/JobQBase.h>
-#include <SpinLock/SpinLock.h>
+#pragma once
+#include "../JobQBase.h"
+#include "../SpinLock/SpinLock.h"
 
 namespace sh {
 namespace Utility {
