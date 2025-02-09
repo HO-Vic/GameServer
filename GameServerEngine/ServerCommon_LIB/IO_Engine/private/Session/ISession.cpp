@@ -1,25 +1,25 @@
 #include <pch.h>
-#include <Session/Session.h>
+#include <Session/ISession.h>
 #include <Session/SessionImpl.h>
 
 namespace sh::IO_Engine {
-Session::Session(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
+ISession::ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
     : m_sessionImpl(nullptr) {
   m_sessionImpl = new SessionImpl(sock, ioType, std::move(recvHandler), iocpHandle);
 }
 
-Session::~Session() {
+ISession::~ISession() {
   delete m_sessionImpl;
 }
 
-void Session::DoSend(const BYTE* data, const size_t len) {
+void ISession::DoSend(const BYTE* data, const size_t len) {
   m_sessionImpl->DoSend(shared_from_this(), data, len);
 }
 
-void Session::StartRecv() {
+void ISession::StartRecv() {
   m_sessionImpl->StartRecv(shared_from_this());
 }
-void Session::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
+void ISession::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
   switch (type) {
     case RECV: {
       m_sessionImpl->RecvComplete(overlappedEx, ioByte);

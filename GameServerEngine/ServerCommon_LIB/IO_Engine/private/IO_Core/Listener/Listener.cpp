@@ -2,6 +2,9 @@
 #include <IO_Core/Listener/Listener.h>
 
 namespace sh::IO_Engine {
+Listener::Listener(uint16_t port, uint32_t ip)
+    : m_iocpHandle(NULL), m_port(port), m_ipAddr(ip), m_listenSocket(NULL) {
+}
 Listener::Listener(HANDLE iocpHandle, uint16_t port, uint32_t ip)
     : m_iocpHandle(iocpHandle), m_port(port), m_ipAddr(ip), m_listenSocket(NULL) {
 }

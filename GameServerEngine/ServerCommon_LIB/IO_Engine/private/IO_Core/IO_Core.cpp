@@ -25,6 +25,10 @@ void IO_Core::Start() {
   }
 }
 
+HANDLE IO_Core::GetHandle() const {
+  return m_iocpHandle;
+}
+
 void IO_Core::IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo) {
   static constexpr uint16_t MAX_COMPLETION_CNT = 10;
   OVERLAPPED_ENTRY overlappedEntry[MAX_COMPLETION_CNT];

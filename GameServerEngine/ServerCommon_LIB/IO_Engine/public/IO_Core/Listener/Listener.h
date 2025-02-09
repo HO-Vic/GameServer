@@ -7,6 +7,8 @@
 namespace sh::IO_Engine {
 class Listener {
  public:
+  Listener(uint16_t port = 9000, uint32_t ip = ADDR_ANY);
+
   Listener(HANDLE iocpHandle, uint16_t port = 9000, uint32_t ip = ADDR_ANY);
 
   void SetAddrInfo(uint16_t port = 9000, uint32_t ip = ADDR_ANY);

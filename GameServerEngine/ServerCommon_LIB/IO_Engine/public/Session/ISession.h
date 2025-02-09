@@ -1,14 +1,16 @@
 #pragma once
+#include <WinSock2.h>
 #include "../IO_Core/OverlappedEvent/IOverlappedEvent.h"
+#include "../CommonDefine.h"
 
 namespace sh::IO_Engine {
 class SessionImpl;
-class Session
+class ISession
     : public IOverlappedEvent {
  public:
-  Session(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
+  ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
 
-  virtual ~Session();
+  virtual ~ISession();
 
   void DoSend(const BYTE* data, const size_t len);
 

@@ -45,7 +45,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="private\Session\Session.cpp">
+    <ClCompile Include="private\Session\ISession.cpp">
       <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp">
@@ -89,7 +89,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="public\Session\Session.h">
+    <ClInclude Include="public\Session\ISession.h">
       <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="public\Buffer\SendBuffer.h">

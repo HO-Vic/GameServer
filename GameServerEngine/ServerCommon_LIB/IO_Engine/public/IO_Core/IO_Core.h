@@ -13,6 +13,8 @@ class IO_Core {
 
   void Start();
 
+  HANDLE GetHandle() const;
+
   void IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo);
 
  private:
