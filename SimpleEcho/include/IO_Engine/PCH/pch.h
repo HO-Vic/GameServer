@@ -37,6 +37,7 @@
 #ifdef _DEBUG
 #pragma comment(lib, "Debug/UtilityD.lib")
 #endif  // _DEBUG
+#pragma comment(lib, "Ws2_32.lib")
 
 #define IN
 

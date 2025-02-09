@@ -137,14 +137,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EchoServer\EchoServer.cpp" />
+    <ClCompile Include="EchoServer\Session\Session.cpp" />
+    <ClCompile Include="EchoServer\Session\SessionManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ServerConfig\ServerConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h" />
+    <ClInclude Include="EchoServer\Session\Session.h" />
+    <ClInclude Include="EchoServer\Session\SessionManager.h" />
     <ClInclude Include="PCH\PCH.h" />
+    <ClInclude Include="ServerConfig\ServerConfig.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
