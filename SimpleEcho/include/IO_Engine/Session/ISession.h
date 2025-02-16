@@ -1,6 +1,6 @@
 #pragma once
+#include <WinSock2.h>
 #include "../IO_Core/OverlappedEvent/IOverlappedEvent.h"
-#include <WS2tcpip.h>
 #include "../CommonDefine.h"
 
 namespace sh::IO_Engine {
@@ -8,6 +8,8 @@ class SessionImpl;
 class ISession
     : public IOverlappedEvent {
  public:
+  ISession();
+
   ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
 
   virtual ~ISession();
@@ -16,8 +18,8 @@ class ISession
 
   virtual void Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) override;
 
- protected:
   void StartRecv();
+ protected:
 
   // 위에 레이어에서 상속받아서 Disconnect 상황에서 해야하는 일 정의
   virtual void Disconnect() = 0;

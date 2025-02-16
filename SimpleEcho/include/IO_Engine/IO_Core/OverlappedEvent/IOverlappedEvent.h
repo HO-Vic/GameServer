@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "../../CommonDefine.h"
 
 namespace sh::IO_Engine {
 class OverlappedEx;

@@ -3,6 +3,7 @@
 #include <ws2def.h>
 #include <Windows.h>
 #include <cstdint>
+#include "./AcceptEvent.h"
 #include "../../CommonDefine.h"
 /*
 1. IOCP에 Listen 등록
@@ -13,7 +14,15 @@ namespace sh::IO_Engine {
 class AcceptEvent;
 class Acceptor {
  public:
+  Acceptor();
+
   Acceptor(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
+
+  void Init(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
+
+  void Init(HANDLE iocpHandle, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
+
+  void SetListenSocket(SOCKET listenSocket);
 
   void Start(uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
 

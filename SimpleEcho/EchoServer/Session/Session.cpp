@@ -1,8 +1,16 @@
 #include "pch.h"
 #include "Session.h"
+#include "SessionManager.h"
 
 namespace sh::EchoServer {
+Session::Session()
+    : ISession() {
+}
+Session::~Session() {
+}
+
 void Session::Disconnect() {
   // Disconnect 됐을 때, 행동을 정의
+  SessionManager::GetInstance().OnDisconnect(m_uniqueNo);
 }
 }  // namespace sh::EchoServer

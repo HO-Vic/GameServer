@@ -37,8 +37,8 @@
 #ifdef _DEBUG
 #pragma comment(lib, "Debug/UtilityD.lib")
 #endif  // _DEBUG
-#pragma comment(lib, "Ws2_32.lib")
-
+#pragma comment(lib, "WS2_32.lib")
+#pragma comment(lib, "MsWSock.lib")
 #define IN
 
 #define OUT

@@ -20,4 +20,5 @@
 #pragma comment(lib, "Debug/UtilityD.lib")
 #pragma comment(lib, "Debug/IO_EngineD.lib")
 #endif  // _DEBUG
-#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "WS2_32.lib")
+#pragma comment(lib, "MsWSock.lib")

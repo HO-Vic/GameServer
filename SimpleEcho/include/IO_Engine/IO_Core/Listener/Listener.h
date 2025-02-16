@@ -11,6 +11,10 @@ class Listener {
 
   Listener(HANDLE iocpHandle, uint16_t port = 9000, uint32_t ip = ADDR_ANY);
 
+  void Init(HANDLE iocpHandle, uint16_t port = 9000, uint32_t ip = ADDR_ANY);
+
+  void SetHandle(HANDLE iocpHandle);
+
   void SetAddrInfo(uint16_t port = 9000, uint32_t ip = ADDR_ANY);
 
   void Start(uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);

@@ -1,5 +1,8 @@
 #pragma once
+#include <cstdint>
 #include <Session/RecvContext/IRecvContextImpl.h>
+#include <IO_Core/OverlappedEx/OverlappedEx.h>
+
 namespace sh::IO_Engine {
 class UDP_RecvContextImpl
     : public IRecvContextImpl {
