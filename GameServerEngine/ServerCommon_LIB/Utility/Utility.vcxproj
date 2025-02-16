@@ -169,7 +169,6 @@
     <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Pool\MemoryPool.h" />
     <ClInclude Include="public\Pool\ObjectPool.h" />
-    <ClInclude Include="public\Pool\RawObjectPool.h" />
     <ClInclude Include="public\SingletonBase\Singleton.h" />
     <ClInclude Include="public\SpinLock\SpinLock.h" />
     <ClInclude Include="public\ThreadPool\ThreadPool.h" />

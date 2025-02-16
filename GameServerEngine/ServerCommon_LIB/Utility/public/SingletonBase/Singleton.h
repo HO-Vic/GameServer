@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace sh::Utility {
 template <class T>

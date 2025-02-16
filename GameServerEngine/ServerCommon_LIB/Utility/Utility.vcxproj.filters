@@ -117,9 +117,6 @@
     <ClInclude Include="public\Pool\ObjectPool.h">
       <Filter>Pool\ObjectPool</Filter>
     </ClInclude>
-    <ClInclude Include="public\Pool\RawObjectPool.h">
-      <Filter>Pool\ObjectPool</Filter>
-    </ClInclude>
     <ClInclude Include="public\PCH\pch.h">
       <Filter>PCH</Filter>
     </ClInclude>
