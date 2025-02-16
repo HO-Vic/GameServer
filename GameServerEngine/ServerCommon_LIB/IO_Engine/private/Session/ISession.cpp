@@ -3,6 +3,9 @@
 #include <Session/SessionImpl.h>
 
 namespace sh::IO_Engine {
+ISession::ISession()
+    : m_sessionImpl(nullptr) {
+}
 ISession::ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
     : m_sessionImpl(nullptr) {
   m_sessionImpl = new SessionImpl(sock, ioType, std::move(recvHandler), iocpHandle);

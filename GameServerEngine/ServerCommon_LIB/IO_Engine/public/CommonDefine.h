@@ -1,4 +1,6 @@
+#include <Windows.h>
 #include <functional>
+#include <WinSock2.h>
 namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
 #define IO_ENGINE_DEFINE
@@ -9,6 +11,7 @@ enum IO_TYPE : char {
 };
 
 enum OVERLAPPED_EVENT_TYPE : char {
+  NONE = 0,
   SEND = 1,
   RECV = 2,
   TERMINATE = 3,

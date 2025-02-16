@@ -9,6 +9,16 @@ Listener::Listener(HANDLE iocpHandle, uint16_t port, uint32_t ip)
     : m_iocpHandle(iocpHandle), m_port(port), m_ipAddr(ip), m_listenSocket(NULL) {
 }
 
+void Listener::Init(HANDLE iocpHandle, uint16_t port, uint32_t ip) {
+  m_iocpHandle = iocpHandle;
+  m_port = port;
+  m_ipAddr = ip;
+}
+
+void Listener::SetHandle(HANDLE iocpHandle) {
+  m_iocpHandle = iocpHandle;
+}
+
 void Listener::SetAddrInfo(uint16_t port, uint32_t ip) {
   m_port = port;
   m_ipAddr = ip;
