@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include <Session/RecvContext/TCP_RecvContextImpl.h>
+#include <Session/ISession.h>
 
 namespace sh::IO_Engine {
 int32_t TCP_RecvContextImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
@@ -14,7 +15,7 @@ int32_t TCP_RecvContextImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioS
       break;
     }
     // 완성된 패킷
-    m_recvHandler(currentPacket->size, bufferPosition);
+    m_recvHandler(std::static_pointer_cast<ISession>(overlappedEx->m_overlappedEvent), currentPacket->size, bufferPosition + sizeof(PacketHeader::size));
     // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
     remainSize -= currentPacket->size;
     bufferPosition = bufferPosition + currentPacket->size;

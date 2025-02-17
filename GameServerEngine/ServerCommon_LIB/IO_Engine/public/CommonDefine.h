@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include <functional>
 #include <WinSock2.h>
+#include <memory>
+
 namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
 #define IO_ENGINE_DEFINE
@@ -29,7 +31,9 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
 #pragma endregion
 
 #pragma region FUNC_DEFINE
-using RecvHandler = std::function<void(size_t, BYTE*)>;
+class ISession;
+using ISessionPtr = std::shared_ptr<ISession>;
+using RecvHandler = std::function<void(ISessionPtr, size_t, BYTE*)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 #pragma endregion
 
