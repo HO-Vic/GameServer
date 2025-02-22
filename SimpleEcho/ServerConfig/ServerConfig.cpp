@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "ServerConfig.h"
 #include <rapidxml/rapidxml.hpp>
+#include <inaddr.h>
 
 namespace sh::EchoServer {
 ServerConfig::ServerConfig()
-    : ip("127.0.0.1"), port(9000), threadNo(4), ipAddr(0) {
+    : ip("0.0.0.0"), port(9000), threadNo(4), ipAddr(0) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -49,14 +50,14 @@ void ServerConfig::LoadXML(const char* configFile) {
 const uint16_t ServerConfig::GetPort() const {
   return port;
 }
-const uint16_t ServerConfig::GetIp() {
+const uint32_t ServerConfig::GetIp() {
   if (ipAddr != 0) {
     return ipAddr;
   }
 
-  IN_ADDR addr{};
-  inet_pton(AF_INET, ip.data(), &addr);
-  ipAddr = addr.s_addr;
+  SOCKADDR_IN addr{};
+  inet_pton(AF_INET, ip.data(), &addr.sin_addr);
+  ipAddr = addr.sin_addr.S_un.S_addr;
   return ipAddr;
 }
 const uint16_t ServerConfig::GetThreadNo() const {

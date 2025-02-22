@@ -3,8 +3,10 @@
 #include <IO_Engine/IO_Core/IO_Core.h>
 #include <IO_Engine/IO_Core/Listener/Listener.h>
 #include <IO_Engine/IO_Core/Acceptor/Acceptor.h>
+#include <IO_Engine/CommonDefine.h>
 
 namespace sh::EchoServer {
+class ISession;
 class Server {
  public:
   Server();
@@ -17,7 +19,7 @@ class Server {
 
  private:
   void AcceptHandle(SOCKET sock);
-  static void RecvHandle(size_t ioByte, BYTE* bufferPosition);
+  static void RecvHandle(IO_Engine::ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
 
   IO_Engine::IO_Core m_ioCore;
   IO_Engine::Listener m_listener;

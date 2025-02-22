@@ -13,6 +13,12 @@
     <Filter Include="EchoServer\Session">
       <UniqueIdentifier>{af80465d-5b7b-4399-af58-adf270b5f8c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EchoServer\Packet">
+      <UniqueIdentifier>{abc23b93-b2b3-4dde-aedf-327f611547e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogMgr">
+      <UniqueIdentifier>{6e07694e-de9a-4d08-9bfc-17fc67723d23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EchoServer\EchoServer.cpp">
@@ -27,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="EchoServer\Session\Session.cpp">
       <Filter>EchoServer\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager\LogManager.cpp">
+      <Filter>LogMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +56,12 @@
     </ClInclude>
     <ClInclude Include="EchoServer\Session\Session.h">
       <Filter>EchoServer\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="EchoServer\Packet.h">
+      <Filter>EchoServer\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager\LogManager.h">
+      <Filter>LogMgr</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

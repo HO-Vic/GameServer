@@ -139,6 +139,7 @@
     <ClCompile Include="EchoServer\EchoServer.cpp" />
     <ClCompile Include="EchoServer\Session\Session.cpp" />
     <ClCompile Include="EchoServer\Session\SessionManager.cpp" />
+    <ClCompile Include="LogManager\LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ServerConfig\ServerConfig.cpp" />
   </ItemGroup>
@@ -147,8 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h" />
+    <ClInclude Include="EchoServer\Packet.h" />
     <ClInclude Include="EchoServer\Session\Session.h" />
     <ClInclude Include="EchoServer\Session\SessionManager.h" />
+    <ClInclude Include="LogManager\LogManager.h" />
     <ClInclude Include="PCH\PCH.h" />
     <ClInclude Include="ServerConfig\ServerConfig.h" />
   </ItemGroup>

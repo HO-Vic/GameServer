@@ -11,7 +11,7 @@ class ServerConfig {
 
   const uint16_t GetPort() const;
 
-  const uint16_t GetIp();
+  const uint32_t GetIp(); 
 
   const uint16_t GetThreadNo() const;
 
