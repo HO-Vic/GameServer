@@ -22,6 +22,7 @@ void ISession::DoSend(const BYTE* data, const size_t len) {
 void ISession::StartRecv() {
   m_sessionImpl->StartRecv(shared_from_this());
 }
+
 void ISession::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
   switch (type) {
     case RECV: {

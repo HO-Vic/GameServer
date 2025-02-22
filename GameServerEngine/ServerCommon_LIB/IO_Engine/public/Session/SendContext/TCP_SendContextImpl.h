@@ -12,7 +12,7 @@ class TCP_SendContextImpl final
     : public ISendContextImpl {
  public:
   TCP_SendContextImpl(SOCKET sock)
-      : ISendContextImpl(sock) {
+      : ISendContextImpl(sock), m_isSendAble(true) {
   }
 
   virtual int32_t DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) override;

@@ -26,17 +26,17 @@ void Listener::SetAddrInfo(uint16_t port, uint32_t ip) {
 
 void Listener::Start(uint16_t inetType, int socketType, int protocolType) {
   m_listenSocket = WSASocket(inetType, socketType, protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
-  SOCKADDR_IN sockAddr{
-      .sin_family = inetType,
-      .sin_port = htons(m_port),
-  };
-  sockAddr.sin_addr.s_addr = htonl(m_ipAddr);
+  SOCKADDR_IN sockAddr{};
+  sockAddr.sin_family = inetType;
+  sockAddr.sin_port = htons(m_port);
+  sockAddr.sin_addr.s_addr = m_ipAddr; 
 
   ::bind(m_listenSocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(SOCKADDR_IN));
   if (INVALID_SOCKET == m_listenSocket) {
     int getLastError = WSAGetLastError();
     assert(INVALID_SOCKET != m_listenSocket);
   }
+  listen(m_listenSocket, SOMAXCONN);
 
   CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_listenSocket), m_iocpHandle, 1, 0);
 }

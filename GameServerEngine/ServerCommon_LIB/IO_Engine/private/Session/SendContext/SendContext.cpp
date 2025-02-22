@@ -19,17 +19,17 @@ SendContext::~SendContext() {
 
 int32_t SendContext::DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len) {
   auto errorNo = m_sendContextImpl->DoSend(session, sendPacket, len);
-  if (WSA_IO_PENDING == errorNo) {
-    errorNo = 0;
-  }
+  // if (WSA_IO_PENDING == errorNo) {
+  // }
+  errorNo = 0;
   return errorNo;
 }
 
 int32_t SendContext::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {
   auto errorNo = m_sendContextImpl->SendComplete(overlappedEx, ioByte);
-  if (WSA_IO_PENDING == errorNo) {
-    errorNo = 0;
-  }
+  /*if (WSA_IO_PENDING == errorNo) {
+  }*/
+  errorNo = 0;
   return errorNo;
 }
 }  // namespace sh::IO_Engine

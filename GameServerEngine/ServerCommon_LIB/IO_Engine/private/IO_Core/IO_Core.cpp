@@ -43,7 +43,7 @@ void IO_Core::IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo) {
 
     // execute overlapped
     for (uint8_t i = 0; i < getOverlappedCnt; ++i) {
-      auto& overalppedEx = (*reinterpret_cast<OverlappedEx*>(&overlappedEntry[i].lpOverlapped));
+      auto& overalppedEx = *(reinterpret_cast<OverlappedEx*>(overlappedEntry[i].lpOverlapped));
 
       if (OVERLAPPED_EVENT_TYPE::TERMINATE == overalppedEx.m_type) {
         BUILD_MESSAGE(__FILE__, __LINE__, "TERMINATE가 호출 됐을 때, stopToken으로 모든 IO Thread 종료 기대");

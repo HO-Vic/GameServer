@@ -15,7 +15,7 @@ int32_t TCP_RecvContextImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioS
       break;
     }
     // 완성된 패킷
-    m_recvHandler(std::static_pointer_cast<ISession>(overlappedEx->m_overlappedEvent), currentPacket->size, bufferPosition + sizeof(PacketHeader::size));
+    m_recvHandler(std::static_pointer_cast<ISession>(overlappedEx->m_overlappedEvent), currentPacket->size, bufferPosition);
     // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
     remainSize -= currentPacket->size;
     bufferPosition = bufferPosition + currentPacket->size;
@@ -34,7 +34,7 @@ int32_t TCP_RecvContextImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioS
 int32_t TCP_RecvContextImpl::DoRecv(OverlappedEx* overlappedEx) {
   // wsaBuf의 buf 위치를 바꿈
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
-  m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
+  m_wsaBuf.len = static_cast<uint32_t>(MAX_RECV_BUF_SIZE - m_remainLen);
   DWORD flag = 0;
   return WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
 }
