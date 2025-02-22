@@ -5,6 +5,10 @@
 namespace sh::IO_Engine {
 IO_Core::IO_Core(const uint16_t ioThreadNo)
     : m_threadPool(ioThreadNo), m_ioThreadNo(ioThreadNo), m_iocpHandle(nullptr) {
+  WSADATA wsaData{};
+  if (WSAStartup(WINSOCK_VERSION, &wsaData) != 0) {
+    assert("WSAData init fail");
+  }
 }
 
 void IO_Core::Init() {
