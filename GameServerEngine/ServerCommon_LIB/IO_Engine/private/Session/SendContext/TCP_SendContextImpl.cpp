@@ -38,6 +38,7 @@ int32_t TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size
     if (0 == m_sendQueue.size()) {
       m_isSendAble = true;
       // 보낼게 없다면 overlappedEx 반납
+      overlappedEx->m_overlappedEvent = nullptr;  // 여기서 해제를 안하게되면 오브젝트풀에서 다시 쓰여지기 전까지 이 섹션은 메모리 해제 불가
       OverlappedExPool::GetInstance().Release(overlappedEx);
       return 0;
     }

@@ -20,18 +20,22 @@ RecvContext::~RecvContext() {
 
 int32_t RecvContext::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
   auto errorNo = m_recvContextImpl->RecvComplete(overlappedEx, ioSize);
-  /*if (WSA_IO_PENDING == errorNo) {
-  }*/
-  errorNo = 0;
+  if (0 != errorNo) {
+    if (WSA_IO_PENDING == WSAGetLastError()) {
+      errorNo = 0;
+    }
+  }
   return errorNo;
 }
 
 int32_t RecvContext::StartRecv(OverlappedPtr& session) {
   auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::RECV);
   auto errorNo = m_recvContextImpl->DoRecv(overlappedEx);
-  /*if (WSA_IO_PENDING == errorNo) {
-  }*/
-  errorNo = 0;
+  if (0 != errorNo) {
+    if (WSA_IO_PENDING == WSAGetLastError()) {
+      errorNo = 0;
+    }
+  }
   return errorNo;
 }
 }  // namespace sh::IO_Engine

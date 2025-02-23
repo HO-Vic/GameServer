@@ -45,10 +45,10 @@ void SessionImpl::RecvComplete(OverlappedEx* overlappedEx, size_t ioByte) {
     m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::RECV_ERR));
     // post
   }
-  if (0 == ioByte) {
-    m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::RECV_ERR));
-    overlappedEx->m_overlappedEvent = nullptr;
-    OverlappedExPool::GetInstance().Release(overlappedEx);
+  if (0 == ioByte) {  // Session 종료
+    m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::DISCONNECT_STATE));
+    overlappedEx->m_type = OVERLAPPED_EVENT_TYPE::DISCONNECT;
+    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(overlappedEx));
     return;
   }
   int32_t recvError = m_recvContext.RecvComplete(overlappedEx, ioByte);
