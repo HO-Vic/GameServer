@@ -61,6 +61,7 @@ int main() {
     std::cout << recvPacket->msg << std::endl;
     sendCnt++;
   }
+  closesocket(sock);
   std::cout << "end\n";
   getchar();
 }

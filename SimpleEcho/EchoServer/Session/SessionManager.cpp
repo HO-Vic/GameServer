@@ -23,6 +23,7 @@ void SessionManager::OnAccept(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine:
 }
 
 void SessionManager::OnDisconnect(uint32_t uniqueNo) {
+  WRITE_LOG(spdlog::level::info, "{}({}) > Session Disconnect", __FUNCTION__, __LINE__);
   std::lock_guard lg{m_activeSessionLock};
   m_activeSessions.erase(uniqueNo);
 }
