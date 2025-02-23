@@ -20,31 +20,35 @@ void ServerConfig::LoadXML(const char* configFile) {
   std::unique_ptr<rapidxml::xml_document<char>> xmlDoc = std::make_unique<rapidxml::xml_document<char>>();
   xmlDoc->parse<0>(&xmlDatas.front());
 
-  rapidxml::xml_node<char>* root = xmlDoc->first_node();
-  for (auto node = root->first_node(); node != nullptr;) {
-    for (auto intenalNode = node; intenalNode != nullptr; intenalNode = intenalNode->next_sibling()) {
-      auto nodeName = intenalNode->name();
-      if (strcmp(nodeName, "Properties") == 0) {
-        for (auto attr = intenalNode->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
-          if (strcmp(attr->name(), "LogLevel") == 0) {
-            uint32_t logLevel = std::stoi(attr->value(), nullptr);
+  if (xmlDoc->first_node() != nullptr) {
+    for (auto root = xmlDoc->first_node(); root != nullptr; root = root->next_sibling()) {
+      if (strcmp(root->name(), "Properties") == 0) {
+        if (root->first_node() != nullptr) {
+          for (auto node = root->first_node(); node != nullptr; node = node->next_sibling()) {
+            if (strcmp(node->name(), "property") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "LogLevel") == 0) {
+                  node->value();
+                }
+              }
+            }
           }
         }
-      } else if (strcmp(nodeName, "EchoServer") == 0) {
-        for (auto attr = intenalNode->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
-          if (strcmp(attr->name(), "ip") == 0) {
-            ip = attr->value();
-          } else if (strcmp(attr->name(), "port") == 0) {
-            port = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
-          } else if (strcmp(attr->name(), "threadNo") == 0) {
-            threadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
-          };
+      } else if (strcmp(root->name(), "EchoServer") == 0) {
+        if (root->first_attribute() != nullptr) {
+          for (auto attr = root->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+            if (strcmp(attr->name(), "ip") == 0) {
+              ip = attr->value();
+            } else if (strcmp(attr->name(), "port") == 0) {
+              port = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+            } else if (strcmp(attr->name(), "ioThreadNo") == 0) {
+              threadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+            }
+          }
         }
       }
     }
-    node = node->next_sibling();
   }
-
   xmlFile.close();
 }
 const uint16_t ServerConfig::GetPort() const {
