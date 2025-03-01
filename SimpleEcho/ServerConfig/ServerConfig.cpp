@@ -5,7 +5,7 @@
 
 namespace sh::EchoServer {
 ServerConfig::ServerConfig()
-    : ip("0.0.0.0"), port(9000), threadNo(4), ipAddr(0) {
+    : ip("0.0.0.0"), port(9000), threadNo(4), ipAddr(0), logLevel(1) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -28,7 +28,9 @@ void ServerConfig::LoadXML(const char* configFile) {
             if (strcmp(node->name(), "property") == 0) {
               for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
                 if (strcmp(attr->name(), "LogLevel") == 0) {
-                  node->value();
+                  logLevel = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "LogMode") == 0) {
+                  logMode = attr->value();
                 }
               }
             }
@@ -66,5 +68,11 @@ const uint32_t ServerConfig::GetIp() {
 }
 const uint16_t ServerConfig::GetThreadNo() const {
   return threadNo;
+}
+const uint8_t ServerConfig::GetLogLevel() const {
+  return logLevel;
+}
+const std::string& ServerConfig::GetLogMode() const {
+  return logMode;
 }
 }  // namespace sh::EchoServer

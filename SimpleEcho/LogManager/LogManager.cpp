@@ -3,7 +3,7 @@
 
 namespace sh::EchoServer {
 
-void LogManager::StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName) {
+void LogManager::StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode) {
   m_warningCnt = 0;
   m_errCnt = 0;
 
@@ -17,13 +17,23 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
 
   std::string outputFileName(outputDir + fileName + currentTimeStrSteam.str() + ".txt");
 
-  auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
-  auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
-  m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front(), consoleLogger->sinks().front()}));
+  if (logMode.compare("Console") == 0) {
+    auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
+    m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({consoleLogger->sinks().front()}));
+  } else if (logMode.compare("File") == 0) {
+    auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
+    m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front()}));
+  } else if (logMode.compare("ConsoleFile") == 0) {
+    auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
+    auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
+    m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front(), consoleLogger->sinks().front()}));
+  }
+
+  m_combinedLog->set_level(level);
   m_combinedLog->info("loggerStarted");
 }
 }  // namespace sh::EchoServer
 
-//#ifdef _DEBUG
-//WRITE_LOG(spdlog::level::info, __FUNCTION__, __LINE__, "%s(),- line.%d, JobPoolName: %s, newPoolCnt: %d", m_name, ++m_newJobCnt);
-//#endif  // _DEBUG
+// #ifdef _DEBUG
+// WRITE_LOG(spdlog::level::info, __FUNCTION__, __LINE__, "%s(),- line.%d, JobPoolName: %s, newPoolCnt: %d", m_name, ++m_newJobCnt);
+// #endif  // _DEBUG
