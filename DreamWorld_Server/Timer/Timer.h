@@ -28,7 +28,7 @@ namespace TIMER
 		void RegisterIocp(std::shared_ptr<IOCP::Iocp>& iocp);
 		void InsertTimerEvent(std::shared_ptr<TIMER::EventBase>& timer);
 	private:
-		//decltype¿¡¼­ ±×³É ÇÔ¼ö¸¦ ³Ñ°Üµµ µÇÁö¸¸, ¸í½ÃÀûÀ¸·Î ÇÔ¼öÀÇ ÁÖ¼Ò¸¦ °¡Á®¿Ã ¼ö ÀÖÀ½(ÀÌ°Ç Á» ¾Ë¾ÆºÁ¾ß ÇÒµí)
+		//decltypeì—ì„œ ê·¸ëƒ¥ í•¨ìˆ˜ë¥¼ ë„˜ê²¨ë„ ë˜ì§€ë§Œ, ëª…ì‹œì ìœ¼ë¡œ í•¨ìˆ˜ì˜ ì£¼ì†Œë¥¼ ê°€ì ¸ì˜¬ ìˆ˜ ìˆìŒ(ì´ê±´ ì¢€ ì•Œì•„ë´ì•¼ í• ë“¯)
 		tbb::concurrent_priority_queue<std::shared_ptr<TIMER::EventBase>, TimerQueueComp> m_timerQueue;
 		//tbb::concurrent_priority_queue<std::shared_ptr<TIMER::EventBase>, decltype(&TIMER::TimerQueueComp)> m_timerQueue;
 		//std::priority_queue <TimerEvent*> m_timerQueue;

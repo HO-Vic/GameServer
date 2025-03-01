@@ -5,7 +5,7 @@
 class CharacterObject;
 class BossMonsterObject;
 /*
-	º¸½º ÀÌµ¿ Á¤Áö °ø°İ ÆĞÅÏ¿¡ ´ëÇØ¼­ »óÅÂ ÆĞÅÏ
+	ë³´ìŠ¤ ì´ë™ ì •ì§€ ê³µê²© íŒ¨í„´ì— ëŒ€í•´ì„œ ìƒíƒœ íŒ¨í„´
 	IDLE, MOVE, ATTACK_SPIN, ATTACK_FIRE, ATTACK_METEO, ATTACK_KICK, ATTACK_PUNCH
 */
 
@@ -44,7 +44,7 @@ namespace BossState
 		}
 
 	protected:
-		//BossObject¸¸ ³»ºÎ ¸â¹ö º¯¼ö·Î ÂüÁ¶¸¦ °®±â ¶§¹®¿¡, ¼øÈ¯ ÂüÁ¶ ¹ß»ı ¾ÈÇÒ°Å·Î ¿¹»ó µÊ. => ¼øÈ¯ ÂüÁ¶ º¯°æ ÇØ¾ß µÊ.
+		//BossObjectë§Œ ë‚´ë¶€ ë©¤ë²„ ë³€ìˆ˜ë¡œ ì°¸ì¡°ë¥¼ ê°–ê¸° ë•Œë¬¸ì—, ìˆœí™˜ ì°¸ì¡° ë°œìƒ ì•ˆí• ê±°ë¡œ ì˜ˆìƒ ë¨. => ìˆœí™˜ ì°¸ì¡° ë³€ê²½ í•´ì•¼ ë¨.
 		std::weak_ptr<BossMonsterObject> m_bossWeakRef;
 		bool isEntered;
 	};
@@ -80,14 +80,14 @@ namespace BossState
 
 	class AttackFire : public AttackState
 	{
-		//1s -> 1Â÷ °ø°İ ÆÇÁ¤
-		//	50~70 »çÀÌ ÇÑ¹ø
-		//	100 µ©Áö
-		//2.5s -> 2Â÷ °ø°İ ÆÇÁ¤
-		//	50 ÀÌ³»¿¡ ÇÑ¹ø
-		//	120µ©Áö
+		//1s -> 1ì°¨ ê³µê²© íŒì •
+		//	50~70 ì‚¬ì´ í•œë²ˆ
+		//	100 ë€ì§€
+		//2.5s -> 2ì°¨ ê³µê²© íŒì •
+		//	50 ì´ë‚´ì— í•œë²ˆ
+		//	120ë€ì§€
 
-		//3s -> Idle·Î
+		//3s -> Idleë¡œ
 		static constexpr SEC FIRST_ATTACK_TIME = SEC(1);
 		static constexpr MS SECOND_ATTACK_TIME = std::chrono::duration_cast<MS>(SEC(2)) + MS(500);
 		static constexpr MS END_TIME = std::chrono::duration_cast<MS>(SEC(3));
@@ -111,12 +111,12 @@ namespace BossState
 
 	class AttackSpin : public AttackState
 	{
-		//300ms -> 1Â÷ °ø°İ
-		//600ms -> 2Â÷ °ø°İ
-		//900ms -> 3Â÷ °ø°İ
-		//1s -> Idle·Î
-		//45¹Ì¸¸ °ø°İ
-		//¹æ´ç 45µ©Áö
+		//300ms -> 1ì°¨ ê³µê²©
+		//600ms -> 2ì°¨ ê³µê²©
+		//900ms -> 3ì°¨ ê³µê²©
+		//1s -> Idleë¡œ
+		//45ë¯¸ë§Œ ê³µê²©
+		//ë°©ë‹¹ 45ë€ì§€
 
 		static constexpr MS FIRST_ATTACK_TIME = MS(300);
 		static constexpr MS SECOND_ATTACK_TIME = MS(600);
@@ -140,8 +140,8 @@ namespace BossState
 
 	class AttackKick : public AttackState
 	{
-		//332ms -> °ø°İ ÆÇÁ¤
-		//823ms -> ´Ù½Ã Idle·Î
+		//332ms -> ê³µê²© íŒì •
+		//823ms -> ë‹¤ì‹œ Idleë¡œ
 		static constexpr MS ATTACK_TIME = MS(332);
 		static constexpr MS END_TIME = MS(832);
 
@@ -159,8 +159,8 @@ namespace BossState
 
 	class AttackPunch : public AttackState
 	{
-		//332ms -> °ø°İ ÆÇÁ¤
-		//823ms -> ´Ù½Ã Idle
+		//332ms -> ê³µê²© íŒì •
+		//823ms -> ë‹¤ì‹œ Idle
 
 		static constexpr MS ATTACK_TIME = MS(332);
 		static constexpr MS END_TIME = MS(832);
@@ -180,7 +180,7 @@ namespace BossState
 	class AttackMeteor : public AttackState
 	{
 		//1.25s -> Idle
-		//À§¿¡¼­ ¸ŞÅ×¿À ¶³¾îÁü => Åõ»çÃ¼·Î ÆÇÁ¤ => Åõ»çÃ¼¿¡ µ¥¹ÌÁö ÀÖ´Âµ¥, ¿©±â¼­ setÇØ¾ßÇÒÁö »ı°¢ÇØºÁ¾ß µÊ.
+		//ìœ„ì—ì„œ ë©”í…Œì˜¤ ë–¨ì–´ì§ => íˆ¬ì‚¬ì²´ë¡œ íŒì • => íˆ¬ì‚¬ì²´ì— ë°ë¯¸ì§€ ìˆëŠ”ë°, ì—¬ê¸°ì„œ setí•´ì•¼í• ì§€ ìƒê°í•´ë´ì•¼ ë¨.
 		static constexpr MS END_TIME = std::chrono::duration_cast<MS>(SEC(1)) + MS(250);
 
 	public:
@@ -218,7 +218,7 @@ private:
 	static constexpr EventController::MS KICK_ATTACK_COOL_TIME = std::chrono::duration_cast<EventController::MS>(EventController::SEC(2) + EventController::MS(500));
 	static constexpr EventController::MS PUNCH_ATTACK_COOL_TIME = std::chrono::duration_cast<EventController::MS>(EventController::SEC(1) + EventController::MS(500));
 
-	//ÃÊ¿¡ È¸ÀüÇÒ ¼ö ÀÖ´Â ÃÖ´ë °¢µµ - ¿ÀÀÏ·¯
+	//ì´ˆì— íšŒì „í•  ìˆ˜ ìˆëŠ” ìµœëŒ€ ê°ë„ - ì˜¤ì¼ëŸ¬
 	static constexpr float IDLE_ROTATE_ANGLE = 60.0f;
 
 public:
@@ -229,12 +229,12 @@ public:
 
 	void Initialize();
 
-	//¾î±×·Î¿Í ±æ Å½»öÇÏ´Â Å¸ÀÌ¸Ó¿¡ ´ëÇØ¼­ µ¿ÀÛ(°ø°İ, ÀÌµ¿°ú ¹«°üÇÏ°Ô °è¼Ó Update¿¡¼­ È®ÀÎ)
+	//ì–´ê·¸ë¡œì™€ ê¸¸ íƒìƒ‰í•˜ëŠ” íƒ€ì´ë¨¸ì— ëŒ€í•´ì„œ ë™ì‘(ê³µê²©, ì´ë™ê³¼ ë¬´ê´€í•˜ê²Œ ê³„ì† Updateì—ì„œ í™•ì¸)
 	void CheckUpdateRoad();
 	void UpdateAggro(std::shared_ptr<CharacterObject> aggroCharacter, std::shared_ptr<std::list<XMFLOAT3>> nodeList);
 	void UpdateRoad(std::shared_ptr<std::list<XMFLOAT3>> nodeList);
 
-	//stateº¯°æµÉ ¶§
+	//stateë³€ê²½ë  ë•Œ
 	void SendBossState(const BossState::STATE& state);
 
 	void AttackSpin(const float& damage, const float& attackRange);

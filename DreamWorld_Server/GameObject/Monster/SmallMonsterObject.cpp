@@ -38,7 +38,7 @@ void SmallMonsterObject::Update()
 		return;
 	}
 
-	UpdateDestinationPosition();//ÀÏÁ¤ ½Ã°£ÀÌ µÇ¸é ¾Ë¾Æ¼­ ¸ñÀûÁö ¹Ù²ñ
+	UpdateDestinationPosition();//ì¼ì • ì‹œê°„ì´ ë˜ë©´ ì•Œì•„ì„œ ëª©ì ì§€ ë°”ë€œ
 	SetMove();
 	Move();
 }
@@ -187,7 +187,7 @@ std::optional<const XMFLOAT3> SmallMonsterObject::UpdateNextPosition(const float
 {
 	XMFLOAT3 commonNextPosition = GetCommonNextPosition(elapsedTime);
 
-	//collideÇÔ¼ö´Â slidingvector°¡ Àû¿ëµÈ À§Ä¡¶ó¸é true¸¦ ¸®ÅÏ
+	//collideí•¨ìˆ˜ëŠ” slidingvectorê°€ ì ìš©ëœ ìœ„ì¹˜ë¼ë©´ trueë¥¼ ë¦¬í„´
 	auto collideWallResult = CollideWall(commonNextPosition, elapsedTime, false);
 	if (collideWallResult.has_value()) {
 		auto collideLiveObjectResult = CollideLiveObject(collideWallResult.value().second, GetLookVector(), elapsedTime, collideWallResult.value().first);
@@ -225,7 +225,7 @@ std::optional<std::pair<bool, XMFLOAT3>> SmallMonsterObject::CollideWall(const X
 
 const bool SmallMonsterObject::IsAbleAttack()
 {
-	//°ø°İ °¡´É °Å¸®, °ø°İ °¡´É ¹üÀ§(ºÎÃ¤²Ã)
+	//ê³µê²© ê°€ëŠ¥ ê±°ë¦¬, ê³µê²© ê°€ëŠ¥ ë²”ìœ„(ë¶€ì±„ê¼´)
 	static constexpr float ABLE_ATTACK_RANGE = 20.0f;
 	static const float ABLE_ATTACK_EULER = 13.0f;//cos(13degree)
 	static const float ABLE_ATTACK_COS_VALUE = cos(XMConvertToRadians(ABLE_ATTACK_EULER));//cos(13degree)

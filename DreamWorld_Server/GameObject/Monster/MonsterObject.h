@@ -21,7 +21,7 @@ protected:
 	const bool IsReadyFindPlayer();
 
 	virtual std::shared_ptr<CharacterObject> FindAggroCharacter() = 0;
-	//πÊ«‚, ∞¢µµ
+	//Î∞©Ìñ•, Í∞ÅÎèÑ
 	const std::pair<float, float> GetBetweenAngleEuler(const XMFLOAT3& otherPosition) const;
 	const bool IsReadyAttack();
 

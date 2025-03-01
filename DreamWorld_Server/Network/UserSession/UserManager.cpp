@@ -29,21 +29,21 @@ void UserManager::RegistPlayer(SOCKET sock)
 		unsigned int playerId = 0;
 		bool ableReuseId = m_restId.try_pop(playerId);
 
-		//Àç»ç¿ë ¾ÆÀÌµğ°¡ ¾ø´Ù¸é
+		//ì¬ì‚¬ìš© ì•„ì´ë””ê°€ ì—†ë‹¤ë©´
 		if (!ableReuseId) {
-			//µî·ÏÇÒ id¸¦ ÀúÀå ¹× ÇöÀç ÃÖ´ë id ÃÖ½ÅÈ­
-			//m_currentMaxId => atomic::operator++()ÀÌ ³»ºÎÀûÀ¸·Î atomicÇÏ°Ô ¿¬»êÇÏ°í¼­ return --_After;ÇØ¼­ ¹®Á¦ ¾øÀ½
+			//ë“±ë¡í•  idë¥¼ ì €ì¥ ë° í˜„ì¬ ìµœëŒ€ id ìµœì‹ í™”
+			//m_currentMaxId => atomic::operator++()ì´ ë‚´ë¶€ì ìœ¼ë¡œ atomicí•˜ê²Œ ì—°ì‚°í•˜ê³ ì„œ return --_After;í•´ì„œ ë¬¸ì œ ì—†ìŒ
 			playerId = m_currentMaxId++;
 		}
-		//»õ·Î¿î UserSessionÃß°¡
+		//ìƒˆë¡œìš´ UserSessionì¶”ê°€
 		auto newPlayerRef = std::make_shared<UserSession>(playerId, sock);
-		//lobby User Ãß°¡
+		//lobby User ì¶”ê°€
 		m_lobbyUserLock.lock();
 		auto inserResult = m_lobbyUser.insert(newPlayerRef);
 		m_lobbyUserLock.unlock();
-		//¼º°øÇß´Ù¸é socketÀ» µî·ÏÇÏ°í return, ½ÇÆĞÇß´Ù¸é Àç½Ãµµ(while-loop)
+		//ì„±ê³µí–ˆë‹¤ë©´ socketì„ ë“±ë¡í•˜ê³  return, ì‹¤íŒ¨í–ˆë‹¤ë©´ ì¬ì‹œë„(while-loop)
 		if (inserResult.second) {
-			//socketÀ» iocp¿¡ µî·Ï
+			//socketì„ iocpì— ë“±ë¡
 			iocpRef->RegistHandle(reinterpret_cast<HANDLE>(sock), playerId);
 			newPlayerRef->StartRecv();
 			return;

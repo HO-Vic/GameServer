@@ -143,7 +143,7 @@ MapData::MapData(const std::string& mapCollisionFile)
 		for (int j = 0; j < m_collisionDatas.size(); j++) {
 			if (i != j) {
 				bool intersectResult = m_collisionDatas[i]->GetCollision().Intersects(m_collisionDatas[j]->GetCollision());
-				if (intersectResult) {//¼­·Î °ã«‡´Ù¸é ¿¬°áµÈ Ãæµ¹ °´Ã¼
+				if (intersectResult) {//ì„œë¡œ ê²¹ì³¡ë‹¤ë©´ ì—°ê²°ëœ ì¶©ëŒ ê°ì²´
 					m_collisionDatas[i]->AddRelationCollision(m_collisionDatas[j]);
 				}
 			}
@@ -160,8 +160,8 @@ const std::vector<std::shared_ptr<MapCollision>>& MapData::GetCollisionData() co
 NavMapData::NavMapData(const std::string& mapCollisionFile, const std::string& navMeshFIle)
 	:MapData(mapCollisionFile)
 {
-	//MapData»ı¼ºÀÚ¿¡¼­ collisionµ¥ÀÌÅÍ¸¦ ¼ÂÇÔ.
-	//³×ºñ ¸Ş½¬ µ¥ÀÌÅÍ¸¸ ¼ÂÇÏ¸é µÇ´Â Å¬·¡½º »ı¼ºÀÚ
+	//MapDataìƒì„±ìì—ì„œ collisionë°ì´í„°ë¥¼ ì…‹í•¨.
+	//ë„¤ë¹„ ë©”ì‰¬ ë°ì´í„°ë§Œ ì…‹í•˜ë©´ ë˜ëŠ” í´ë˜ìŠ¤ ìƒì„±ì
 	using namespace std;
 
 	std::string line;
@@ -178,7 +178,7 @@ NavMapData::NavMapData(const std::string& mapCollisionFile, const std::string& n
 	std::string readObject;
 	while (!navFile.eof()) {
 		navFile >> readObject;
-		//Á¤Á¡ µ¥ÀÌÅÍ
+		//ì •ì  ë°ì´í„°
 		if (readObject == verticesStr) {
 			navFile >> readObject;
 
@@ -194,11 +194,11 @@ NavMapData::NavMapData(const std::string& mapCollisionFile, const std::string& n
 				vertexCnt--;
 			}
 		}
-		//Á¤Á¡¿¡ ´ëÇÑ ÀÎµ¦½º Á¤º¸
+		//ì •ì ì— ëŒ€í•œ ì¸ë±ìŠ¤ ì •ë³´
 		else if (readObject == indicesStr) {
 			navFile >> readObject;
 			int indexCnt = std::stoi(readObject);
-			m_triangleMesh.reserve(indexCnt / 3);// (ÀÎµ¦½º °¹¼ö / 3) ÀÌ »ï°¢ ³×ºñ ¸Ş½¬ °¹¼ö
+			m_triangleMesh.reserve(indexCnt / 3);// (ì¸ë±ìŠ¤ ê°¯ìˆ˜ / 3) ì´ ì‚¼ê° ë„¤ë¹„ ë©”ì‰¬ ê°¯ìˆ˜
 			while (indexCnt) {
 				int i;
 				navFile >> i;
@@ -245,7 +245,7 @@ NavMapData::NavMapData(const std::string& mapCollisionFile, const std::string& n
 
 NavMapData::~NavMapData()
 {
-	for (auto& triangleMesh : m_triangleMesh)//»ï°¢ ¸Ş½¬°£ÀÇ ¿¬°á °ü°è ÃÊ±âÈ­ÇÏ¿©, ¼øÈ¯ÂüÁ¶·ÎÀÎÇÑ ¸Ş¸ğ¸® ¹®Á¦ ÇØ°á
+	for (auto& triangleMesh : m_triangleMesh)//ì‚¼ê° ë©”ì‰¬ê°„ì˜ ì—°ê²° ê´€ê³„ ì´ˆê¸°í™”í•˜ì—¬, ìˆœí™˜ì°¸ì¡°ë¡œì¸í•œ ë©”ëª¨ë¦¬ ë¬¸ì œ í•´ê²°
 		triangleMesh->ResetRelationData();
 	m_bossStartMesh.reset();
 }
@@ -267,53 +267,53 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode(const XMFLOAT3& startPosition, cons
 		return std::list<XMFLOAT3>{};
 	}
 
-	closeList.try_emplace(startMesh, startMesh, 0, 0);
+	closeList.try_emplace(startMesh, NavMesh::AstarNode(startMesh, 0, 0));
 
 	auto currentFindMesh = startMesh;
 	while (true) {
-		auto relationMeshes = currentFindMesh->GetRelationTriangleMeshes();//ÇöÀç ¸Ş½Ã¿Í ¿¬°áµÈ ¸Ş½Ã µ¥ÀÌÅÍ
+		auto relationMeshes = currentFindMesh->GetRelationTriangleMeshes();//í˜„ì¬ ë©”ì‹œì™€ ì—°ê²°ëœ ë©”ì‹œ ë°ì´í„°
 		for (auto& relationMesh : relationMeshes) {
-			if (closeList.count(relationMesh)) continue;//ÀÌ¹Ì closeList¿¡ ÀÖ´Ù¸é ³Ñ±â±â -> ÀÌ¹Ì È®Á¤µÈ ¸Ş½Ã
-			float destinationDistacne = destinationMesh->GetDistance(relationMesh->GetCenter()); //¸ñÀûÁö±îÁöÀÇ °Å¸®
-			std::optional<float> parentDistance = currentFindMesh->GetRelationMeshDistance(relationMesh);//ºÎ¸ğ ¸ñÀûÁö·Î ºÎÅÍ °Å¸®
-			if (!parentDistance.has_value()) {//ÇöÀç ¸Ş½Ã°¡ ºÎ¸ğ ¸Ş½Ã¿Í ¿¬°áÀÌ ¾Æ´Ô   (ÀÌ·±ÀÏÀÌ ÀÏ¾î³ªÁø ¾Ê±äÇÔ)
+			if (closeList.count(relationMesh)) continue;//ì´ë¯¸ closeListì— ìˆë‹¤ë©´ ë„˜ê¸°ê¸° -> ì´ë¯¸ í™•ì •ëœ ë©”ì‹œ
+			float destinationDistacne = destinationMesh->GetDistance(relationMesh->GetCenter()); //ëª©ì ì§€ê¹Œì§€ì˜ ê±°ë¦¬
+			std::optional<float> parentDistance = currentFindMesh->GetRelationMeshDistance(relationMesh);//ë¶€ëª¨ ëª©ì ì§€ë¡œ ë¶€í„° ê±°ë¦¬
+			if (!parentDistance.has_value()) {//í˜„ì¬ ë©”ì‹œê°€ ë¶€ëª¨ ë©”ì‹œì™€ ì—°ê²°ì´ ì•„ë‹˜   (ì´ëŸ°ì¼ì´ ì¼ì–´ë‚˜ì§„ ì•Šê¸´í•¨)
 				spdlog::critical("NavMapData::GetAstarNode() - not related Mesh");
 				continue;
 			}
 			auto relationMeshIter = openList.find(relationMesh);
-			if (openList.end() != relationMeshIter) {//openList¿¡ ÀÌ ¸Ş½Ã Á¤º¸°¡ Á¸Àç
-				//Á¸ÀçÇÑ´Ù¸é Astar³ëµåÀÇ °ªÀ» ºñ±³ÇÏ¿© ´õ °ªÀÌ ½Ñ °É·Î ±³Ã¼
-				//ÇöÀç openList¿¡ Á¸ÀçÇÏ´Â ÀÌ ³ëµåÀÇ ¿¡ÀÌ½ºÅ¸
+			if (openList.end() != relationMeshIter) {//openListì— ì´ ë©”ì‹œ ì •ë³´ê°€ ì¡´ì¬
+				//ì¡´ì¬í•œë‹¤ë©´ Astarë…¸ë“œì˜ ê°’ì„ ë¹„êµí•˜ì—¬ ë” ê°’ì´ ì‹¼ ê±¸ë¡œ êµì²´
+				//í˜„ì¬ openListì— ì¡´ì¬í•˜ëŠ” ì´ ë…¸ë“œì˜ ì—ì´ìŠ¤íƒ€
 				NavMesh::AstarNode& existedAstarNode = relationMeshIter->second;
-				//ÀÌ¹Ì Á¸ÀçÇÏ´Â ¿¡ÀÌ½ºÅ¸ ³ëµå¿¡ ´ëÇØ¼­
-				// ´ëÇØ¼­ ºÎ¸ğ·ÎºÎÅÍ °Å¸®°¡ ´õ Âª´Ù¸é ±³Ã¤ÇØ¾ß µÊ.(ºÎ¸ğ°¡ ´Ù¸¦ ¶§ ÀÏ¾î³¯ ¼ö ÀÖÀ½ -> currentFindMesh°¡ ºÎ¸ğ ¸Ş½Ã
-				//¾îÂ÷ÇÇ ³ëµå·ÎºÎÅÍ ¸ñÀûÁö ±îÁö °Å¸®´Â °°À¸´Ï±î(°°Àº ³ëµå¿¡ ´ëÇØ¼­ °è»ê)
+				//ì´ë¯¸ ì¡´ì¬í•˜ëŠ” ì—ì´ìŠ¤íƒ€ ë…¸ë“œì— ëŒ€í•´ì„œ
+				// ëŒ€í•´ì„œ ë¶€ëª¨ë¡œë¶€í„° ê±°ë¦¬ê°€ ë” ì§§ë‹¤ë©´ êµì±„í•´ì•¼ ë¨.(ë¶€ëª¨ê°€ ë‹¤ë¥¼ ë•Œ ì¼ì–´ë‚  ìˆ˜ ìˆìŒ -> currentFindMeshê°€ ë¶€ëª¨ ë©”ì‹œ
+				//ì–´ì°¨í”¼ ë…¸ë“œë¡œë¶€í„° ëª©ì ì§€ ê¹Œì§€ ê±°ë¦¬ëŠ” ê°™ìœ¼ë‹ˆê¹Œ(ê°™ì€ ë…¸ë“œì— ëŒ€í•´ì„œ ê³„ì‚°)
 				if (existedAstarNode.GetParentDistance() > parentDistance.value()) {
 					existedAstarNode.RefreshData(currentFindMesh, parentDistance.value());
 				}
 			}
-			else {//openList¿¡ Á¸ÀçÇÏÁö ¾ÊÀ½. => ±×³É »ğÀÔ
+			else {//openListì— ì¡´ì¬í•˜ì§€ ì•ŠìŒ. => ê·¸ëƒ¥ ì‚½ì…
 				openList.try_emplace(relationMesh, currentFindMesh, parentDistance.value(), destinationDistacne);
 			}
 		}
 
-		auto minIter = openList.begin();//¿¡ÀÌ½ºÅ¸Áß Á¦ÀÏ °ªÀÌ ³·Àº°É Å½»ö
+		auto minIter = openList.begin();//ì—ì´ìŠ¤íƒ€ì¤‘ ì œì¼ ê°’ì´ ë‚®ì€ê±¸ íƒìƒ‰
 		for (auto iter = openList.begin(); iter != openList.end(); ++iter) {
 			if (iter->second < minIter->second) {
 				minIter = iter;
 			}
 		}
-		//ÃÖ¼Ò °ªÀ» closeList¿¡ »ğÀÔ
+		//ìµœì†Œ ê°’ì„ closeListì— ì‚½ì…
 		closeList.emplace(minIter->first, minIter->second);
-		if (minIter->first == destinationMesh) {//¸¸¾à¿¡ Áö±İ »ğÀÔÇÑ °´Ã¼°¡ ¸ñÀûÁö¶ó¸é ·çÇÁ¹® Á¾·á
+		if (minIter->first == destinationMesh) {//ë§Œì•½ì— ì§€ê¸ˆ ì‚½ì…í•œ ê°ì²´ê°€ ëª©ì ì§€ë¼ë©´ ë£¨í”„ë¬¸ ì¢…ë£Œ
 			break;
 		}
-		//ÇöÀç ¸Ş½Ã´Â ¹æ±İ closeList¿¡ µé¾î¿Â ÃÖ¼Ò°ªÀÎ ¸Ş½Ã
+		//í˜„ì¬ ë©”ì‹œëŠ” ë°©ê¸ˆ closeListì— ë“¤ì–´ì˜¨ ìµœì†Œê°’ì¸ ë©”ì‹œ
 		currentFindMesh = minIter->first;
-		//closeList¿¡ »ğÀÔÇßÀ¸´Ï openList¿¡¼­´Â »èÁ¦
+		//closeListì— ì‚½ì…í–ˆìœ¼ë‹ˆ openListì—ì„œëŠ” ì‚­ì œ
 		openList.erase(minIter);
 	}
-	//front: ½ÃÀÛ ¸Ş½Ã , end: µµÂø ¸Ş½Ã
+	//front: ì‹œì‘ ë©”ì‹œ , end: ë„ì°© ë©”ì‹œ
 	std::list<std::shared_ptr<NavMesh::TriangleNavMesh>> confirmedMesh;
 	//std::list<XMFLOAT3> testCenterList;
 	//testCenterList.emplace_front(destinationPosition);
@@ -322,11 +322,11 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode(const XMFLOAT3& startPosition, cons
 	while (true) {
 		auto currentAstarIter = closeList.find(currentMesh);
 		if (closeList.end() != currentAstarIter) {
-			//ºÎ¸ğ ¸Ş½Ã¸¦ »ğÀÔ
+			//ë¶€ëª¨ ë©”ì‹œë¥¼ ì‚½ì…
 			auto parentMesh = currentAstarIter->second.GetParentMesh();
 			//testCenterList.emplace_front(parentMesh->GetCenter());
 			confirmedMesh.emplace_front(parentMesh);
-			if (parentMesh == startMesh) break;//½ÃÀÛ ¸Ş½Ã¿Í ºÎ¸ğ ¸Ş½Ã°¡ °°´Ù¸é Á¾·á
+			if (parentMesh == startMesh) break;//ì‹œì‘ ë©”ì‹œì™€ ë¶€ëª¨ ë©”ì‹œê°€ ê°™ë‹¤ë©´ ì¢…ë£Œ
 			currentMesh = parentMesh;
 		}
 		else {
@@ -352,49 +352,49 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode_TestForClient(const XMFLOAT3& start
 
 	auto currentFindMesh = startMesh;
 	while (true) {
-		auto relationMeshes = currentFindMesh->GetRelationTriangleMeshes();//ÇöÀç ¸Ş½Ã¿Í ¿¬°áµÈ ¸Ş½Ã µ¥ÀÌÅÍ
+		auto relationMeshes = currentFindMesh->GetRelationTriangleMeshes();//í˜„ì¬ ë©”ì‹œì™€ ì—°ê²°ëœ ë©”ì‹œ ë°ì´í„°
 		for (auto& relationMesh : relationMeshes) {
-			if (closeList.count(relationMesh)) continue;//ÀÌ¹Ì closeList¿¡ ÀÖ´Ù¸é ³Ñ±â±â -> ÀÌ¹Ì È®Á¤µÈ ¸Ş½Ã
-			float destinationDistacne = destinationMesh->GetDistance(relationMesh->GetCenter()); //¸ñÀûÁö±îÁöÀÇ °Å¸®
-			std::optional<float> parentDistance = currentFindMesh->GetRelationMeshDistance(relationMesh);//ºÎ¸ğ ¸ñÀûÁö·Î ºÎÅÍ °Å¸®
-			if (!parentDistance.has_value()) {//ÇöÀç ¸Ş½Ã°¡ ºÎ¸ğ ¸Ş½Ã¿Í ¿¬°áÀÌ ¾Æ´Ô   (ÀÌ·±ÀÏÀÌ ÀÏ¾î³ªÁø ¾Ê±äÇÔ)
+			if (closeList.count(relationMesh)) continue;//ì´ë¯¸ closeListì— ìˆë‹¤ë©´ ë„˜ê¸°ê¸° -> ì´ë¯¸ í™•ì •ëœ ë©”ì‹œ
+			float destinationDistacne = destinationMesh->GetDistance(relationMesh->GetCenter()); //ëª©ì ì§€ê¹Œì§€ì˜ ê±°ë¦¬
+			std::optional<float> parentDistance = currentFindMesh->GetRelationMeshDistance(relationMesh);//ë¶€ëª¨ ëª©ì ì§€ë¡œ ë¶€í„° ê±°ë¦¬
+			if (!parentDistance.has_value()) {//í˜„ì¬ ë©”ì‹œê°€ ë¶€ëª¨ ë©”ì‹œì™€ ì—°ê²°ì´ ì•„ë‹˜   (ì´ëŸ°ì¼ì´ ì¼ì–´ë‚˜ì§„ ì•Šê¸´í•¨)
 				spdlog::critical("NavMapData::GetAstarNode() - not related Mesh");
 				continue;
 			}
 			auto relationMeshIter = openList.find(relationMesh);
-			if (openList.end() != relationMeshIter) {//openList¿¡ ÀÌ ¸Ş½Ã Á¤º¸°¡ Á¸Àç
-				//Á¸ÀçÇÑ´Ù¸é Astar³ëµåÀÇ °ªÀ» ºñ±³ÇÏ¿© ´õ °ªÀÌ ½Ñ °É·Î ±³Ã¼
-				//ÇöÀç openList¿¡ Á¸ÀçÇÏ´Â ÀÌ ³ëµåÀÇ ¿¡ÀÌ½ºÅ¸
+			if (openList.end() != relationMeshIter) {//openListì— ì´ ë©”ì‹œ ì •ë³´ê°€ ì¡´ì¬
+				//ì¡´ì¬í•œë‹¤ë©´ Astarë…¸ë“œì˜ ê°’ì„ ë¹„êµí•˜ì—¬ ë” ê°’ì´ ì‹¼ ê±¸ë¡œ êµì²´
+				//í˜„ì¬ openListì— ì¡´ì¬í•˜ëŠ” ì´ ë…¸ë“œì˜ ì—ì´ìŠ¤íƒ€
 				NavMesh::AstarNode& existedAstarNode = relationMeshIter->second;
-				//ÀÌ¹Ì Á¸ÀçÇÏ´Â ¿¡ÀÌ½ºÅ¸ ³ëµå¿¡ ´ëÇØ¼­
-				// ´ëÇØ¼­ ºÎ¸ğ·ÎºÎÅÍ °Å¸®°¡ ´õ Âª´Ù¸é ±³Ã¤ÇØ¾ß µÊ.(ºÎ¸ğ°¡ ´Ù¸¦ ¶§ ÀÏ¾î³¯ ¼ö ÀÖÀ½ -> currentFindMesh°¡ ºÎ¸ğ ¸Ş½Ã
-				//¾îÂ÷ÇÇ ³ëµå·ÎºÎÅÍ ¸ñÀûÁö ±îÁö °Å¸®´Â °°À¸´Ï±î(°°Àº ³ëµå¿¡ ´ëÇØ¼­ °è»ê)
+				//ì´ë¯¸ ì¡´ì¬í•˜ëŠ” ì—ì´ìŠ¤íƒ€ ë…¸ë“œì— ëŒ€í•´ì„œ
+				// ëŒ€í•´ì„œ ë¶€ëª¨ë¡œë¶€í„° ê±°ë¦¬ê°€ ë” ì§§ë‹¤ë©´ êµì±„í•´ì•¼ ë¨.(ë¶€ëª¨ê°€ ë‹¤ë¥¼ ë•Œ ì¼ì–´ë‚  ìˆ˜ ìˆìŒ -> currentFindMeshê°€ ë¶€ëª¨ ë©”ì‹œ
+				//ì–´ì°¨í”¼ ë…¸ë“œë¡œë¶€í„° ëª©ì ì§€ ê¹Œì§€ ê±°ë¦¬ëŠ” ê°™ìœ¼ë‹ˆê¹Œ(ê°™ì€ ë…¸ë“œì— ëŒ€í•´ì„œ ê³„ì‚°)
 				if (existedAstarNode.GetParentDistance() > parentDistance.value()) {
 					existedAstarNode.RefreshData(currentFindMesh, parentDistance.value());
 				}
 			}
-			else {//openList¿¡ Á¸ÀçÇÏÁö ¾ÊÀ½. => ±×³É »ğÀÔ
+			else {//openListì— ì¡´ì¬í•˜ì§€ ì•ŠìŒ. => ê·¸ëƒ¥ ì‚½ì…
 				openList.try_emplace(relationMesh, currentFindMesh, parentDistance.value(), destinationDistacne);
 			}
 		}
 
-		auto minIter = openList.begin();//¿¡ÀÌ½ºÅ¸Áß Á¦ÀÏ °ªÀÌ ³·Àº°É Å½»ö
+		auto minIter = openList.begin();//ì—ì´ìŠ¤íƒ€ì¤‘ ì œì¼ ê°’ì´ ë‚®ì€ê±¸ íƒìƒ‰
 		for (auto iter = openList.begin(); iter != openList.end(); ++iter) {
 			if (iter->second < minIter->second) {
 				minIter = iter;
 			}
 		}
-		//ÃÖ¼Ò °ªÀ» closeList¿¡ »ğÀÔ
+		//ìµœì†Œ ê°’ì„ closeListì— ì‚½ì…
 		closeList.emplace(minIter->first, minIter->second);
-		if (minIter->first == destinationMesh) {//¸¸¾à¿¡ Áö±İ »ğÀÔÇÑ °´Ã¼°¡ ¸ñÀûÁö¶ó¸é ·çÇÁ¹® Á¾·á
+		if (minIter->first == destinationMesh) {//ë§Œì•½ì— ì§€ê¸ˆ ì‚½ì…í•œ ê°ì²´ê°€ ëª©ì ì§€ë¼ë©´ ë£¨í”„ë¬¸ ì¢…ë£Œ
 			break;
 		}
-		//ÇöÀç ¸Ş½Ã´Â ¹æ±İ closeList¿¡ µé¾î¿Â ÃÖ¼Ò°ªÀÎ ¸Ş½Ã
+		//í˜„ì¬ ë©”ì‹œëŠ” ë°©ê¸ˆ closeListì— ë“¤ì–´ì˜¨ ìµœì†Œê°’ì¸ ë©”ì‹œ
 		currentFindMesh = minIter->first;
-		//closeList¿¡ »ğÀÔÇßÀ¸´Ï openList¿¡¼­´Â »èÁ¦
+		//closeListì— ì‚½ì…í–ˆìœ¼ë‹ˆ openListì—ì„œëŠ” ì‚­ì œ
 		openList.erase(minIter);
 	}
-	//front: ½ÃÀÛ ¸Ş½Ã , end: µµÂø ¸Ş½Ã
+	//front: ì‹œì‘ ë©”ì‹œ , end: ë„ì°© ë©”ì‹œ
 	std::list<std::shared_ptr<NavMesh::TriangleNavMesh>> confirmedMesh;
 	//std::list<XMFLOAT3> testCenterList;
 	//testCenterList.emplace_front(destinationPosition);
@@ -406,7 +406,7 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode_TestForClient(const XMFLOAT3& start
 	while (true) {
 		auto currentAstarIter = closeList.find(currentMesh);
 		if (closeList.end() != currentAstarIter) {
-			//ºÎ¸ğ ¸Ş½Ã¸¦ »ğÀÔ
+			//ë¶€ëª¨ ë©”ì‹œë¥¼ ì‚½ì…
 			auto parentMesh = currentAstarIter->second.GetParentMesh();
 			//testCenterList.emplace_front(parentMesh->GetCenter());
 			confirmedMesh.emplace_front(parentMesh);
@@ -415,7 +415,7 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode_TestForClient(const XMFLOAT3& start
 			if (parentMesh == startMesh) {
 				/*indexList->emplace_front(startMesh->GetId());
 				spdlog::info("Find Path Last NavMesh Idx: {}", startMesh->GetId());*/
-				break;//½ÃÀÛ ¸Ş½Ã¿Í ºÎ¸ğ ¸Ş½Ã°¡ °°´Ù¸é Á¾·á
+				break;//ì‹œì‘ ë©”ì‹œì™€ ë¶€ëª¨ ë©”ì‹œê°€ ê°™ë‹¤ë©´ ì¢…ë£Œ
 			}
 			currentMesh = parentMesh;
 		}
@@ -443,47 +443,47 @@ std::list<XMFLOAT3> NavMapData::OptimizeAStar(const XMFLOAT3& startPosition, con
 	//optimizedPositions.emplace_back(startPosition);
 
 	while (true) {
-		//Á¶»çÇÒ ¼ö ÀÖ´Â ÀÎµ¦½º¸¦ ³Ñ±â¸é Á¾·á
+		//ì¡°ì‚¬í•  ìˆ˜ ìˆëŠ” ì¸ë±ìŠ¤ë¥¼ ë„˜ê¸°ë©´ ì¢…ë£Œ
 		if (leftPortalIdx + 1 >= static_cast<int>(leftPortal.size()) ||
 			rightPortalIdx + 1 >= static_cast<int>(rightPortal.size())) break;
 
-		//Æ÷Å» Á¤º¸ ¼¼ÆÃ
+		//í¬íƒˆ ì •ë³´ ì„¸íŒ…
 		XMFLOAT3 currentLeftPortal = leftPortal[leftPortalIdx];
 		XMFLOAT3 nextLeftPortal = leftPortal[leftPortalIdx + 1];
 		XMFLOAT3 currentRightPortal = rightPortal[rightPortalIdx];
 		XMFLOAT3 nextRightPortal = rightPortal[rightPortalIdx + 1];
 
-		//¿ŞÂÊ Æ÷Å» Á¤º¸
+		//ì™¼ìª½ í¬íƒˆ ì •ë³´
 		XMFLOAT3 startToCurrentLeft = Vector3::Subtract(currentLeftPortal, restartPosition);
 		XMFLOAT3 startToNextLeft = Vector3::Subtract(nextLeftPortal, restartPosition);
 		XMFLOAT3 leftCrossProduct = Vector3::CrossProduct(startToCurrentLeft, startToNextLeft, true);
-		//ÇöÀç -> ´ÙÀ½ÀÌ ¿ÜÀûÀÌ 0,1,0ÀÌ¶ó¸é À¯È¿
-		//¾ç¼ö¸é ´õ ¿Ü°û
+		//í˜„ì¬ -> ë‹¤ìŒì´ ì™¸ì ì´ 0,1,0ì´ë¼ë©´ ìœ íš¨
+		//ì–‘ìˆ˜ë©´ ë” ì™¸ê³½
 		float resultLeftPortalDot = Vector3::DotProduct(UP, leftCrossProduct);
 		bool leftValid = resultLeftPortalDot > 0.0f;
 
-		//¿ìÃø Æ÷Å» Á¤º¸
+		//ìš°ì¸¡ í¬íƒˆ ì •ë³´
 		XMFLOAT3 startToCurrentRight = Vector3::Subtract(currentRightPortal, restartPosition);
 		XMFLOAT3 startToNextRight = Vector3::Subtract(nextRightPortal, restartPosition);
-		//¿ìÃø Æ÷Å»Àº ¿ÜÀû¼ø¼­¸¦ ¹Ù²ã¼­ ¾ç¼ö¶ó¸é ´õ ¿Ü°ûÀÓÀ» ¾Ë ¼ö ÀÖ°Ô.
+		//ìš°ì¸¡ í¬íƒˆì€ ì™¸ì ìˆœì„œë¥¼ ë°”ê¿”ì„œ ì–‘ìˆ˜ë¼ë©´ ë” ì™¸ê³½ì„ì„ ì•Œ ìˆ˜ ìˆê²Œ.
 		XMFLOAT3 rightCrossProduct = Vector3::CrossProduct(startToNextRight, startToCurrentRight, true);
-		//´ÙÀ½ -> ÇöÀç ¿ÜÀûÀÌ 0,1,0ÀÌ¶ó¸é À¯È¿
+		//ë‹¤ìŒ -> í˜„ì¬ ì™¸ì ì´ 0,1,0ì´ë¼ë©´ ìœ íš¨
 		float resultRightPortalDot = Vector3::DotProduct(UP, rightCrossProduct);
 		bool rightValid = resultRightPortalDot > 0.0f;
 
-		//´ÙÀ½ ¿ìÃø Á¤Á¡ÀÌ ÁÂÃøº¸´Ù ¿ŞÂÊÀÌ¶ó¸é UPº¤ÅÍ¿Í dotProductÇßÀ» ¶§ ¾ç¼ö
+		//ë‹¤ìŒ ìš°ì¸¡ ì •ì ì´ ì¢Œì¸¡ë³´ë‹¤ ì™¼ìª½ì´ë¼ë©´ UPë²¡í„°ì™€ dotProductí–ˆì„ ë•Œ ì–‘ìˆ˜
 		XMFLOAT3 leftCornerCross = Vector3::CrossProduct(startToNextRight, startToCurrentLeft, true);
-		//¾ç¼öÀÏ ¶§ ÁÂÃø Á¤Á¡ º¸´Ù ´ÙÀ½ ¿ìÃø Á¤Á¡º¸´Ù ´õ ÁÂÃø => ÁÂÈ¸Àü
+		//ì–‘ìˆ˜ì¼ ë•Œ ì¢Œì¸¡ ì •ì  ë³´ë‹¤ ë‹¤ìŒ ìš°ì¸¡ ì •ì ë³´ë‹¤ ë” ì¢Œì¸¡ => ì¢ŒíšŒì „
 		float leftCornerDot = Vector3::DotProduct(UP, leftCornerCross);
 		bool isLeftCorner = leftCornerDot >= 0.0f;
 
 		XMFLOAT3 rightCornerCross = Vector3::CrossProduct(startToCurrentRight, startToNextLeft, true);
-		//¾ç¼ö ÀÏ ¶§ ´ÙÀ½ ÁÂÃø Á¤Á¡ÀÌ ¿ìÃøº¸´Ù ´õ ¿ìÃø => ¿ìÈ¸Àü
+		//ì–‘ìˆ˜ ì¼ ë•Œ ë‹¤ìŒ ì¢Œì¸¡ ì •ì ì´ ìš°ì¸¡ë³´ë‹¤ ë” ìš°ì¸¡ => ìš°íšŒì „
 		float rightCornerDot = Vector3::DotProduct(UP, rightCornerCross);
 		bool isRightCorner = rightCornerDot >= 0.0f;
 
-		if (!leftValid && !rightValid) {//±æ Àß °¡´Ù°¡ ´ÙÀ½ Á¡ÀÌ µÑ ´Ù ¹ú¾îÁø °æ¿ì
-			int restartIdx = leftPortalIdx < rightPortalIdx ? leftPortalIdx : rightPortalIdx;//µÑ Áß ´õ ÀÌÀü Á¤Á¡À¸·Î ´Ù½Ã ¼¼ÆÃ(°°Àº »ï°¢ÇüÀ¸·Î)
+		if (!leftValid && !rightValid) {//ê¸¸ ì˜ ê°€ë‹¤ê°€ ë‹¤ìŒ ì ì´ ë‘˜ ë‹¤ ë²Œì–´ì§„ ê²½ìš°
+			int restartIdx = leftPortalIdx < rightPortalIdx ? leftPortalIdx : rightPortalIdx;//ë‘˜ ì¤‘ ë” ì´ì „ ì •ì ìœ¼ë¡œ ë‹¤ì‹œ ì„¸íŒ…(ê°™ì€ ì‚¼ê°í˜•ìœ¼ë¡œ)
 			XMFLOAT3 leftVertex = leftPortal[restartIdx];
 			XMFLOAT3 rightVertex = rightPortal[restartIdx];
 
@@ -493,28 +493,28 @@ std::list<XMFLOAT3> NavMapData::OptimizeAStar(const XMFLOAT3& startPosition, con
 			optimizedPositions.emplace_back(restartPosition);
 			//spdlog::info("Find Path position non Valid Portal - x: {}, y: {}, z: {}", restartPosition.x, restartPosition.y, restartPosition.z);
 
-			//À§¿¡ ÁßÁ¡À¸·Î ÇöÀç »ï°¢ÇüÀ¸·Î °¡´Â À§Ä¡°¡ È®Á¤ µÆÀ¸´Ï, µÑ ´Ù ´ÙÀ½ »ï°¢ÇüÀ¸·Î ÀüÁøÇØ¾ß µÊ
+			//ìœ„ì— ì¤‘ì ìœ¼ë¡œ í˜„ì¬ ì‚¼ê°í˜•ìœ¼ë¡œ ê°€ëŠ” ìœ„ì¹˜ê°€ í™•ì • ëìœ¼ë‹ˆ, ë‘˜ ë‹¤ ë‹¤ìŒ ì‚¼ê°í˜•ìœ¼ë¡œ ì „ì§„í•´ì•¼ ë¨
 			leftPortalIdx = restartIdx + 1;
 			rightPortalIdx = restartIdx + 1;
 			continue;
 		}
 
 		if (leftValid) {
-			if (isRightCorner) {//ÁÂÃø¸¸ ºÃÀ» ¶§´Â ¹®Á¦ ¾øÁö¸¸, ÁÂÃøÁ¡ÀÌ ¿ìÃøÀ¸·Î ³Ñ¾î¿Â °æ¿ì -> ¿ìÈ¸Àü
-				//¿©±â¼­ ÇÑ¹ø Ã¼Å© Æ÷ÀÎÆ®? ´À³¦À¸·Î Âï¾î¾ß µÊ.
-				//restartPosition = currentRightPortal;//¿ìÈ¸ÀüÀÌ´Ï ÇöÀç ¿ìÃø Á¤Á¡À» Áö³ª°Ô
+			if (isRightCorner) {//ì¢Œì¸¡ë§Œ ë´¤ì„ ë•ŒëŠ” ë¬¸ì œ ì—†ì§€ë§Œ, ì¢Œì¸¡ì ì´ ìš°ì¸¡ìœ¼ë¡œ ë„˜ì–´ì˜¨ ê²½ìš° -> ìš°íšŒì „
+				//ì—¬ê¸°ì„œ í•œë²ˆ ì²´í¬ í¬ì¸íŠ¸? ëŠë‚Œìœ¼ë¡œ ì°ì–´ì•¼ ë¨.
+				//restartPosition = currentRightPortal;//ìš°íšŒì „ì´ë‹ˆ í˜„ì¬ ìš°ì¸¡ ì •ì ì„ ì§€ë‚˜ê²Œ
 				restartPosition = GetInternalDivisionPosition(currentRightPortal, currentLeftPortal, 1.0f, 11.0f);
 				optimizedPositions.emplace_back(restartPosition);
 				//spdlog::info("Find Path position right corner - x: {}, y: {}, z: {}", restartPosition.x, restartPosition.y, restartPosition.z);
 
-				++rightPortalIdx;//ÇöÀç rightIdx¸¦ ±âÁØÀ¸·Î ´Ù½Ã ½ÃÀÛÇÒ°Å±â ¶§¹®¿¡, ÀüÁø
-				leftPortalIdx = rightPortalIdx;//°°Àº »ï°¢Çü ±âÁØÀ¸·Î ½ÃÀÛÇÏ°Ô ¼¼ÆÃ
+				++rightPortalIdx;//í˜„ì¬ rightIdxë¥¼ ê¸°ì¤€ìœ¼ë¡œ ë‹¤ì‹œ ì‹œì‘í• ê±°ê¸° ë•Œë¬¸ì—, ì „ì§„
+				leftPortalIdx = rightPortalIdx;//ê°™ì€ ì‚¼ê°í˜• ê¸°ì¤€ìœ¼ë¡œ ì‹œì‘í•˜ê²Œ ì„¸íŒ…
 				continue;
 			}
-			if (abs(resultLeftPortalDot) > FLT_EPSILON) {//Áö±İÁ¡ ´ÙÀ½Á¡ÀÌ °°Àº °æ¿ìµµ Á¸ÀçÇÔ-> ´Ù¸¥ Á¡ÀÏ ¶§ ÀüÁø
+			if (abs(resultLeftPortalDot) > FLT_EPSILON) {//ì§€ê¸ˆì  ë‹¤ìŒì ì´ ê°™ì€ ê²½ìš°ë„ ì¡´ì¬í•¨-> ë‹¤ë¥¸ ì ì¼ ë•Œ ì „ì§„
 				++leftPortalIdx;
 
-				//¿ŞÂÊ Á¤Á¡ µ¥ÀÌÅÍ°¡ ÃÖ½ÅÈ­µÆÀ¸´Ï ¹Ø¿¡ ¿ìÃø Á¤Á¡ ÆÇ´Ü¿¡¼­ ÁÂÈ¸ÀüÀÎÁö ÆÇ´ÜÇÒ ¼ö ÀÖ¾î¾ß µÊ.
+				//ì™¼ìª½ ì •ì  ë°ì´í„°ê°€ ìµœì‹ í™”ëìœ¼ë‹ˆ ë°‘ì— ìš°ì¸¡ ì •ì  íŒë‹¨ì—ì„œ ì¢ŒíšŒì „ì¸ì§€ íŒë‹¨í•  ìˆ˜ ìˆì–´ì•¼ ë¨.
 				currentLeftPortal = leftPortal[leftPortalIdx];
 				startToCurrentLeft = Vector3::Subtract(currentLeftPortal, restartPosition);
 				leftCornerCross = Vector3::CrossProduct(startToNextRight, startToCurrentLeft, true);
@@ -525,7 +525,7 @@ std::list<XMFLOAT3> NavMapData::OptimizeAStar(const XMFLOAT3& startPosition, con
 
 		if (rightValid) {
 			if (isLeftCorner) {
-				//À§¿¡ ¿ìÃø ÄÚ³Ê¿Í °°Àº ¹æ½ÄÀ¸·Î µ¿ÀÛÇÏ°Ô.
+				//ìœ„ì— ìš°ì¸¡ ì½”ë„ˆì™€ ê°™ì€ ë°©ì‹ìœ¼ë¡œ ë™ì‘í•˜ê²Œ.
 				//restartPosition = currentLeftPortal;
 				restartPosition = GetInternalDivisionPosition(currentRightPortal, currentLeftPortal, 11.0f, 1.0f);
 				optimizedPositions.emplace_back(restartPosition);
@@ -564,22 +564,22 @@ void NavMapData::CreatePortal(std::list<std::shared_ptr<NavMesh::TriangleNavMesh
 
 		XMFLOAT3 currentCenter = currentMesh->GetCenter();
 		XMFLOAT3 nextCenter = nextMesh->GetCenter();
-		//ÇöÀç ³ëµå -> ´ÙÀ½ ³ëµå ÁßÁ¡ ¿¬°á º¤ÅÍ
+		//í˜„ì¬ ë…¸ë“œ -> ë‹¤ìŒ ë…¸ë“œ ì¤‘ì  ì—°ê²° ë²¡í„°
 		XMFLOAT3 currentToNextVector = Vector3::Subtract(nextCenter, currentCenter);
 
 		auto sharedVertexIdxes = currentMesh->GetRelationVertexIdx(nextMesh);
 
 		for (auto& sharedVertexIdx : sharedVertexIdxes) {
 			XMFLOAT3 sharedVertex = m_vertex[sharedVertexIdx];
-			//ÇöÀç ÁßÁ¡ -> °øÀ¯ÇÏ´Â Á¤Á¡ º¤ÅÍ
+			//í˜„ì¬ ì¤‘ì  -> ê³µìœ í•˜ëŠ” ì •ì  ë²¡í„°
 			XMFLOAT3 centerToVertexVector = Vector3::Subtract(sharedVertex, currentCenter);
 			/*
-				´ÙÀ½ ³ëµå±îÁö º¤ÅÍ X ÇöÀç ÁßÁ¡¿¡¼­ °øÀ¯ Á¡ => ¿Ş¼Õ ÁÂÇ¥°è¶ó¸é °øÀ¯Á¡ÀÌ ¿À¸¥ÂÊÀÌ¶ó¸é 0,1,0º¤ÅÍ // ¿ŞÂÊÀÌ¶ó¸é 0,-1,0 ÀÌ ³ª¿È
-				-> ±×·± ´ÙÀ½ 0, 1, 0 º¤ÅÍ¿Í ³»Àû ÇßÀ» ¶§ ¾ç¼ö, À½¼ö¸¦ ÆÇ´ÜÇÏ¿© ÁÂ(À½¼ö), ¿ì(¾ç¼ö) ¸¦ ÆÇ´Ü ÇÒ ¼ö ÀÖÀ½.
+				ë‹¤ìŒ ë…¸ë“œê¹Œì§€ ë²¡í„° X í˜„ì¬ ì¤‘ì ì—ì„œ ê³µìœ  ì  => ì™¼ì† ì¢Œí‘œê³„ë¼ë©´ ê³µìœ ì ì´ ì˜¤ë¥¸ìª½ì´ë¼ë©´ 0,1,0ë²¡í„° // ì™¼ìª½ì´ë¼ë©´ 0,-1,0 ì´ ë‚˜ì˜´
+				-> ê·¸ëŸ° ë‹¤ìŒ 0, 1, 0 ë²¡í„°ì™€ ë‚´ì  í–ˆì„ ë•Œ ì–‘ìˆ˜, ìŒìˆ˜ë¥¼ íŒë‹¨í•˜ì—¬ ì¢Œ(ìŒìˆ˜), ìš°(ì–‘ìˆ˜) ë¥¼ íŒë‹¨ í•  ìˆ˜ ìˆìŒ.
 			*/
 			XMFLOAT3 crossProductResult = Vector3::CrossProduct(currentToNextVector, centerToVertexVector, true);
 			float dotProductResult = Vector3::DotProduct(UP, crossProductResult);
-			if (dotProductResult > 0.0f) {//¿À¸¥ÂÊ¿¡ À§Ä¡ÇÑ Á¤Á¡.
+			if (dotProductResult > 0.0f) {//ì˜¤ë¥¸ìª½ì— ìœ„ì¹˜í•œ ì •ì .
 				rightPortal.push_back(sharedVertex);
 			}
 			else {

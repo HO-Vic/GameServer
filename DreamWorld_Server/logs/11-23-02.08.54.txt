@@ -1,0 +1,3 @@
+[2024-11-23 02:08:54.992] [Server Log] [info] Start Logger
+[2024-11-23 02:10:10.383] [Server Log] [info] Iocp::Iocp() - Create Iocp Handle
+[2024-11-23 02:10:10.652] [Server Log] [info] Timer::Timer() - Timer Constructor

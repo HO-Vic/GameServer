@@ -17,32 +17,32 @@ void DB::EventBase::Execute(HANDLE iocpHandle, SQLHDBC hdbc)
 		DB::ErrorPrint(SQL_HANDLE_STMT, sqlStatement);
 		if (SQL_ERROR == retCode) {
 			ExecuteFail();
-			SQLCancel(sqlStatement);///Á¾·á
-			SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//¸®¼Ò½º ÇØÁ¦
+			SQLCancel(sqlStatement);///ì¢…ë£Œ
+			SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//ë¦¬ì†ŒìŠ¤ í•´ì œ
 			return;
 		}
 	}
 
 	std::wstring query = GetQuery();
-	//SQL¹® ½ÇÇà - stmt, ½ÇÇàÇÒ SQL¹®, ½ÇÇàÇÒ SQL¹® ±æÀÌ
+	//SQLë¬¸ ì‹¤í–‰ - stmt, ì‹¤í–‰í•  SQLë¬¸, ì‹¤í–‰í•  SQLë¬¸ ê¸¸ì´
 	retCode = SQLExecDirect(sqlStatement, (SQLWCHAR*)query.c_str(), query.size());
 
 	if (SQL_ERROR == retCode || SQL_INVALID_HANDLE == retCode) {
-		//¹®Á¦°¡ ÀÖ´Ù¸é Å¬¶óÀÌ¾ğÆ®¿¡ ¾Ë¸²
+		//ë¬¸ì œê°€ ìˆë‹¤ë©´ í´ë¼ì´ì–¸íŠ¸ì— ì•Œë¦¼
 		spdlog::warn("DB::PlayerInfoEvent::Execute() - SQLExecDirect alloc Error");
 		DB::ErrorPrint(SQL_HANDLE_STMT, sqlStatement);
-		ExecuteFail();//Å¬¶óÀÌ¾ğÆ®¿¡ ´Ù½Ã ½Ãµµ ¾Ë¸²
-		SQLCancel(sqlStatement);///Á¾·á
-		SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//¸®¼Ò½º ÇØÁ¦
+		ExecuteFail();//í´ë¼ì´ì–¸íŠ¸ì— ë‹¤ì‹œ ì‹œë„ ì•Œë¦¼
+		SQLCancel(sqlStatement);///ì¢…ë£Œ
+		SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//ë¦¬ì†ŒìŠ¤ í•´ì œ
 		return;
 	}
 
-	//Äõ¸®¿¡ ´ëÇÑ °á°ú Ã³¸®
+	//ì¿¼ë¦¬ì— ëŒ€í•œ ê²°ê³¼ ì²˜ë¦¬
 	Proccess(retCode, iocpHandle, sqlStatement);
 
-	//stmt ÇØÁ¦
-	SQLCancel(sqlStatement);///Á¾·á
-	SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//¸®¼Ò½º ÇØÁ¦
+	//stmt í•´ì œ
+	SQLCancel(sqlStatement);///ì¢…ë£Œ
+	SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);//ë¦¬ì†ŒìŠ¤ í•´ì œ
 }
 
 #pragma region DB_PLAYER_EVENT
@@ -57,10 +57,10 @@ DB::PlayerInfoEvent::PlayerInfoEvent(const DB_OP_CODE& opCode, std::shared_ptr<U
 void DB::PlayerInfoEvent::Proccess(SQLRETURN exeResult, HANDLE iocpHandle, SQLHSTMT hstmt)
 {
 	auto userRef = m_userRef.lock();
-	//À¯Àú°¡ ·Î±×ÀÎ ÇÏ±âÀü¿¡ ³ª°¨
+	//ìœ ì €ê°€ ë¡œê·¸ì¸ í•˜ê¸°ì „ì— ë‚˜ê°
 	if (nullptr == userRef) return;
 
-	//ÇÃ·¹ÀÌ¾î Á¤º¸°¡ Á¸Àç
+	//í”Œë ˆì´ì–´ ì •ë³´ê°€ ì¡´ì¬
 	SQLRETURN retCode;
 	SQLWCHAR playerName[DB_NAME_SIZE] = { 0 };
 	SQLLEN dataLength = SQL_NULL_DATA;
@@ -68,7 +68,7 @@ void DB::PlayerInfoEvent::Proccess(SQLRETURN exeResult, HANDLE iocpHandle, SQLHS
 	//SQL_NULL_DATA
 	//SQL_NO_TOTAL
 
-	//BufferLegth´Â wchar_t: 2¹ÙÀÌÆ® ÀÌ±â¶§¹®¿¡ * 2 °è»ê
+	//BufferLegthëŠ” wchar_t: 2ë°”ì´íŠ¸ ì´ê¸°ë•Œë¬¸ì— * 2 ê³„ì‚°
 	retCode = SQLBindCol(hstmt, 1, SQL_C_WCHAR, playerName, DB_NAME_SIZE * 2, &dataLength);
 #ifdef _DEBUG
 	if (SQL_SUCCESS != retCode) {
@@ -78,10 +78,10 @@ void DB::PlayerInfoEvent::Proccess(SQLRETURN exeResult, HANDLE iocpHandle, SQLHS
 #endif // _DEBUG
 
 	retCode = SQLFetch(hstmt);
-	//ÇÃ·¹ÀÌ¾î Á¤º¸°¡ ¾øÀ½
+	//í”Œë ˆì´ì–´ ì •ë³´ê°€ ì—†ìŒ
 	if (SQL_NO_DATA == retCode) {
 		NonExist(iocpHandle, userRef);
-		//stmtÁ¾·á´Â ÇÔ¼ö ¿ÜºÎ¿¡¼­ ¼öÇà
+		//stmtì¢…ë£ŒëŠ” í•¨ìˆ˜ ì™¸ë¶€ì—ì„œ ìˆ˜í–‰
 		return;
 	}
 
@@ -98,10 +98,10 @@ void DB::PlayerInfoEvent::Proccess(SQLRETURN exeResult, HANDLE iocpHandle, SQLHS
 
 	/*
 		SQL_SUCCESS_WITH_INFO
-		SQL_NEED_DATA - ¾Æ¸¶ ¹ß»ı ¾ÈÇÔ
-		SQL_STILL_EXECUTING - ºñµ¿±â ÀÏ¶§ »ı±â´Â ¿¡·¯ÄÚµå
+		SQL_NEED_DATA - ì•„ë§ˆ ë°œìƒ ì•ˆí•¨
+		SQL_STILL_EXECUTING - ë¹„ë™ê¸° ì¼ë•Œ ìƒê¸°ëŠ” ì—ëŸ¬ì½”ë“œ
 	*/
-	//SQL_SUCCESS°¡ ¾Æ´Ï¶ó¸é ¹®Á¦°¡ ÀÖ´Ù´Â ÀÇ¹Ì - ·Î±× Ãâ·Â
+	//SQL_SUCCESSê°€ ì•„ë‹ˆë¼ë©´ ë¬¸ì œê°€ ìˆë‹¤ëŠ” ì˜ë¯¸ - ë¡œê·¸ ì¶œë ¥
 	if (SQL_SUCCESS != exeResult) {
 		spdlog::warn("DB::PlayerInfoEvent::Execute() - Success with Info");
 		DB::ErrorPrint(SQL_HANDLE_STMT, hstmt);
@@ -120,13 +120,13 @@ std::wstring DB::PlayerInfoEvent::GetQuery()
 
 void DB::PlayerInfoEvent::ExecuteFail()
 {
-	//´Ù½Ã ½Ãµµ ¾Ë¸²
+	//ë‹¤ì‹œ ì‹œë„ ì•Œë¦¼
 
 }
 
 void DB::PlayerInfoEvent::NonExist(HANDLE iocpHandle, std::shared_ptr<UserSession>& userRef)
 {
-	//¼º°øÇßÀ¸³ª, ÇØ´çÇÏ´Â Á¤º¸°¡ Á¸Àç ÇÏÁö ¾ÊÀ½.
+	//ì„±ê³µí–ˆìœ¼ë‚˜, í•´ë‹¹í•˜ëŠ” ì •ë³´ê°€ ì¡´ì¬ í•˜ì§€ ì•ŠìŒ.
 	//auto playerInfoEvent = std::make_shared<IOCP::DBNotifyEvent>(userRef);
 	/*auto expOver = IocpEventManager::GetInstance().CreateExpOver(IOCP_OP_CODE::OP_FAIL_GET_PLAYER_INFO, playerInfoEvent);
 	PostQueuedCompletionStatus(iocpHandle, 0, 99999, expOver);*/
@@ -156,13 +156,13 @@ void DB::DBConnector::DBConnectThread()
 	spdlog::info("DB::DBConnector::DBConnectThread() - start Db Thread");
 	while (true) {
 		if (m_DBEventQueue.empty()) {
-			//DB ÀÌº¥Æ® ¼öÇàÇÒ°Ô ¾ø¾î ¾çº¸
+			//DB ì´ë²¤íŠ¸ ìˆ˜í–‰í• ê²Œ ì—†ì–´ ì–‘ë³´
 			std::this_thread::yield();
 			continue;
 		}
 		std::shared_ptr<DB::EventBase> dbEvent;
 		bool isSuccess = m_DBEventQueue.try_pop(dbEvent);
-		if (!isSuccess) {//ÀÌº¥Æ®¸¦ ¸ø °¡Á®¿Ô´Ù¸é ¾çº¸
+		if (!isSuccess) {//ì´ë²¤íŠ¸ë¥¼ ëª» ê°€ì ¸ì™”ë‹¤ë©´ ì–‘ë³´
 			std::this_thread::yield();
 			continue;
 		}
@@ -179,17 +179,17 @@ void DB::DBConnector::Connect()
 {
 	SQLRETURN retCode;
 	// Allocate environment handle
-	//SQLAllocHandle() - ODBC ÇÚµé º¯¼ö ÇÒ´ç
+	//SQLAllocHandle() - ODBC í•¸ë“¤ ë³€ìˆ˜ í• ë‹¹
 	retCode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_henv);
 
 	// Set the ODBC version environment attribute
 	if (SQL_SUCCESS == retCode) {
-		//env¼³Á¤
+		//envì„¤ì •
 		retCode = SQLSetEnvAttr(m_henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
 
 		// Allocate connection handle  
 		if (SQL_SUCCESS == retCode) {
-			//dbc ÇÒ´ç
+			//dbc í• ë‹¹
 			retCode = SQLAllocHandle(SQL_HANDLE_DBC, m_henv, &m_hdbc);
 
 			if (SQL_SUCCESS == retCode) {
@@ -197,7 +197,7 @@ void DB::DBConnector::Connect()
 				retCode = SQLSetConnectAttr(m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
 				if (SQL_SUCCESS == retCode) {
 					// Connect to data source
-					//SQL ¿¬°á, dbc, DBÀÌ¸§, »ç¿ëÀÚ ÀÌ¸§, ºñ¹Ğ¹øÈ£...
+					//SQL ì—°ê²°, dbc, DBì´ë¦„, ì‚¬ìš©ì ì´ë¦„, ë¹„ë°€ë²ˆí˜¸...
 					retCode = SQLConnect(m_hdbc, (SQLWCHAR*)L"Dream_World_DB", SQL_NTS, (SQLWCHAR*)NULL, SQL_NTS, NULL, SQL_NTS);
 					if (SQL_SUCCESS == retCode) {
 						spdlog::info("DB Connect Success");
@@ -259,7 +259,7 @@ void DB::DBConnector::InsertDBEvent(std::shared_ptr<DB::EventBase>& dbEvent)
 
 void DB::ErrorPrint(const SQLSMALLINT& handleType, SQLHANDLE handle)
 {
-	//¿À·ù ÀúÀå ¹öÆÛ
+	//ì˜¤ë¥˜ ì €ì¥ ë²„í¼
 	SQLWCHAR sqlState[SQL_SQLSTATE_SIZE + 1]{ 0 };
 	SQLWCHAR sqlMessage[SQL_MAX_MESSAGE_LENGTH + 1]{ 0 };
 	SQLINTEGER sqlNativeError = 0;
@@ -270,7 +270,7 @@ void DB::ErrorPrint(const SQLSMALLINT& handleType, SQLHANDLE handle)
 		SQLRETURN sqlRetVal = SQLGetDiagRec(handleType, handle, recNumber, sqlState, &sqlNativeError, sqlMessage, SQL_MAX_MESSAGE_LENGTH + 1, &sqlErrorLength);
 		switch (sqlRetVal)
 		{
-		case SQL_SUCCESS: //Áø´Ü Á¤º¸ Á¸Àç
+		case SQL_SUCCESS: //ì§„ë‹¨ ì •ë³´ ì¡´ì¬
 		{
 			spdlog::info("SQL State: {0}", ConvertWideStringToString(sqlState));
 			spdlog::info("SQL Error Message: {0}", ConvertWideStringToString(sqlMessage));
@@ -280,7 +280,7 @@ void DB::ErrorPrint(const SQLSMALLINT& handleType, SQLHANDLE handle)
 		}
 		break;
 
-		case SQL_SUCCESS_WITH_INFO: // ¹öÆÛ°¡ ÀÛÀ» ¼ö ÀÖÀ½
+		case SQL_SUCCESS_WITH_INFO: // ë²„í¼ê°€ ì‘ì„ ìˆ˜ ìˆìŒ
 		{
 			spdlog::warn("SQL State: {0}", ConvertWideStringToString(sqlState));
 			spdlog::warn("SQL Error Message: {0}", ConvertWideStringToString(sqlMessage));
@@ -292,25 +292,25 @@ void DB::ErrorPrint(const SQLSMALLINT& handleType, SQLHANDLE handle)
 		}
 		break;
 
-		case SQL_INVALID_HANDLE:	// ÇÚµé ¶Ç´Â ÇÚµé Å¸ÀÔÀÌ Àß¸ø µÊ.
+		case SQL_INVALID_HANDLE:	// í•¸ë“¤ ë˜ëŠ” í•¸ë“¤ íƒ€ì…ì´ ì˜ëª» ë¨.
 		{
 			spdlog::critical("DB::DBConnector::ErrorPrint() - SQL_INVALID_HANDLE");
 			//asssert?
 		}
 		break;
 
-		case SQL_ERROR:				// recNumber <= 0 ¶Ç´Â bufferLength < 0 ¶Ç´Â ºñµ¿±â ¾Ë¸²À» »ç¿ëÇÏ¸é ºñµ¿±â ÀÛ¾÷ÀÌ ¿Ï·á µÇÁö ¾ÊÀ½.
+		case SQL_ERROR:				// recNumber <= 0 ë˜ëŠ” bufferLength < 0 ë˜ëŠ” ë¹„ë™ê¸° ì•Œë¦¼ì„ ì‚¬ìš©í•˜ë©´ ë¹„ë™ê¸° ì‘ì—…ì´ ì™„ë£Œ ë˜ì§€ ì•ŠìŒ.
 		{
 			if (recNumber <= 0) {
 				spdlog::critical("DB::DBConnector::ErrorPrint() - SQL_ERROR");
 			}
-			//bufferLength´Â Ç×»ó Á¸Àç ÇÏ±â¶§¹®¿¡ 0¹Ì¸¸ÀÌ µÇÁø ¾ÊÀ½.
-			//ºñµ¿±â ÀÛ¾÷À» ¼öÇàÇÏÁö ¾ÊÀ½.
+			//bufferLengthëŠ” í•­ìƒ ì¡´ì¬ í•˜ê¸°ë•Œë¬¸ì— 0ë¯¸ë§Œì´ ë˜ì§„ ì•ŠìŒ.
+			//ë¹„ë™ê¸° ì‘ì—…ì„ ìˆ˜í–‰í•˜ì§€ ì•ŠìŒ.
 		}
 		break;
 
-		case SQL_NO_DATA:			// recNumber°¡ handle¿¡ ÁöÁ¤µÈ ÇÚµé¿¡ ´ëÇØ Á¸ÀçÇß´ø Áø´Ü ·¹ÄÚµå ¼ö º¸´Ù Å« °æ¿ì ¶Ç´Â
-			//Handle¿¡ ´ëÇÑ Áø´Ü ·¹ÄÚµå°¡ ¾øÀ» ¶§ recNumber´Â ¾ç¼ö + SQL_NO_DATA ¹İÈ¯
+		case SQL_NO_DATA:			// recNumberê°€ handleì— ì§€ì •ëœ í•¸ë“¤ì— ëŒ€í•´ ì¡´ì¬í–ˆë˜ ì§„ë‹¨ ë ˆì½”ë“œ ìˆ˜ ë³´ë‹¤ í° ê²½ìš° ë˜ëŠ”
+			//Handleì— ëŒ€í•œ ì§„ë‹¨ ë ˆì½”ë“œê°€ ì—†ì„ ë•Œ recNumberëŠ” ì–‘ìˆ˜ + SQL_NO_DATA ë°˜í™˜
 		{
 			if (recNumber > 0) return;
 		}

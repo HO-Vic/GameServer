@@ -8,7 +8,7 @@ namespace NavMesh {
 		TriangleNavMesh(const int& triangleId, const XMFLOAT3& v1, const XMFLOAT3& v2, const XMFLOAT3& v3, const int& idx1, const int& idx2, const int& idx3);
 		std::pair<bool, float> IsOnTriangleMesh(const DirectX::XMFLOAT3& position) const;
 
-		//´Ù¸¥ »ï°¢Çü°úÀÇ °øÀ¯Á¡ÀÌ 2°³¶ó¸é
+		//ë‹¤ë¥¸ ì‚¼ê°í˜•ê³¼ì˜ ê³µìœ ì ì´ 2ê°œë¼ë©´
 		//const bool IsShareLine(const TriangleNavMesh& other) const;
 
 		const float GetDistance(const XMFLOAT3& position) const;
@@ -40,15 +40,15 @@ namespace NavMesh {
 
 	private:
 		int m_id;
-		//Á¤Á¡ Á¤º¸
+		//ì •ì  ì •ë³´
 		std::array<XMFLOAT3, 3> m_vertexs;
-		//°®°í ÀÖ´Â Á¤Á¡ÀÇ ÀÎµ¦½º
+		//ê°–ê³  ìˆëŠ” ì •ì ì˜ ì¸ë±ìŠ¤
 		std::unordered_set<int> m_vertexIdxSet;
 
-		//¹«°Ô Áß½É ÁÂÇ¥
+		//ë¬´ê²Œ ì¤‘ì‹¬ ì¢Œí‘œ
 		XMFLOAT3 m_center;
-		//³ĞÀÌ -> »ï°¢Çü À§¿¡ ÇÑ Á¡ÀÌ ÀÖ´ÂÁö ÆÇ´ÜÇÏ·Á¸é, ÇÑ Á¡À¸·Î ºÎÅÍ °¢ »ï°¢Çü Á¡±îÁöÀÇ º¤ÅÍ¸¦ ±¸ÇÏ°í, ±× º¤ÅÍ¿Í »ï°¢Çü Á¤Á¡ÀÌ °®´Â º¤ÅÍ¸¦ ¿ÜÀû / 2ÇßÀ» ¶§, »ï°¢ÇüÀÇ ³ĞÀÌ¿Í °°À½.
-		float m_duobleAreaSize;//°è»êÇÏ±â ÆíÇÏ°Ô, »ï°¢Çü ³ÎÀÌÀÇ 2¹è¸¦ ÀúÀå
+		//ë„“ì´ -> ì‚¼ê°í˜• ìœ„ì— í•œ ì ì´ ìˆëŠ”ì§€ íŒë‹¨í•˜ë ¤ë©´, í•œ ì ìœ¼ë¡œ ë¶€í„° ê° ì‚¼ê°í˜• ì ê¹Œì§€ì˜ ë²¡í„°ë¥¼ êµ¬í•˜ê³ , ê·¸ ë²¡í„°ì™€ ì‚¼ê°í˜• ì •ì ì´ ê°–ëŠ” ë²¡í„°ë¥¼ ì™¸ì  / 2í–ˆì„ ë•Œ, ì‚¼ê°í˜•ì˜ ë„“ì´ì™€ ê°™ìŒ.
+		float m_duobleAreaSize;//ê³„ì‚°í•˜ê¸° í¸í•˜ê²Œ, ì‚¼ê°í˜• ë„ì´ì˜ 2ë°°ë¥¼ ì €ì¥
 
 	public:
 		//ptr, distance

@@ -78,17 +78,17 @@ enum class PLAYER_STATE : char
 enum class IOCP_OP_CODE : char
 {
 	OP_NONE,
-	//Åë½Å
+	//í†µì‹ 
 	OP_ACCEPT,
 	OP_RECV,
 	OP_SEND,
 
 	//DB
-	//·Î±×ÀÎ, ÇÃ·¹ÀÌ¾î ·Î±×ÀÎ ¼º°ø
+	//ë¡œê·¸ì¸, í”Œë ˆì´ì–´ ë¡œê·¸ì¸ ì„±ê³µ
 	OP_SUCCESS_GET_PLAYER_INFO,
-	//·Î±×ÀÎ, ÇÃ·¹ÀÌ¾î ·Î±×ÀÎ ½ÇÆÐ
+	//ë¡œê·¸ì¸, í”Œë ˆì´ì–´ ë¡œê·¸ì¸ ì‹¤íŒ¨
 	OP_FAIL_GET_PLAYER_INFO,
-	//Å¬¶óÀÌ¾ðÆ®ÀÇ DBÀÛ¾÷ÀÌ ½ÇÆÐ ÇßÀ» ¶§
+	//í´ë¼ì´ì–¸íŠ¸ì˜ DBìž‘ì—…ì´ ì‹¤íŒ¨ í–ˆì„ ë•Œ
 	OP_DB_ERROR,
 
 	//Room - update, player pos send
@@ -102,12 +102,12 @@ enum class IOCP_OP_CODE : char
 	//Room - player skill
 	OP_PLAYER_APPLY_SIELD,
 	OP_PLAYER_REMOVE_SIELD,
-	OP_PLAYER_HEAL_START, // Áö¼Ó Èú - Æ½¸¶´Ù
-	OP_PLAYER_HEAL, // Áö¼Ó Èú - Æ½¸¶´Ù
+	OP_PLAYER_HEAL_START, // ì§€ì† íž - í‹±ë§ˆë‹¤
+	OP_PLAYER_HEAL, // ì§€ì† íž - í‹±ë§ˆë‹¤
 	OP_PLAYER_HEAL_END,
-	OP_RAIN_ARROW_ATTACK, //nÃÊ ÀÌÈÄ ±× À§Ä¡ °ø°Ý
+	OP_RAIN_ARROW_ATTACK, //nì´ˆ ì´í›„ ê·¸ ìœ„ì¹˜ ê³µê²©
 
-	//ÀüÁ¦ ÇÃ·¹ÀÌ¾î RTT°è»êÀ» À§ÇÑ
+	//ì „ì œ í”Œë ˆì´ì–´ RTTê³„ì‚°ì„ ìœ„í•œ
 	OP_SYNC_TIME,
 };
 
@@ -135,14 +135,14 @@ enum class ROLE :char {
 
 enum class TIMER_EVENT_TYPE : char {
 	EV_NONE,
-	//°ÔÀÓ »óÅÂ °ü·Ã
+	//ê²Œìž„ ìƒíƒœ ê´€ë ¨
 	EV_ROOM_UPDATE,
 	EV_SEND_GAME_STATE,
 	EV_SEND_NPC_MOVE,
-	//º¸½º °ü·Ã
+	//ë³´ìŠ¤ ê´€ë ¨
 	EV_BOSS_FIND_PLAYER,
 	EV_BOSS_RESEARCH_ROAD,
-	//ÇÃ·¹ÀÌ¾î °ü·Ã
+	//í”Œë ˆì´ì–´ ê´€ë ¨
 	EV_HEAL_START,
 	EV_HEAL,
 	EV_HEAL_END,

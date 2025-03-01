@@ -2,12 +2,12 @@
 #include "../../PCH/stdafx.h"
 #include "../IocpEvent/IocpEventBase.h"
 
-//UserSession -> recvEvent°´Ã¼
+//UserSession -> recvEventê°ì²´
 class ExpOver;
 class Room;
 class CharacterObject;
 struct PacketHeader;
-//recv, DB(weak_ptr), Room°´Ã¼ ¿¹Á¤
+//recv, DB(weak_ptr), Roomê°ì²´ ì˜ˆì •
 class UserSession :public IOCP::EventBase
 {
 public:
@@ -113,9 +113,9 @@ protected:
 	std::atomic<CONNECT_STATE> m_connectState;
 	std::wstring m_playerName;
 
-	std::weak_ptr<Room> m_roomWeakRef;//RoomÀÌ »èÁ¦ µÆ´Ù¸é, ÇÃ·¹ÀÌ¾î´Â ¹æ¿¡¼­ ³ª¿À°Ô
-	std::weak_ptr<CharacterObject> m_possessCharacter;//Room¿¡¼­ ÇÃ·¹ÀÌÇÏ°í ÀÖ´Â Ä³¸¯ÅÍ
+	std::weak_ptr<Room> m_roomWeakRef;//Roomì´ ì‚­ì œ ëë‹¤ë©´, í”Œë ˆì´ì–´ëŠ” ë°©ì—ì„œ ë‚˜ì˜¤ê²Œ
+	std::weak_ptr<CharacterObject> m_possessCharacter;//Roomì—ì„œ í”Œë ˆì´í•˜ê³  ìˆëŠ” ìºë¦­í„°
 
-	ROLE m_ingameRole;//½ÇÁ¦ ÀÎ°ÔÀÓ ROLE
-	ROLE m_matchedRole;//ÇöÀç match Å¥¿¡ »ğÀÔÇÑ ROLE
+	ROLE m_ingameRole;//ì‹¤ì œ ì¸ê²Œì„ ROLE
+	ROLE m_matchedRole;//í˜„ì¬ match íì— ì‚½ì…í•œ ROLE
 };

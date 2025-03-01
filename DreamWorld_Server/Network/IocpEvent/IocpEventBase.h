@@ -3,7 +3,7 @@
 
 class ExpOver;
 /*
-	Iocp ΐΜΊ¥Ζ® ΐΞΕΝΖδΐΜ½Ί class
+	Iocp μ΄λ²¤νΈ μΈν„°νμ΄μ¤ class
 */
 namespace IOCP
 {

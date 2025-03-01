@@ -25,20 +25,20 @@ const std::pair<float, XMFLOAT3> MapCollision::GetSlidingVector(std::shared_ptr<
 	toGameObjectVector.y = 0.0f;
 	toGameObjectVector = Vector3::Normalize(toGameObjectVector);
 
-	//ToGameObjectº¤ÅÍ¿Í ÀúÀåµÈ normal°£ÀÇ cos°ªÀ» °è»ê
-	// => °´Ã¼·Î °¡´Â º¤ÅÍ . º®°´Ã¼ÀÇ ³ë¸» ¹æÇâÀ» ³»ÀûÇÏ¸é ¾î¶² ¸é¿¡¼­ Ãæµ¹ÀÎÁö ¾Ë ¼ö ÀÖÀ½.
+	//ToGameObjectë²¡í„°ì™€ ì €ì¥ëœ normalê°„ì˜ cosê°’ì„ ê³„ì‚°
+	// => ê°ì²´ë¡œ ê°€ëŠ” ë²¡í„° . ë²½ê°ì²´ì˜ ë…¸ë§ ë°©í–¥ì„ ë‚´ì í•˜ë©´ ì–´ë–¤ ë©´ì—ì„œ ì¶©ëŒì¸ì§€ ì•Œ ìˆ˜ ìˆìŒ.
 	float forwardDotResult = Vector3::DotProduct(toGameObjectVector, normalVectorData[0].second);
 	XMFLOAT3 slidingVector;
-	if (abs(forwardDotResult) > normalVectorData[0].first) {// ÀÌ ¸é°ú Ãæµ¹
-		slidingVector = normalVectorData[1].second;//Àû¿ëÇÒ ½½¶óÀÌµù º¤ÅÍ
+	if (abs(forwardDotResult) > normalVectorData[0].first) {// ì´ ë©´ê³¼ ì¶©ëŒ
+		slidingVector = normalVectorData[1].second;//ì ìš©í•  ìŠ¬ë¼ì´ë”© ë²¡í„°
 	}
 	else {
 		slidingVector = normalVectorData[0].second;
 	}
 	XMFLOAT3 currentMoveVector = moveVector;
-	//ÀÌµ¿ÇÒ ¼¼±â -> º®°ú ¼öÁ÷À¸·Î ÀÌµ¿ÇÏ¸é, ¸¹ÀÌ ÀÌµ¿ ¸øÇÏ°Ô.
+	//ì´ë™í•  ì„¸ê¸° -> ë²½ê³¼ ìˆ˜ì§ìœ¼ë¡œ ì´ë™í•˜ë©´, ë§ì´ ì´ë™ ëª»í•˜ê²Œ.
 	float moveVectorDotResult = Vector3::DotProduct(currentMoveVector, slidingVector);
-	//¿òÁöÀÌ´Â ¹æÇâ°ú, ½½¶óÀÌµù º¤ÅÍÀÇ ¹æÇâÀÌ ´Ù¸£´Ù¸é * -1
+	//ì›€ì§€ì´ëŠ” ë°©í–¥ê³¼, ìŠ¬ë¼ì´ë”© ë²¡í„°ì˜ ë°©í–¥ì´ ë‹¤ë¥´ë‹¤ë©´ * -1
 	if (moveVectorDotResult < 0) slidingVector = Vector3::ScalarProduct(slidingVector, -1, true);
 	return { abs(moveVectorDotResult), slidingVector };
 }

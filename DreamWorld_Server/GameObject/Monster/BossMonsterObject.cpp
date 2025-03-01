@@ -10,13 +10,13 @@
 BossMonsterObject::BossMonsterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<Room>& roomRef)
 	:MonsterObject(maxHp, moveSpeed, boundingSize, roomRef), m_currentState(nullptr), m_roadUpdate(false), m_currentDestinationPosition(XMFLOAT3(0, 0, 0)), m_isAbleRoadUpdate(true)
 {
-	//200ms¸¶´Ù ±æ Ã£±â Àç¼öÇà
+	//200msë§ˆë‹¤ ê¸¸ ì°¾ê¸° ì¬ìˆ˜í–‰
 	m_behaviorTimeEventCtrl->InsertCoolDownEventData(RESEARCH_ROAD, RESEARCH_ROAD_COOL_TIME);
-	//5ÃÊ¸¶´Ù ¾î±×·Î ´ë»ó º¯°æ
+	//5ì´ˆë§ˆë‹¤ ì–´ê·¸ë¡œ ëŒ€ìƒ ë³€ê²½
 	m_behaviorTimeEventCtrl->InsertCoolDownEventData(FIND_PLAYER, FIND_PLAYER_COOM_TIME);
 	m_behaviorTimeEventCtrl->InsertCoolDownEventData(SEND_AGGRO_POSITION, SEND_AGGRO_POSITION_TIME);
 
-	//ÀüÃ¼ÀûÀ¸·Î ´ÙÀ½ ½ºÅ³À» »ç¿ëÇÏ±âÀü¿¡ ÄğÅ¸ÀÓ => ½ºÅ³ ÄğÅ¸ÀÓ°ú º°°³·Î Àû¿ëµÇ´Â ÄğÅ¸ÀÓ
+	//ì „ì²´ì ìœ¼ë¡œ ë‹¤ìŒ ìŠ¤í‚¬ì„ ì‚¬ìš©í•˜ê¸°ì „ì— ì¿¨íƒ€ì„ => ìŠ¤í‚¬ ì¿¨íƒ€ì„ê³¼ ë³„ê°œë¡œ ì ìš©ë˜ëŠ” ì¿¨íƒ€ì„
 	m_behaviorTimeEventCtrl->InsertCoolDownEventData(ATTACK_PLAYER, BETWEEN_ATTACK_COOM_TIME);
 
 	m_behaviorTimeEventCtrl->InsertCoolDownEventData(ATTACK_METEOR, METEOR_COOL_TIME);
@@ -36,7 +36,7 @@ void BossMonsterObject::Update()
 
 void BossMonsterObject::Initialize()
 {
-	//»ı¼ºÀÚ¿¡¼­ shared_from_this()°¡ ¿À·ù
+	//ìƒì„±ìì—ì„œ shared_from_this()ê°€ ì˜¤ë¥˜
 	//m_bossStates.try_emplace(BossState::STATE::IDLE, std::make_shared<BossState::IdleState>(std::static_pointer_cast<BossMonsterObject>(shared_from_this())));
 	m_bossStates.try_emplace(BossState::STATE::MOVE, std::make_shared<BossState::MoveState>(std::static_pointer_cast<BossMonsterObject>(shared_from_this())));
 	m_bossStates.try_emplace(BossState::STATE::MOVE_AGGRO, std::make_shared<BossState::MoveAggroState>(std::static_pointer_cast<BossMonsterObject>(shared_from_this())));
@@ -120,7 +120,7 @@ void BossMonsterObject::SendBossState(const BossState::STATE& state)
 		spdlog::debug("changeBossState: MOVE_AGGRO");
 		UpdateLastUpdateTime();
 		auto sendAggroPositionEvent = m_behaviorTimeEventCtrl->GetEventData(SEND_AGGRO_POSITION);
-		//¾î±×·Î¸¦ ¹Ù·Î µû¶ó°¡¾ß ÇÏ±â ¶§¹®¿¡, °­Á¦·Î
+		//ì–´ê·¸ë¡œë¥¼ ë°”ë¡œ ë”°ë¼ê°€ì•¼ í•˜ê¸° ë•Œë¬¸ì—, ê°•ì œë¡œ
 		sendAggroPositionEvent->ForceExecute();
 		m_currentAggroPosition = m_aggroCharacter->GetPosition();
 		roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossSameNodeEvent>(m_currentAggroPosition)));
@@ -184,7 +184,7 @@ void BossMonsterObject::AttackFire(const float& damage, const float& inner, cons
 {
 	auto roomRef = m_roomWeakRef.lock();
 	if (nullptr == roomRef) return;
-	//¿Ü°û - ¾ÈÂÊ ¼øÀ¸·Î °ø°İ
+	//ì™¸ê³½ - ì•ˆìª½ ìˆœìœ¼ë¡œ ê³µê²©
 	auto characters = roomRef->GetCharacters();
 	if (mode == 0) {
 		for (auto& character : characters) {
@@ -258,7 +258,7 @@ void BossMonsterObject::AttackMeteor()
 void BossMonsterObject::Move()
 {
 	AttackCheck();
-	if (m_currentState != m_bossStates[BossState::STATE::MOVE]) return;//ÇöÀç »óÅÂ°¡ MOVE°¡ ¾Æ´Ï¶ó¸é, ´Ù¸¥ »óÅÂ·Î º¯°æ µÊ.
+	if (m_currentState != m_bossStates[BossState::STATE::MOVE]) return;//í˜„ì¬ ìƒíƒœê°€ MOVEê°€ ì•„ë‹ˆë¼ë©´, ë‹¤ë¥¸ ìƒíƒœë¡œ ë³€ê²½ ë¨.
 	if (m_road->empty()) {
 		m_currentState->ExitState();
 		ChangeBossState(BossState::STATE::MOVE_AGGRO);
@@ -275,9 +275,9 @@ void BossMonsterObject::MoveAggro()
 	if (nullptr == roomRef) return;
 
 	AttackCheck();
-	if (m_currentState != m_bossStates[BossState::STATE::MOVE_AGGRO]) return;//ÇöÀç »óÅÂ°¡ MOVE°¡ ¾Æ´Ï¶ó¸é, ´Ù¸¥ »óÅÂ·Î º¯°æ µÊ.
+	if (m_currentState != m_bossStates[BossState::STATE::MOVE_AGGRO]) return;//í˜„ì¬ ìƒíƒœê°€ MOVEê°€ ì•„ë‹ˆë¼ë©´, ë‹¤ë¥¸ ìƒíƒœë¡œ ë³€ê²½ ë¨.
 
-	if (!m_road->empty()) {//´Ù½Ã ±æ Ã£¾Æ±â ¶§¹®¿¡, Move·Î »óÅÂ º¯È­
+	if (!m_road->empty()) {//ë‹¤ì‹œ ê¸¸ ì°¾ì•„ê¸° ë•Œë¬¸ì—, Moveë¡œ ìƒíƒœ ë³€í™”
 		XMFLOAT3 currentAggroPosition = m_currentAggroPosition;
 		float distance = GetDistance(currentAggroPosition);
 		if (distance > STOP_DISTANCE) {
@@ -286,7 +286,7 @@ void BossMonsterObject::MoveAggro()
 			return;
 		}
 	}
-	//¾î±×·Î°¡ ¿òÁ÷ÀÌ±â ¶§¹®¿¡, ÇöÀç ¾î±×·Î À§Ä¡ ÃÖ½ÅÈ­
+	//ì–´ê·¸ë¡œê°€ ì›€ì§ì´ê¸° ë•Œë¬¸ì—, í˜„ì¬ ì–´ê·¸ë¡œ ìœ„ì¹˜ ìµœì‹ í™”
 	auto aggroPositionSendCoolTimeData = m_behaviorTimeEventCtrl->GetEventData(SEND_AGGRO_POSITION);
 	const bool isAbleSendAggroPosition = aggroPositionSendCoolTimeData->IsAbleExecute();
 	if (isAbleSendAggroPosition) {
@@ -299,7 +299,7 @@ void BossMonsterObject::MoveAggro()
 void BossMonsterObject::ChangeBossState(const BossState::STATE& state)
 {
 	m_currentState = m_bossStates[state];
-	m_currentState->Execute();//enterStateÈ£Ãâ ÇÒ ¼ö ÀÖ°Ô.
+	m_currentState->Execute();//enterStateí˜¸ì¶œ í•  ìˆ˜ ìˆê²Œ.
 }
 
 const XMFLOAT3 BossMonsterObject::GetCommonNextPosition(const float& elapsedTime)
@@ -318,13 +318,13 @@ std::shared_ptr<CharacterObject> BossMonsterObject::FindAggroCharacter()
 	if (nullptr == roomRef) return nullptr;
 
 	auto characters = roomRef->GetCharacters();
-	auto ableRole = roomRef->GetLiveRoles();//Ä¿³×ÆÃ µÇ¾îÀÖ°í, »ì¾ÆÀÖ´Â Ä³¸¯ÅÍ¸¸
+	auto ableRole = roomRef->GetLiveRoles();//ì»¤ë„¤íŒ… ë˜ì–´ìˆê³ , ì‚´ì•„ìˆëŠ” ìºë¦­í„°ë§Œ
 	std::shared_ptr<CharacterObject> minDistanceObject = nullptr;
 	float minDistance = 0.0f;
 	for (const auto& role : ableRole) {
 		auto character = roomRef->GetCharacterObject(role);
 		float distance = character->GetDistance(shared_from_this());
-		if (nullptr == minDistanceObject || minDistance > distance) {//¾ÆÁ÷ Á¤ÇØÁø ÃÖ¼Ò °Å¸® °´Ã¼°¡ ¾ø°Å³ª, ÃÖ¼Ò°Å¸®º¸´Ù ´õ ÂªÀº °Å¸®ÀÏ ¶§
+		if (nullptr == minDistanceObject || minDistance > distance) {//ì•„ì§ ì •í•´ì§„ ìµœì†Œ ê±°ë¦¬ ê°ì²´ê°€ ì—†ê±°ë‚˜, ìµœì†Œê±°ë¦¬ë³´ë‹¤ ë” ì§§ì€ ê±°ë¦¬ì¼ ë•Œ
 			minDistanceObject = character;
 			minDistance = distance;
 		}
@@ -344,7 +344,7 @@ void BossMonsterObject::MoveUpdate()
 	auto roomRef = m_roomWeakRef.lock();
 	if (nullptr == roomRef) return;
 
-	//´õ ÀÌ»ó ÀÌµ¿ÇÒ ³ëµå°¡ ¾øÀ½ => °°Àº ³ëµå¿¡ ÀÖÀ½.
+	//ë” ì´ìƒ ì´ë™í•  ë…¸ë“œê°€ ì—†ìŒ => ê°™ì€ ë…¸ë“œì— ìˆìŒ.
 	XMFLOAT3 currentPosition = GetPosition();
 
 	XMFLOAT3 currentDestinationPosition;// = m_road->front();
@@ -384,7 +384,7 @@ void BossMonsterObject::MoveUpdate()
 	bool isNextNodePositionUpdate = false;
 	while (true)
 	{
-		//ÇöÀç Á¤ÇØÁø ¸ñÀûÁö±îÁö °Å¸®
+		//í˜„ì¬ ì •í•´ì§„ ëª©ì ì§€ê¹Œì§€ ê±°ë¦¬
 		//m_prevDestinationPosition = currentDestinationPosition;
 		currentDestinationPosition = m_road->front();
 		m_currentDestinationPosition = currentDestinationPosition;
@@ -394,11 +394,11 @@ void BossMonsterObject::MoveUpdate()
 			m_isAbleRoadUpdate = false;
 		else m_isAbleRoadUpdate = true;
 
-		if (destinationDistance < CHANGE_NODE_DISTANCE) {//road°¡ »õ·Î °è»êµÆ´Ù¸é, front´Â º¸½ºÀÇ À§Ä¡¿Í °°À» °ÍÀÌ±â¶§¹®¿¡, ¾Ë¾Æ¼­ send µÊ
+		if (destinationDistance < CHANGE_NODE_DISTANCE) {//roadê°€ ìƒˆë¡œ ê³„ì‚°ëë‹¤ë©´, frontëŠ” ë³´ìŠ¤ì˜ ìœ„ì¹˜ì™€ ê°™ì„ ê²ƒì´ê¸°ë•Œë¬¸ì—, ì•Œì•„ì„œ send ë¨
 			spdlog::debug("Change Boss DestinationPosition - distnace: {}", destinationDistance);
 			m_road->pop_front();
 			isNextNodePositionUpdate = true;
-			if (m_road->empty()) {//°°Àº ³ëµå¿¡ ÀÖÀ½
+			if (m_road->empty()) {//ê°™ì€ ë…¸ë“œì— ìˆìŒ
 				m_currentState->ExitState();
 				ChangeBossState(BossState::STATE::MOVE_AGGRO);
 				return;
@@ -435,7 +435,7 @@ void BossMonsterObject::MoveAggroUpdate()
 	const float elapsedTime = GetElapsedLastUpdateTime();
 
 	float applyRotateAngle = 0.0f;
-	if (betweenEulerAngle.second < IDLE_ROTATE_ANGLE * elapsedTime) {// »çÀÌ °¢ÀÌ , º¯°æÇÏ·Á´Â °¢µµº¸´Ù ÀÛ´Ù => ÀüÁøÇÒ¶§ ÈçµéÈçµéÇÔ => »çÀÌ°¢ ¸¸Å­ È¸Àü
+	if (betweenEulerAngle.second < IDLE_ROTATE_ANGLE * elapsedTime) {// ì‚¬ì´ ê°ì´ , ë³€ê²½í•˜ë ¤ëŠ” ê°ë„ë³´ë‹¤ ì‘ë‹¤ => ì „ì§„í• ë•Œ í”ë“¤í”ë“¤í•¨ => ì‚¬ì´ê° ë§Œí¼ íšŒì „
 		applyRotateAngle = betweenEulerAngle.second;
 	}
 	else {
@@ -463,7 +463,7 @@ const bool BossMonsterObject::AbleSpinAttack()
 
 	auto characters = roomRef->GetCharacters();
 
-	//¹üÀ§ Ã¼Å©
+	//ë²”ìœ„ ì²´í¬
 	int validCnt = 0;
 	for (auto& character : characters) {
 		float distance = character->GetDistance(shared_from_this());
@@ -471,10 +471,10 @@ const bool BossMonsterObject::AbleSpinAttack()
 			++validCnt;
 		}
 	}
-	//2¸í ÀÌ»óÀÏ ¶§ ¼öÇà
+	//2ëª… ì´ìƒì¼ ë•Œ ìˆ˜í–‰
 	if (validCnt < 2) return false;
 
-	//ÄğÅ¸ÀÓ Ã¼Å©
+	//ì¿¨íƒ€ì„ ì²´í¬
 	auto spinAttackCoolTimeData = m_behaviorTimeEventCtrl->GetEventData(ATTACK_SPIN);
 	const bool able = spinAttackCoolTimeData->IsAbleExecute();
 	return able;
@@ -489,7 +489,7 @@ const bool BossMonsterObject::AbleFireAttack()
 
 	auto characters = roomRef->GetCharacters();
 
-	//¹üÀ§ Ã¼Å©
+	//ë²”ìœ„ ì²´í¬
 	int validCnt = 0;
 	for (auto& character : characters) {
 		float distance = character->GetDistance(shared_from_this());
@@ -497,10 +497,10 @@ const bool BossMonsterObject::AbleFireAttack()
 			++validCnt;
 		}
 	}
-	//2¸í ÀÌ»óÀÏ ¶§ ¼öÇà
+	//2ëª… ì´ìƒì¼ ë•Œ ìˆ˜í–‰
 	if (validCnt < 2) return false;
 
-	//ÄğÅ¸ÀÓ Ã¼Å©
+	//ì¿¨íƒ€ì„ ì²´í¬
 	auto fireAttackCoolTimeData = m_behaviorTimeEventCtrl->GetEventData(ATTACK_FIRE);
 	const bool able = fireAttackCoolTimeData->IsAbleExecute();
 	return able;
@@ -508,7 +508,7 @@ const bool BossMonsterObject::AbleFireAttack()
 
 const bool BossMonsterObject::AbleMeteorAttack()
 {
-	//¸ŞÅ×¿À °ø°İÀº ÄğÅ¸ÀÓ µÇ¸é ¼öÇàÇÏ°Ô
+	//ë©”í…Œì˜¤ ê³µê²©ì€ ì¿¨íƒ€ì„ ë˜ë©´ ìˆ˜í–‰í•˜ê²Œ
 	auto meteorAttackCoolTimeData = m_behaviorTimeEventCtrl->GetEventData(ATTACK_METEOR);
 	const bool able = meteorAttackCoolTimeData->IsAbleExecute();
 	return able;
@@ -524,7 +524,7 @@ const bool BossMonsterObject::AbleKickAttack()
 	if (nullptr == roomRef) return false;
 
 	auto characters = roomRef->GetCharacters();
-	//¹üÀ§ Ã¼Å©
+	//ë²”ìœ„ ì²´í¬
 	int validCnt = 0;
 	for (auto& character : characters) {
 		float distance = character->GetDistance(shared_from_this());
@@ -550,7 +550,7 @@ const bool BossMonsterObject::AblePunchAttack()
 	if (nullptr == roomRef) return false;
 
 	auto characters = roomRef->GetCharacters();
-	//¹üÀ§ Ã¼Å©
+	//ë²”ìœ„ ì²´í¬
 	int validCnt = 0;
 	for (auto& character : characters) {
 		float distance = character->GetDistance(shared_from_this());
@@ -666,7 +666,7 @@ void BossState::AttackFire::UpdateState()
 	{
 	case 0:
 	{
-		if (m_firstAttackExecuteTime < nowTime) {//Ã¹¹øÂ° °ø°İ ¼öÇà
+		if (m_firstAttackExecuteTime < nowTime) {//ì²«ë²ˆì§¸ ê³µê²© ìˆ˜í–‰
 			bossObject->AttackFire(FIRST_DAMAGE, INNER_RANGE, OUTER_RANGE, m_attackCnt);
 			m_attackCnt += 1;
 		}
@@ -674,7 +674,7 @@ void BossState::AttackFire::UpdateState()
 	break;
 	case 1:
 	{
-		if (m_secondAttackExecuteTime < nowTime) {//µÎ¹øÂ° °ø°İ ¼öÇà
+		if (m_secondAttackExecuteTime < nowTime) {//ë‘ë²ˆì§¸ ê³µê²© ìˆ˜í–‰
 			bossObject->AttackFire(SECOND_DAMAGE, INNER_RANGE, OUTER_RANGE, m_attackCnt);
 			m_attackCnt += 1;
 		}
@@ -708,7 +708,7 @@ void BossState::AttackSpin::UpdateState()
 	{
 	case 0:
 	{
-		if (m_firstAttackExecuteTime < nowTime) {//Ã¹¹øÂ° °ø°İ ¼öÇà
+		if (m_firstAttackExecuteTime < nowTime) {//ì²«ë²ˆì§¸ ê³µê²© ìˆ˜í–‰
 			bossObject->AttackSpin(DAMAGE, RANGE);
 			m_attackCnt += 1;
 		}
@@ -716,14 +716,14 @@ void BossState::AttackSpin::UpdateState()
 	break;
 	case 1:
 	{
-		if (m_secondAttackExecuteTime < nowTime) {//µÎ¹øÂ° °ø°İ ¼öÇà
+		if (m_secondAttackExecuteTime < nowTime) {//ë‘ë²ˆì§¸ ê³µê²© ìˆ˜í–‰
 			bossObject->AttackSpin(DAMAGE, RANGE);
 			m_attackCnt += 1;
 		}
 	}
 	break;
 	case 2:
-		if (m_thirdAttackExecuteTime < nowTime) {//µÎ¹øÂ° °ø°İ ¼öÇà
+		if (m_thirdAttackExecuteTime < nowTime) {//ë‘ë²ˆì§¸ ê³µê²© ìˆ˜í–‰
 			bossObject->AttackSpin(DAMAGE, RANGE);
 			m_attackCnt += 1;
 		}

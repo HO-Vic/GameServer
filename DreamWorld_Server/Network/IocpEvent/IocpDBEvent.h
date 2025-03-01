@@ -28,7 +28,7 @@ namespace IOCP
 		virtual void Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key) override;
 		virtual void Fail(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key) override;
 	private:
-		wchar_t m_buffer[DB_NAME_SIZE];//playerName Á¤º¸ ÀúÀå
+		wchar_t m_buffer[DB_NAME_SIZE];//playerName ì •ë³´ ì €ìž¥
 		std::weak_ptr<UserSession> m_userRef;
 	};
 }

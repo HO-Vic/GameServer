@@ -7,27 +7,27 @@ NavMesh::TriangleNavMesh::TriangleNavMesh(const int& triangleId, const XMFLOAT3&
 	m_vertexIdxSet.insert(idx1);
 	m_vertexIdxSet.insert(idx2);
 	m_vertexIdxSet.insert(idx3);
-	//¹«°Ô Áß½É
+	//ë¬´ê²Œ ì¤‘ì‹¬
 	m_center = Vector3::ScalarProduct(Vector3::Add(m_vertexs[0], Vector3::Add(m_vertexs[1], m_vertexs[2])), 1.0f / 3.0f, false);
 
-	XMFLOAT3 vector01 = Vector3::Subtract(m_vertexs[0], m_vertexs[1]);//1->0 °¡´Â Á¤Á¡°£ º¤ÅÍ
-	XMFLOAT3 vector12 = Vector3::Subtract(m_vertexs[2], m_vertexs[1]);//1->2 °¡´Â Á¤Á¡°£ º¤ÅÍ
+	XMFLOAT3 vector01 = Vector3::Subtract(m_vertexs[0], m_vertexs[1]);//1->0 ê°€ëŠ” ì •ì ê°„ ë²¡í„°
+	XMFLOAT3 vector12 = Vector3::Subtract(m_vertexs[2], m_vertexs[1]);//1->2 ê°€ëŠ” ì •ì ê°„ ë²¡í„°
 
-	//³ĞÀÌ´Â »ï°¢Çü º¯ µÎ°³ÀÇ º¤ÅÍ ¿ÜÀû °ª / 2
+	//ë„“ì´ëŠ” ì‚¼ê°í˜• ë³€ ë‘ê°œì˜ ë²¡í„° ì™¸ì  ê°’ / 2
 	m_duobleAreaSize = Vector3::Length(Vector3::CrossProduct(vector01, vector12, false));
 }
 
 std::pair<bool, float> NavMesh::TriangleNavMesh::IsOnTriangleMesh(const DirectX::XMFLOAT3& position) const
 {
-	//¹Ø¿¡ ¿¬»êÀº »ï°¢Çü µÎ°³¸¦ ºÙÀÎ ³ĞÀÌ ÀÌ±â¶§¹®¿¡, /2¿¬»êÀ» ¿·Ç×À¸·Î ¿Å±â°ÅÃ³·³ °è»êÇÏ±â À§ÇØ * 2.0f
+	//ë°‘ì— ì—°ì‚°ì€ ì‚¼ê°í˜• ë‘ê°œë¥¼ ë¶™ì¸ ë„“ì´ ì´ê¸°ë•Œë¬¸ì—, /2ì—°ì‚°ì„ ì˜†í•­ìœ¼ë¡œ ì˜®ê¸°ê±°ì²˜ëŸ¼ ê³„ì‚°í•˜ê¸° ìœ„í•´ * 2.0f
 	static constexpr float COMPARE_AREA_VALUE = FLT_EPSILON * 2.0f;
 	XMFLOAT3 toVertex0 = Vector3::Subtract(XMFLOAT3(position.x, 0, position.z), XMFLOAT3(m_vertexs[0]));
 	XMFLOAT3 toVertex1 = Vector3::Subtract(XMFLOAT3(position.x, 0, position.z), XMFLOAT3(m_vertexs[1]));
 	XMFLOAT3 toVertex2 = Vector3::Subtract(XMFLOAT3(position.x, 0, position.z), XMFLOAT3(m_vertexs[2]));
 	float doubleAreaSize = 0.0f;
-	//ÇöÀç pos¿¡ ´ëÇØ¼­, »ï°¢Çü Á¤Á¡À¸·Î °¡´Â º¤ÅÍ¸¦ ±¸ÇÏ°í
-	//°¢ º¤ÅÍµéÀ» ¿ÜÀû => (Á¤Á¡1·Î °¡´Â º¤ÅÍ X Á¤Á¡ 2·Î °¡´Âº¤ÅÍ) ... °ãÄ¡Áö ¾Ê°Ô.
-	//ÀÌ ¿ÜÀûÇÑ °ªÀÇ Å©±â¸¦ ´Ù ´õÇÏ¸é, »ï°¢Çü Å©±â¿Í °°´Ù¸é, pos´Â »ï°¢Çü À§¿¡ ÀÖÀ½.
+	//í˜„ì¬ posì— ëŒ€í•´ì„œ, ì‚¼ê°í˜• ì •ì ìœ¼ë¡œ ê°€ëŠ” ë²¡í„°ë¥¼ êµ¬í•˜ê³ 
+	//ê° ë²¡í„°ë“¤ì„ ì™¸ì  => (ì •ì 1ë¡œ ê°€ëŠ” ë²¡í„° X ì •ì  2ë¡œ ê°€ëŠ”ë²¡í„°) ... ê²¹ì¹˜ì§€ ì•Šê²Œ.
+	//ì´ ì™¸ì í•œ ê°’ì˜ í¬ê¸°ë¥¼ ë‹¤ ë”í•˜ë©´, ì‚¼ê°í˜• í¬ê¸°ì™€ ê°™ë‹¤ë©´, posëŠ” ì‚¼ê°í˜• ìœ„ì— ìˆìŒ.
 
 	float areaSize1 = Vector3::Length(Vector3::CrossProduct(toVertex0, toVertex1, false));
 	float areaSize2 = Vector3::Length(Vector3::CrossProduct(toVertex1, toVertex2, false));
@@ -41,9 +41,9 @@ std::pair<bool, float> NavMesh::TriangleNavMesh::IsOnTriangleMesh(const DirectX:
 	if (absAreaDiff < COMPARE_AREA_VALUE) 
 		return {true, absAreaDiff };
 	
-	//°á°ú °ªÀÌ ºñ±³ÇÒ ³ĞÀÌ °ªº¸´Ù ÀÛ´Ù¸é »ï°¢Çü À§¿¡ ÀÖ´Ù.
-	//doubleAreaSize´Â »ï°¢ÇüÀÇ Å©±âº¸´Ù ÀÛ±â Èûµê. ÀÛ´Ù¸é, »ï°¢Çü ³»ºÎÀ§¿¡ ÀÖ°í ¿ÀÂ÷ ¹üÀ§ ¶§¹®¿¡ ±×·² ¼öµµ?
-	//	=> »ï°¢Çü ¿ÜºÎÁ¡¿¡ ´ëÇØ¼­ ¿ÜÀûÇÏ¸é, »ï°¢Çü º¸´Ù ´õ Å« µµÇü¿¡ ´ëÇØ¼­ ³ĞÀÌ°¡ ³ª¿Í¹ö¸².
+	//ê²°ê³¼ ê°’ì´ ë¹„êµí•  ë„“ì´ ê°’ë³´ë‹¤ ì‘ë‹¤ë©´ ì‚¼ê°í˜• ìœ„ì— ìˆë‹¤.
+	//doubleAreaSizeëŠ” ì‚¼ê°í˜•ì˜ í¬ê¸°ë³´ë‹¤ ì‘ê¸° í˜ë“¦. ì‘ë‹¤ë©´, ì‚¼ê°í˜• ë‚´ë¶€ìœ„ì— ìˆê³  ì˜¤ì°¨ ë²”ìœ„ ë•Œë¬¸ì— ê·¸ëŸ´ ìˆ˜ë„?
+	//	=> ì‚¼ê°í˜• ì™¸ë¶€ì ì— ëŒ€í•´ì„œ ì™¸ì í•˜ë©´, ì‚¼ê°í˜• ë³´ë‹¤ ë” í° ë„í˜•ì— ëŒ€í•´ì„œ ë„“ì´ê°€ ë‚˜ì™€ë²„ë¦¼.
 	return { false, absAreaDiff };
 }
 

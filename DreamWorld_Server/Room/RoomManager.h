@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Server/PCH/stdafx.h"
+#include "../PCH/stdafx.h"
 #include "../SingletonBase.h"
 
 class MonsterMapData;

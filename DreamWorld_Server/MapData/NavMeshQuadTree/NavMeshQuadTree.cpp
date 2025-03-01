@@ -12,17 +12,17 @@ const NavMesh::Node::CHILD_IDX NavMesh::Node::NodeBase::GetQuadrant(const float&
 
 	using namespace NavMesh::Node;
 	if (x - m_center.first < FLT_EPSILON) {
-		if (y - m_center.second < FLT_EPSILON) {//3»çºĞ¸é
+		if (y - m_center.second < FLT_EPSILON) {//3ì‚¬ë¶„ë©´
 			return CHILD_IDX::LEFT_BOTTOM;
 		}
-		else {//2»çºĞ¸é
+		else {//2ì‚¬ë¶„ë©´
 			return CHILD_IDX::LEFT_TOP;
 		}
 	}
-	if (y <= m_center.second) {//4»çºĞ¸é
+	if (y <= m_center.second) {//4ì‚¬ë¶„ë©´
 		return CHILD_IDX::RIGHT_BOTTOM;
 	}
-	else {//1»çºĞ¸é
+	else {//1ì‚¬ë¶„ë©´
 		return CHILD_IDX::RIGHT_TOP;
 	}
 }
@@ -30,7 +30,7 @@ const NavMesh::Node::CHILD_IDX NavMesh::Node::NodeBase::GetQuadrant(const float&
 NavMesh::Node::InternalNode::InternalNode(const float& centerX, const float& centerY, const float& halfSize, const float& minSize)
 	:NodeBase(centerX, centerY, halfSize)
 {
-	if (m_halfSize / 2.0f > minSize) {//¸¸µé ÀÚ½Ä ³ëµå°¡ ÃÖ¼Ò ¼½¼Ç Å©±âº¸´Ù Å©´Ù¸é Internal»ı¼º, ¾Æ´Ï¶ó¸é Leaf»ı¼º.
+	if (m_halfSize / 2.0f > minSize) {//ë§Œë“¤ ìì‹ ë…¸ë“œê°€ ìµœì†Œ ì„¹ì…˜ í¬ê¸°ë³´ë‹¤ í¬ë‹¤ë©´ Internalìƒì„±, ì•„ë‹ˆë¼ë©´ Leafìƒì„±.
 		m_childNodes[0] = std::make_shared<InternalNode>(centerX + halfSize / 2.0f, centerY + halfSize / 2.0f, halfSize / 2.0f, minSize);
 		m_childNodes[1] = std::make_shared<InternalNode>(centerX + halfSize / 2.0f, centerY + halfSize / 2.0f, halfSize / 2.0f, minSize);
 		m_childNodes[2] = std::make_shared<InternalNode>(centerX + halfSize / 2.0f, centerY + halfSize / 2.0f, halfSize / 2.0f, minSize);
@@ -78,30 +78,30 @@ void NavMesh::Node::LeafNode::InsertTriangleMesh(const XMFLOAT3& vertex, std::sh
 std::shared_ptr<NavMesh::TriangleNavMesh> NavMesh::Node::LeafNode::GetOnPositionTriangleMesh(const XMFLOAT3& position) const
 {
 	std::vector<std::shared_ptr<NavMesh::TriangleNavMesh>> relationMesh;
-	relationMesh.reserve(m_navMeshSet.size() * 3);//°¢ ¸Ş½Ã´ç ¿¬°áµÈ »ï°¢ÇüÀº ÃÖ´ë 3°³ÀÌ´Ï, ÃÑ ¸Ş½Ã * 3°³¸¦ ¹Ì¸® ÇÒ´ç
+	relationMesh.reserve(m_navMeshSet.size() * 3);//ê° ë©”ì‹œë‹¹ ì—°ê²°ëœ ì‚¼ê°í˜•ì€ ìµœëŒ€ 3ê°œì´ë‹ˆ, ì´ ë©”ì‹œ * 3ê°œë¥¼ ë¯¸ë¦¬ í• ë‹¹
 	float minAreaDiff = FLT_MAX;
 	std::shared_ptr<NavMesh::TriangleNavMesh> minAreaMesh = nullptr;
 	for (auto& navMesh : m_navMeshSet) {
 		auto onNavMeshResult = navMesh->IsOnTriangleMesh(position);//isSuccess, areaDiffSize
-		if (onNavMeshResult.first) {//¼º°øÇßÀ¸¸é ¹Ù·Î ¹İÈ¯
+		if (onNavMeshResult.first) {//ì„±ê³µí–ˆìœ¼ë©´ ë°”ë¡œ ë°˜í™˜
 			return navMesh;
 		}
-		//°¡Àå ÀûÀº Â÷ÀÌ¸¦ ³»´Â ¸Ş½Ã ÀúÀå
+		//ê°€ì¥ ì ì€ ì°¨ì´ë¥¼ ë‚´ëŠ” ë©”ì‹œ ì €ì¥
 		if (minAreaDiff > onNavMeshResult.second) {
 			minAreaMesh = navMesh;
 			minAreaDiff = onNavMeshResult.second;
 		}
 
-		//½ÇÆĞÇß´Ù¸é, ¿¬°áµÈ ¸Ş½Ã¸¦ ÀúÀå
+		//ì‹¤íŒ¨í–ˆë‹¤ë©´, ì—°ê²°ëœ ë©”ì‹œë¥¼ ì €ì¥
 		auto currentRelationMesh = navMesh->GetRelationTriangleMeshes();
 		std::copy_if(currentRelationMesh.begin(), currentRelationMesh.end(), std::back_inserter(relationMesh), [&](const std::shared_ptr<NavMesh::TriangleNavMesh>& mesh) {
-			return !m_navMeshSet.count(mesh);//ÇöÀç Äõµå Æ®¸® ¼½¼ÇÀÌ °¡Áø ¸Ş½Ã¸¦ Á¦¿Ü
-			});//¿¬°áµÈ ¸Ş½ÃµéÀ» ÀúÀå
+			return !m_navMeshSet.count(mesh);//í˜„ì¬ ì¿¼ë“œ íŠ¸ë¦¬ ì„¹ì…˜ì´ ê°€ì§„ ë©”ì‹œë¥¼ ì œì™¸
+			});//ì—°ê²°ëœ ë©”ì‹œë“¤ì„ ì €ì¥
 	}
-	//¿¬°áµÈ ¸Ş½Ã¸¦ Å½»ö.
+	//ì—°ê²°ëœ ë©”ì‹œë¥¼ íƒìƒ‰.
 	for (auto& navMesh : relationMesh) {
 		auto onNavMeshResult = navMesh->IsOnTriangleMesh(position);//isSuccess, areaDiffSize
-		if (onNavMeshResult.first) {//¼º°øÇßÀ¸¸é ¹Ù·Î ¹İÈ¯
+		if (onNavMeshResult.first) {//ì„±ê³µí–ˆìœ¼ë©´ ë°”ë¡œ ë°˜í™˜
 			return navMesh;
 		}
 		if (minAreaDiff > onNavMeshResult.second) {

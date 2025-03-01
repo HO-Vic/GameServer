@@ -71,7 +71,7 @@ void Room::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)
 		Update();
 
 		//InsertTimerEvent(TIMER_EVENT_TYPE::EV_SEND_NPC_MOVE, 1ms);
-		//Å¸ÀÌ¸Ó¿¡ ¿ì¼± ³Ö°í ÀÌÈÄ Update()¿¡¼­ ³ª¿Â SendÀÌº¥Æ® Ã³¸®
+		//íƒ€ì´ë¨¸ì— ìš°ì„  ë„£ê³  ì´í›„ Update()ì—ì„œ ë‚˜ì˜¨ Sendì´ë²¤íŠ¸ ì²˜ë¦¬
 		InsertTimerEvent(TIMER_EVENT_TYPE::EV_ROOM_UPDATE, 30ms);
 		//auto updateEndTime = std::chrono::high_resolution_clock::now();
 
@@ -235,7 +235,7 @@ std::vector<ROLE> Room::GetLiveRoles()
 
 void Room::InsertProjectileObject(std::shared_ptr<ProjectileObject> projectileObject)
 {
-	//prevUpdateEvent´Â Update()³»ºÎ¿¡¼­ ½Ì±ÛÇÏ°Ô µ¹¾Æ°¨.
+	//prevUpdateEventëŠ” Update()ë‚´ë¶€ì—ì„œ ì‹±ê¸€í•˜ê²Œ ëŒì•„ê°.
 	m_projectileObjects.push_back(projectileObject);
 }
 
@@ -373,7 +373,7 @@ void Room::Update()
 			++aliveCharacterCnt;
 	}
 
-	if (aliveCharacterCnt == 0) {//¸ğµç ÇÃ·¹ÀÌ¾î°¡ Á×¾îµµ °ÔÀÓ Á¾·á
+	if (aliveCharacterCnt == 0) {//ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì£½ì–´ë„ ê²Œì„ ì¢…ë£Œ
 		SetRoomEndState();
 		return;
 	}
@@ -387,10 +387,10 @@ void Room::Update()
 			m_bossMonster->Update();
 	}
 
-	//Åõ»çÃ¼ ¾÷µ¥ÀÌÆ®
+	//íˆ¬ì‚¬ì²´ ì—…ë°ì´íŠ¸
 	UpdateProjectileObject();
 
-	if (!m_bossMonster->IsAlive()) {//°ÔÀÓ Á¾·á Á¶°Ç
+	if (!m_bossMonster->IsAlive()) {//ê²Œì„ ì¢…ë£Œ ì¡°ê±´
 		SetRoomEndState();
 		return;
 	}
@@ -398,7 +398,7 @@ void Room::Update()
 
 void Room::GameStateSend()
 {
-	//ÇöÀç º¸³¾ °ÔÀÓ»óÅÂ¿¡ Àû¿ëµÈ ·ë »óÅÂ¿Í ÇöÀç ·ë »óÅÂ°¡ ´Ù¸£´Ù¸é º¸³»Áö ¾ÊÀ½.
+	//í˜„ì¬ ë³´ë‚¼ ê²Œì„ìƒíƒœì— ì ìš©ëœ ë£¸ ìƒíƒœì™€ í˜„ì¬ ë£¸ ìƒíƒœê°€ ë‹¤ë¥´ë‹¤ë©´ ë³´ë‚´ì§€ ì•ŠìŒ.
 
 	//if (m_roomState != m_applyRoomStateForGameState) return;
 	if (ROOM_STATE::ROOM_COMMON == m_roomState) {
@@ -604,7 +604,7 @@ void Room::PlayerRemoveShield()
 
 void Room::RainArrowAttack()
 {
-	//UpdateAfterEvent´Â ¾îÂ÷ÇÇ concurrent¶ó ¹®Á¦ ¾øÀ½
+	//UpdateAfterEventëŠ” ì–´ì°¨í”¼ concurrentë¼ ë¬¸ì œ ì—†ìŒ
 	std::static_pointer_cast<ArcherObject>(m_characters[ROLE::ARCHER])->AttackRainArrow();
 }
 

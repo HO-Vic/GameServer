@@ -14,7 +14,7 @@ namespace TIMER
 		virtual void Execute(HANDLE iocpHandle) override;
 	protected:
 		//int m_roomId;
-		//RoomÀÌ ¾ø¾îÁ³´Ù¸é, weak_ptrÀÌ ¾ø´Ù¸é ´õ ÀÌ»ó È£Ãâx
+		//Roomì´ ì—†ì–´ì¡Œë‹¤ë©´, weak_ptrì´ ì—†ë‹¤ë©´ ë” ì´ìƒ í˜¸ì¶œx
 		std::weak_ptr<Room> m_roomWeakRef;
 	};
 }

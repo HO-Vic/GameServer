@@ -9,50 +9,50 @@ MatchQueue::MatchQueue()
 std::optional<std::shared_ptr<UserSession>> MatchQueue::GetMatchUser()
 {
 	/*
-	match cancelÀº ·ÎÁ÷ ¹Ù²ã¾ß ÇÒµí
-		cancelÅ¥ ¼ø¼­ ²¿ÀÌ¸é ¸Å¿ì °ï¶õÇØÁü -> ÇöÀç »ÌÀº ´ë»óÀÇ role°ú ÇöÀç ¿øÇÏ´Â roleÀ» ºñ±³
-		Ãë¼Ò ÆÐÅ¶ ³¯¾Æ¿À¸é non_selectµÇ°ÔÇÏ°í, ´Ù¸¥°Å ¸ÅÄªÇÏ¸é ±× roleÀÌ ¼¼ÆÃµÇ´Ï±î ´Ù¸£¸é ´ÙÀ½ »ç¶÷ º¸±â·Î.
+	match cancelì€ ë¡œì§ ë°”ê¿”ì•¼ í• ë“¯
+		cancelí ìˆœì„œ ê¼¬ì´ë©´ ë§¤ìš° ê³¤ëž€í•´ì§ -> í˜„ìž¬ ë½‘ì€ ëŒ€ìƒì˜ roleê³¼ í˜„ìž¬ ì›í•˜ëŠ” roleì„ ë¹„êµ
+		ì·¨ì†Œ íŒ¨í‚· ë‚ ì•„ì˜¤ë©´ non_selectë˜ê²Œí•˜ê³ , ë‹¤ë¥¸ê±° ë§¤ì¹­í•˜ë©´ ê·¸ roleì´ ì„¸íŒ…ë˜ë‹ˆê¹Œ ë‹¤ë¥´ë©´ ë‹¤ìŒ ì‚¬ëžŒ ë³´ê¸°ë¡œ.
 	*/
 
 	while (true)
 	{
 		std::weak_ptr<UserSession> matchUserWeakPtr;
 		bool isSuccess = m_match.try_pop(matchUserWeakPtr);
-		//pop½ÇÆÐ
+		//popì‹¤íŒ¨
 		if (!isSuccess)
 			return std::nullopt;
 
 		auto matchUserRef = matchUserWeakPtr.lock();
-		//À¯Àú°¡ ¸ÅÄªÇÏ°í¼­ ³ª°¨, Å¥¿¡¼­ ´ÙÀ½ À¯Àú Å½»ö
+		//ìœ ì €ê°€ ë§¤ì¹­í•˜ê³ ì„œ ë‚˜ê°, íì—ì„œ ë‹¤ìŒ ìœ ì € íƒìƒ‰
 		if (nullptr == matchUserRef)
 			continue;
 
 		auto lastCancelUserRef = m_lastCancelUserWeakPtr.lock();
 		if (nullptr != lastCancelUserRef) {
-			//Ãë¼Ò À¯Àú¿Í ¸ÅÄª À¯Àú°¡ °°À» ¶§´Â, ´ÙÀ½ À¯Àú Å½»ö
+			//ì·¨ì†Œ ìœ ì €ì™€ ë§¤ì¹­ ìœ ì €ê°€ ê°™ì„ ë•ŒëŠ”, ë‹¤ìŒ ìœ ì € íƒìƒ‰
 			if (lastCancelUserRef == matchUserRef) {
-				lastCancelUserRef.reset();//¸ÅÄª Ãë¼Ò ÇßÀ¸´Ï ¸®¼Â
+				lastCancelUserRef.reset();//ë§¤ì¹­ ì·¨ì†Œ í–ˆìœ¼ë‹ˆ ë¦¬ì…‹
 				continue;
 			}
-			//Ãë¼ÒÇÑ À¯Àú¿Í ÇöÀç ¸ÞÄªÇÒ À¯Àú°¡ ´Ù¸¦ ¶§
+			//ì·¨ì†Œí•œ ìœ ì €ì™€ í˜„ìž¬ ë©”ì¹­í•  ìœ ì €ê°€ ë‹¤ë¥¼ ë•Œ
 			else return matchUserRef;
 		}
 
-		//ÀÌÀü Ãë¼Ò À¯Àú°¡ ¾øÀ»¶§, Ãë¼Ò À¯Àú Å¥ È®ÀÎ
+		//ì´ì „ ì·¨ì†Œ ìœ ì €ê°€ ì—†ì„ë•Œ, ì·¨ì†Œ ìœ ì € í í™•ì¸
 		auto cancelUserInfo = GetCancelUser();
 
-		//Ãë¼Ò À¯Àú°¡ ¾øÀ½ -> ¼º°ø
+		//ì·¨ì†Œ ìœ ì €ê°€ ì—†ìŒ -> ì„±ê³µ
 		if (!cancelUserInfo.has_value())
 			return matchUserRef;
-		else {//Ãë¼Ò À¯Àú°¡ Á¸Àç ÇÔ.
+		else {//ì·¨ì†Œ ìœ ì €ê°€ ì¡´ìž¬ í•¨.
 			auto cancelUserRef = cancelUserInfo.value();
-			//ÇöÀç Ãë¼ÒÇÒ À¯Àú¿Í ¸ÅÄª À¯Àú°¡ °°À½, ´ÙÀ½ À¯Àú Å½»ö
+			//í˜„ìž¬ ì·¨ì†Œí•  ìœ ì €ì™€ ë§¤ì¹­ ìœ ì €ê°€ ê°™ìŒ, ë‹¤ìŒ ìœ ì € íƒìƒ‰
 			if (cancelUserRef == matchUserRef) {
 				continue;
 			}
-			//Ãë¼ÒÇÑ À¯Àú¿Í ÇöÀç ¸ÞÄªÇÒ À¯Àú°¡ ´Ù¸¦ ¶§
+			//ì·¨ì†Œí•œ ìœ ì €ì™€ í˜„ìž¬ ë©”ì¹­í•  ìœ ì €ê°€ ë‹¤ë¥¼ ë•Œ
 			else {
-				//ÇöÀç ¸ÅÄª À¯Àú¿Í Ãë¼Ò À¯Àú°¡ ´Ù¸§, Ãë¼ÒÇÒ À¯Àú ÀúÀå, ¸ÅÄª ¼º°ø
+				//í˜„ìž¬ ë§¤ì¹­ ìœ ì €ì™€ ì·¨ì†Œ ìœ ì €ê°€ ë‹¤ë¦„, ì·¨ì†Œí•  ìœ ì € ì €ìž¥, ë§¤ì¹­ ì„±ê³µ
 				lastCancelUserRef = cancelUserRef;
 				return matchUserRef;
 			}

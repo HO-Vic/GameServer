@@ -6,7 +6,7 @@
 
 bool TIMER::TimerQueueComp::operator()(const std::shared_ptr<TIMER::EventBase>& l, const std::shared_ptr<TIMER::EventBase>& r)
 {
-	//¾îÂ÷ÇÇ Å¸ÀÌ¸Ó ÀÌº¥Æ® ³»ºÎ¿¡¼­ ¿ÀÆÛ·¹ÀÌÆÃÇßÀ½
+	//ì–´ì°¨í”¼ íƒ€ì´ë¨¸ ì´ë²¤íŠ¸ ë‚´ë¶€ì—ì„œ ì˜¤í¼ë ˆì´íŒ…í–ˆìŒ
 	return *l < *r;
 }
 
@@ -21,7 +21,7 @@ TIMER::Timer::~Timer()
 	spdlog::info("Timer::~Timer()");
 }
 
-//ÀÌÀü Å¸ÀÌ¸Ó ÄÚµå
+//ì´ì „ íƒ€ì´ë¨¸ ì½”ë“œ
 void TIMER::Timer::TimerThreadFunc()
 {
 	while (true) {
@@ -47,47 +47,47 @@ void TIMER::Timer::TimerThreadFunc()
 //void TIMER::Timer::TimerThreadFunc()
 //{
 //	/*
-//		¾ó¸¶ ³²Áö ¾ÊÀº Å¸ÀÌ¸Ó ÀÌº¥Æ®¿¡ ´ëÇØ¼­ ÀÓ½Ã Å¸ÀÌ¸Ó Å¥¿¡ ÀúÀå
-//		concurrency_priority_queue¿¡ ´Ù½Ã »ğÀÔÇÏ´Â°Åº¸´Ù´Â ÀÓ½Ã·Î ÀúÀåÇÏ°í
-//		°ğ ¼öÇàµÇ±â ¶§¹®¿¡, ´ÙÀ½ ¼öÇà ¶§ ¹Ù·Î ½ÇÇà¿¡ °¡±î¿ò
-//		topÀ¸·Î ¿ì¼±¼øÀ§ ³ôÀº °´Ã¼ º¼ ¼ö ÀÖÀ½.
+//		ì–¼ë§ˆ ë‚¨ì§€ ì•Šì€ íƒ€ì´ë¨¸ ì´ë²¤íŠ¸ì— ëŒ€í•´ì„œ ì„ì‹œ íƒ€ì´ë¨¸ íì— ì €ì¥
+//		concurrency_priority_queueì— ë‹¤ì‹œ ì‚½ì…í•˜ëŠ”ê±°ë³´ë‹¤ëŠ” ì„ì‹œë¡œ ì €ì¥í•˜ê³ 
+//		ê³§ ìˆ˜í–‰ë˜ê¸° ë•Œë¬¸ì—, ë‹¤ìŒ ìˆ˜í–‰ ë•Œ ë°”ë¡œ ì‹¤í–‰ì— ê°€ê¹Œì›€
+//		topìœ¼ë¡œ ìš°ì„ ìˆœìœ„ ë†’ì€ ê°ì²´ ë³¼ ìˆ˜ ìˆìŒ.
 //	*/
 //	std::priority_queue<std::shared_ptr<TIMER::EventBase>, std::vector<std::shared_ptr<TIMER::EventBase>>, TimerQueueComp> immediateTimer;
-//	constexpr TIMER::MS PUSH_IMMEDIATE_TIMER_QUEUE_TIME = TIMER::MS(4);//¾î´ÀÁ¤µµ ½Ã°£ÀÌ Àû´çÇÒÁö´Â »ı°¢ÇØ¾ßÇÒµí...
+//	constexpr TIMER::MS PUSH_IMMEDIATE_TIMER_QUEUE_TIME = TIMER::MS(4);//ì–´ëŠì •ë„ ì‹œê°„ì´ ì ë‹¹í• ì§€ëŠ” ìƒê°í•´ì•¼í• ë“¯...
 //	while (true) {
 //		while (!immediateTimer.empty()) {
-//			//ÀÓ½ÃÅ¥¿¡¼­ »©Áö ¾Ê°í ÃÖ¿ì¼± Å¸ÀÌ¸Ó ÀÌº¥Æ®¸¦ º¼ ¼ö ÀÖÀ½
+//			//ì„ì‹œíì—ì„œ ë¹¼ì§€ ì•Šê³  ìµœìš°ì„  íƒ€ì´ë¨¸ ì´ë²¤íŠ¸ë¥¼ ë³¼ ìˆ˜ ìˆìŒ
 //			auto& immediateTimerEvent = immediateTimer.top();
-//			if (!immediateTimerEvent->IsReady())//Áï½Ã ¼öÇà ºÒ°¡´ÉÀÌ¶ó¸é ÀÓ½Ã Å¸ÀÌ¸Ó Å¥ °´Ã¼´Â Á¾·á
+//			if (!immediateTimerEvent->IsReady())//ì¦‰ì‹œ ìˆ˜í–‰ ë¶ˆê°€ëŠ¥ì´ë¼ë©´ ì„ì‹œ íƒ€ì´ë¨¸ í ê°ì²´ëŠ” ì¢…ë£Œ
 //				break;
-//			//ÀÓ½Ã Å¸ÀÌ¸Ó °´Ã¼´Ï ¼öÇà °¡´É
+//			//ì„ì‹œ íƒ€ì´ë¨¸ ê°ì²´ë‹ˆ ìˆ˜í–‰ ê°€ëŠ¥
 //			immediateTimerEvent->Execute(iocpRef->GetIocpHandle());
 //			immediateTimer.pop();
 //		}
 //
 //		if (m_timerQueue.empty()) {
-//			//Å¸ÀÌ¸Ó ÀÌº¥Æ® ¼öÇàÇÒ°Ô ¾ø¾î ´Ù¸¥ ¾²·¹µå¿¡ ¾çº¸
+//			//íƒ€ì´ë¨¸ ì´ë²¤íŠ¸ ìˆ˜í–‰í• ê²Œ ì—†ì–´ ë‹¤ë¥¸ ì“°ë ˆë“œì— ì–‘ë³´
 //			std::this_thread::yield();
 //			continue;
 //		}
 //		while (true) {
 //			std::shared_ptr<TIMER::EventBase> currentEvent = nullptr;
 //			bool isSuccess = m_timerQueue.try_pop(currentEvent);
-//			if (!isSuccess) {//ÀÌº¥Æ®¸¦ ¸ø °¡Á®¿Ô´Ù¸é ´Ù¸¥ ¾²·¹µå¿¡ ¾çº¸
+//			if (!isSuccess) {//ì´ë²¤íŠ¸ë¥¼ ëª» ê°€ì ¸ì™”ë‹¤ë©´ ë‹¤ë¥¸ ì“°ë ˆë“œì— ì–‘ë³´
 //				//Sleep(1);
 //				std::this_thread::yield();
 //				break;
 //			}
 //
-//			if (currentEvent->IsReady()) {//¼öÇàÇÒ ½Ã°£ÀÌ µÆ´Ù¸é ¼öÇà
+//			if (currentEvent->IsReady()) {//ìˆ˜í–‰í•  ì‹œê°„ì´ ëë‹¤ë©´ ìˆ˜í–‰
 //				currentEvent->Execute(iocpRef->GetIocpHandle());
 //				continue;
 //			}
-//			//¾Æ´Ï¶ó¸é ´Ù½Ã »ğÀÔ
+//			//ì•„ë‹ˆë¼ë©´ ë‹¤ì‹œ ì‚½ì…
 //			TIMER::MS restTime = currentEvent->GetRestTimeForReady();
-//			if (restTime <= PUSH_IMMEDIATE_TIMER_QUEUE_TIME)//±âÁØ ½Ã°£º¸´Ù ÀûÀº ½Ã°£ÀÌ ³²¾Ò´Ù¸é, ÀÓ½Ã Å¥¿¡ »ğÀÔ
+//			if (restTime <= PUSH_IMMEDIATE_TIMER_QUEUE_TIME)//ê¸°ì¤€ ì‹œê°„ë³´ë‹¤ ì ì€ ì‹œê°„ì´ ë‚¨ì•˜ë‹¤ë©´, ì„ì‹œ íì— ì‚½ì…
 //				immediateTimer.push(currentEvent);
-//			else m_timerQueue.push(currentEvent);//¾Æ´Ï¶ó¸é concurrent¿¡ »ğÀÔ
+//			else m_timerQueue.push(currentEvent);//ì•„ë‹ˆë¼ë©´ concurrentì— ì‚½ì…
 //			Sleep(1);
 //			break;
 //		}

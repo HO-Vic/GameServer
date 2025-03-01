@@ -7,7 +7,7 @@ class SingletonBase
 protected:
 	SingletonBase() = default;
 	virtual ~SingletonBase() {}
-	//½Ì±ÛÅæÀÌ±â ¶§¹®¿¡, º¹»ç°¡ ÀÏ¾î³ª¸é ¾È µÊ.
+	//ì‹±ê¸€í†¤ì´ê¸° ë•Œë¬¸ì—, ë³µì‚¬ê°€ ì¼ì–´ë‚˜ë©´ ì•ˆ ë¨.
 	SingletonBase(const SingletonBase&) = delete;
 	SingletonBase& operator=(const SingletonBase&) = delete;
 public:

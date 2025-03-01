@@ -6,7 +6,7 @@
 class MageObject;
 namespace MageSkill
 {
-	//¾î¶² À§Ä¡¿¡ ¹ø°³, Èú ½ºÅ³ => 2°³
+	//ì–´ë–¤ ìœ„ì¹˜ì— ë²ˆê°œ, í ìŠ¤í‚¬ => 2ê°œ
 	class MageRef
 	{
 	public:
@@ -49,7 +49,7 @@ namespace MageSkill
 		virtual void Execute() override;
 	};
 
-	class CommonAttack : public DirectionSkill//¿¬¼ÓÇü °ø°İ¾øÀÌ ±×´ë·Î °ø°İÇÏ¸é µÊ.
+	class CommonAttack : public DirectionSkill//ì—°ì†í˜• ê³µê²©ì—†ì´ ê·¸ëŒ€ë¡œ ê³µê²©í•˜ë©´ ë¨.
 	{
 	public:
 		CommonAttack(std::shared_ptr<MageObject> mageRef, const XMFLOAT3& direction) : DirectionSkill(mageRef, direction) {}

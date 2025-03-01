@@ -71,13 +71,13 @@ namespace DB
 		void InsertDBEvent(std::shared_ptr<DB::EventBase>& dbEvent);
 
 	private:
-		//ODBCÇÚµé - SQLHANDLE
-		//È¯°æ ÇÚµé
+		//ODBCí•¸ë“¤ - SQLHANDLE
+		//í™˜ê²½ í•¸ë“¤
 		SQLHENV m_henv;
-		//¿¬°á ÇÚµé DB ConnectionÇÚµé
+		//ì—°ê²° í•¸ë“¤ DB Connectioní•¸ë“¤
 		SQLHDBC m_hdbc;
 
-		//¸í·É ÇÚµé statement ÇÚµé
+		//ëª…ë ¹ í•¸ë“¤ statement í•¸ë“¤
 		//SQLHSTMT m_hstmt;
 
 		tbb::concurrent_queue<std::shared_ptr<DB::EventBase>> m_DBEventQueue;

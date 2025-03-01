@@ -2,14 +2,14 @@
 #include "../GameObject.h"
 
 /*
-¾ÆÃÄ ¸ŞÀÌÁö ÆòÅ¸ y + 8
-¾ÆÃÄ Q
+ì•„ì³ ë©”ì´ì§€ í‰íƒ€ y + 8
+ì•„ì³ Q
 			objPosition.y = 6.0f + (i % 2) * 4.0f;
 			objPosition = Vector3::Add(objPosition, objectRight, (1 - i) * 4.0f);
 			objPosition = Vector3::Add(objPosition, derection, 1.0f);
 
-Åõ»çÃ¼ 4
-¸ŞÅ×¿À 10
+íˆ¬ì‚¬ì²´ 4
+ë©”í…Œì˜¤ 10
 */
 
 class ProjectileObject : public MoveObject
@@ -37,7 +37,7 @@ class PlayerProjectileObject :public ProjectileObject
 public:
 	PlayerProjectileObject(const float& moveSpeed, std::shared_ptr<Room>& roomRef, const XMFLOAT3& startPosition, const XMFLOAT3& directionVector, const float& attackDamage, const SEC& lifeTime);
 protected:
-	virtual bool EnermyObjectsAttackCheck() override;//¸ó½ºÅÍµé, º¸½º¿Í Ãæµ¹ Ã¼Å©
+	virtual bool EnermyObjectsAttackCheck() override;//ëª¬ìŠ¤í„°ë“¤, ë³´ìŠ¤ì™€ ì¶©ëŒ ì²´í¬
 };
 
 class MonsterProjectileObject : public ProjectileObject
@@ -45,7 +45,7 @@ class MonsterProjectileObject : public ProjectileObject
 public:
 	MonsterProjectileObject(const float& moveSpeed, const float& boundingSize, std::shared_ptr<Room>& roomRef, const XMFLOAT3& startPosition, const XMFLOAT3& directionVector, const float& attackDamage, const SEC& lifeTime);
 protected:
-	virtual bool EnermyObjectsAttackCheck() override;//Player¿Í Ãæµ¹ Ã¼Å©
+	virtual bool EnermyObjectsAttackCheck() override;//Playerì™€ ì¶©ëŒ ì²´í¬
 };
 
 class CommonArrowObject : public PlayerProjectileObject
@@ -60,7 +60,7 @@ public:
 	static constexpr float POWER_ARROW_LEVEL3_DAMAGE = 110.0f;
 private:
 	static constexpr SEC ARROW_LIFE_TIME = SEC(10);
-	//»ı¼ºÀÚ¿¡ int power
+	//ìƒì„±ìì— int power
 public:
 	CommonArrowObject(const float& moveSpeed, std::shared_ptr<Room>& roomRef, const XMFLOAT3& startPosition, const XMFLOAT3& directionVector, const float& attackDamage);
 };
@@ -69,7 +69,7 @@ class TripleArrowObject : public PlayerProjectileObject
 {
 private:
 	static constexpr float TRIPLE_ARROW_SPEED = 250.0f;
-	static constexpr float TRIPLE_ARROW_DAMAGE = 95.0f;//È­»ì ÇÏ³ª´ç µ¥¹ÌÁö -> 3°³ ´Ù ¸ÂÀ¸¸é 3 * 95µ¥¹ÌÁö.
+	static constexpr float TRIPLE_ARROW_DAMAGE = 95.0f;//í™”ì‚´ í•˜ë‚˜ë‹¹ ë°ë¯¸ì§€ -> 3ê°œ ë‹¤ ë§ìœ¼ë©´ 3 * 95ë°ë¯¸ì§€.
 	static constexpr SEC TRIPE_ARROW_LIFE_TIME = SEC(10);
 public:
 	TripleArrowObject(std::shared_ptr<Room> roomRef, const XMFLOAT3& startPosition, const XMFLOAT3& directionVector);

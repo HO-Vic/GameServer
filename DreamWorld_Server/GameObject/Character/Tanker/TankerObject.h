@@ -6,7 +6,7 @@
 class TankerObject;
 namespace TankerSkill
 {
-	//ÅÊÄ¿ ½ºÅ³Àº ½¯µå ½ºÅ³, ÇÜ¸Ó ¾ÕÀ¸·Î Äç ½ºÅ³ ÃÑ 2°³ÀÎµ¥, ´Ù¸¥ °áÀÇ ½ºÅ³
+	//íƒ±ì»¤ ìŠ¤í‚¬ì€ ì‰´ë“œ ìŠ¤í‚¬, í–„ë¨¸ ì•ìœ¼ë¡œ ì¾… ìŠ¤í‚¬ ì´ 2ê°œì¸ë°, ë‹¤ë¥¸ ê²°ì˜ ìŠ¤í‚¬
 	class TankerRef
 	{
 	public:
@@ -43,7 +43,7 @@ namespace TankerSkill
 		virtual void Execute() override;
 	};
 
-	class CommonAttack : public DirectionSkill//¿¬¼ÓÇü °ø°İ¾øÀÌ ±×´ë·Î °ø°İÇÏ¸é µÊ.
+	class CommonAttack : public DirectionSkill//ì—°ì†í˜• ê³µê²©ì—†ì´ ê·¸ëŒ€ë¡œ ê³µê²©í•˜ë©´ ë¨.
 	{
 	public:
 		CommonAttack(std::shared_ptr<TankerObject> tankerRef, const XMFLOAT3& direction) : DirectionSkill(tankerRef, direction) {}

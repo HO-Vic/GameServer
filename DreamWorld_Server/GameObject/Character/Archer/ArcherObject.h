@@ -44,7 +44,7 @@ namespace ArcherSKill
 		virtual void Execute() override;
 	};
 
-	class CommonAttack : public DirectionSkill//¾ÆÃÄ´Â ÁÜÀÎÀ¸·Î °­È­µÈ °ø°İÀ» ÇÒ ¼ö ÀÖÀ½.
+	class CommonAttack : public DirectionSkill//ì•„ì³ëŠ” ì¤Œì¸ìœ¼ë¡œ ê°•í™”ëœ ê³µê²©ì„ í•  ìˆ˜ ìˆìŒ.
 	{
 	public:
 		CommonAttack(std::shared_ptr<ArcherObject> archerRef, const XMFLOAT3& direction, const int& power) : DirectionSkill(archerRef, direction), power(power) {}

@@ -15,7 +15,7 @@ struct PacketHeader;
 class IocpEventManager : public SingletonBase<IocpEventManager>
 {
 	friend SingletonBase;
-	//send, DB, Event overlapped°ü·Ã ÀÚ·á±¸Á¶ °ü¸®
+	//send, DB, Event overlappedê´€ë ¨ ìë£Œêµ¬ì¡° ê´€ë¦¬
 private:
 	IocpEventManager();
 	~IocpEventManager();

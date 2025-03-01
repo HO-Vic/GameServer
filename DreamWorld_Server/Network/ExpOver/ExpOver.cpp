@@ -51,9 +51,9 @@ void ExpOver::Execute(const BOOL& isSuccess, const DWORD& ioByte, const ULONG_PT
 //
 //void ExpOverSocket::Execute(ULONG_PTR& completionKey)
 //{
-//	//UserSession¿¡ ¼ÒÄÏ µî·Ï
+//	//UserSessionì— ì†Œì¼“ ë“±ë¡
 //	UserManager::GetInstance().AcceptPlayer(IOCP::m_hIocp, std::move(m_socket));
-//	//»õ ¼ÒÄÏ »ı¼º
+//	//ìƒˆ ì†Œì¼“ ìƒì„±
 //	m_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 //	ResetOverlapped();
 //	int addr_size = sizeof(SOCKADDR_IN);

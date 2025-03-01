@@ -6,7 +6,7 @@
 #include "../Room/Room.h"
 
 #define ALONE_TEST
-//Å×½ºÆ®ÇÒ ¶§, ÇÑ °ÔÀÓ´ç µé¾î¿Ã ÀÎ¿ø ¼ö
+//í…ŒìŠ¤íŠ¸í•  ë•Œ, í•œ ê²Œì„ë‹¹ ë“¤ì–´ì˜¬ ì¸ì› ìˆ˜
 //#define TEST_MODE_PEOPLE 2
 
 void Matching::InserMatch(std::shared_ptr<UserSession>& userRef, const ROLE& role)
@@ -185,7 +185,7 @@ std::shared_ptr<UserSession> Matching::GetCurrentMatchUserSession(MatchQueue& ma
 	returnUserSession = lastUserSession;
 	while (true) {
 		if (nullptr != returnUserSession) {
-			//UserSessionÀÌ ÀÖÁö¸¸ disconnect µÆ´Ù¸é, 
+			//UserSessionì´ ìˆì§€ë§Œ disconnect ëë‹¤ë©´, 
 			if (UserSession::CONNECT_STATE::DISCONNECTED == returnUserSession->GetConnectState()) {
 				returnUserSession = nullptr;
 				continue;

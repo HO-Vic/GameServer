@@ -32,12 +32,12 @@ namespace NavMesh
 			return ownerMesh == m_parentMesh;
 		}
 	private:
-		////ÇöÀç ¿¡ÀÌ½ºÅ¸ÀÇ ÁÖÀÎ ¸Ş½¬
+		////í˜„ì¬ ì—ì´ìŠ¤íƒ€ì˜ ì£¼ì¸ ë©”ì‰¬
 		//std::shared_ptr<TriangleNavMesh> m_ownerMesh;
-		//ÇöÀç ³ëµå·Î ¿Ã ¼ö ÀÖ°Ô ÀÌ¾îÁø ¸Ş½¬
+		//í˜„ì¬ ë…¸ë“œë¡œ ì˜¬ ìˆ˜ ìˆê²Œ ì´ì–´ì§„ ë©”ì‰¬
 		std::shared_ptr<TriangleNavMesh> m_parentMesh;
 
-		float m_parentDistance;//ºÎ¸ğ ¸Ş½Ã·ÎºÎÅÍ °Å¸® °ª
-		float m_destinationDistance;//¸ñÀûÁö·Î °¡´Â °Å¸® °ª
+		float m_parentDistance;//ë¶€ëª¨ ë©”ì‹œë¡œë¶€í„° ê±°ë¦¬ ê°’
+		float m_destinationDistance;//ëª©ì ì§€ë¡œ ê°€ëŠ” ê±°ë¦¬ ê°’
 	};
 }

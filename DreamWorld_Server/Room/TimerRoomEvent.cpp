@@ -17,10 +17,10 @@ TIMER::RoomEvent::RoomEvent(const TIMER_EVENT_TYPE& eventId, const std::chrono::
 void TIMER::RoomEvent::Execute(HANDLE iocpHandle)
 {
 	auto roomRef = m_roomWeakRef.lock();
-	//roomÀÌ À¯È¿ÇÏÁö ¾Ê´Ù¸é ¼öÇàÇÏÁö ¾ÊÀ½
+	//roomì´ ìœ íš¨í•˜ì§€ ì•Šë‹¤ë©´ ìˆ˜í–‰í•˜ì§€ ì•ŠìŒ
 	if (nullptr == roomRef) return;
 	IOCP_OP_CODE currentOpCode = IOCP_OP_CODE::OP_NONE;
-	//ÀÌº¥Æ®¿¡ µû¸¥ OP_CODE ¼³Á¤
+	//ì´ë²¤íŠ¸ì— ë”°ë¥¸ OP_CODE ì„¤ì •
 	switch (m_eventId)
 	{
 	case TIMER_EVENT_TYPE::EV_SEND_NPC_MOVE:

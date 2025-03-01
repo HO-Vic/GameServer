@@ -12,11 +12,11 @@ int PacketManager::ProccessPacket(const int& useId, const int& roomId, const uns
 	////case CLIENT_PACKET::MELEE_ATTACK:
 	////{
 	////	//CLIENT_PACKET::MeleeAttackPacket* recvPacket = reinterpret_cast<CLIENT_PACKET::MeleeAttackPacket*>(p);
-	////	//≥ª∫Œ∑Œ ª©æﬂµ 
+	////	//ÎÇ¥Î∂ÄÎ°ú ÎπºÏïºÎê®
 	////	//Room& roomRef = g_RoomManager.GetRunningRoomRef(g_iocpNetwork.m_session[userId].GetRoomId());
 	////	//bool attacking = roomRef.GetLeftAttackPlayCharacter(g_iocpNetwork.m_session[userId].GetRole());
 	////	//DirectX::XMFLOAT3 pos = roomRef.GetPositionPlayCharacter(g_iocpNetwork.m_session[userId].GetRole());
-	////	//if (roomRef.MeleeAttack(recvPacket->dir, pos))//¿Ã∞≈¥¬ 
+	////	//if (roomRef.MeleeAttack(recvPacket->dir, pos))//Ïù¥Í±∞Îäî 
 	////	//	roomRef.m_bossDamagedQueue.push(g_iocpNetwork.m_session[userId].GetAttackDamagePlayCharacter());
 	////}
 	////break;

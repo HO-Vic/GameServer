@@ -15,10 +15,10 @@ IOCP::SendEvent::SendEvent()
 void IOCP::SendEvent::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)
 {
 	const auto& currentOpCode = over->GetOpCode();
-	//IocpEvent°´Ã¼ ¹İÈ¯
-	//IOCP::EventBase°¡ enable_shared_from_this<>»ó¼ÓÀÌ±â¶§¹®¿¡, shared_from_this()´Â shared_ptr<IOCP::EventBase>°¡ µÊ.
+	//IocpEventê°ì²´ ë°˜í™˜
+	//IOCP::EventBaseê°€ enable_shared_from_this<>ìƒì†ì´ê¸°ë•Œë¬¸ì—, shared_from_this()ëŠ” shared_ptr<IOCP::EventBase>ê°€ ë¨.
 	IocpEventManager::GetInstance().DeleteSendEvent(std::static_pointer_cast<IOCP::SendEvent>(shared_from_this()));
-	//over°´Ã¼ ¹İÈ¯
+	//overê°ì²´ ë°˜í™˜
 	IocpEventManager::GetInstance().DeleteExpOver(over);
 }
 
@@ -32,7 +32,7 @@ void IOCP::SendEvent::Send(SOCKET sock, ExpOver* over, const PacketHeader* packe
 {
 	m_wsabuf.len = packetHeader->size;
 	errno_t errorCode = memcpy_s(m_buffer, MAX_SEND_BUF_SIZE, packetHeader, packetHeader->size);
-	if (errorCode)//memcpy°¡ Àß¸øµÆ´Ù¸é
+	if (errorCode)//memcpyê°€ ì˜ëª»ëë‹¤ë©´
 		assert(errorCode);
 	int sendRes = WSASend(sock, &m_wsabuf, 1, nullptr, 0, over, nullptr);
 	//send Error

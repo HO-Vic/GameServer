@@ -3,7 +3,7 @@
 #include "IocpEventBase.h"
 
 /*
-	Iocp Accept ListenÀ» À§ÇÑ Å¬·¡½º
+	Iocp Accept Listenì„ ìœ„í•œ í´ë˜ìŠ¤
 */
 
 struct ConnectInfo

@@ -23,10 +23,10 @@ const std::pair<float, float> MonsterObject::GetBetweenAngleEuler(const XMFLOAT3
 	XMFLOAT3 toAggroVector = GetToVector(aggroPosition);
 	toAggroVector = Vector3::Normalize(toAggroVector);
 	XMFLOAT3 lookVector = GetLookVector();
-	float lookDotResult = Vector3::DotProduct(lookVector, toAggroVector);//»çÀÌ °¢¿¡ ´ëÇÑ cos()
-	//ÁÂÃøÀÎÁö ¿ìÃøÀÎÁö ÆÇ´Üµµ ÇØ¾ß µÊ.
-	XMFLOAT3 crossProductResult = Vector3::Normalize(Vector3::CrossProduct(lookVector, toAggroVector));//¾î±×·Î °´Ã¼°¡ ¿ìÃø¿¡ ÀÖ´Ù¸é UP ³»Àû ÇßÀ» ¶§ ¾ç¼ö
-	float dotProductFromUp = Vector3::DotProduct(UP, crossProductResult); // ¾ç¼ö¶ó¸é ¾î±×·Î´Â ¿ìÃø¿¡ Á¸Àç ÇÔ.
+	float lookDotResult = Vector3::DotProduct(lookVector, toAggroVector);//ì‚¬ì´ ê°ì— ëŒ€í•œ cos()
+	//ì¢Œì¸¡ì¸ì§€ ìš°ì¸¡ì¸ì§€ íŒë‹¨ë„ í•´ì•¼ ë¨.
+	XMFLOAT3 crossProductResult = Vector3::Normalize(Vector3::CrossProduct(lookVector, toAggroVector));//ì–´ê·¸ë¡œ ê°ì²´ê°€ ìš°ì¸¡ì— ìžˆë‹¤ë©´ UP ë‚´ì  í–ˆì„ ë•Œ ì–‘ìˆ˜
+	float dotProductFromUp = Vector3::DotProduct(UP, crossProductResult); // ì–‘ìˆ˜ë¼ë©´ ì–´ê·¸ë¡œëŠ” ìš°ì¸¡ì— ì¡´ìž¬ í•¨.
 	if (dotProductFromUp > 0)
 		return std::make_pair<float, float>(1.0f, XMConvertToDegrees(std::acosf(lookDotResult)));
 	return std::make_pair<float, float>(-1.0f, XMConvertToDegrees(std::acosf(lookDotResult)));

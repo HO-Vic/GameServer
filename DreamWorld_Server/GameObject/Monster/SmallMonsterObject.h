@@ -25,7 +25,7 @@ protected:
 
 	virtual const XMFLOAT3 GetCommonNextPosition(const float& elapsedTime) override;
 
-	//°´Ã¼°¡ ¿ìÃøÀÌ¶ó¸é 1 ¾Æ´Ï¶ó¸é -1, »çÀÌ °¢µµ(¶óµğ¾È)
+	//ê°ì²´ê°€ ìš°ì¸¡ì´ë¼ë©´ 1 ì•„ë‹ˆë¼ë©´ -1, ì‚¬ì´ ê°ë„(ë¼ë””ì•ˆ)
 	const std::pair<float, float> GetAggroBetweenAngleEuler() const;
 
 	void UpdateDestinationPosition();

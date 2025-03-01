@@ -21,6 +21,6 @@ public:
 
 private:
 	BoundingOrientedBox m_collision;
-	std::array<std::pair< float, XMFLOAT3>, 2> normalVectorData;//Á÷»ç°¢Çü Äİ¸®Àü ³ë¸» º¤ÅÍ
-	std::vector<std::weak_ptr<MapCollision>> m_relationCollsions;//¿¬°áµÈ Äİ¸®Àü Á¤º¸
+	std::array<std::pair< float, XMFLOAT3>, 2> normalVectorData;//ì§ì‚¬ê°í˜• ì½œë¦¬ì „ ë…¸ë§ ë²¡í„°
+	std::vector<std::weak_ptr<MapCollision>> m_relationCollsions;//ì—°ê²°ëœ ì½œë¦¬ì „ ì •ë³´
 };

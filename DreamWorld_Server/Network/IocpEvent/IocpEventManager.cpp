@@ -11,7 +11,7 @@ IocpEventManager::IocpEventManager()
 
 IocpEventManager::~IocpEventManager()
 {
-	//tbb::concurrent_queue<> ¼Ò¸êÀÚ¿¡¼­ clear()ÇÏ¿© µû·Î Ã³¸® ¾ÈÇØµµ µÊ(ÇÏÁö¸¸ not thread-safe)
+	//tbb::concurrent_queue<> ì†Œë©¸ìì—ì„œ clear()í•˜ì—¬ ë”°ë¡œ ì²˜ë¦¬ ì•ˆí•´ë„ ë¨(í•˜ì§€ë§Œ not thread-safe)
 	spdlog::info("IocpEventManager::~IocpEventManager()");
 }
 
@@ -41,7 +41,7 @@ ExpOver* IocpEventManager::CreateExpOver(const IOCP_OP_CODE& opCode, std::shared
 {
 	ExpOver* overlapObject = nullptr;
 	bool success = m_expOverQueue.try_pop(overlapObject);
-	if (!success)//½ÇÆĞÇß´Ù¸é »õ·Î »ı¼º
+	if (!success)//ì‹¤íŒ¨í–ˆë‹¤ë©´ ìƒˆë¡œ ìƒì„±
 		overlapObject = new ExpOver(opCode, iocpEvent);
 	else overlapObject->SetData(opCode, iocpEvent);
 

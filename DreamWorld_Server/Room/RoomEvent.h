@@ -7,10 +7,10 @@ class PlayerSkillBase;
 struct PacketHeader;
 
 /*
-	NPC°¡ Update()ÀÌÈÄ¿¡ Àü¼ÛÇÒ µ¥ÀÌÅÍÀÇ ÀÎÅÍÆäÀÌ½º Å¬·¡½º
-	//ÇÃ·¹ÀÌ¾î ÇÇ »óÅÂ º¯È­
-	//¸ó½ºÅÍ ÇÇ »óÅÂ º¯È­
-	//Çàµ¿ º¯È­
+	NPCê°€ Update()ì´í›„ì— ì „ì†¡í•  ë°ì´í„°ì˜ ì¸í„°í˜ì´ìŠ¤ í´ë˜ìŠ¤
+	//í”Œë ˆì´ì–´ í”¼ ìƒíƒœ ë³€í™”
+	//ëª¬ìŠ¤í„° í”¼ ìƒíƒœ ë³€í™”
+	//í–‰ë™ ë³€í™”
 */
 class RoomSendEvent : public std::enable_shared_from_this<RoomSendEvent>
 {
@@ -27,7 +27,7 @@ protected:
 	ROLE role;
 };
 
-//¸ó½ºÅÍ°¡ °ø°İÇÏ¿© Player hp ±ïÀÏ ¶§.
+//ëª¬ìŠ¤í„°ê°€ ê³µê²©í•˜ì—¬ Player hp ê¹ì¼ ë•Œ.
 class PlayerDamagedEvent : public PlayerSendEvent
 {
 public:
@@ -48,7 +48,7 @@ public:
 };
 
 /*
-	SmallMonster¿¡ ´ëÇÑ sendEvent, id¸¸ °¡Áü.
+	SmallMonsterì— ëŒ€í•œ sendEvent, idë§Œ ê°€ì§.
 */
 class SmallMonsterEvent : public RoomSendEvent
 {
@@ -154,7 +154,7 @@ private:
 
 //class BossRotateEvent : public RoomSendEvent
 //{
-//	//yÃà È¸Àü
+//	//yì¶• íšŒì „
 //public:
 //	BossRotateEvent(const float& angle) : angle(angle) {}
 //	virtual std::shared_ptr<PacketHeader> GetPacketHeader() override;
@@ -209,8 +209,8 @@ public:
 };
 
 /*
-	Update¿¡¼­ À§Ä¡ ¾÷µ¥ÀÌÆ® ÀÌÀü¿¡ Ã³¸®ÇÒ µ¥ÀÌÅÍ
-	ÇÃ·¹ÀÌ¾îÀÇ °ø°İ ÆĞÅ¶À» ¹Ş¾ÒÀ» ¶§, ÀúÀåÇÒ Å¬·¡½º
+	Updateì—ì„œ ìœ„ì¹˜ ì—…ë°ì´íŠ¸ ì´ì „ì— ì²˜ë¦¬í•  ë°ì´í„°
+	í”Œë ˆì´ì–´ì˜ ê³µê²© íŒ¨í‚·ì„ ë°›ì•˜ì„ ë•Œ, ì €ì¥í•  í´ë˜ìŠ¤
 */
 
 class PrevUpdateEvent : std::enable_shared_from_this<PrevUpdateEvent>

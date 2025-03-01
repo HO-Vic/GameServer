@@ -13,7 +13,7 @@ public:
 	void InsertCancelUser(std::shared_ptr<UserSession>& userRef);
 
 private:
-	//Ãë¼ÒÇÑ À¯Àú°¡ ¾øÀ» ¶§, weak_ptr nullptrÀÌ ¾øÀ½
+	//ì·¨ì†Œí•œ ìœ ì €ê°€ ì—†ì„ ë•Œ, weak_ptr nullptrì´ ì—†ìŒ
 	std::optional<std::shared_ptr<UserSession>> GetCancelUser();
 private:
 	tbb::concurrent_queue<std::weak_ptr<UserSession>> m_match;

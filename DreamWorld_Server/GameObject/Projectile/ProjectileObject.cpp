@@ -19,7 +19,7 @@ void ProjectileObject::Update()
 		m_isCollide = true;
 		return;
 	}
-	//À§Ä¡ ¾÷µ¥ÀÌÆ®
+	//ìœ„ì¹˜ ì—…ë°ì´íŠ¸
 	float elapsedTime = GetElapsedLastUpdateTime();
 	XMFLOAT3 nextPosition = GetPosition();
 	XMFLOAT3 directionVector = GetLookVector();

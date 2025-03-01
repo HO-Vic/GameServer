@@ -8,7 +8,7 @@
 
 IOCP::Iocp::Iocp() : m_listener(nullptr)
 {
-	////iocp°´Ã¼ »ı¼º - ÀÌ¶§ ¸Ç ¸¶Áö¸· ÀÎÀÚ°¡ 0À¸·Î ¼³Á¤ÇÏ¸é ÃÖ´ë ÇÁ·Î¼¼¼­ ¼ö¸¸Å­ ½º·¹µå Çã¿ë
+	////iocpê°ì²´ ìƒì„± - ì´ë•Œ ë§¨ ë§ˆì§€ë§‰ ì¸ìê°€ 0ìœ¼ë¡œ ì„¤ì •í•˜ë©´ ìµœëŒ€ í”„ë¡œì„¸ì„œ ìˆ˜ë§Œí¼ ìŠ¤ë ˆë“œ í—ˆìš©
 	m_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	spdlog::info("Iocp::Iocp() - Create Iocp Handle");
 }
@@ -20,7 +20,7 @@ IOCP::Iocp::~Iocp()
 void IOCP::Iocp::Start()
 {
 	int threadNum = std::thread::hardware_concurrency();
-	//thread »ı¼º
+	//thread ìƒì„±
 	ThreadManager& thMgrRef = ThreadManager::GetInstance();
 	spdlog::info("Iocp::Start() - Start Worker Threads");
 	for (int i = 0; i < threadNum; ++i)
@@ -50,7 +50,7 @@ void IOCP::Iocp::RegistHandle(HANDLE registHandle, int key)
 {
 	HANDLE retVal = CreateIoCompletionPort(registHandle, m_hIocp, key, 0);
 	if (NULL == retVal) {
-		//IocpHandle ¿À·ù
+		//IocpHandle ì˜¤ë¥˜
 		spdlog::critical("Iocp::RegistHandle() - ErrorCode: {0}, key: {1}", GetLastError(), key);
 	}
 }

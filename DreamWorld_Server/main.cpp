@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "../ThreadManager/ThreadManager.h"
 #include "Network/IOCP/Iocp.h"
 #include "Timer/Timer.h"

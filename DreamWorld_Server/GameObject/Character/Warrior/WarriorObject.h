@@ -6,8 +6,8 @@
 class WarriorObject;
 namespace WarriorSkill
 {
-	//¿ö¸®¾î Ä³¸¯ÅÍ ½ºÅ³
-	//¹æÇâ¼º ÀÖ´Â ½ºÅ³ ÇÏ³ª »ÓÀÌ±â ÇÏ³ª¸¸ Á¦ÀÛ
+	//ì›Œë¦¬ì–´ ìºë¦­í„° ìŠ¤í‚¬
+	//ë°©í–¥ì„± ìˆëŠ” ìŠ¤í‚¬ í•˜ë‚˜ ë¿ì´ê¸° í•˜ë‚˜ë§Œ ì œì‘
 	class DirectionSkill :public DirectionSkillBase
 	{
 	public:
@@ -16,7 +16,7 @@ namespace WarriorSkill
 		std::shared_ptr<WarriorObject> warriorRef;
 	};
 
-	//½ÇÁ¦ ±¸ÇöµÉ °ø°İ ½ºÅ³
+	//ì‹¤ì œ êµ¬í˜„ë  ê³µê²© ìŠ¤í‚¬
 	class LongSwordSkill : public DirectionSkill
 	{
 	public:
@@ -24,7 +24,7 @@ namespace WarriorSkill
 		virtual void Execute() override;
 	};
 
-	class CommonAttack : public DirectionSkill//¿ö¸®¾î´Â ¿¬¼ÓÇü °ø°İ
+	class CommonAttack : public DirectionSkill//ì›Œë¦¬ì–´ëŠ” ì—°ì†í˜• ê³µê²©
 	{
 	public:
 		CommonAttack(std::shared_ptr<WarriorObject> warriorRef, const XMFLOAT3& direction, const int& power) : DirectionSkill(warriorRef, direction), power(power) {}

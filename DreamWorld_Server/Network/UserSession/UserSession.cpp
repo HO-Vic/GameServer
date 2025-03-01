@@ -82,14 +82,14 @@ void UserSession::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& k
 
 void UserSession::Fail(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)
 {
-	//Iocp¿¡¼­ ret == false
+	//Iocpì—ì„œ ret == false
 	spdlog::critical("UserSession::Fail()");
 	Disconnect();
 }
 
 void UserSession::StartRecv()
 {
-	//expOVer »ı¼º ÈÄ, ÇöÀç °´Ã¼¸¦ ¿¬°á
+	//expOVer ìƒì„± í›„, í˜„ì¬ ê°ì²´ë¥¼ ì—°ê²°
 	m_recvOverlapped = IocpEventManager::GetInstance().CreateExpOver(IOCP_OP_CODE::OP_RECV, shared_from_this());
 	m_sendOverlapped = IocpEventManager::GetInstance().CreateExpOver(IOCP_OP_CODE::OP_SEND, shared_from_this());
 	DoRecv(m_recvOverlapped);
@@ -106,7 +106,7 @@ void UserSession::DoSend(const std::shared_ptr<PacketHeader> packetHeader)
 	if (CONNECT_STATE::DISCONNECTED == m_connectState) return;
 	m_prevSendPacketBufferQueue.push(packetHeader);
 	++m_prevSendPacketBufferQueueSize;
-	bool sendAble = m_isAbleSend.exchange(false);//ÀÌÀü °ªÀ» ¹İÈ¯ ÇÔ.
+	bool sendAble = m_isAbleSend.exchange(false);//ì´ì „ ê°’ì„ ë°˜í™˜ í•¨.
 	if (sendAble) {
 		SendExecte();
 	}
@@ -134,7 +134,7 @@ void UserSession::Reconnect(std::shared_ptr<UserSession> prevDisconnectedUserSes
 			m_playerState = PLAYER_STATE::LOBBY;
 			return;
 		}
-		//¾ÆÁ÷ ·±Å¸ÀÓÁßÀÎ °ÔÀÓÀÌ Á¸ÀçÇÔ.
+		//ì•„ì§ ëŸ°íƒ€ì„ì¤‘ì¸ ê²Œì„ì´ ì¡´ì¬í•¨.
 		bool isValidRoom = roomRef->ReconnectUser(std::static_pointer_cast<UserSession>(shared_from_this()));
 		if (!isValidRoom)m_playerState = PLAYER_STATE::LOBBY;
 	}
@@ -149,8 +149,8 @@ void UserSession::SetIngameRef(std::shared_ptr<Room>& roomRef, std::shared_ptr<C
 
 void UserSession::DoRecv(ExpOver*& over)
 {
-	m_recvOverlapped->SetIocpEvent(shared_from_this());//´Ù½Ã Set
-	//wsaBuf length ±æÀÌ Àç ¼³Á¤
+	m_recvOverlapped->SetIocpEvent(shared_from_this());//ë‹¤ì‹œ Set
+	//wsaBuf length ê¸¸ì´ ì¬ ì„¤ì •
 	m_recvDataStorage.m_wsabuf.len = MAX_RECV_BUF_SIZE - m_recvDataStorage.m_remainDataLength;
 	DWORD immediateRecvByte = 0;
 	DWORD recvFlag = 0;
@@ -169,7 +169,7 @@ void UserSession::DoRecv(ExpOver*& over)
 
 void UserSession::RecvComplete(const DWORD& ioByte)
 {
-	//recv ¿Ï·á ÇÒ ¶§´Â overlapped¿¡ iocpEvent ÇØÁ¦
+	//recv ì™„ë£Œ í•  ë•ŒëŠ” overlappedì— iocpEvent í•´ì œ
 	if (CONNECT_STATE::DISCONNECTED == m_connectState) {
 		m_recvOverlapped->ResetEvent();
 		return;
@@ -192,22 +192,22 @@ void UserSession::ContructPacket(const DWORD& ioSize)
 	while (remainSize > sizeof(PacketHeader::size)) {
 		PacketHeader* currentPacket = reinterpret_cast<PacketHeader*>(bufferPosition);
 		if (currentPacket->size > remainSize) {
-			//¿Ï¼ºµÈ ÆĞÅ¶ÀÌ ¸¸µé¾îÁöÁö ¾ÊÀ½.
+			//ì™„ì„±ëœ íŒ¨í‚·ì´ ë§Œë“¤ì–´ì§€ì§€ ì•ŠìŒ.
 			break;
 		}
-		//¿Ï¼ºµÈ ÆĞÅ¶
+		//ì™„ì„±ëœ íŒ¨í‚·
 		ExecutePacket(currentPacket);
-		//³²Àº ÆÛ¹ö Å©±â ÃÖ½ÅÈ­, ÇöÀç ¹öÆÛ À§Ä¡ ´ÙÀ½ ÆĞÅ¶ ½ÃÀÛ À§Ä¡·Î
+		//ë‚¨ì€ í¼ë²„ í¬ê¸° ìµœì‹ í™”, í˜„ì¬ ë²„í¼ ìœ„ì¹˜ ë‹¤ìŒ íŒ¨í‚· ì‹œì‘ ìœ„ì¹˜ë¡œ
 		remainSize -= currentPacket->size;
 		bufferPosition = bufferPosition + currentPacket->size;
 		++i;
 	}
-	//ÇöÀç ³²Àº µ¥ÀÌÅÍ Å©±â ÀúÀå
+	//í˜„ì¬ ë‚¨ì€ ë°ì´í„° í¬ê¸° ì €ì¥
 	m_recvDataStorage.m_remainDataLength = remainSize;
-	//³²Àº ÆĞÅ¶ µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é, ¸Ç ¾ÕÀ¸·Î ´ç±â±â
+	//ë‚¨ì€ íŒ¨í‚· ë°ì´í„°ê°€ ìˆë‹¤ë©´, ë§¨ ì•ìœ¼ë¡œ ë‹¹ê¸°ê¸°
 	if (remainSize > 0)
 		std::memcpy(m_recvDataStorage.m_buffer, bufferPosition, remainSize);
-	//wsaBufÀÇ buf À§Ä¡¸¦ ¹Ù²Ş
+	//wsaBufì˜ buf ìœ„ì¹˜ë¥¼ ë°”ê¿ˆ
 	m_recvDataStorage.m_wsabuf.buf = m_recvDataStorage.m_buffer + remainSize;
 }
 
@@ -236,13 +236,13 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 	{
 		const CLIENT_PACKET::ReConnectPacket* recvPacket = reinterpret_cast<const CLIENT_PACKET::ReConnectPacket*>(packetHeader);
 		auto prevUserSessionData = UserManager::GetInstance().FindDisconnectUser(recvPacket->nickName);
-		//Reconnect ¼º°ø ½ÇÆĞ¿¡ ´ëÇØ¼­ Å¬¶ó¿¡ Àü¼Û ÇØ¾ßÇÒµí
+		//Reconnect ì„±ê³µ ì‹¤íŒ¨ì— ëŒ€í•´ì„œ í´ë¼ì— ì „ì†¡ í•´ì•¼í• ë“¯
 		if (nullptr == prevUserSessionData) {
 			ReconnectFail();
-			//½ÇÆĞ => Å¬¶ó´Â ÇÁ·Î±×·¥ Á¾·á
+			//ì‹¤íŒ¨ => í´ë¼ëŠ” í”„ë¡œê·¸ë¨ ì¢…ë£Œ
 			return;
 		}
-		Reconnect(prevUserSessionData);//¿©±â¼­ ´Ù½Ã ¹æµé¾î°¡´Â ÀÛ¾÷ÇÔ.
+		Reconnect(prevUserSessionData);//ì—¬ê¸°ì„œ ë‹¤ì‹œ ë°©ë“¤ì–´ê°€ëŠ” ì‘ì—…í•¨.
 	}
 	break;
 
@@ -264,8 +264,8 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 		//Logic::CharacterAddDirection(userId, recvPacket->direction);
 		//
 		//Effectively returns expired() ? shared_ptr<T>() : shared_ptr<T>(*this), executed atomically.
-		//weak_ptr<>::lock() ³»ºÎÀûÀ¸·Î, shared_ptrÀÇ refCnt != 0 && Rep°¡ À¯È¿ÇÒ ¶§, ptrº¹»ç, ¾Æ´Ï¸é nullptr ¹İÈ¯
-		//RoomRef´Â shared_ptr ¿øº»Àº _Rep¸¦ ¼öÁ¤ÇÏÁø ¾Ê¾Æ¼­ ¹®Á¦ ¾øÀ½.
+		//weak_ptr<>::lock() ë‚´ë¶€ì ìœ¼ë¡œ, shared_ptrì˜ refCnt != 0 && Repê°€ ìœ íš¨í•  ë•Œ, ptrë³µì‚¬, ì•„ë‹ˆë©´ nullptr ë°˜í™˜
+		//RoomRefëŠ” shared_ptr ì›ë³¸ì€ _Repë¥¼ ìˆ˜ì •í•˜ì§„ ì•Šì•„ì„œ ë¬¸ì œ ì—†ìŒ.
 		auto possessObject = m_possessCharacter.lock();
 		auto roomRef = m_roomWeakRef.lock();
 		if (nullptr != possessObject && nullptr != roomRef) {
@@ -275,7 +275,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 			roomRef->MultiCastCastPacket(sendPacket, possessObject->GetRole());
 		}
 		else {
-			//À¯È¿ÇÏÁö ¾ÊÀ½.
+			//ìœ íš¨í•˜ì§€ ì•ŠìŒ.
 			if (PLAYER_STATE::IN_GAME == m_playerState)
 				m_playerState = PLAYER_STATE::LOBBY;
 		}
@@ -337,7 +337,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 #pragma endregion
 
 #pragma region CHARACTER_ATTACK
-	case CLIENT_PACKET::TYPE::SKILL_EXECUTE_Q://½ÇÁ¦ °ø°İÀ» ÇàÇÒ ¶§ ³¯¾Æ¿À´Â ÆĞÅ¶
+	case CLIENT_PACKET::TYPE::SKILL_EXECUTE_Q://ì‹¤ì œ ê³µê²©ì„ í–‰í•  ë•Œ ë‚ ì•„ì˜¤ëŠ” íŒ¨í‚·
 	{
 		auto possessCharacter = m_possessCharacter.lock();
 		if (nullptr == possessCharacter) {
@@ -405,8 +405,8 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 		possessCharacter->RecvSkillInput(CharacterObject::SKILL_TYPE::SKILL_TYPE_E);
 	}
 	break;
-	//Å¬¶ó·Î °ø°İ ½ÃÀÛ ¾Ö´Ï¸ŞÀÌ¼Ç ÆĞÅ¶Àº mouseInput¿¡¼­ ÇØ°á ÇÏ´Â °ÍÀ¸·Î º¸ÀÓ
-	//PLAYER_ATTACK ÀÌ 2°³¿¡ Àû¿ë µÇ´Â µí?
+	//í´ë¼ë¡œ ê³µê²© ì‹œì‘ ì• ë‹ˆë©”ì´ì…˜ íŒ¨í‚·ì€ mouseInputì—ì„œ í•´ê²° í•˜ëŠ” ê²ƒìœ¼ë¡œ ë³´ì„
+	//PLAYER_ATTACK ì´ 2ê°œì— ì ìš© ë˜ëŠ” ë“¯?
 	case CLIENT_PACKET::TYPE::PLAYER_POWER_ATTACK_EXECUTE:
 	{
 		const CLIENT_PACKET::PlayerPowerAttackPacket* recvPacket = reinterpret_cast<const CLIENT_PACKET::PlayerPowerAttackPacket*>(packetHeader);
@@ -439,7 +439,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 		auto possessObject = m_possessCharacter.lock();
 		auto roomRef = m_roomWeakRef.lock();
 		if (nullptr != possessObject && nullptr != roomRef) {
-			//Room°´Ã¼°¡ ¾ÆÁ÷ À¯È¿
+			//Roomê°ì²´ê°€ ì•„ì§ ìœ íš¨
 			possessObject->RecvMouseInput(recvPacket->leftClickedButton, recvPacket->rightClickedButton);
 			auto sendPacket = std::make_shared<SERVER_PACKET::MouseInputPacket>(possessObject->GetRole(), recvPacket->leftClickedButton, recvPacket->rightClickedButton);
 			roomRef->MultiCastCastPacket(sendPacket, possessObject->GetRole());
@@ -466,7 +466,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 	}
 	break;
 
-	case CLIENT_PACKET::TYPE::TEST_GAME_END: // ÀÓ½Ã·Î
+	case CLIENT_PACKET::TYPE::TEST_GAME_END: // ì„ì‹œë¡œ
 	{
 		auto roomRef = m_roomWeakRef.lock();
 		if (nullptr == roomRef) {
@@ -479,7 +479,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 	break;
 #pragma endregion
 
-	//ÇÃ·¹ÀÌ¾î °ÔÀÓ ³¡³ª°í ·ë ³ª°¥¶§ OK -> ÀÌ¶§ ·ë »èÁ¦ ¿©ºÎ È®ÀÎ
+	//í”Œë ˆì´ì–´ ê²Œì„ ëë‚˜ê³  ë£¸ ë‚˜ê°ˆë•Œ OK -> ì´ë•Œ ë£¸ ì‚­ì œ ì—¬ë¶€ í™•ì¸
 	case CLIENT_PACKET::TYPE::GAME_END_OK:
 	{
 		auto roomRef = m_roomWeakRef.lock();
@@ -488,7 +488,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 		m_playerState.store(PLAYER_STATE::LOBBY);
 	}
 	break;
-	//NPC´ëÈ­ °ü·Ã
+	//NPCëŒ€í™” ê´€ë ¨
 	case CLIENT_PACKET::TYPE::SKIP_NPC_COMMUNICATION:
 	{
 		//int roomId = g_iocpNetwork.m_session[userId].GetRoomId();
@@ -498,7 +498,7 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 		//}
 	}
 	break;
-	//Å¬¶óÀÌ¾ğÆ®¿Í ½Ã°£ µ¿±âÈ­ RTTÃ¼Å©
+	//í´ë¼ì´ì–¸íŠ¸ì™€ ì‹œê°„ ë™ê¸°í™” RTTì²´í¬
 	case CLIENT_PACKET::TYPE::TIME_SYNC_REQUEST:
 	{
 		DoSend(std::make_shared<SERVER_PACKET::TimeSyncPacket>());
@@ -519,15 +519,15 @@ void UserSession::ExecutePacket(const PacketHeader* packetHeader)
 
 void UserSession::SendExecte()
 {
-	m_sendOverlapped->SetIocpEvent(shared_from_this());//´Ù½Ã Set
-	//º¸³Â´ø ÆĞÅ¶ µ¥ÀÌÅÍ Á¤¸®
+	m_sendOverlapped->SetIocpEvent(shared_from_this());//ë‹¤ì‹œ Set
+	//ë³´ëƒˆë˜ íŒ¨í‚· ë°ì´í„° ì •ë¦¬
 	m_sendPacketBuffer.clear();
-	//queue¿¡ ´ã±ä ÆĞÅ¶À» ¸ğ¾Æ¼­ Á¶ÇÕ ÈÄ, send
+	//queueì— ë‹´ê¸´ íŒ¨í‚·ì„ ëª¨ì•„ì„œ ì¡°í•© í›„, send
 	int currentProcessSendCnt = m_prevSendPacketBufferQueueSize;
 	m_prevSendPacketBufferQueueSize -= currentProcessSendCnt;
 
 	m_sendPacketBuffer.reserve(currentProcessSendCnt);
-	//Å¥¿¡¼­ º¸³¾ ¹öÆÛ¿¡ ÀúÀå
+	//íì—ì„œ ë³´ë‚¼ ë²„í¼ì— ì €ì¥
 	for (int i = 0; i < currentProcessSendCnt; ++i) {
 		std::shared_ptr<PacketHeader> currentPacket = nullptr;
 		bool isSuccess = m_prevSendPacketBufferQueue.try_pop(currentPacket);
@@ -543,7 +543,7 @@ void UserSession::SendExecte()
 		m_isAbleSend = true;
 		return;
 	}
-	//wsaBuf ¹öÆÛµéÀ» »ı¼º
+	//wsaBuf ë²„í¼ë“¤ì„ ìƒì„±
 	std::vector<WSABUF> sendBuffers;
 	sendBuffers.reserve(currentProcessSendCnt);
 	for (auto& packetHeader : m_sendPacketBuffer) {
@@ -572,7 +572,7 @@ void UserSession::SendComplete(const DWORD& ioByte)
 		m_sendOverlapped->ResetEvent();
 		return;
 	}
-	//ÇÏÇÊ ¿©±â¼­ refCnt = 0ÀÌ µÅ¾î¼­ ¹®Á¦°¡ ¹ß»ı.
+	//í•˜í•„ ì—¬ê¸°ì„œ refCnt = 0ì´ ë¼ì–´ì„œ ë¬¸ì œê°€ ë°œìƒ.
 	if (0 == ioByte) {
 		Disconnect();
 		m_sendOverlapped->ResetEvent();
@@ -582,7 +582,7 @@ void UserSession::SendComplete(const DWORD& ioByte)
 		m_isAbleSend = true;
 		return;
 	}
-	//Å¥¿¡ ÆĞÅ¶ º¸³¾°Ô ÀÖ´Ù¸é ¿©±â¼­ Àü¼Û
+	//íì— íŒ¨í‚· ë³´ë‚¼ê²Œ ìˆë‹¤ë©´ ì—¬ê¸°ì„œ ì „ì†¡
 	SendExecte();
 }
 
@@ -591,7 +591,7 @@ void UserSession::Disconnect()
 	if (PLAYER_STATE::RECONN_FAIL == m_playerState) return;
 	if (CONNECT_STATE::DISCONNECTED == m_connectState) return;
 	m_connectState = CONNECT_STATE::DISCONNECTED;
-	//ReconnectÇÒ ¶§ ¾îÂ÷ÇÇ Accept¿¡¼­ »õ·Î¿î ¼ÒÄÏ ÇÒ´çÇÏ±â´ë¹®¿¡ close
+	//Reconnectí•  ë•Œ ì–´ì°¨í”¼ Acceptì—ì„œ ìƒˆë¡œìš´ ì†Œì¼“ í• ë‹¹í•˜ê¸°ëŒ€ë¬¸ì— close
 	closesocket(m_socket);
 	UserManager::GetInstance().LobbyUserToDisconnectUser(std::static_pointer_cast<UserSession>(shared_from_this()));
 	switch (m_playerState)

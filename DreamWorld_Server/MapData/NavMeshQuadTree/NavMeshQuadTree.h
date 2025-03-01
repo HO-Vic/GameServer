@@ -1,7 +1,7 @@
 #pragma once
 #include "../PCH/stdafx.h"
 
-// Äõµå Æ®¸® ³ëµå ±¸Á¶Ã¼
+// ì¿¼ë“œ íŠ¸ë¦¬ ë…¸ë“œ êµ¬ì¡°ì²´
 namespace NavMesh
 {
 	class TriangleNavMesh;
@@ -24,10 +24,10 @@ namespace NavMesh
 		protected:
 			const CHILD_IDX GetQuadrant(const float& x, const float& y) const;
 
-			std::pair<float, float> m_center;// ³ëµå°¡ ³ªÅ¸³»´Â »ç°¢Çü ¿µ¿ªÀÇ Áß½É ÁÂÇ¥
-			float m_halfSize; // »ç°¢Çü ¿µ¿ªÀÇ Àı¹İ Å©±â
+			std::pair<float, float> m_center;// ë…¸ë“œê°€ ë‚˜íƒ€ë‚´ëŠ” ì‚¬ê°í˜• ì˜ì—­ì˜ ì¤‘ì‹¬ ì¢Œí‘œ
+			float m_halfSize; // ì‚¬ê°í˜• ì˜ì—­ì˜ ì ˆë°˜ í¬ê¸°
 
-			// ÇÏÀ§ ³ëµåµé »çºĞ¸éÀ¸·Î °è»êÇÏÀÚ
+			// í•˜ìœ„ ë…¸ë“œë“¤ ì‚¬ë¶„ë©´ìœ¼ë¡œ ê³„ì‚°í•˜ì
 		};
 
 		class InternalNode : public NodeBase
@@ -48,11 +48,11 @@ namespace NavMesh
 			virtual void InsertTriangleMesh(const XMFLOAT3& vertex, std::shared_ptr<TriangleNavMesh>& triangleNavMesh) override;
 			virtual std::shared_ptr<TriangleNavMesh> GetOnPositionTriangleMesh(const XMFLOAT3& position) const override;
 		private:
-			std::unordered_set<std::shared_ptr<TriangleNavMesh>> m_navMeshSet; // ³ëµå¿¡ ¼ÓÇÑ ³×ºñ ¸Ş½Ãµé
+			std::unordered_set<std::shared_ptr<TriangleNavMesh>> m_navMeshSet; // ë…¸ë“œì— ì†í•œ ë„¤ë¹„ ë©”ì‹œë“¤
 		};
 	}
 
-	// Äõµå Æ®¸® Å¬·¡½º
+	// ì¿¼ë“œ íŠ¸ë¦¬ í´ë˜ìŠ¤
 	class QuadTree
 	{
 	public:

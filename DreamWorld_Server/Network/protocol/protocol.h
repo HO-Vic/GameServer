@@ -1,10 +1,10 @@
 
 
-//DB¿¡ ÀúÀåµÇ´Â ±ÛÀÚ¼ö´Â 19±ÛÀÚ, cpp¿¡¼­´Â null¹®ÀÚ Æ÷ÇÔÇÏ¿© 20±ÛÀÚ
+//DBì— ì €ì¥ë˜ëŠ” ê¸€ììˆ˜ëŠ” 19ê¸€ì, cppì—ì„œëŠ” nullë¬¸ì í¬í•¨í•˜ì—¬ 20ê¸€ì
 constexpr short NAME_SIZE = 20;
 
 #pragma pack (push, 1)
-//°øÅëÀûÀ¸·Î ÆĞÅ¶ ÇØ´õ¸¦ °¡Áü
+//ê³µí†µì ìœ¼ë¡œ íŒ¨í‚· í•´ë”ë¥¼ ê°€ì§
 struct PacketHeader
 {
 	unsigned short size;
@@ -46,7 +46,7 @@ namespace CLIENT_PACKET {
 		PLAYER_POWER_ATTACK_EXECUTE,
 
 		ARCHER_SKILL_ARROW,
-		PLAYER_COMMON_ATTACK, //¾Ö´Ï ½ÇÇà
+		PLAYER_COMMON_ATTACK, //ì• ë‹ˆ ì‹¤í–‰
 #pragma endregion
 
 #pragma region INGAME_PLAY
@@ -56,13 +56,13 @@ namespace CLIENT_PACKET {
 		STAGE_CHANGE_BOSS,
 		PLAYER_POSITION_STATE,
 		GAME_END_OK,
-		TEST_GAME_END, //ÀÓ½Ã·Î Å¬¶ó¿¡¼­ Àü¼ÛÇÏ¿© °ÔÀÓ ³¡³¾ ¼ö ÀÖ°Ô
+		TEST_GAME_END, //ì„ì‹œë¡œ í´ë¼ì—ì„œ ì „ì†¡í•˜ì—¬ ê²Œì„ ëë‚¼ ìˆ˜ ìˆê²Œ
 #pragma endregion
 		TIME_SYNC_REQUEST,
 		STRESS_TEST_DELAY
 	};
 
-	//TYPEÀ¸·Î À¯ÃßµÇ´Â ÆĞÅ¶
+	//TYPEìœ¼ë¡œ ìœ ì¶”ë˜ëŠ” íŒ¨í‚·
 	using NotifyPacket = PacketHeader;
 
 	struct ReConnectPacket : public PacketHeader
@@ -75,7 +75,7 @@ namespace CLIENT_PACKET {
 	};
 
 	struct MovePacket : public PacketHeader
-	{//½Ã°£°ú ÁøÇà ¹æÇâ, ÀÌµ¿ ÀÔ·Â
+	{//ì‹œê°„ê³¼ ì§„í–‰ ë°©í–¥, ì´ë™ ì…ë ¥
 		DIRECTION direction;
 		MovePacket(const DIRECTION& direction, const char& type)
 			: PacketHeader(type, sizeof(MovePacket)), direction(direction)
@@ -135,7 +135,7 @@ namespace CLIENT_PACKET {
 	struct PlayerPowerAttackPacket : public PacketHeader
 	{
 		DirectX::XMFLOAT3 direction;
-		int power;// ¾ÆÃ³ ÁÜÀÎ, ¿ö¸®¾î 3´Ü°è
+		int power;// ì•„ì²˜ ì¤Œì¸, ì›Œë¦¬ì–´ 3ë‹¨ê³„
 		PlayerPowerAttackPacket(const DirectX::XMFLOAT3& direction, const int& power, const char& type = static_cast<char>(TYPE::PLAYER_POWER_ATTACK_EXECUTE))
 			: PacketHeader(type, sizeof(PlayerPowerAttackPacket)), direction(direction), power(power)
 		{}
@@ -268,17 +268,17 @@ namespace SERVER_PACKET {
 
 
 #pragma region DISCARD
-	//constexpr unsigned char CREATE_ROOM_SUCCESS = 71; // ·ë »ı¼º ½Ã ¼º°ø ÆĞÅ¶
-	//constexpr unsigned char CREATE_ROOM_FAILURE = 72; // ·ë »ı¼º ½Ã ½ÇÆĞ ÆĞÅ¶
-	//constexpr unsigned char REQUEST_ROOM_LIST = 73; // ¹æ ¸®½ºÆ® Ãâ·ÂÁß
-	//constexpr unsigned char REQUEST_ROOM_LIST_END = 74;// ¹æ ¸®½ºÆ®ÀÇ ³¡
-	//constexpr unsigned char REQUEST_ROOM_LIST_NONE = 75;//¾î¶² ¹æµµ ¾ø´Ù
-	//constexpr unsigned char ACCEPT_ENTER_ROOM = 76; // ¹æ ÀÔÀå È®ÀÎ
-	//constexpr unsigned char REJECT_ENTER_ROOM = 77; // ¹æ ÀÔÀå °ÅºÎ
-	//constexpr unsigned char NOT_FOUND_ROOM = 78; // ½ÅÃ»ÇÑ ¹æÀÌ »ç¶óÁü
+	//constexpr unsigned char CREATE_ROOM_SUCCESS = 71; // ë£¸ ìƒì„± ì‹œ ì„±ê³µ íŒ¨í‚·
+	//constexpr unsigned char CREATE_ROOM_FAILURE = 72; // ë£¸ ìƒì„± ì‹œ ì‹¤íŒ¨ íŒ¨í‚·
+	//constexpr unsigned char REQUEST_ROOM_LIST = 73; // ë°© ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ì¤‘
+	//constexpr unsigned char REQUEST_ROOM_LIST_END = 74;// ë°© ë¦¬ìŠ¤íŠ¸ì˜ ë
+	//constexpr unsigned char REQUEST_ROOM_LIST_NONE = 75;//ì–´ë–¤ ë°©ë„ ì—†ë‹¤
+	//constexpr unsigned char ACCEPT_ENTER_ROOM = 76; // ë°© ì…ì¥ í™•ì¸
+	//constexpr unsigned char REJECT_ENTER_ROOM = 77; // ë°© ì…ì¥ ê±°ë¶€
+	//constexpr unsigned char NOT_FOUND_ROOM = 78; // ì‹ ì²­í•œ ë°©ì´ ì‚¬ë¼ì§
 	//
-	//constexpr unsigned char PLAYER_APPLY_ROOM = 79; // ½ÅÃ»ÀÚ Á¤º¸ ¹æÀå(¹æ)ÇÑÅ× Àü¼Û
-	//constexpr unsigned char PLAYER_CANCEL_ROOM = 80; // ½ÅÃ» Ãë¼Ò Á¤º¸ ¹æÀå(¹æ)ÇÑÅ× Àü¼Û
+	//constexpr unsigned char PLAYER_APPLY_ROOM = 79; // ì‹ ì²­ì ì •ë³´ ë°©ì¥(ë°©)í•œí…Œ ì „ì†¡
+	//constexpr unsigned char PLAYER_CANCEL_ROOM = 80; // ì‹ ì²­ ì·¨ì†Œ ì •ë³´ ë°©ì¥(ë°©)í•œí…Œ ì „ì†¡
 #pragma endregion
 
 	enum class BOSS_ATTACK : char {
@@ -454,7 +454,7 @@ namespace SERVER_PACKET {
 	};
 
 	struct NotifyPlayerAnimationPacket : public PacketHeader
-	{//ÀüÃ¼ ÇÃ·¹ÀÌ¾îµé¿¡°Ô ¾Ë·Á¼­ ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+	{//ì „ì²´ í”Œë ˆì´ì–´ë“¤ì—ê²Œ ì•Œë ¤ì„œ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
 		ROLE role;
 		std::chrono::high_resolution_clock::time_point time;
 		NotifyPlayerAnimationPacket(const char& type, const ROLE& role, const std::chrono::high_resolution_clock::time_point& time)
@@ -479,10 +479,10 @@ namespace SERVER_PACKET {
 
 	struct BossStageInitPacket : public PacketHeader
 	{
-		XMFLOAT3 bossPosition;//º¸½º ½ÃÀÛÇÒ¶§ À§Ä¡
+		XMFLOAT3 bossPosition;//ë³´ìŠ¤ ì‹œì‘í• ë•Œ ìœ„ì¹˜
 		XMFLOAT3 bossLookVector;
 		float bossHp;
-		PlayerState userState[4];//À¯Àú µ¥ÀÌÅÍ
+		PlayerState userState[4];//ìœ ì € ë°ì´í„°
 		BossStageInitPacket() : PacketHeader(static_cast<char>(TYPE::START_STAGE_BOSS), sizeof(BossStageInitPacket)) {}
 	};
 

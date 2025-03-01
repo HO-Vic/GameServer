@@ -162,14 +162,14 @@ std::optional<std::pair<bool, XMFLOAT3>> LiveObject::CollideLiveObject(const XMF
 	BoundingSphere collideSphere{ nextPosition,  m_collisionSphere.Radius };
 	std::vector<std::shared_ptr<LiveObject>>& liveObjects = roomRef->GetLiveObjects();
 	for (auto& liveObject : liveObjects) {
-		//ÀÚ±â ÀÚ½ÅÀÌ¶ó¸é ³Ñ¾î°¨
+		//ìžê¸° ìžì‹ ì´ë¼ë©´ ë„˜ì–´ê°
 		if (liveObject == shared_from_this()) continue;
 		if (!liveObject->IsAlive())continue;
 		float distance = liveObject->GetDistance(nextPosition);
 		if (liveObject->GetCollision().Radius + m_collisionSphere.Radius < distance) continue;
 		if (true == isSlidingPosition || nullptr != collideLiveObject) {
-			//ÀÌ¹Ì Ãæµ¹ÇØ¼­ ¶Ç Ãæµ¹ÇÑ°Å¸é ÀÌµ¿x
-			//¶Ç´Â »óÀ§¿¡¼­ ÀÌ¹Ì ½½¶óÀÌµù º¤ÅÍ ±¸ÇØ¼­ Ãæµ¹ÀÌ ÇÏ³ª¶óµµ ÀÖÀ¸¸é ÀÌµ¿x
+			//ì´ë¯¸ ì¶©ëŒí•´ì„œ ë˜ ì¶©ëŒí•œê±°ë©´ ì´ë™x
+			//ë˜ëŠ” ìƒìœ„ì—ì„œ ì´ë¯¸ ìŠ¬ë¼ì´ë”© ë²¡í„° êµ¬í•´ì„œ ì¶©ëŒì´ í•˜ë‚˜ë¼ë„ ìžˆìœ¼ë©´ ì´ë™x
 			return std::nullopt;
 		}
 		collideLiveObject = liveObject;
@@ -190,8 +190,8 @@ std::optional<std::pair<bool, XMFLOAT3>> LiveObject::CollideLiveObject(const XMF
 
 	XMFLOAT3 slidingVector = XMFLOAT3(-normalVector.z, 0.0f, normalVector.x);
 
-	float slidingDotLookResult = Vector3::DotProduct(slidingVector, m_moveVector);//ÇöÀç ·è ¹æÇâ¿¡ ¸Â´Â ½½¶óÀÌµù º¤ÅÍ È®ÀÎÇÏ±â À§ÇÑ ³»Àû
-	if (slidingDotLookResult < 0)slidingVector = Vector3::ScalarProduct(slidingVector, -1.0f, false);//0º¸´Ù ÀÛ´Ù´Â°Ç, ¹Ý´ë ¹æÇâÀ» ÀÇ¹Ì
+	float slidingDotLookResult = Vector3::DotProduct(slidingVector, m_moveVector);//í˜„ìž¬ ë£© ë°©í–¥ì— ë§žëŠ” ìŠ¬ë¼ì´ë”© ë²¡í„° í™•ì¸í•˜ê¸° ìœ„í•œ ë‚´ì 
+	if (slidingDotLookResult < 0)slidingVector = Vector3::ScalarProduct(slidingVector, -1.0f, false);//0ë³´ë‹¤ ìž‘ë‹¤ëŠ”ê±´, ë°˜ëŒ€ ë°©í–¥ì„ ì˜ë¯¸
 
 	XMFLOAT3 applySlidingVectorPosition = GetPosition();
 	applySlidingVectorPosition = Vector3::Add(applySlidingVectorPosition, slidingVector, m_moveSpeed * elapsedTime);
@@ -209,7 +209,7 @@ BoundingOrientedBox LiveObject::GetMeleeAttackJudgeBox(const XMFLOAT3& startPosi
 	XMFLOAT3 objectForwardVector = forwardVector;
 	objectForwardVector = Vector3::Normalize(objectForwardVector);
 	float dotProductResult = Vector3::DotProduct(objectForwardVector, DEFAULT_FORWARD_VECTOR);
-	//ÁÂ¿ì ÆÇ´ÜÀ» À§ÇÑ ¿ÜÀû
+	//ì¢Œìš° íŒë‹¨ì„ ìœ„í•œ ì™¸ì 
 	XMFLOAT3 crossProductResult = Vector3::CrossProduct(DEFAULT_FORWARD_VECTOR, objectForwardVector);
 
 	float betweenRadian = acosf(dotProductResult);
@@ -217,7 +217,7 @@ BoundingOrientedBox LiveObject::GetMeleeAttackJudgeBox(const XMFLOAT3& startPosi
 	if (dotProductUpVectorResult < 0)
 		betweenRadian = -1 * betweenRadian;
 
-	//start·Î ºÎÅÍ forward¹æÇâÀ¸·Î offset¸¸Å­ ¾Õ¿¡
+	//startë¡œ ë¶€í„° forwardë°©í–¥ìœ¼ë¡œ offsetë§Œí¼ ì•žì—
 	XMFLOAT3 boundingPosition = startPosition;
 	boundingPosition = Vector3::Add(boundingPosition, objectForwardVector, offsetLegth);
 	boundingPosition.y = height / 2.0f;

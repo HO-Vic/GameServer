@@ -1,23 +1,23 @@
 #pragma once
 #include "../../PCH/stdafx.h"
 
-//Event¸¦ Ã³¸®ÇÒ °´Ã¼¸¦ Æ÷ÀÎÅÍ·Î °¡Áü
+//Eventë¥¼ ì²˜ë¦¬í•  ê°ì²´ë¥¼ í¬ì¸í„°ë¡œ ê°€ì§
 
 /*
-	°¡»ó ÇÔ¼ö¸¦ »ç¿ëÇÏ°Ô µÇ¸é, classÀÇ ÁÖ¼Ò°¡ vtableÀÇ ÁÖ¼Ò°¡ µÇ±â ¶§¹®¿¡
-	IocpEvent¸¦ ¸â¹ö·Î °¡Á® executeÇÏ¿© Ã³¸®
+	ê°€ìƒ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•˜ê²Œ ë˜ë©´, classì˜ ì£¼ì†Œê°€ vtableì˜ ì£¼ì†Œê°€ ë˜ê¸° ë•Œë¬¸ì—
+	IocpEventë¥¼ ë©¤ë²„ë¡œ ê°€ì ¸ executeí•˜ì—¬ ì²˜ë¦¬
 */
 
 /*
-	IOCP_OP_CODE: ¿Ï·áÆ÷Æ® ÅëÁö ½Ã, ÇÒ Çàµ¿
-	IocpEvent: ½ÇÁ¦ ÇàÀ§´Â IocpEvent::Execute()¿¡¼­
+	IOCP_OP_CODE: ì™„ë£Œí¬íŠ¸ í†µì§€ ì‹œ, í•  í–‰ë™
+	IocpEvent: ì‹¤ì œ í–‰ìœ„ëŠ” IocpEvent::Execute()ì—ì„œ
 */
 namespace IOCP
 {
 	class EventBase;
 }
 
-//overlapped±¸Á¶Ã¼°¡ ¸Ç ¾Õ¿¡(´Ù¸¥°Ç »ó¼ÓÇÏ¸é ¾ÈµÉµí?) ex) enable_shared_from_this<>
+//overlappedêµ¬ì¡°ì²´ê°€ ë§¨ ì•ì—(ë‹¤ë¥¸ê±´ ìƒì†í•˜ë©´ ì•ˆë ë“¯?) ex) enable_shared_from_this<>
 class ExpOver : public WSAOVERLAPPED
 {
 public:
@@ -63,7 +63,7 @@ public:
 
 	void Execute(const BOOL& isSuccess, const DWORD& ioByte, const ULONG_PTR& key);
 
-	//¿À¹ö·¦ °´Ã¼ ÃÊ±âÈ­
+	//ì˜¤ë²„ë© ê°ì²´ ì´ˆê¸°í™”
 	void ResetOverlapped()
 	{
 		ZeroMemory(this, sizeof(WSAOVERLAPPED));

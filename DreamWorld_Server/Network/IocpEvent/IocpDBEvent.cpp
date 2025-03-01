@@ -51,7 +51,7 @@ void IOCP::DBNotifyEvent::Fail(ExpOver* over, const DWORD& ioByte, const ULONG_P
 
 IOCP::DBGetPlayerInfoEvent::DBGetPlayerInfoEvent(const wchar_t* name, std::shared_ptr<UserSession>& userRef) : m_userRef(userRef)
 {
-	//DB¿¡¼­ 20±ÛÀÚ·Î Á¦ÇÑ Çß±â¶§¹®¿¡ ¹®Á¦ ¹ß»ı ¾ÈÇÒ°Å·Î ¿¹»ó µÊ.
+	//DBì—ì„œ 20ê¸€ìë¡œ ì œí•œ í–ˆê¸°ë•Œë¬¸ì— ë¬¸ì œ ë°œìƒ ì•ˆí• ê±°ë¡œ ì˜ˆìƒ ë¨.
 	HRESULT res = StringCchCopyW(m_buffer, NAME_SIZE, name);
 	if (S_OK != res) {
 		//Error
@@ -70,7 +70,7 @@ IOCP::DBGetPlayerInfoEvent::DBGetPlayerInfoEvent(const std::wstring& name, std::
 void IOCP::DBGetPlayerInfoEvent::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)
 {
 	auto userRef = m_userRef.lock();
-	//À¯Àú°¡ ¾ø´Ù¸é ¸®ÅÏ
+	//ìœ ì €ê°€ ì—†ë‹¤ë©´ ë¦¬í„´
 	if (nullptr == userRef) {
 		IocpEventManager::GetInstance().DeleteExpOver(over);
 		return;
@@ -86,25 +86,25 @@ void IOCP::DBGetPlayerInfoEvent::Execute(ExpOver* over, const DWORD& ioByte, con
 			if (m_buffer[removeSpace] != L' ' && m_buffer[removeSpace] != 0) break;
 			m_buffer[removeSpace] = 0;
 		}
-		//disconnectUser¿¡ ÀÖ´Ù¸é Á¦°Å
+		//disconnectUserì— ìˆë‹¤ë©´ ì œê±°
 		UserManager::GetInstance().EraseDiconnectUser(m_buffer);
 		StringCchCopyW(sendPacket->nickName, NAME_SIZE, m_buffer);
-		//À¯Àú ¼½¼ÇÀÌ ´Ğ³×ÀÓ ÀúÀå
+		//ìœ ì € ì„¹ì…˜ì´ ë‹‰ë„¤ì„ ì €ì¥
 		userRef->LoginSuccess(m_buffer);
-		//À¯Àú¿¡°Ô ·Î±×ÀÎ ¼º°ø Á¤º¸ ¼Û½Å
+		//ìœ ì €ì—ê²Œ ë¡œê·¸ì¸ ì„±ê³µ ì •ë³´ ì†¡ì‹ 
 		userRef->DoSend(sendPacket);
 		//userRef->
-		//userSession¿¡ ÀÌ¸§ ÀúÀå
-		//Å¬¶óÀÌ¾ğÆ®¿¡ ÀÌ¸§ Àü¼Û
+		//userSessionì— ì´ë¦„ ì €ì¥
+		//í´ë¼ì´ì–¸íŠ¸ì— ì´ë¦„ ì „ì†¡
 	}
 	break;
 	default:
 		spdlog::critical("DBGetPlayerInfoEvent::Execute() - UnDefined OP_CODE - {}", static_cast<int>(currentOpCode));
 		break;
 	}
-	//expOver´Â ¹İÈ¯
+	//expOverëŠ” ë°˜í™˜
 	IocpEventManager::GetInstance().DeleteExpOver(over);
-	//IOCP::EventBase´Â shared_ptr°´Ã¼¿©¼­ delete x
+	//IOCP::EventBaseëŠ” shared_ptrê°ì²´ì—¬ì„œ delete x
 }
 
 void IOCP::DBGetPlayerInfoEvent::Fail(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)

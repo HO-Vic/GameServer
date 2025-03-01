@@ -56,9 +56,9 @@ public:
 		return m_triangleMesh[idx];
 	}
 
-	//¸Ó¸®°¡ ½ÃÀÛ, ²¿¸®°¡ ³¡
+	//ë¨¸ë¦¬ê°€ ì‹œì‘, ê¼¬ë¦¬ê°€ ë
 	std::list<XMFLOAT3> GetAstarNode(const XMFLOAT3& startPosition, const XMFLOAT3& destinationPosition);
-	//±æÃ£±â È®ÀÎÀÌ Àß ¾ÈµÅ¼­ Å¬¶óÀÌ¾ğÆ®¿¡¼­ ³×ºñ ¸Ş½Ã ·»´õ¸µÀ» À§ÇÑ °´Ã¼
+	//ê¸¸ì°¾ê¸° í™•ì¸ì´ ì˜ ì•ˆë¼ì„œ í´ë¼ì´ì–¸íŠ¸ì—ì„œ ë„¤ë¹„ ë©”ì‹œ ë Œë”ë§ì„ ìœ„í•œ ê°ì²´
 	std::list<XMFLOAT3> GetAstarNode_TestForClient(const XMFLOAT3& startPosition, const XMFLOAT3& destinationPosition, std::shared_ptr<std::list<int>> indexList);
 private:
 	std::list<XMFLOAT3> OptimizeAStar(const XMFLOAT3& startPosition, const XMFLOAT3& destinationPosition, std::list<std::shared_ptr<NavMesh::TriangleNavMesh>>& confirmedAstarNode);

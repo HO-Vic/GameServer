@@ -40,8 +40,8 @@ protected:
 
 	BoundingSphere m_collisionSphere;
 
-	//RoomÀÇ ¸â¹ö º¯¼ö¿©¼­ ¸ÕÀú ¼Ò¸êÀÚ È£ÃâµÇ´Ï, ¹®Á¦ ¾øÀ»°Å·Î »ý°¢ µÊ. => Àß¸øµÈ »ý°¢À» Çß³×.
-	//¾ê ¶§¹®¿¡ ¼Ò¸êÀÚ°¡ ¾ÈºÒ·Á¼­ ¸Þ¸ð¸® ÇØÁ¦°¡ ¾ÈµÇ´Â »óÈ²ÀÌ ¹ß»ýÇÏ°Ô µÇ³×
+	//Roomì˜ ë©¤ë²„ ë³€ìˆ˜ì—¬ì„œ ë¨¼ì € ì†Œë©¸ìž í˜¸ì¶œë˜ë‹ˆ, ë¬¸ì œ ì—†ì„ê±°ë¡œ ìƒê° ë¨. => ìž˜ëª»ëœ ìƒê°ì„ í–ˆë„¤.
+	//ì–˜ ë•Œë¬¸ì— ì†Œë©¸ìžê°€ ì•ˆë¶ˆë ¤ì„œ ë©”ëª¨ë¦¬ í•´ì œê°€ ì•ˆë˜ëŠ” ìƒí™©ì´ ë°œìƒí•˜ê²Œ ë˜ë„¤
 	std::weak_ptr<Room> m_roomWeakRef;
 };
 

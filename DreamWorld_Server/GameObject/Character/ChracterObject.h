@@ -4,7 +4,7 @@
 #include "../GameObject.h"
 #include "../EventController/EventController.h"
 
-//User ÇÃ·¹ÀÌ Ä³¸¯ÅÍ
+//User í”Œë ˆì´ ìºë¦­í„°
 class CharacterObject : public LiveObject
 {
 public:
@@ -24,11 +24,11 @@ private:
 		UodateAngle() : applyAngle(0), currentAngle(0) {}
 		float Update()
 		{
-			//ÇöÀç Àû¿ëÇÒ °¢µµ¿¡ ¼ö½Å °¢µµ¸¦ ÀúÀå
+			//í˜„ì¬ ì ìš©í•  ê°ë„ì— ìˆ˜ì‹  ê°ë„ë¥¼ ì €ì¥
 			float newAngle = applyAngle;
-			//ÇöÀç Àû¿ëµÇ¾îÀÖ´Â °¢µµ¿Í, Àû¿ëÇÒ °¢µµÀÇ Â÷ÀÌ °è»ê
+			//í˜„ì¬ ì ìš©ë˜ì–´ìˆëŠ” ê°ë„ì™€, ì ìš©í•  ê°ë„ì˜ ì°¨ì´ ê³„ì‚°
 			float diffAngle = newAngle - currentAngle;
-			//È¸ÀüÇßÀ¸´Ï, ÇöÀç °¢µµ ÃÖ½ÅÈ­
+			//íšŒì „í–ˆìœ¼ë‹ˆ, í˜„ì¬ ê°ë„ ìµœì‹ í™”
 			currentAngle = newAngle;
 			if (currentAngle > 360.0f) currentAngle -= 360.0f;
 			if (currentAngle < 0.0f) currentAngle += 360.0f;
@@ -99,24 +99,24 @@ protected:
 	std::optional<const XMFLOAT3> UpdateNextPosition(const float& elapsedTime);
 	virtual std::optional<const XMFLOAT3> GetMoveVector() const = 0;
 	//Collision By Wall, Boss, Monster
-	//¿òÁ÷ÀÏ ¼ö ¾ø´Ù¸é nullopt
-	//¿òÁ÷ÀÏ ¼ö ÀÖ´Ù¸é, ÇöÀç À§Ä¡ ¶Ç´Â, ½½¶óÀÌµù º¤ÅÍ Àû¿ëÇÑ À§Ä¡
-	//±Ùµ¥, ¾îÂ·µç ¿òÁ÷ÀÏ ¼öÀÖ´Ù ¾ø´Ù¸é
-	//¿òÁ÷ÀÌ¸é ½½¶óÀÌµù º¤ÅÍ Àû¿ëÇÏµç, nextPosition¸®ÅÏÇÏ¸é µÇÁö ¾Ê³ª?
+	//ì›€ì§ì¼ ìˆ˜ ì—†ë‹¤ë©´ nullopt
+	//ì›€ì§ì¼ ìˆ˜ ìˆë‹¤ë©´, í˜„ì¬ ìœ„ì¹˜ ë˜ëŠ”, ìŠ¬ë¼ì´ë”© ë²¡í„° ì ìš©í•œ ìœ„ì¹˜
+	//ê·¼ë°, ì–´ì¨Œë“  ì›€ì§ì¼ ìˆ˜ìˆë‹¤ ì—†ë‹¤ë©´
+	//ì›€ì§ì´ë©´ ìŠ¬ë¼ì´ë”© ë²¡í„° ì ìš©í•˜ë“ , nextPositionë¦¬í„´í•˜ë©´ ë˜ì§€ ì•Šë‚˜?
 	std::optional<std::pair<bool, XMFLOAT3>> CollideWall(const XMFLOAT3& nextPosition, const float& elapsedTime, const bool& isSlidingPosition);
 	
 protected:
 	bool m_leftMouseInput;
 	bool m_rightMouseInput;
 
-	//Àû¿ëÇÒ ¹æÇâ
+	//ì ìš©í•  ë°©í–¥
 	std::atomic<char> m_applyDIrection;
-	//ÇöÀç ¹æÇâ
+	//í˜„ì¬ ë°©í–¥
 	char m_currentDirection;
 
 	UodateAngle3 m_angleData;
 
-	//½¯µå Àû¿ë Á¤º¸
+	//ì‰´ë“œ ì ìš© ì •ë³´
 	std::atomic_bool	m_activeShield;
 	float				m_Shield = 0.0f;
 
@@ -138,8 +138,8 @@ protected:
 	void UpdateDirectionRotate();
 	virtual void UpdateRotate() override;
 
-	//¿ø°Å¸® Ä³¸¯ÅÍ´Â ¹«Á¶°Ç ¾ÕÀ» º¸°í ÀüÈÄÁÂ¿ì ¿òÁ÷ÀÌÁö¸¸
-	//±Ù°Å¸®´Â ÀüÈÄÁÂÈÄ·Î ¹Ù¶óº¸¸é¼­ ¿òÁ÷ÀÓ. => °ø°İÀÌ ¿·À¸·Î ³ª°¥ ¼ö ÀÖ¾î¾ß ÇÔ.
+	//ì›ê±°ë¦¬ ìºë¦­í„°ëŠ” ë¬´ì¡°ê±´ ì•ì„ ë³´ê³  ì „í›„ì¢Œìš° ì›€ì§ì´ì§€ë§Œ
+	//ê·¼ê±°ë¦¬ëŠ” ì „í›„ì¢Œí›„ë¡œ ë°”ë¼ë³´ë©´ì„œ ì›€ì§ì„. => ê³µê²©ì´ ì˜†ìœ¼ë¡œ ë‚˜ê°ˆ ìˆ˜ ìˆì–´ì•¼ í•¨.
 };
 
 class RangedCharacterObject : public CharacterObject

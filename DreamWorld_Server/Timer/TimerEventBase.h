@@ -4,25 +4,25 @@
 namespace TIMER {
 
 	/*
-		°ÔÀÓ »óÅÂ °ü·Ã
-		EV_ROOM_UPDATE: À§Ä¡ ¾÷µ¥ÀÌÆ® - (60fps = 1000/60ms = ¾à16.67ms -> 17ms·Î ¾÷µ¥ÀÌÆ®)
-			targetId: ·ë ¹øÈ£
-		EV_GAME_STATE_SEND: µ¥µå ·¹Ä¿´×À» À§ÇÑ ¼­¹ö ÁÂÇ¥ send - (100ms¸¶´Ù ¼öÇà)
-			targetid: ·ë ¹øÈ£
+		ê²Œì„ ìƒíƒœ ê´€ë ¨
+		EV_ROOM_UPDATE: ìœ„ì¹˜ ì—…ë°ì´íŠ¸ - (60fps = 1000/60ms = ì•½16.67ms -> 17msë¡œ ì—…ë°ì´íŠ¸)
+			targetId: ë£¸ ë²ˆí˜¸
+		EV_GAME_STATE_SEND: ë°ë“œ ë ˆì»¤ë‹ì„ ìœ„í•œ ì„œë²„ ì¢Œí‘œ send - (100msë§ˆë‹¤ ìˆ˜í–‰)
+			targetid: ë£¸ ë²ˆí˜¸
 
-		//º¸½º °ü·Ã
-		EV_FIND_PLAYER: º¸½º ÇÃ·¹ÀÌ¾î ±æ Å½»ö
-			targetId: ·ë ¹øÈ£
-		EV_BOSS_ATTACK: º¸½º °ø°İ
-			targetId: ·ë ¹øÈ£
+		//ë³´ìŠ¤ ê´€ë ¨
+		EV_FIND_PLAYER: ë³´ìŠ¤ í”Œë ˆì´ì–´ ê¸¸ íƒìƒ‰
+			targetId: ë£¸ ë²ˆí˜¸
+		EV_BOSS_ATTACK: ë³´ìŠ¤ ê³µê²©
+			targetId: ë£¸ ë²ˆí˜¸
 
-		//ÇÃ·¹ÀÌ¾î °ü·Ã
-		EV_HEAL: Èú·¯°¡ Èú
-			targetId: ·ë ¹øÈ£
-		EV_TANKER_SHIELD_END: ÅÊÄ¿ ½¯µå ³¡³¯ ¶§ Á¦°Å
-			targetId: ·ë ¹øÈ£
-		EV_SKY_ARROW_ATTACK: nÃÊÈÄ¿¡ È­»ì À§Ä¡¿¡ ¸ó½ºÅÍ ÇÇ°İ
-			targetId: ·ë¹øÈ£
+		//í”Œë ˆì´ì–´ ê´€ë ¨
+		EV_HEAL: íëŸ¬ê°€ í
+			targetId: ë£¸ ë²ˆí˜¸
+		EV_TANKER_SHIELD_END: íƒ±ì»¤ ì‰´ë“œ ëë‚  ë•Œ ì œê±°
+			targetId: ë£¸ ë²ˆí˜¸
+		EV_SKY_ARROW_ATTACK: nì´ˆí›„ì— í™”ì‚´ ìœ„ì¹˜ì— ëª¬ìŠ¤í„° í”¼ê²©
+			targetId: ë£¸ë²ˆí˜¸
 
 	*/
 
@@ -31,12 +31,12 @@ namespace TIMER {
 	class EventBase : std::enable_shared_from_this<TIMER::EventBase>
 	{
 	public:
-		//msÀÖ´Ù°¡ ½ÃÀÛÇÒ ÀÛ¾÷
+		//msìˆë‹¤ê°€ ì‹œì‘í•  ì‘ì—…
 		EventBase(const TIMER_EVENT_TYPE& eventId, const std::chrono::milliseconds& afterTime);
-		//secÀÖ´Ù°¡ ½ÃÀÛÇÒ ÀÛ¾÷
+		//secìˆë‹¤ê°€ ì‹œì‘í•  ì‘ì—…
 		EventBase(const TIMER_EVENT_TYPE& eventId, const std::chrono::seconds& afterTime);
 
-		//priorityQueue¿¡¼­ ¿ì¼± ¼øÀ§ ÆÇ´ÜÀ» À§ÇÑ operator
+		//priorityQueueì—ì„œ ìš°ì„  ìˆœìœ„ íŒë‹¨ì„ ìœ„í•œ operator
 		constexpr bool operator < (const EventBase& L) const
 		{
 			return (m_wakeupTime > L.m_wakeupTime);

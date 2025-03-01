@@ -21,7 +21,7 @@ const bool EventController::InsertDurationEventData(const std::string_view event
 
 std::shared_ptr<CoolDownEventBase> EventController::GetEventData(const std::string_view eventName)
 {
-	//Á¸Àç ÇÏÁö ¾Ê´Â ÀÌº¥Æ®ÀÏ ¶§
+	//ì¡´ì¬ í•˜ì§€ ì•ŠëŠ” ì´ë²¤íŠ¸ì¼ ë•Œ
 	if (!m_eventDatas.count(eventName.data())) return nullptr;
 	return m_eventDatas[eventName.data()];
 }

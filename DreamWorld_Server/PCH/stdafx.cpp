@@ -29,11 +29,11 @@ void StartLogger()
 	filename_ss << std::put_time(parts, "logs/%m-%d-%H.%M.%S.txt");
 	std::string filename = filename_ss.str();
 
-	// ·Î±× ÆÄÀÏ »ý¼º
+	// ë¡œê·¸ íŒŒì¼ ìƒì„±
 	auto file_logger = spdlog::basic_logger_mt("file_logger", filename);
-	// ÄÜ¼Ö Ãâ·ÂÀ» À§ÇÑ ·Î°Å »ý¼º
+	// ì½˜ì†” ì¶œë ¥ì„ ìœ„í•œ ë¡œê±° ìƒì„±
 	auto console_logger = spdlog::stdout_color_mt("console_logger");
-	// ÆÄÀÏ°ú ÄÜ¼Ö¿¡ ·Î±× µ¿½Ã¿¡ Ãâ·ÂÇÏ´Â ·Î°Å »ý¼º
+	// íŒŒì¼ê³¼ ì½˜ì†”ì— ë¡œê·¸ ë™ì‹œì— ì¶œë ¥í•˜ëŠ” ë¡œê±° ìƒì„±
 	auto combined_logger = spdlog::logger("Server Log", { console_logger->sinks().front(), file_logger->sinks().front() });
 	combined_logger.info("Start Logger");
 	spdlog::set_default_logger(std::make_shared<spdlog::logger>(spdlog::logger("Server Log", { console_logger->sinks().front(), file_logger->sinks().front() })));

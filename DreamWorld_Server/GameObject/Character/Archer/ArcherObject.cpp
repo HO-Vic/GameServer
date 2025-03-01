@@ -62,7 +62,7 @@ void ArcherObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power)
 void ArcherObject::ExecuteTripleArrow(const XMFLOAT3& direction)
 {
 	//  .
-	// . . <= ÀÌ·± ÇüÅÂ
+	// . . <= ì´ëŸ° í˜•íƒœ
 	auto currentPosition = GetPosition();
 	auto rightVector = GetRightVector();
 

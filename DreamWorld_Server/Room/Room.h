@@ -34,7 +34,7 @@ public:
 	Room(std::shared_ptr<UserSession>& userRef, std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef);
 	~Room();
 
-	//IOCP¿¡¼­ PQGS·Î ¿À´Â °æ¿ì ÇØ°á - update, gamestate...(·ë¿¡ ´ëÇÑ ÀÌº¥Æ®)
+	//IOCPì—ì„œ PQGSë¡œ ì˜¤ëŠ” ê²½ìš° í•´ê²° - update, gamestate...(ë£¸ì— ëŒ€í•œ ì´ë²¤íŠ¸)
 	virtual void Execute(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key) override;
 	virtual void Fail(ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key) override;
 
@@ -73,7 +73,7 @@ public:
 	void SetBossRoad(std::shared_ptr<std::list<XMFLOAT3>> road);
 	void SetBossAggro(std::shared_ptr<std::list<XMFLOAT3>> road, std::shared_ptr<CharacterObject> characteRef);
 
-	void ForceGameEnd();//ÀÌ ¹æ °ÔÀÓ °­Á¦·Î Á¾·á
+	void ForceGameEnd();//ì´ ë°© ê²Œì„ ê°•ì œë¡œ ì¢…ë£Œ
 
 	void DisconnectUser(std::shared_ptr<UserSession> disconnectedUserRef);
 	bool ReconnectUser(std::shared_ptr<UserSession> reconnectUserRef);
@@ -103,24 +103,24 @@ private:
 	ROOM_STATE m_roomState = ROOM_STATE::ROOM_COMMON;
 	int m_updateCnt;
 
-	//ÇÃ·¹ÀÌ¾î id-Ä³¸¯ÅÍ
-	//concurrent_hash_map - insert/erase´Â thread safeÇÏÁö¸¸
-	//¼øÈ¸´Â ¾ÈÀüÇÏÁö ¾ÊÀ½.
-	//std::unordered_mapÀ¸·Î º¯°æ
+	//í”Œë ˆì´ì–´ id-ìºë¦­í„°
+	//concurrent_hash_map - insert/eraseëŠ” thread safeí•˜ì§€ë§Œ
+	//ìˆœíšŒëŠ” ì•ˆì „í•˜ì§€ ì•ŠìŒ.
+	//std::unordered_mapìœ¼ë¡œ ë³€ê²½
 	std::unordered_set<std::shared_ptr<UserSession>> m_userSessions;
 	//std::mutex m_userLock;
-	//ÆĞÅ¶À» º¸³»´Â°Ç 2°³ ÀÌ»óÀÇ ¾²·¹µå¿¡¼­ ÇÏ´Â °æ¿ì°¡ ¸¹Àºµ¥, read¸¸ ÇÏ´Âµ¥µµ mutex´Â ¾ÈÁÁÀº ¹æ¹ıÀÌ¶ó°í ÆÇ´Ü-> read lockÀ¸·Î º¯°æ, À¯Àú°¡ µé¾î¿Ã ¶§, ³ª°¥¶§´Â write-lockÀ» ÇÒ ÀÇµµ
+	//íŒ¨í‚·ì„ ë³´ë‚´ëŠ”ê±´ 2ê°œ ì´ìƒì˜ ì“°ë ˆë“œì—ì„œ í•˜ëŠ” ê²½ìš°ê°€ ë§ì€ë°, readë§Œ í•˜ëŠ”ë°ë„ mutexëŠ” ì•ˆì¢‹ì€ ë°©ë²•ì´ë¼ê³  íŒë‹¨-> read lockìœ¼ë¡œ ë³€ê²½, ìœ ì €ê°€ ë“¤ì–´ì˜¬ ë•Œ, ë‚˜ê°ˆë•ŒëŠ” write-lockì„ í•  ì˜ë„
 	std::shared_mutex m_userSessionsLock;
-	//¿ªÇÒ-Ä³¸¯ÅÍ-°´Ã¼
+	//ì—­í• -ìºë¦­í„°-ê°ì²´
 	std::unordered_map<ROLE, std::shared_ptr<CharacterObject>> m_characters;
-	//Update¸¦ À§ÇÑ ¸ğµç °ÔÀÓ ¿ÀºêÁ§Æ®¸¦ ´ã´Â vector
+	//Updateë¥¼ ìœ„í•œ ëª¨ë“  ê²Œì„ ì˜¤ë¸Œì íŠ¸ë¥¼ ë‹´ëŠ” vector
 
 	std::vector<std::shared_ptr<SmallMonsterObject>> m_smallMonsters;
 
 	std::shared_ptr<BossMonsterObject> m_bossMonster;
 	std::chrono::high_resolution_clock::time_point m_bossStartTime;
 
-	//Åõ»çÃ¼´Â »ç¶óÁú ¼ö ÀÖÀ¸´Ï list·Î Ã³¸®
+	//íˆ¬ì‚¬ì²´ëŠ” ì‚¬ë¼ì§ˆ ìˆ˜ ìˆìœ¼ë‹ˆ listë¡œ ì²˜ë¦¬
 	std::list<std::shared_ptr<ProjectileObject>> m_projectileObjects;
 
 	//0 stage // 1 boss

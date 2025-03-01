@@ -17,7 +17,7 @@ void IOCP::ListenEvent::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_
 	{
 	case IOCP_OP_CODE::OP_ACCEPT:
 	{
-		//m_connInfo·Î remote ÁÖ¼Ò Á¤º¸ È®ÀÎ °¡´É
+		//m_connInfoë¡œ remote ì£¼ì†Œ ì •ë³´ í™•ì¸ ê°€ëŠ¥
 
 		spdlog::debug("IOCP::ListenEvent::Execute() - OP_ACCEPT, key: {}", key);
 		SOCKADDR_IN remoteInfo;
@@ -25,7 +25,7 @@ void IOCP::ListenEvent::Execute(ExpOver* over, const DWORD& ioByte, const ULONG_
 		unsigned short remotePort2 = ntohs(remoteInfo.sin_port);
 		spdlog::critical("port: {}", (unsigned short)remotePort2);
 		UserManager::GetInstance().RegistPlayer(m_clientSocket);
-		//»õ·Î¿î Å¬¶óÀÌ¾ğÆ®¸¦ ¹Ş±â À§ÇØ ´Ù½Ã AcceptÈ£Ãâ
+		//ìƒˆë¡œìš´ í´ë¼ì´ì–¸íŠ¸ë¥¼ ë°›ê¸° ìœ„í•´ ë‹¤ì‹œ Acceptí˜¸ì¶œ
 	}
 	break;
 	default:
@@ -67,10 +67,10 @@ void IOCP::ListenEvent::Accept()
 		m_clientSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, NULL, WSA_FLAG_OVERLAPPED);
 		int addrInfoSize = sizeof(SOCKADDR_IN);
 		/*
-			·ÎÄÃ°ú ¿ø°İÁö ÁÖ¼ÒÀÇ Å©±â´Â ÁÖ¼Ò°¡ ³»ºÎ Çü½Ä(Internel format)À¸·Î ±â·ÏµÇ±â ¶§¹®¿¡
-			¹İµå½Ã »ç¿ëÁßÀÎ Àü¼Û ÇÁ·ÎÅäÄİ sockaddr ±¸Á¶Ã¼º¸´Ù 16¹ÙÀÌÆ® ÀÌ»ó Ä¿¾ßÇÕ´Ï´Ù.
-			¿¹¸¦µé¾î, sockaddr_in(TCP/IPÀÇ ÁÖ¼Ò ±¸Á¶)ÀÇ Å©±â´Â 16¹ÙÀÌÆ®ÀÔ´Ï´Ù. µû¶ó¼­,
-			·ÎÄÃÁÖ¼Ò¿Í ¿ø°İÁÖ¼Ò¿¡ ´ëÇØ ÃÖ¼Ò 32BytesÀÇ ¹öÆÛÅ©±â¸¦ ÁöÁ¤ÇØ¾ß ÇÕ´Ï´Ù.
+			ë¡œì»¬ê³¼ ì›ê²©ì§€ ì£¼ì†Œì˜ í¬ê¸°ëŠ” ì£¼ì†Œê°€ ë‚´ë¶€ í˜•ì‹(Internel format)ìœ¼ë¡œ ê¸°ë¡ë˜ê¸° ë•Œë¬¸ì—
+			ë°˜ë“œì‹œ ì‚¬ìš©ì¤‘ì¸ ì „ì†¡ í”„ë¡œí† ì½œ sockaddr êµ¬ì¡°ì²´ë³´ë‹¤ 16ë°”ì´íŠ¸ ì´ìƒ ì»¤ì•¼í•©ë‹ˆë‹¤.
+			ì˜ˆë¥¼ë“¤ì–´, sockaddr_in(TCP/IPì˜ ì£¼ì†Œ êµ¬ì¡°)ì˜ í¬ê¸°ëŠ” 16ë°”ì´íŠ¸ì…ë‹ˆë‹¤. ë”°ë¼ì„œ,
+			ë¡œì»¬ì£¼ì†Œì™€ ì›ê²©ì£¼ì†Œì— ëŒ€í•´ ìµœì†Œ 32Bytesì˜ ë²„í¼í¬ê¸°ë¥¼ ì§€ì •í•´ì•¼ í•©ë‹ˆë‹¤.
 		*/
 		bool isSuccess = AcceptEx(m_listenSocket, m_clientSocket, &m_connInfo, 0, sizeof(m_connInfo.localInfo), sizeof(m_connInfo.remoteInfo), nullptr, expOver);
 		if (!isSuccess) {
@@ -81,7 +81,7 @@ void IOCP::ListenEvent::Accept()
 			spdlog::critical("ListenEvent::Accept() - Accept Error");
 			DisplayWsaGetLastError(errCode);
 		}
-		else {//Áï½Ã ¿Ï·á
+		else {//ì¦‰ì‹œ ì™„ë£Œ
 			ListenEvent::Execute(expOver, 0, 0);
 			return;
 		}
@@ -96,11 +96,11 @@ void IOCP::ListenEvent::StartListen(const unsigned short& port)
 	server_addr.sin_port = htons(port);
 	server_addr.sin_addr.s_addr = INADDR_ANY;
 
-	//listen Socket »ı¼º, ¹ÙÀÎµù
+	//listen Socket ìƒì„±, ë°”ì¸ë”©
 	m_listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	bind(m_listenSocket, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr));
 	listen(m_listenSocket, SOMAXCONN);
 
-	////¸®½¼ ¼ÒÄÏ iocp°´Ã¼¿¡ µî·Ï
+	////ë¦¬ìŠ¨ ì†Œì¼“ iocpê°ì²´ì— ë“±ë¡
 	iocpRef->RegistHandle(reinterpret_cast<HANDLE>(m_listenSocket), 999999);
 }
