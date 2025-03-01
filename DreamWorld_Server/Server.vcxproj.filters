@@ -10,9 +10,6 @@
     <Filter Include="PCH">
       <UniqueIdentifier>{d65f0c35-b6f5-41f7-a1a8-d5c230df8689}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Logic">
-      <UniqueIdentifier>{2b2a4b60-1bff-40aa-b1cc-e8ae5b381fde}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DB">
       <UniqueIdentifier>{67488753-1084-4e91-a43b-a7d2dc66a6bf}</UniqueIdentifier>
     </Filter>
@@ -95,9 +92,6 @@
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
       <Filter>PCH</Filter>
-    </ClCompile>
-    <ClCompile Include="Logic\Logic.cpp">
-      <Filter>Logic</Filter>
     </ClCompile>
     <ClCompile Include="DB\DB.cpp">
       <Filter>DB</Filter>
@@ -224,9 +218,6 @@
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h">
       <Filter>PCH</Filter>
-    </ClInclude>
-    <ClInclude Include="Logic\Logic.h">
-      <Filter>Logic</Filter>
     </ClInclude>
     <ClInclude Include="DB\DB.h">
       <Filter>DB</Filter>
