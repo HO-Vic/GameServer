@@ -1,0 +1,31 @@
+#pragma once
+#include "../OverlappedEvent/IOverlappedEvent.h"
+#include <WinSock2.h>
+#include <ws2def.h>
+#include <cstdint>
+#include "../../CommonDefine.h"
+
+namespace sh::IO_Engine {
+class OverlappedEx;
+class AcceptEvent
+    : public IOverlappedEvent {
+ public:
+  AcceptEvent(SOCKET listenSocket, AcceptCompleteHandler acceptHandle, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP)
+      : m_listenSocket(listenSocket), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType) {
+    ZeroMemory(&m_connInfo, sizeof(ConnectInfo));
+  }
+
+  void Start(OverlappedEx* overlappedEx);
+
+  virtual void Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) override;
+
+ private:
+  SOCKET m_clientSocket;
+  SOCKET m_listenSocket;
+  ConnectInfo m_connInfo;
+  AcceptCompleteHandler m_acceptCompleteHandle;
+  int m_socketType;
+  int m_protocolType;
+  uint16_t m_inetType;
+};
+}  // namespace sh::IO_Engine
