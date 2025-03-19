@@ -20,9 +20,6 @@
     <Filter Include="Job">
       <UniqueIdentifier>{f1c439d5-f119-4c87-8114-583eea297082}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ThreadPool">
-      <UniqueIdentifier>{bca4bd16-89ba-42a0-8d2b-f090f4120b7a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TimeCalculator">
       <UniqueIdentifier>{dd08a848-6af2-416a-92cf-5d5a62e2c9ad}</UniqueIdentifier>
     </Filter>
@@ -50,13 +47,13 @@
     <Filter Include="Pool\ObjectPool">
       <UniqueIdentifier>{ecd04716-d3e3-40f2-849d-728003073893}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{bca4bd16-89ba-42a0-8d2b-f090f4120b7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Job\Job.cpp">
       <Filter>Job</Filter>
-    </ClCompile>
-    <ClCompile Include="private\ThreadPool\ThreadPool.cpp">
-      <Filter>ThreadPool</Filter>
     </ClCompile>
     <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp">
       <Filter>TimeCalculator</Filter>
@@ -76,13 +73,22 @@
     <ClCompile Include="private\Pool\MemoryPool.cpp">
       <Filter>Pool\MemoryPool</Filter>
     </ClCompile>
+    <ClCompile Include="private\Thread\ThreadManager.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThreadPool.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThWorkerJob.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\IWorkerItem.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Job\Job.h">
       <Filter>Job</Filter>
-    </ClInclude>
-    <ClInclude Include="public\ThreadPool\ThreadPool.h">
-      <Filter>ThreadPool</Filter>
     </ClInclude>
     <ClInclude Include="public\TimeCalculator\TimeCalculator.h">
       <Filter>TimeCalculator</Filter>
@@ -119,6 +125,18 @@
     </ClInclude>
     <ClInclude Include="public\PCH\pch.h">
       <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThreadManager.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThreadPool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThWorkerJob.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\IWorkerItem.h">
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

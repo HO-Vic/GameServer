@@ -1,8 +1,8 @@
 #include <pch.h>
 #include <Session/ISession.h>
 #include <Session/SessionImpl.h>
-#include <IO_Core/OverlappedEx/OverlappedEx.h>
-#include <IO_Core/OverlappedEx/OverlappedExPool.h>
+#include <Utility/Thread/ThWorkerJob.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
 ISession::ISession()
@@ -25,23 +25,23 @@ void ISession::StartRecv() {
   m_sessionImpl->StartRecv(shared_from_this());
 }
 
-void ISession::Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) {
+void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
   static constexpr bool DESIRE_DISCONNECT = true;
   static bool CONNECTED = false;
-  switch (type) {
-    case RECV: {
-      m_sessionImpl->RecvComplete(overlappedEx, ioByte);
+  switch (thWorkerJob->GetType()) {
+    case Utility::WORKER_TYPE::RECV: {
+      m_sessionImpl->RecvComplete(thWorkerJob, ioByte);
     } break;
-    case SEND: {
-      m_sessionImpl->SendComplete(overlappedEx, ioByte);
+    case Utility::WORKER_TYPE::SEND: {
+      m_sessionImpl->SendComplete(thWorkerJob, ioByte);
     } break;
-    case DISCONNECT: {
+    case Utility::WORKER_TYPE::DISCONN: {
       if (m_isDisconnnected.compare_exchange_strong(CONNECTED, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
         Disconnect();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
-      overlappedEx->m_overlappedEvent = nullptr;
-      OverlappedExPool::GetInstance().Release(overlappedEx);
+      thWorkerJob->Reset();
+      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
     } break;
     default: {
     } break;

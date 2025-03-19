@@ -2,7 +2,8 @@
 #include <Session/RecvContext/RecvContext.h>
 #include <Session/RecvContext/TCP_RecvContextImpl.h>
 #include <Session/RecvContext/UDP_RecvContextImpl.h>
-#include <IO_Core/OverlappedEx/OverlappedExPool.h>
+#include <Utility/Thread/ThWorkerJob.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
 RecvContext::RecvContext(const IO_TYPE ioType, SOCKET sock, RecvHandler recvHandler)
@@ -18,8 +19,8 @@ RecvContext::~RecvContext() {
   delete m_recvContextImpl;
 }
 
-int32_t RecvContext::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
-  auto errorNo = m_recvContextImpl->RecvComplete(overlappedEx, ioSize);
+int32_t RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize) {
+  auto errorNo = m_recvContextImpl->RecvComplete(thWorkerJob, ioSize);
   if (0 != errorNo) {
     if (WSA_IO_PENDING == WSAGetLastError()) {
       errorNo = 0;
@@ -28,9 +29,9 @@ int32_t RecvContext::RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) {
   return errorNo;
 }
 
-int32_t RecvContext::StartRecv(OverlappedPtr& session) {
-  auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::RECV);
-  auto errorNo = m_recvContextImpl->DoRecv(overlappedEx);
+int32_t RecvContext::StartRecv(Utility::WorkerPtr& session) {
+  auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::RECV);
+  auto errorNo = m_recvContextImpl->DoRecv(thWorkerJob);
   if (0 != errorNo) {
     if (WSA_IO_PENDING == WSAGetLastError()) {
       errorNo = 0;

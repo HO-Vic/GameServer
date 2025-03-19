@@ -24,7 +24,10 @@
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
     <ClCompile Include="private\IO_Core\Listener\Listener.cpp" />
-    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp" />
+    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="private\Session\ISession.cpp" />
     <ClCompile Include="private\Session\RecvContext\RecvContext.cpp" />
     <ClCompile Include="private\Session\RecvContext\TCP_RecvContextImpl.cpp" />
@@ -42,9 +45,19 @@
     <ClInclude Include="public\IO_Core\Acceptor\Acceptor.h" />
     <ClInclude Include="public\IO_Core\IO_Core.h" />
     <ClInclude Include="public\IO_Core\Listener\Listener.h" />
-    <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h" />
-    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h" />
-    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h" />
+    <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\ThWorkerJobPool.h" />
     <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Session\ISession.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />

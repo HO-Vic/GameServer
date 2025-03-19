@@ -2,10 +2,12 @@
 #include <Session/SendContext/TCP_SendContextImpl.h>
 #include <Utility/Pool/ObjectPool.h>
 #include <Buffer/SendBufferPool.h>
-#include <IO_Core/OverlappedEx/OverlappedExPool.h>
+#include <Utility/Thread/ThWorkerJob.h>
+#include <Utility/Thread/IWorkerItem.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_SendContextImpl::DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) {
+int32_t TCP_SendContextImpl::DoSend(Utility::WorkerPtr& session, const BYTE* data, const size_t len) {
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
   {
@@ -23,13 +25,13 @@ int32_t TCP_SendContextImpl::DoSend(OverlappedPtr& session, const BYTE* data, co
   // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
   if (isSendAbleThread) {
-    auto overlappedEx = OverlappedExPool::GetInstance().GetObjectPtr(session, OVERLAPPED_EVENT_TYPE::SEND);
-    return SendExecute(overlappedEx);
+    auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
+    return SendExecute(thWorkerJob);
   }
   return 0;
 }
 
-int32_t TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) {
+int32_t TCP_SendContextImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) {
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
   m_sendBuffer.clear();
@@ -38,15 +40,15 @@ int32_t TCP_SendContextImpl::SendComplete(OverlappedEx* overlappedEx, const size
     if (0 == m_sendQueue.size()) {
       m_isSendAble = true;
       // 보낼게 없다면 overlappedEx 반납
-      overlappedEx->m_overlappedEvent = nullptr;  // 여기서 해제를 안하게되면 오브젝트풀에서 다시 쓰여지기 전까지 이 섹션은 메모리 해제 불가
-      OverlappedExPool::GetInstance().Release(overlappedEx);
+      thWorkerJob->Reset();  // 여기서 해제를 안하게되면 오브젝트풀에서 다시 쓰여지기 전까지 이 섹션은 메모리 해제 불가
+      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
       return 0;
     }
   }
-  return SendExecute(overlappedEx);
+  return SendExecute(thWorkerJob);
 }
 
-int32_t TCP_SendContextImpl::SendExecute(OverlappedEx* overlappedEx) {
+int32_t TCP_SendContextImpl::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
     while (!m_sendQueue.empty()) {
@@ -62,7 +64,6 @@ int32_t TCP_SendContextImpl::SendExecute(OverlappedEx* overlappedEx) {
             .len = static_cast<uint32_t>(sendBuffer->m_size),
             .buf = reinterpret_cast<char*>(sendBuffer->m_buffer)});
   }
-  return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(overlappedEx), nullptr);
+  return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
 }
-
 }  // namespace sh::IO_Engine
