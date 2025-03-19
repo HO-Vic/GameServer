@@ -2,12 +2,12 @@
 #include <Windows.h>
 #include <cstdint>
 #include <stop_token>
-#include <Utility/ThreadPool/ThreadPool.h>
+#include <Utility/Thread/ThreadPool.h>
 
 namespace sh::IO_Engine {
 class IO_Core {
  public:
-  IO_Core(const uint16_t ioThreadNo);
+  IO_Core(const uint8_t ioThreadNo);
 
   void Init();
 
@@ -15,12 +15,7 @@ class IO_Core {
 
   HANDLE GetHandle() const;
 
-  void IO_Thread(std::stop_token& stopToken, const uint32_t ThreadNo);
-
  private:
   Utility::ThreadPool m_threadPool;
-  HANDLE m_iocpHandle;
-  volatile bool m_isRunAble = true;
-  uint16_t m_ioThreadNo;
 };
 }  // namespace sh::IO_Engine

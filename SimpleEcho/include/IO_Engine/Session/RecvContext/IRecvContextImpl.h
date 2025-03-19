@@ -1,8 +1,13 @@
 #pragma once
 #include <WinSock2.h>
 
+namespace sh {
+namespace Utility {
+class ThWorkerJob;
+}
+}  // namespace sh::Utility
+
 namespace sh::IO_Engine {
-class OverlappedEx;
 class IRecvContextImpl {
  public:
   IRecvContextImpl(SOCKET sock, RecvHandler&& recvHandler)
@@ -11,9 +16,9 @@ class IRecvContextImpl {
     m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   }
 
-  virtual int32_t RecvComplete(OverlappedEx* overlappedEx, size_t ioSize) = 0;
+  virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) = 0;
 
-  virtual int32_t DoRecv(OverlappedEx* overlappedEx) = 0;
+  virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) = 0;
 
  protected:
   SOCKET m_socket;

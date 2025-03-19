@@ -5,14 +5,13 @@
 #include "Session/SessionManager.h"
 #include "Packet.h"
 #include "../LogManager/LogManager.h"
-#include <spdlog/common.h>
 
 namespace sh::EchoServer {
 Server::Server()
     : m_ioCore(4), m_listener(), m_acceptor() {
 }
 
-Server::Server(const uint32_t ip, const uint16_t port, const uint16_t ioThreadNo)
+Server::Server(const uint32_t ip, const uint16_t port, const uint8_t ioThreadNo)
     : m_ioCore(ioThreadNo), m_listener(port, ip), m_acceptor() {
 }
 

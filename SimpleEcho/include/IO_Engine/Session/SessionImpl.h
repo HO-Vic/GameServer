@@ -1,5 +1,6 @@
 #pragma once
-#pragma once
+#include "Utility/Thread/IWorkerItem.h"
+#include "../CommonDefine.h"
 #include "../Session/SendContext/SendContext.h"
 #include "../Session/RecvContext/RecvContext.h"
 
@@ -28,8 +29,6 @@ IO 에러 발생 상황
 나머지 케이스도 비슷할거라 생각
 */
 namespace sh::IO_Engine {
-class OverlappedEx;
-
 enum SESSION_STATE : BYTE {
   NON_ERR = 0x0,
   SEND_ERR = 0x1,
@@ -41,13 +40,13 @@ class SessionImpl {
  public:
   SessionImpl(SOCKET sock, const IO_TYPE ioType, RecvHandler&& recvHandler, HANDLE iocpHandle);
 
-  void SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
+  void SendComplete(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte);
 
-  void DoSend(OverlappedPtr session, const BYTE* data, const size_t len);
+  void DoSend(Utility::WokerPtr session, const BYTE* data, const size_t len);
 
-  void RecvComplete(OverlappedEx* overlappedEx, size_t ioByte);
+  void RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioByte);
 
-  void StartRecv(OverlappedPtr session);
+  void StartRecv(Utility::WokerPtr session);
 
  private:
   SendContext m_sendContext;

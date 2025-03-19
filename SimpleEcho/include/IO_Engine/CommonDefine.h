@@ -12,14 +12,6 @@ enum IO_TYPE : char {
   UDP = 2,
 };
 
-enum OVERLAPPED_EVENT_TYPE : char {
-  NONE = 0,
-  SEND = 1,
-  RECV = 2,
-  TERMINATE = 3,
-  ACCEPT = 4,
-  DISCONNECT = 5,
-};
 #pragma endregion
 
 #pragma region PACKET

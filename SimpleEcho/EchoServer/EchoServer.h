@@ -11,7 +11,7 @@ class Server {
  public:
   Server();
 
-  Server(const uint32_t ip, const uint16_t port, const uint16_t ioThreadNo);
+  Server(const uint32_t ip, const uint16_t port, const uint8_t ioThreadNo);
 
   void Start();
 
