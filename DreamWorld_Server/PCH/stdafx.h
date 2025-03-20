@@ -54,7 +54,7 @@
 #include <tbb/concurrent_queue.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_for_each.h>
-
+#include <tbb/tbb.h>
 #include<sqlext.h>
 
 #include<filesystem>
@@ -355,7 +355,7 @@ namespace Matrix4x4
 
 void PrintCurrentTime();
 void DisplayWsaGetLastError(const int& wsaErrcode);
-void StartLogger();
+
 //wchar->char
 std::string ConvertWideStringToString(const wchar_t* wstr);
 //char->wchar

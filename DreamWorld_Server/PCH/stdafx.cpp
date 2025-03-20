@@ -19,34 +19,6 @@ void DisplayWsaGetLastError(const int& wsaErrcode)
 	LocalFree(lpMsgBuf);
 }
 
-void StartLogger()
-{
-	auto now = std::chrono::system_clock::now();
-	auto time_point = std::chrono::system_clock::to_time_t(now);
-	struct std::tm* parts = std::localtime(&time_point);
-
-	std::stringstream filename_ss;
-	filename_ss << std::put_time(parts, "logs/%m-%d-%H.%M.%S.txt");
-	std::string filename = filename_ss.str();
-
-	// 로그 파일 생성
-	auto file_logger = spdlog::basic_logger_mt("file_logger", filename);
-	// 콘솔 출력을 위한 로거 생성
-	auto console_logger = spdlog::stdout_color_mt("console_logger");
-	// 파일과 콘솔에 로그 동시에 출력하는 로거 생성
-	auto combined_logger = spdlog::logger("Server Log", { console_logger->sinks().front(), file_logger->sinks().front() });
-	combined_logger.info("Start Logger");
-	spdlog::set_default_logger(std::make_shared<spdlog::logger>(spdlog::logger("Server Log", { console_logger->sinks().front(), file_logger->sinks().front() })));
-#ifdef _DEBUG
-	spdlog::set_level(spdlog::level::info);
-	spdlog::flush_every(std::chrono::milliseconds(10));
-#else
-	spdlog::set_level(spdlog::level::info);
-#endif // _DEBUG
-	spdlog::flush_on(spdlog::level::info);
-
-}
-
 std::string ConvertWideStringToString(const wchar_t* wstr)
 {
 	USES_CONVERSION;
