@@ -2,6 +2,8 @@
 #include "DBJobBase.h"
 #include "DBConnectionManager.h"
 #include "DBConnection.h"
+#include "Utility/Thread/ThWorkerJob.h"
+#include "IO_Engine/IO_Core/ThWorkerJobPool.h"
 
 using logLevel = spdlog::level::level_enum;
 
@@ -24,6 +26,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
       ExecuteFail();
       SQLCancel(sqlStatement);                       /// 종료
       SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
+      Clear(workerJob);
       return;
     }
   }
@@ -44,6 +47,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
     ExecuteFail();                                 // 클라이언트에 다시 시도 알림
     SQLCancel(sqlStatement);                       /// 종료
     SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
+    Clear(workerJob);
     return;
   }
 
@@ -54,5 +58,10 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
   // stmt 해제
   SQLCancel(sqlStatement);                       /// 종료
   SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
+  Clear(workerJob);
+}
+void DBJobBase::Clear(sh::Utility::ThWorkerJob* workerJob) {
+  workerJob->Reset();
+  sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
 }
 }  // namespace DreamWorld

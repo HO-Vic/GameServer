@@ -1,11 +1,16 @@
 #pragma once
 
 namespace sh {
+namespace Utility {
+class ThWorkerJob;
+class IWorkerItem;
+using WorkerPtr = std::shared_ptr<IWorkerItem>;
+}
+}  // namespace sh::Utility
+
+namespace sh {
 namespace IO_Engine {
 class IRecvContextImpl;
-class OverlappedEx;
-class IOverlappedEvent;
-using OverlappedPtr = std::shared_ptr<IOverlappedEvent>;
 
 class RecvContext {
  public:
@@ -13,9 +18,9 @@ class RecvContext {
 
   virtual ~RecvContext();
 
-  int32_t RecvComplete(OverlappedEx* overlappedEx, size_t ioSize);
+  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize);
 
-  int32_t StartRecv(OverlappedPtr& sesssion);
+  int32_t StartRecv(Utility::WorkerPtr& sesssion);
 
  private:
   IRecvContextImpl* m_recvContextImpl;

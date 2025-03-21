@@ -12,20 +12,25 @@
    할당하면 heap 메모리 파편화 생각
 */
 
+namespace sh {
+namespace Utility {
+class ThWorkerJob;
+class IWorkerItem;
+using WorkerPtr = std::shared_ptr<IWorkerItem>;
+}
+}  // namespace sh::Utility
+
 namespace sh::IO_Engine {
 class ISendContextImpl;
-class OverlappedEx;
-class IOverlappedEvent;
-using OverlappedPtr = std::shared_ptr<IOverlappedEvent>;
 class SendContext {
  public:
   SendContext(SOCKET sock, const IO_TYPE sendType);
 
   ~SendContext();
 
-  int32_t DoSend(OverlappedPtr& session, const BYTE* sendPacket, const size_t len);
+  int32_t DoSend(Utility::WorkerPtr& session, const BYTE* sendPacket, const size_t len);
 
-  int32_t SendComplete(OverlappedEx* overlappedEx, const size_t ioByte);
+  int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte);
 
  private:
   ISendContextImpl* m_sendContextImpl;

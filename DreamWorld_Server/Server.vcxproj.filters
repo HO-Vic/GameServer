@@ -88,6 +88,18 @@
     <Filter Include="Network\IocpEvent\UserSession">
       <UniqueIdentifier>{117bfb1d-30a0-44fb-9963-935ceae9c30f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{2a662e64-2652-4fc7-9bc2-7432b3ae59ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Session">
+      <UniqueIdentifier>{1c05ab28-1e77-4534-b2bb-2f11d19bdde9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogManager">
+      <UniqueIdentifier>{7369c46a-ddca-433b-b9f0-b26d7c9d5433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MsgDispatcher">
+      <UniqueIdentifier>{e946ddf0-360d-4f10-9d46-7ecef6e88cba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
@@ -96,17 +108,14 @@
     <ClCompile Include="DB\DB.cpp">
       <Filter>DB</Filter>
     </ClCompile>
-    <ClCompile Include="Room\Room.cpp">
+    <ClCompile Include="Room\DeprecatedRoom.cpp">
       <Filter>InGame\Room</Filter>
     </ClCompile>
-    <ClCompile Include="Room\RoomManager.cpp">
+    <ClCompile Include="Room\DeprecatedRoomManager.cpp">
       <Filter>InGame\Room</Filter>
     </ClCompile>
     <ClCompile Include="Timer\Timer.cpp">
       <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\PacketManager\PacketManager.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\IOCP\Iocp.cpp">
       <Filter>Network\IOCP</Filter>
@@ -214,6 +223,48 @@
     <ClCompile Include="GameObject\Monster\BossEvent.cpp">
       <Filter>InGame\GameObject\Monster\BossEvent</Filter>
     </ClCompile>
+    <ClCompile Include="Server\Server.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Session\Session.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Session\SessionMananger.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBThreadPool.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBConnectionManager.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBConnection.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager\LogManager.cpp">
+      <Filter>LogManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DB\DBJobBase.cpp">
+      <Filter>DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\RoomThreadPool.cpp">
+      <Filter>InGame\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\RoomMsgDispatcher.cpp">
+      <Filter>InGame\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgDispatcher\MsgDispatcher.cpp">
+      <Filter>MsgDispatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\Room.cpp">
+      <Filter>InGame\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\RoomManager.cpp">
+      <Filter>InGame\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Room\RoomBase.cpp">
+      <Filter>InGame\Room</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h">
@@ -222,17 +273,14 @@
     <ClInclude Include="DB\DB.h">
       <Filter>DB</Filter>
     </ClInclude>
-    <ClInclude Include="Room\Room.h">
+    <ClInclude Include="Room\DeprecatedRoom.h">
       <Filter>InGame\Room</Filter>
     </ClInclude>
-    <ClInclude Include="Room\RoomManager.h">
+    <ClInclude Include="Room\DeprecatedRoomManager.h">
       <Filter>InGame\Room</Filter>
     </ClInclude>
     <ClInclude Include="Timer\Timer.h">
       <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\PacketManager\PacketManager.h">
-      <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Network\IOCP\Iocp.h">
       <Filter>Network\IOCP</Filter>
@@ -345,6 +393,52 @@
     </ClInclude>
     <ClInclude Include="GameObject\Monster\BossEvent.h">
       <Filter>InGame\GameObject\Monster\BossEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\Server.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Session\Session.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Session\SessionMananger.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBThreadPool.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBConnectionManager.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBConnection.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager\LogManager.h">
+      <Filter>LogManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DB\DBJobBase.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\RoomThreadPool.h">
+      <Filter>InGame\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\RoomMsgDispatcher.h">
+      <Filter>InGame\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgDispatcher\MsgDispatcher.h">
+      <Filter>MsgDispatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MsgProtocol.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="DreamWorldDefine.h" />
+    <ClInclude Include="Room\Room.h">
+      <Filter>InGame\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\RoomManager.h">
+      <Filter>InGame\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Room\RoomBase.h">
+      <Filter>InGame\Room</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

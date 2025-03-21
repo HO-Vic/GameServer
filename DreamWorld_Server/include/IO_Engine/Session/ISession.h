@@ -1,12 +1,12 @@
 #pragma once
 #include <WinSock2.h>
-#include "../IO_Core/OverlappedEvent/IOverlappedEvent.h"
+#include "Utility/Thread/IWorkerItem.h"
 #include "../CommonDefine.h"
 
 namespace sh::IO_Engine {
 class SessionImpl;
 class ISession
-    : public IOverlappedEvent {
+    : public Utility::IWorkerItem {
  public:
   ISession();
 
@@ -16,7 +16,7 @@ class ISession
 
   void DoSend(const BYTE* data, const size_t len);
 
-  virtual void Execute(OverlappedEx* overlappedEx, const OVERLAPPED_EVENT_TYPE type, const size_t ioByte) override;
+  virtual void Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte) override;
 
   void StartRecv();
 

@@ -24,6 +24,7 @@
     <ProjectGuid>{06dfeb5b-61f0-4376-918e-c4eca428ae51}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>DreamWorld_Server</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -159,6 +160,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DB\DB.cpp" />
+    <ClCompile Include="DB\DBConnection.cpp" />
+    <ClCompile Include="DB\DBConnectionManager.cpp" />
+    <ClCompile Include="DB\DBJobBase.cpp" />
+    <ClCompile Include="DB\DBThreadPool.cpp" />
     <ClCompile Include="GameObject\Character\Archer\ArcherObject.cpp" />
     <ClCompile Include="GameObject\Character\ChracterObject.cpp" />
     <ClCompile Include="GameObject\Character\Mage\MageObject.cpp" />
@@ -175,6 +180,7 @@
     <ClCompile Include="GameObject\Monster\SmallMonsterObject.cpp" />
     <ClCompile Include="GameObject\Projectile\MeteoObject.cpp" />
     <ClCompile Include="GameObject\Projectile\ProjectileObject.cpp" />
+    <ClCompile Include="LogManager\LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapData\AstarNode\AstarNode.cpp" />
     <ClCompile Include="MapData\MapCollision\MapCollision.cpp" />
@@ -183,13 +189,15 @@
     <ClCompile Include="MapData\TriangleMesh\TriangleNavMesh.cpp" />
     <ClCompile Include="Match\Matching.cpp" />
     <ClCompile Include="Match\MatchQueue.cpp" />
+    <ClCompile Include="MsgDispatcher\MsgDispatcher.cpp" />
     <ClCompile Include="Network\ExpOver\ExpOver.cpp" />
     <ClCompile Include="Network\IocpEvent\IocpEventManager.cpp" />
     <ClCompile Include="Network\IocpEvent\IocpDBEvent.cpp" />
     <ClCompile Include="Network\IocpEvent\ListenEvent.cpp" />
     <ClCompile Include="Network\IocpEvent\SendEvent.cpp" />
     <ClCompile Include="Network\IOCP\Iocp.cpp" />
-    <ClCompile Include="Network\PacketManager\PacketManager.cpp" />
+    <ClCompile Include="Network\Session\Session.cpp" />
+    <ClCompile Include="Network\Session\SessionMananger.cpp" />
     <ClCompile Include="Network\UserSession\UserManager.cpp" />
     <ClCompile Include="Network\UserSession\UserSession.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -200,16 +208,27 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Room\DeprecatedRoom.cpp" />
     <ClCompile Include="Room\Room.cpp" />
+    <ClCompile Include="Room\RoomBase.cpp" />
     <ClCompile Include="Room\RoomEvent.cpp" />
-    <ClCompile Include="Room\TimerRoomEvent.cpp" />
     <ClCompile Include="Room\RoomManager.cpp" />
+    <ClCompile Include="Room\RoomMsgDispatcher.cpp" />
+    <ClCompile Include="Room\RoomThreadPool.cpp" />
+    <ClCompile Include="Room\TimerRoomEvent.cpp" />
+    <ClCompile Include="Room\DeprecatedRoomManager.cpp" />
+    <ClCompile Include="Server\Server.cpp" />
     <ClCompile Include="ThreadManager\ThreadManager.cpp" />
     <ClCompile Include="Timer\Timer.cpp" />
     <ClCompile Include="Timer\TimerEventBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DB\DB.h" />
+    <ClInclude Include="DB\DBConnection.h" />
+    <ClInclude Include="DB\DBConnectionManager.h" />
+    <ClInclude Include="DB\DBJobBase.h" />
+    <ClInclude Include="DB\DBThreadPool.h" />
+    <ClInclude Include="DreamWorldDefine.h" />
     <ClInclude Include="GameObject\Character\Archer\ArcherObject.h" />
     <ClInclude Include="GameObject\Character\ChracterObject.h" />
     <ClInclude Include="GameObject\Character\Mage\MageObject.h" />
@@ -226,6 +245,7 @@
     <ClInclude Include="GameObject\Monster\SmallMonsterObject.h" />
     <ClInclude Include="GameObject\Projectile\MeteoObject.h" />
     <ClInclude Include="GameObject\Projectile\ProjectileObject.h" />
+    <ClInclude Include="LogManager\LogManager.h" />
     <ClInclude Include="MapData\AstarNode\AstarNode.h" />
     <ClInclude Include="MapData\MapCollision\MapCollision.h" />
     <ClInclude Include="MapData\MapData.h" />
@@ -233,6 +253,7 @@
     <ClInclude Include="MapData\TriangleMesh\TriangleNavMesh.h" />
     <ClInclude Include="Match\Matching.h" />
     <ClInclude Include="Match\MatchQueue.h" />
+    <ClInclude Include="MsgDispatcher\MsgDispatcher.h" />
     <ClInclude Include="Network\ExpOver\ExpOver.h" />
     <ClInclude Include="Network\IocpEvent\IocpEventBase.h" />
     <ClInclude Include="Network\IocpEvent\IocpEventManager.h" />
@@ -240,15 +261,23 @@
     <ClInclude Include="Network\IocpEvent\ListenEvent.h" />
     <ClInclude Include="Network\IocpEvent\SendEvent.h" />
     <ClInclude Include="Network\IOCP\Iocp.h" />
-    <ClInclude Include="Network\PacketManager\PacketManager.h" />
     <ClInclude Include="Network\protocol\protocol.h" />
+    <ClInclude Include="Network\Session\Session.h" />
+    <ClInclude Include="Network\Session\SessionMananger.h" />
     <ClInclude Include="Network\UserSession\UserManager.h" />
     <ClInclude Include="Network\UserSession\UserSession.h" />
     <ClInclude Include="PCH\stdafx.h" />
+    <ClInclude Include="Room\DeprecatedRoom.h" />
     <ClInclude Include="Room\Room.h" />
+    <ClInclude Include="Room\RoomBase.h" />
     <ClInclude Include="Room\RoomEvent.h" />
-    <ClInclude Include="Room\TimerRoomEvent.h" />
     <ClInclude Include="Room\RoomManager.h" />
+    <ClInclude Include="Room\RoomMsgDispatcher.h" />
+    <ClInclude Include="Room\RoomThreadPool.h" />
+    <ClInclude Include="Room\TimerRoomEvent.h" />
+    <ClInclude Include="Room\DeprecatedRoomManager.h" />
+    <ClInclude Include="Server\MsgProtocol.h" />
+    <ClInclude Include="Server\Server.h" />
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="ThreadManager\ThreadManager.h" />
     <ClInclude Include="Timer\Timer.h" />

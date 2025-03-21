@@ -1,5 +1,6 @@
 #pragma once
 #include "../JobQBase.h"
+#include <tbb/tbb.h>
 
 /*
         함수자에 대해서 queue에 저장했다가

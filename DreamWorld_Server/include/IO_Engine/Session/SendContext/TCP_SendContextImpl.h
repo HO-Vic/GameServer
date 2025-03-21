@@ -15,12 +15,12 @@ class TCP_SendContextImpl final
       : ISendContextImpl(sock), m_isSendAble(true) {
   }
 
-  virtual int32_t DoSend(OverlappedPtr& session, const BYTE* data, const size_t len) override;
+  virtual int32_t DoSend(Utility::WorkerPtr& session, const BYTE* data, const size_t len) override;
 
-  virtual int32_t SendComplete(OverlappedEx* overlappedEx, const size_t ioByte) override;
+  virtual int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) override;
 
  private:
-  virtual int32_t SendExecute(OverlappedEx* overlappedEx) override;
+  virtual int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob) override;
 
  private:
   std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함

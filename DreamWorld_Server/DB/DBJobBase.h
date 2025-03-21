@@ -17,6 +17,9 @@ class DBJobBase
 
   virtual std::wstring GetQuery() = 0;
   virtual void ExecuteFail() = 0;
+
+ private:
+  void Clear(sh::Utility::ThWorkerJob* workerJob);
 };
 
 class UserDBJobBase
@@ -27,4 +30,8 @@ class UserDBJobBase
  protected:
 };
 
+/*
+  DB 쿼리 이후에, 인게임 반영 어떻게 할지 추후에 생각해야 됨
+   - DreamWorld는 로그인밖에 없어서...
+*/
 }  // namespace DreamWorld

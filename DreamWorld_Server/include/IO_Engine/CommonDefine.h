@@ -12,20 +12,17 @@ enum IO_TYPE : char {
   UDP = 2,
 };
 
-enum OVERLAPPED_EVENT_TYPE : char {
-  NONE = 0,
-  SEND = 1,
-  RECV = 2,
-  TERMINATE = 3,
-  ACCEPT = 4,
-  DISCONNECT = 5,
-};
 #pragma endregion
 
 #pragma region PACKET
+#pragma pack(push, 1)
 struct PacketHeader {
   uint16_t size;
+  PacketHeader(const uint16_t size)
+      : size(size) {
+  }
 };
+#pragma pack(pop)
 
 constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
 #pragma endregion
