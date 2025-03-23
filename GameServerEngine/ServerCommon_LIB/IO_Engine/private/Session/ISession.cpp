@@ -17,8 +17,8 @@ ISession::~ISession() {
   delete m_sessionImpl;
 }
 
-void ISession::DoSend(const BYTE* data, const size_t len) {
-  m_sessionImpl->DoSend(shared_from_this(), data, len);
+void ISession::DoSend(const void* data, const size_t len) {
+  m_sessionImpl->DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);
 }
 
 void ISession::StartRecv() {

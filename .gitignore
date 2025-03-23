@@ -14,3 +14,8 @@
 *.enc
 *vcx*.txt
 /**/Log
+*.d.json
+*.dt.module.json
+*.json.command
+*.ifc
+/**/ServerCore
