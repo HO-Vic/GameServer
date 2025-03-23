@@ -4,6 +4,7 @@
 #include "DBConnection.h"
 #include "Utility/Thread/ThWorkerJob.h"
 #include "IO_Engine/IO_Core/ThWorkerJobPool.h"
+#include <spdlog/common.h>
 
 using logLevel = spdlog::level::level_enum;
 
@@ -63,5 +64,10 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
 void DBJobBase::Clear(sh::Utility::ThWorkerJob* workerJob) {
   workerJob->Reset();
   sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
+}
+
+void UserDBJobBase::ExecuteFail() {
+  // 하지만 DreamWorld 클라는 DB 실패에 대한 작업이 없기에 패스...ㅠ
+  // m_session->DoSend(nullptr, 0);
 }
 }  // namespace DreamWorld

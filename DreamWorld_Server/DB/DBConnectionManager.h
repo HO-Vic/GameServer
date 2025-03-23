@@ -26,7 +26,7 @@ class DBConnectionManager : public sh::Utility::SingletonBase<DBConnectionManage
  public:
   void Init(const uint8_t dbConnectionNo);
 
-  // RAII구조로 메모리 해지명시 하지 한더라도 할 수있게(오브젝트 풀로 들어감)
+  // RAII구조로 메모리 해지 명시안해도 할 수있게(오브젝트 풀로 들어감)
   ConnectionGuard GetConnection();
 
   void Release(DBConnectionPtr&& connection);

@@ -4,13 +4,11 @@
 
 namespace DreamWorld {
 class DBThreadPool
-    : public sh::Utility::SingletonBase<DBThreadPool> {
+    : public sh::Utility::ThreadPool,
+      public sh::Utility::SingletonBase<DBThreadPool> {
  public:
   // void InsertDBJob();
 
   void Init(const uint8_t threadNo);
-
- private:
-  sh::Utility::ThreadPool m_threadPool;
 };
 }  // namespace DreamWorld

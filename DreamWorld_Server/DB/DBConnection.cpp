@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "DBConnection.h"
+#include <cassert>
+#include <sqlext.h>
+#include <sqltypes.h>
 #include "../LogManager/LogManager.h"
 
 namespace DreamWorld {

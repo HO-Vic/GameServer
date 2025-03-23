@@ -1,10 +1,17 @@
 #pragma once
 #include "Utility/Thread/IWorkerItem.h"
 #include <sqltypes.h>
+#include <memory>
+#include <string>
 
 namespace sh::Utility {
 class ThWorkerJob;
-}
+}  // namespace sh::Utility
+
+namespace sh::IO_Engine {
+class ISession;
+using ISessionPtr = std::shared_ptr<ISession>;
+}  // namespace sh::IO_Engine
 
 namespace DreamWorld {
 class DBJobBase
@@ -24,10 +31,16 @@ class DBJobBase
 
 class UserDBJobBase
     : public DBJobBase {
- protected:
-  virtual void ExecuteFail() override;
+ public:
+  UserDBJobBase(sh::IO_Engine::ISessionPtr session)
+      : m_session(session) {
+  }
 
  protected:
+  virtual void ExecuteFail() override;  // 실패했다면, 클라로 DB실패 메시지 보내기
+
+ protected:
+  sh::IO_Engine::ISessionPtr m_session;
 };
 
 /*
