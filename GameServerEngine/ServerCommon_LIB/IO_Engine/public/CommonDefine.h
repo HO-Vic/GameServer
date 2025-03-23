@@ -15,9 +15,14 @@ enum IO_TYPE : char {
 #pragma endregion
 
 #pragma region PACKET
+#pragma pack(push, 1)
 struct PacketHeader {
   uint16_t size;
+  PacketHeader(const uint16_t size)
+      : size(size) {
+  }
 };
+#pragma pack(pop)
 
 constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
 #pragma endregion

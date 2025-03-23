@@ -39,6 +39,11 @@ void ThreadPool::RunningThread(std::stop_token stopToken) {
   }
 }
 
+void ThreadPool::Init(const uint8_t threadNo) {
+  m_threadNo = threadNo;
+  Init();
+}
+
 void ThreadPool::Init() {
   m_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, m_threadNo);
   if (nullptr == m_handle) {

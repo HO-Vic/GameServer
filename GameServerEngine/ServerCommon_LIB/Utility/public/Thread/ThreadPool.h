@@ -15,6 +15,8 @@ class ThreadPool {
 
   void RunningThread(std::stop_token stopToken);
 
+  void Init(const uint8_t threadNo);
+
   void Init();
 
   void Start();

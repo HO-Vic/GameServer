@@ -1,6 +1,6 @@
 #include <pch.h>
 #include <IO_Core/IO_Core.h>
-#include <IO_Core/OverlappedEx/OverlappedEx.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
 IO_Core::IO_Core(const uint8_t ioThreadNo)
@@ -13,6 +13,7 @@ IO_Core::IO_Core(const uint8_t ioThreadNo)
 
 void IO_Core::Init() {
   m_threadPool.Init();
+  ThWorkerJobPool::GetInstance().Init(100);
 }
 
 void IO_Core::Start() {
