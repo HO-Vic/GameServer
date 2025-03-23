@@ -5,8 +5,9 @@
 #include "../MsgDispatcher/MsgDispatcher.h"
 
 namespace sh::IO_Engine {
-class ISessionPtr;
-}
+class ISession;
+using ISessionPtr = std::shared_ptr<ISession>;
+}  // namespace sh::IO_Engine
 
 namespace DreamWorld {
 class Server {

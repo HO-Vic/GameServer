@@ -565,4 +565,5 @@ struct TestNavMeshRenderPacket : public PacketHeader {
 };
 
 }  // namespace SERVER_PACKET
+}  // namespace DreamWorld
 #pragma pack(pop)

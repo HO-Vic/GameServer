@@ -4,19 +4,19 @@
 
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
-bool MsgDispatcher::AddMsgHandler(const uint16_t msgId, MsgHandler handler) {
+bool MsgDispatcher::AddMsgHandler(const uint8_t msgId, MsgHandler handler) {
   if (m_dispatcher.contains(msgId)) {
-    WRITE_LOG(logLevel::critical, "{}({}) > Duplicate MsgId!", __FUNCTION__, __LINE__);
+    WRITE_LOG(logLevel::critical, "{}({}) > Duplicate MsgId! [MsgId:{}]", __FUNCTION__, __LINE__, msgId);
     return false;
   }
   m_dispatcher.emplace(msgId, std::move(handler));
-  WRITE_LOG(logLevel::debug, "{}({}) > Regist MsgId - Handler!", __FUNCTION__, __LINE__);
+  WRITE_LOG(logLevel::debug, "{}({}) > Regist MsgId - Handler [MsgId:{}]!", __FUNCTION__, __LINE__, msgId);
   return true;
 }
 
-bool MsgDispatcher::GetHandler(const uint16_t msgId, MsgHandler& handler) {
+bool MsgDispatcher::GetHandler(const uint8_t msgId, MsgHandler& handler) {
   if (!m_dispatcher.contains(msgId)) {
-    WRITE_LOG(logLevel::warn, "{}({}) > Can not Find Msg Id!", __FUNCTION__, __LINE__);
+    WRITE_LOG(logLevel::warn, "{}({}) > Can not Find Msg Id! [MsgId:{}]", __FUNCTION__, __LINE__, msgId);
     return false;
   }
   auto handlerIter = m_dispatcher.find(msgId);

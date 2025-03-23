@@ -1,5 +1,5 @@
 #pragma once
-#include <WinSock2.h>
+#include <atomic>
 #include "Utility/Thread/IWorkerItem.h"
 #include "../CommonDefine.h"
 
@@ -14,7 +14,7 @@ class ISession
 
   virtual ~ISession();
 
-  void DoSend(const BYTE* data, const size_t len);
+  void DoSend(const void* data, const size_t len);
 
   virtual void Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte) override;
 

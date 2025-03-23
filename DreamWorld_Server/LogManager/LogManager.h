@@ -1,7 +1,6 @@
 #pragma once
 #include <Utility/SingletonBase/Singleton.h>
 #include <spdlog/common.h>
-#include <spdlog/logger.h>
 #include <string>
 #include <memory>
 #include <cstdint>
@@ -9,8 +8,12 @@
         log는 외부 라이브러리 spdlog를 사용
 */
 // log
+namespace spdlog {
+class logger;
+}  // namespace spdlog
 
 namespace DreamWorld {
+using logLevel = spdlog::level::level_enum;
 class LogManager : public sh::Utility::SingletonBase<LogManager> {
  public:
   void StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode);

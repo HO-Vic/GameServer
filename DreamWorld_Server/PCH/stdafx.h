@@ -2,8 +2,12 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 1
 #define MAX_USER 4000
-#pragma comment(lib, "mswsock.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "Debug/UtilityD.lib")
+#pragma comment(lib, "Debug/IO_EngineD.lib")
+#endif  // _DEBUG
 #pragma comment(lib, "WS2_32.lib")
+#pragma comment(lib, "MsWSock.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "lib/x64/Debug/spdlogd.lib")
@@ -66,8 +70,6 @@
 #include <random>
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
-
-#include "../DreamWorldDefine.h"
 
 enum class PLAYER_STATE : char
 {
@@ -330,7 +332,3 @@ namespace Matrix4x4
 void PrintCurrentTime();
 void DisplayWsaGetLastError(const int& wsaErrcode);
 
-//wchar->char
-std::string ConvertWideStringToString(const wchar_t* wstr);
-//char->wchar
-std::wstring ConvertStringToWideString(const char* str);

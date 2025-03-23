@@ -1,5 +1,4 @@
 #pragma once
-#include <sqlext.h>
 #include <sqltypes.h>
 
 namespace DreamWorld {
@@ -8,20 +7,22 @@ class DBConnection {
   struct CallerInfo {
     const char* funcInfo = nullptr;
     const char* commonInfo = nullptr;
-    uint16_t line = 0;
+    uint32_t line = 0;
   };
 
   struct LogCallerInfo : public CallerInfo {
     const char* funcInfo = nullptr;
     const char* commonInfo = nullptr;
-    uint16_t line = 0;
+    long line = 0;
     spdlog::level::level_enum logLevel;
   };
 
  public:
   DBConnection();
 
-  void Connect();
+  ~DBConnection();
+
+  bool Connect(SQLHENV env);
 
   SQLHDBC GetConection() const {
     return m_hdbc;
@@ -30,9 +31,6 @@ class DBConnection {
   static void ErrorPrint(LogCallerInfo& callerInfo, const SQLSMALLINT& handleType, SQLHANDLE handle);
 
  private:
-  // ODBC핸들 - SQLHANDLE
-  // 환경 핸들
-  SQLHENV m_henv;
   // 연결 핸들 DB Connection핸들
   SQLHDBC m_hdbc;
 

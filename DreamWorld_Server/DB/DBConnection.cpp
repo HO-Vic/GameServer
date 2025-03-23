@@ -1,95 +1,86 @@
 #include "stdafx.h"
 #include "DBConnection.h"
+#include <Windows.h>
 #include <cassert>
-#include <sqlext.h>
 #include <sqltypes.h>
+#include <sqlext.h>
 #include "../LogManager/LogManager.h"
+#include "../DreamWorldDefine.h"
 
 namespace DreamWorld {
 
 DBConnection::DBConnection() {
 }
 
-void DBConnection::Connect() {
+DBConnection::~DBConnection() {
+  SQLFreeConnect(m_hdbc);
+}
+
+bool DBConnection::Connect(SQLHENV env) {
   SQLRETURN retCode;
-  // Allocate environment handle
   // SQLAllocHandle() - ODBC 핸들 변수 할당
-  retCode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_henv);
-
-  // Set the ODBC version environment attribute
+  retCode = SQLAllocHandle(SQL_HANDLE_DBC, env, &m_hdbc);
   if (SQL_SUCCESS == retCode) {
-    // env설정
-    retCode = SQLSetEnvAttr(m_henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0);
-
-    // Allocate connection handle
+    // Set login timeout to 5 second
+    retCode = SQLSetConnectAttr(m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(intptr_t)1, 0);
     if (SQL_SUCCESS == retCode) {
-      // dbc 할당
-      retCode = SQLAllocHandle(SQL_HANDLE_DBC, m_henv, &m_hdbc);
-
+      // Connect to data source
+      // SQL 연결, dbc, ODBC, 사용자 이름, 비밀번호...
+      SQLWCHAR connStr[] =
+          L"DRIVER={ODBC Driver 17 for SQL Server};"
+          L"SERVER=127.0.0.1,1433;"
+          L"DATABASE=Dream_World;"  // ms sql은 하나의 host에서 여러 database를 가짐, mysql은 하나의 host 여러 스키마여서 헷갈림+mysql은 이게 기본 스키마
+          L"UID=test;"
+          L"PWD=test;";
+      // 윈도우로 로그인이기때문에, id,pw없이
+      ;
+      retCode = SQLDriverConnect(m_hdbc, NULL, connStr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
+      // retCode = SQLConnect(m_hdbc, (SQLWCHAR*)L"Dream_World_DB", SQL_NTS, (SQLWCHAR*)NULL, SQL_NTS, NULL, SQL_NTS);
       if (SQL_SUCCESS == retCode) {
-        // Set login timeout to 5 second
-        retCode = SQLSetConnectAttr(m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)5, 0);
-        if (SQL_SUCCESS == retCode) {
-          // Connect to data source
-          // SQL 연결, dbc, DB이름, 사용자 이름, 비밀번호...
-          retCode = SQLConnect(m_hdbc, (SQLWCHAR*)L"Dream_World_DB", SQL_NTS, (SQLWCHAR*)NULL, SQL_NTS, NULL, SQL_NTS);
-          if (SQL_SUCCESS == retCode) {
-            WRITE_LOG(spdlog::level::info, "{}({}) > DB Connect Success", __FUNCTION__, __LINE__);
-          } else {
-            if (SQL_SUCCESS_WITH_INFO == retCode) {
-              WRITE_LOG(spdlog::level::info, "{}({}) > DB Connect Success With Info", __FUNCTION__, __LINE__);
-              ErrorPrint(LogCallerInfo{
-                             .funcInfo = __FUNCTION__,
-                             .commonInfo = "DB Connect Success With Info",
-                             .line = __LINE__,
-                             .logLevel = spdlog::level::info},
-                         SQL_HANDLE_DBC, m_hdbc);
-            } else {
-              ErrorPrint(LogCallerInfo{
-                             .funcInfo = __FUNCTION__,
-                             .commonInfo = "DB Connect Fail",
-                             .line = __LINE__,
-                             .logLevel = spdlog::level::critical},
-                         SQL_HANDLE_DBC, m_hdbc);
-              assert("Can Not Connect DB");
-            }
-          }
+        WRITE_LOG(spdlog::level::info, "{}({}) > DB Connect Success", __FUNCTION__, __LINE__);
+        return true;
+      } else {
+        if (SQL_SUCCESS_WITH_INFO == retCode) {
+          WRITE_LOG(spdlog::level::info, "{}({}) > DB Connect Success With Info", __FUNCTION__, __LINE__);
+          ErrorPrint(LogCallerInfo{
+                         .funcInfo = __FUNCTION__,
+                         .commonInfo = "DB Connect Success With Info",
+                         .line = __LINE__,
+                         .logLevel = spdlog::level::info},
+                     SQL_HANDLE_DBC, m_hdbc);
+          return true;
         } else {
           ErrorPrint(LogCallerInfo{
                          .funcInfo = __FUNCTION__,
-                         .commonInfo = "ODBC Set Attr Error Fail",
+                         .commonInfo = "DB Connect Fail",
                          .line = __LINE__,
                          .logLevel = spdlog::level::critical},
                      SQL_HANDLE_DBC, m_hdbc);
-          assert("Can Not Connect DB");
+          assert(false && "Can Not Connect DB");
+          return false;
         }
-      } else {
-        ErrorPrint(LogCallerInfo{
-                       .funcInfo = __FUNCTION__,
-                       .commonInfo = "ODBC Alloc Error Fail",
-                       .line = __LINE__,
-                       .logLevel = spdlog::level::critical},
-                   SQL_HANDLE_DBC, m_hdbc);
-        assert("Can Not Connect DB");
       }
     } else {
       ErrorPrint(LogCallerInfo{
                      .funcInfo = __FUNCTION__,
-                     .commonInfo = "Env Set Attr Error Fail",
+                     .commonInfo = "ODBC Set Attr Error Fail",
                      .line = __LINE__,
                      .logLevel = spdlog::level::critical},
                  SQL_HANDLE_DBC, m_hdbc);
-      assert("Can Not Connect DB");
+      assert(false && "Can Not Connect DB");
+      return false;
     }
   } else {
     ErrorPrint(LogCallerInfo{
                    .funcInfo = __FUNCTION__,
-                   .commonInfo = "Env Alloc Error Fail",
+                   .commonInfo = "ODBC Alloc Error Fail",
                    .line = __LINE__,
                    .logLevel = spdlog::level::critical},
                SQL_HANDLE_DBC, m_hdbc);
-    assert("Can Not Connect DB");
+    assert(false && "Can Not Connect DB");
+    return false;
   }
+  return false;
 }
 void DBConnection::ErrorPrint(LogCallerInfo& callerInfo, const SQLSMALLINT& handleType, SQLHANDLE handle) {
   // 오류 저장 버퍼

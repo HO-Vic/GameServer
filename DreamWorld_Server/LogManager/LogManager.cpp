@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "LogManager.h"
+#include <spdlog/logger.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace DreamWorld {
 
@@ -23,7 +26,7 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
   } else if (logMode.compare("File") == 0) {
     auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front()}));
-  } else if (logMode.compare("ConsoleFile") == 0) {
+  } else {
     auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
     auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front(), consoleLogger->sinks().front()}));

@@ -1,6 +1,5 @@
 #pragma once
 #include "Utility/Thread/IWorkerItem.h"
-#include <sqltypes.h>
 #include <memory>
 #include <string>
 
@@ -11,6 +10,7 @@ class ThWorkerJob;
 namespace sh::IO_Engine {
 class ISession;
 using ISessionPtr = std::shared_ptr<ISession>;
+using ISessionWeakPtr = std::weak_ptr<ISession>;
 }  // namespace sh::IO_Engine
 
 namespace DreamWorld {
@@ -20,7 +20,8 @@ class DBJobBase
   virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) override;
 
  protected:
-  virtual void Proccess(SQLHSTMT hstmt) = 0;
+  // 쿼리 결과 처리
+  virtual void PostExecute(SQLHSTMT hstmt) = 0;
 
   virtual std::wstring GetQuery() = 0;
   virtual void ExecuteFail() = 0;
@@ -40,7 +41,7 @@ class UserDBJobBase
   virtual void ExecuteFail() override;  // 실패했다면, 클라로 DB실패 메시지 보내기
 
  protected:
-  sh::IO_Engine::ISessionPtr m_session;
+  sh::IO_Engine::ISessionWeakPtr m_session;
 };
 
 /*

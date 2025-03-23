@@ -7,35 +7,36 @@
 #include "DB/DB.h"
 #include "Match/Matching.h"
 #include "Room/RoomManager.h"
+//
+#include "Server/Server.h"
+#include "DB/DBThreadPool.h"
+#include "DB/DBConnectionManager.h"
+#include "LogManager/LogManager.h"
+#include "Room/RoomThreadPool.h"
 
-int main()
-{
-	std::wcout.imbue(std::locale("KOREAN"));
-	//Trace – Debug – Info – Warning – Error – Critical
-	StartLogger();
+int main() {
+  std::wcout.imbue(std::locale("KOREAN"));
+  // Trace – Debug – Info – Warning – Error – Critical
+  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(1), "console");
 
-	WSADATA WSAData;
-	if (WSAStartup(MAKEWORD(2, 2), &WSAData) != 0) {
-		spdlog::critical("wsaStartUp Error");
-		WSACleanup();
-		return -1;
-	}
+  DreamWorld::Server server(0);
+  server.Init();
+  DreamWorld::DBThreadPool::GetInstance().Init(1);
+  DreamWorld::DBThreadPool::GetInstance().Start();
+  DreamWorld::DBConnectionManager::GetInstance().Init(1);
+  DreamWorld::RoomThreadPool::GetInstance().Init(1);
+  DreamWorld::RoomThreadPool::GetInstance().Start();
 
-	//각 클래스에 iocp 객체 등록
-	std::shared_ptr<IOCP::Iocp> iocpRef = std::make_shared<IOCP::Iocp>();
-	TIMER::Timer::GetInstance().RegisterIocp(iocpRef->GetSharedPtr());
-	UserManager::GetInstance().RegisterIocp(iocpRef->GetSharedPtr());
-	DB::DBConnector::GetInstance().RegistIocp(iocpRef->GetSharedPtr());
+  server.Start();
 
-	//각 클래스 시작
-	IocpEventManager::GetInstance().Initailize();
-	RoomManager::GetInstance().Initialize();
-	UserManager::GetInstance().Initialize();
-	TIMER::Timer::GetInstance().StartTimer();
-	DB::DBConnector::GetInstance().Connect();
-	Matching::GetInstance().StartMatching();
+  /*
+  0. io<=>게임 분리 하기위해 라이브러리 분리해서 적용 목적
+  1. 문제점
+                  a. Room업데이트는 io Thread pool에서 하는데, 어떻게 할지 생각 지금은 타이머 + PQGS()
+                      i. Room만 업데이트하는 쓰레드 풀 생성
+                           ii. Room을 묶어서 업데이트
+                  b. DB결과도 마찬가지로 쿼리 하고나서 PQGS()
+                            i. DB이벤트 자체에 type생성하면 문제x
+  */
 
-	iocpRef->Start();
-	
-	ThreadManager::GetInstance().Join();
 }

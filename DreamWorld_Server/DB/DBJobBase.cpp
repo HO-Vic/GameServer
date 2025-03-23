@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DBJobBase.h"
+#include <sqlext.h>
 #include "DBConnectionManager.h"
 #include "DBConnection.h"
 #include "Utility/Thread/ThWorkerJob.h"
@@ -51,10 +52,20 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
     Clear(workerJob);
     return;
   }
+#ifdef _DEBUG
+  else if (SQL_SUCCESS_WITH_INFO == retCode) {
+    DBConnection::ErrorPrint(DBConnection::LogCallerInfo{
+                                 .funcInfo = __FUNCTION__,
+                                 .commonInfo = "SUCCESS WITH INFO",
+                                 .line = __LINE__,
+                                 .logLevel = logLevel::warn},
+                             SQL_HANDLE_STMT, sqlStatement);
+  }
+#endif  // _DEBUG
 
   // retCode
   //  쿼리에 대한 결과 처리
-  Proccess(sqlStatement);
+  PostExecute(sqlStatement);
 
   // stmt 해제
   SQLCancel(sqlStatement);                       /// 종료

@@ -1,3 +1,10 @@
+#pragma once
+#include <string>
+
+#ifndef DreamWorldDefine
+#define DreamWorldDefine
+
+#define chrono_clock std::chrono::high_resolution_clock
 
 enum class DIRECTION : char {
   IDLE = 0x00,
@@ -26,3 +33,9 @@ enum class ROOM_STATE : char {
   ROOM_BOSS,
   ROOM_END
 };
+
+#endif  // !DreamWorldDefine
+// wchar->char
+std::string ConvertWideStringToString(const wchar_t* wstr);
+// char->wchar
+std::wstring ConvertStringToWideString(const char* str);

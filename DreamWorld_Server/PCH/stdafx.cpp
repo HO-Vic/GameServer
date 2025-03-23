@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../DreamWorldDefine.h"
 
 #pragma warning (disable:4996)
 
@@ -17,20 +18,4 @@ void DisplayWsaGetLastError(const int& wsaErrcode)
 	if (nullptr == lpMsgBuf) return;
 	spdlog::critical("WSAErrorCode: {}, Error Message: {}", wsaErrcode, ConvertWideStringToString(lpMsgBuf));
 	LocalFree(lpMsgBuf);
-}
-
-std::string ConvertWideStringToString(const wchar_t* wstr)
-{
-	USES_CONVERSION;
-	return std::string(W2A(wstr));
-	//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convertWchar;
-	//return convertWchar.to_bytes(wstr);
-}
-
-std::wstring ConvertStringToWideString(const char* str)
-{
-	USES_CONVERSION;
-	return std::wstring(A2W(str));
-	//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convertChar;
-	//return convertChar.from_bytes(str);
 }
