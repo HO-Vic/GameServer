@@ -2,6 +2,7 @@
 #include "DBConnectionManager.h"
 #include <sqlext.h>
 #include <assert.h>
+#include <memory>
 #include "DBConnection.h"
 #include "../LogManager/LogManager.h"
 
@@ -67,13 +68,18 @@ void DBConnectionManager::Init(const uint8_t dbConnectionNo) {
 }
 
 ConnectionGuard DBConnectionManager::GetConnection() {
-  std::lock_guard lg{m_lock};
-  if (m_connections.empty()) {
-    return ConnectionGuard(nullptr);
+  {
+    std::lock_guard lg{m_lock};
+    if (!m_connections.empty()) {
+      auto conn = std::move(m_connections.top());
+      m_connections.pop();
+      return ConnectionGuard{std::move(conn)};
+    }
   }
-  auto conn = std::move(m_connections.top());
-  m_connections.pop();
-  return ConnectionGuard{std::move(conn)};
+  WRITE_LOG(logLevel::warn, "{}({}) > Non Exist Connection In Pool, Create New Connection", __FUNCTION__, __LINE__);
+  auto newConn = std::make_unique<DBConnection>();
+  newConn->Connect(m_henv);
+  return ConnectionGuard{std::move(newConn)};
 }
 
 void DBConnectionManager::Release(DBConnectionPtr&& connection) {

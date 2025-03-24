@@ -12,7 +12,7 @@ using ISessionPtr = std::shared_ptr<ISession>;
 namespace DreamWorld {
 class Server {
  public:
-  Server(uint16_t ioThreadNo);
+  Server(const uint8_t ioThreadNo);
 
   void Init();
 

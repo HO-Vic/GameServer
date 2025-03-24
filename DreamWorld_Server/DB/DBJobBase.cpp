@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "DBJobBase.h"
 #include <sqlext.h>
+#include <spdlog/common.h>
+#include <sqlucode.h>
 #include "DBConnectionManager.h"
 #include "DBConnection.h"
 #include "Utility/Thread/ThWorkerJob.h"
 #include "IO_Engine/IO_Core/ThWorkerJobPool.h"
-#include <spdlog/common.h>
 
 using logLevel = spdlog::level::level_enum;
 
@@ -35,7 +36,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
 
   std::wstring query = GetQuery();
   // SQL문 실행 - stmt, 실행할 SQL문, 실행할 SQL문 길이
-  retCode = SQLExecDirect(sqlStatement, (SQLWCHAR*)query.c_str(), query.size());
+  retCode = SQLExecDirect(sqlStatement, (SQLWCHAR*)query.c_str(), static_cast<SQLINTEGER>(query.size()));
 
   if (SQL_ERROR == retCode || SQL_INVALID_HANDLE == retCode) {
     // 문제가 있다면 클라이언트에 알림
