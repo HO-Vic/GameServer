@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 /*
         함수자를 가질 클래스 잡큐를 위한 래퍼
         생성자로, T, function Args를 받기
@@ -31,9 +32,18 @@ class Job : public std::enable_shared_from_this<Job> {
   // "[&]" : 참조
   // 아래는 shared_ptr이 복사이기 때문에, 소유권 유지
   template <typename T, typename... Args>
-  static Caller GenerateCaller(std::function<void(Args...)> func, std::shared_ptr<T>& owner, Args... args) {
+  static Caller GenerateCaller(std::function<void(Args...)> func, std::shared_ptr<T>& owner, const bool isWeak, Args... args) {
     if (nullptr == owner) {
       return [=]() { func(std::forward<Args>(args)...); };
+    } else if (isWeak) {
+      std::weak_ptr<T> weakPtr = owner;
+      return [=]() {
+        auto strongPtr = weakPtr.lock();
+        if (nullptr == strongPtr) {
+          return;
+        }
+        owner->func(std::forward<Args>(args)...);
+      };
     }
     return [=]() { owner->func(std::forward<Args>(args)...); };
   }

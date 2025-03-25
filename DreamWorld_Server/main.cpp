@@ -17,13 +17,15 @@
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
   // Trace – Debug – Info – Warning – Error – Critical
-  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(1), "console");
-
+  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(0), "Console");
+  // DreamWorld 객체 풀 하나 만들어서 하는게 좋을듯
+  //  -> pool 모아둔 코드?로
   DreamWorld::Server server(0);
   server.Init();
+  DreamWorld::DBConnectionManager::GetInstance().Init(1);
   DreamWorld::DBThreadPool::GetInstance().Init(1);
   DreamWorld::DBThreadPool::GetInstance().Start();
-  DreamWorld::DBConnectionManager::GetInstance().Init(1);
+
   DreamWorld::RoomThreadPool::GetInstance().Init(1);
   DreamWorld::RoomThreadPool::GetInstance().Start();
 
@@ -38,5 +40,4 @@ int main() {
                   b. DB결과도 마찬가지로 쿼리 하고나서 PQGS()
                             i. DB이벤트 자체에 type생성하면 문제x
   */
-
 }

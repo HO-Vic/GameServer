@@ -43,6 +43,14 @@ class Session
 
   void SetIngameRef(std::shared_ptr<RoomBase>& roomRef, std::shared_ptr<CharacterObject>& characterRef);
 
+  std::shared_ptr<CharacterObject> GetPossessCharacter() {
+    return m_possessCharacter.lock();
+  }
+
+  std::shared_ptr<RoomBase> GetRoom() {
+    return m_roomWeakRef.lock();
+  }
+
  private:
   // INGame
   uint32_t m_uniqueNo;

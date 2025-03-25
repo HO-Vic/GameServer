@@ -1,5 +1,4 @@
 #pragma once
-#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -45,7 +44,9 @@ class RoomBase
   // 비추천 함수
   void Broadcast(PacketHeader*, std::vector<std::shared_ptr<Session>> ignorePlayers);
 
-  void BroadCast(PacketHeader*, const std::unordered_set<uint32_t>& ignoreUniqueNos);
+  void Broadcast(PacketHeader*, const std::unordered_set<uint32_t>& ignoreUniqueNos);
+
+  virtual std::vector<std::shared_ptr<GameObject>> GetLiveObjects();
 
  protected:
   virtual void Update();

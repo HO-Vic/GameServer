@@ -25,7 +25,7 @@ class Server {
 
   static void OnLogin(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 
-  static void OnStartMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
+  static void OnMatchReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 
   static void OnCancelMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 

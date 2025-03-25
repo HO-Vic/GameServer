@@ -269,6 +269,9 @@
       <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="DreamWorldDefine.cpp" />
+    <ClCompile Include="Server\server_MsgHandler.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h">

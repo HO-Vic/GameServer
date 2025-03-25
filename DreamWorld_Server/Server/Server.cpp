@@ -25,8 +25,11 @@ void Server::Init() {
   });
 
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::LOGIN), std::bind(Server::OnLogin, std::placeholders::_1, std::placeholders::_2));
-  m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnStartMatch, std::placeholders::_1, std::placeholders::_2));
+  m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnMatchReq, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH_REQUEST), std::bind(Server::OnCancelMatch, std::placeholders::_1, std::placeholders::_2));
+
+  WRITE_LOG(logLevel::info, "{}({}) > Room Msg Init!", __FUNCTION__, __LINE__);
+  RoomMsgDispatcher::GetInstance().Init();
 }
 
 void Server::Start() {
@@ -34,7 +37,7 @@ void Server::Start() {
   m_listener.Start();
   m_acceptor.SetListenSocket(m_listener.GetListenSocket());
   m_acceptor.Start();
-
+  WRITE_LOG(logLevel::info, "{}({}) > Server Start!", __FUNCTION__, __LINE__);
   while (true) {
   }
 }

@@ -5,7 +5,7 @@ const bool CoolDownEventBase::IsAbleExecute()
 {
 	auto nowTime = std::chrono::high_resolution_clock::now();
 	auto lastExecuteDurationTime = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - m_lastExecTime);
-	//Äğ Å¸ÀÓº¸´Ù (¸¶Áö¸· ½Ã°£ - Áö±İ)ÀÌ ´õ Å« °ª ¼öÇà °¡´É
+	//ì¿¨ íƒ€ì„ë³´ë‹¤ (ë§ˆì§€ë§‰ ì‹œê°„ - ì§€ê¸ˆ)ì´ ë” í° ê°’ ìˆ˜í–‰ ê°€ëŠ¥
 	if (m_coolTime <= lastExecuteDurationTime) {
 		m_lastExecTime = nowTime;
 		return true;
@@ -21,7 +21,7 @@ void CoolDownEventBase::ForceExecute()
 const CoolDownEventBase::TIME& CoolDownEventBase::GetLastExeTime() const
 {
 	return m_lastExecTime;
-	// TODO: ¿©±â¿¡ return ¹®À» »ğÀÔÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— return ë¬¸ì„ ì‚½ì…í•©ë‹ˆë‹¤.
 }
 
 void CoolDownEventBase::ResetCoolTime()

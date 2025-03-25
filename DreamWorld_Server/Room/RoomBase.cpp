@@ -22,7 +22,7 @@ bool RoomBase::InsertPlayer(std::shared_ptr<Session>& player) {
     return false;
   }
   if (m_Sessions.contains(player->GetUniqueNo())) {
-    WRITE_LOG(logLevel::err, "{}({}) > Already Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, player->GetPlayerName());
+    WRITE_LOG(logLevel::err, "{}({}) > Already Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, 11);
     return false;
   }
   m_Sessions.emplace(player->GetUniqueNo(), player);
@@ -32,7 +32,7 @@ bool RoomBase::InsertPlayer(std::shared_ptr<Session>& player) {
 void RoomBase::DiscardPlayer(std::shared_ptr<Session>& player) {
   std::lock_guard<std::shared_mutex> lg{m_userLock};
   if (!m_Sessions.contains(player->GetUniqueNo())) {
-    WRITE_LOG(logLevel::err, "{}({}) > Non Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, player->GetPlayerName());
+    WRITE_LOG(logLevel::err, "{}({}) > Non Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, 11);
     return;
   }
   m_Sessions.erase(player->GetUniqueNo());
@@ -68,13 +68,17 @@ void RoomBase::Broadcast(PacketHeader* sendPacket, std::vector<std::shared_ptr<S
   }
 }
 
-void RoomBase::BroadCast(PacketHeader* sendPacket, const std::unordered_set<uint32_t>& ignoreUniqueNos) {
+void RoomBase::Broadcast(PacketHeader* sendPacket, const std::unordered_set<uint32_t>& ignoreUniqueNos) {
   std::shared_lock<std::shared_mutex> lg{m_userLock};
   for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
     if (!ignoreUniqueNos.contains(uniqueNo)) {
       sessionPtr->DoSend(sendPacket, sendPacket->size);
     }
   }
+}
+
+std::vector<std::shared_ptr<GameObject>> RoomBase::GetLiveObjects() {
+  return m_gameObjects;
 }
 
 void RoomBase::Update() {
@@ -99,7 +103,8 @@ void RoomBase::IntenalUpdateGameObjet() {
 
 void RoomBase::IntenalUpdateProjectileObject() {
   for (auto projectileIter = m_projectileObjects.begin(); projectileIter != m_projectileObjects.end();) {
-    if (true /*projectileIter->()*/) {//check Expire
+    (*projectileIter)->Update();
+    if ((*projectileIter)->IsDestroy()) {  // check Expire
       projectileIter = m_projectileObjects.erase(projectileIter);
       continue;
     }

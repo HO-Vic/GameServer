@@ -19,7 +19,7 @@ bool MapCollision::CollideMap(const BoundingSphere& boundingSphere) const
 	return m_collision.Intersects(boundingSphere);
 }
 
-const std::pair<float, XMFLOAT3> MapCollision::GetSlidingVector(std::shared_ptr<GameObject>& gameObject, const XMFLOAT3& moveVector)
+const std::pair<float, XMFLOAT3> MapCollision::GetSlidingVector(std::shared_ptr<DreamWorld::GameObject>& gameObject, const XMFLOAT3& moveVector)
 {
 	XMFLOAT3 toGameObjectVector = gameObject->GetFromVector(m_collision.Center);
 	toGameObjectVector.y = 0.0f;

@@ -1,4 +1,5 @@
 #pragma once
+#include <sqltypes.h>
 #include "DBJobBase.h"
 
 namespace sh::IO_Engine {

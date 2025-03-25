@@ -15,10 +15,10 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
   struct std::tm* parts = std::localtime(&time_point);
 
   std::stringstream currentTimeStrSteam;
-  currentTimeStrSteam << std::put_time(parts, "logs/%m-%d-%H.%M.%S.txt");
+  currentTimeStrSteam << std::put_time(parts, "logs/%y-%m-%d_%H-%M-%S.txt");
   std::string timeStr = currentTimeStrSteam.str();
 
-  std::string outputFileName(outputDir + fileName + currentTimeStrSteam.str() + ".txt");
+  std::string outputFileName(outputDir + fileName + currentTimeStrSteam.str());
 
   if (logMode.compare("Console") == 0) {
     auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
@@ -31,8 +31,8 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
     auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front(), consoleLogger->sinks().front()}));
   }
-
-  m_combinedLog->set_level(level);
+  m_combinedLog->set_level(logLevel::trace);
+  m_combinedLog->flush_on(level);
   m_combinedLog->info("loggerStarted");
 }
 }  // namespace DreamWorld

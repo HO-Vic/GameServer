@@ -13,6 +13,10 @@ using PacketTime = std::chrono::high_resolution_clock::time_point;
 struct PacketHeader
     : public sh::IO_Engine::PacketHeader {
   unsigned char type;
+  PacketHeader(unsigned char type)
+      : sh::IO_Engine::PacketHeader(sizeof(DreamWorld::PacketHeader)), type(type) {
+  }
+
   PacketHeader(unsigned char type, const uint16_t size)
       : sh::IO_Engine::PacketHeader(size), type(type) {
   }

@@ -71,13 +71,7 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
-enum class PLAYER_STATE : char
-{
-	LOBBY,
-	MATCH,
-	IN_GAME,
-	RECONN_FAIL
-};
+
 
 enum class IOCP_OP_CODE : char
 {

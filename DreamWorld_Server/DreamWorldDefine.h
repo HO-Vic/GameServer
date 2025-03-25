@@ -34,6 +34,13 @@ enum class ROOM_STATE : char {
   ROOM_END
 };
 
+enum class PLAYER_STATE : char {
+  LOBBY,
+  MATCH,
+  IN_GAME,
+  RECONN_FAIL
+};
+
 #endif  // !DreamWorldDefine
 // wchar->char
 std::string ConvertWideStringToString(const wchar_t* wstr);
