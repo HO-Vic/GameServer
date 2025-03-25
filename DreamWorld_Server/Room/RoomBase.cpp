@@ -3,6 +3,9 @@
 #include "../GameObject/GameObject.h"
 #include "../GameObject/Character/ChracterObject.h"
 #include "../GameObject/Projectile/ProjectileObject.h"
+#include "../Network/Session/Session.h"
+#include "../LogManager/LogManager.h"
+#include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
 RoomBase::RoomBase(const uint16_t maxExecuteJobCnt)
@@ -13,23 +16,65 @@ void RoomBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) 
   Update();
 }
 
-bool RoomBase::InsertPlayer(Session* caster) {
+bool RoomBase::InsertPlayer(std::shared_ptr<Session>& player) {
   std::lock_guard<std::shared_mutex> lg{m_userLock};
-  //
-  return false;
+  if (m_Sessions.size() > 3) {
+    return false;
+  }
+  if (m_Sessions.contains(player->GetUniqueNo())) {
+    WRITE_LOG(logLevel::err, "{}({}) > Already Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, player->GetPlayerName());
+    return false;
+  }
+  m_Sessions.emplace(player->GetUniqueNo(), player);
+  return true;
 }
 
-void RoomBase::DiscardPlayer(Session* caster) {
+void RoomBase::DiscardPlayer(std::shared_ptr<Session>& player) {
   std::lock_guard<std::shared_mutex> lg{m_userLock};
-  //
+  if (!m_Sessions.contains(player->GetUniqueNo())) {
+    WRITE_LOG(logLevel::err, "{}({}) > Non Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, player->GetPlayerName());
+    return;
+  }
+  m_Sessions.erase(player->GetUniqueNo());
 }
 
-void RoomBase::Broadcast(PacketHeader*, Session* caster) {
+void RoomBase::Broadcast(PacketHeader* sendPacket, std::shared_ptr<Session> ignore /*= nullptr*/) {
   std::shared_lock<std::shared_mutex> lg{m_userLock};
+  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+    if (sessionPtr != ignore) {
+      sessionPtr->DoSend(sendPacket, sendPacket->size);
+    }
+  }
 }
 
-void RoomBase::Broadcast(PacketHeader*, const std::vector<std::shared_ptr<Session>>& ignorePlayers) {
+void RoomBase::Broadcast(PacketHeader* sendPacket, std::vector<std::shared_ptr<Session>> ignorePlayers) {
   std::shared_lock<std::shared_mutex> lg{m_userLock};
+  if (m_Sessions.empty()) {
+    return;
+  }
+
+  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+    if (!ignorePlayers.empty()) {
+      auto ignorePlayerIter = std::find_if(ignorePlayers.begin(), ignorePlayers.end(), [uniqueNo](const std::shared_ptr<Session>& ignorePlayer) {
+        return uniqueNo == ignorePlayer->GetUniqueNo();
+      });
+      if (ignorePlayerIter != ignorePlayers.end()) {
+        std::swap(*ignorePlayerIter, ignorePlayers.back());
+        ignorePlayers.pop_back();
+        continue;
+      }
+    }
+    sessionPtr->DoSend(sendPacket, sendPacket->size);
+  }
+}
+
+void RoomBase::BroadCast(PacketHeader* sendPacket, const std::unordered_set<uint32_t>& ignoreUniqueNos) {
+  std::shared_lock<std::shared_mutex> lg{m_userLock};
+  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+    if (!ignoreUniqueNos.contains(uniqueNo)) {
+      sessionPtr->DoSend(sendPacket, sendPacket->size);
+    }
+  }
 }
 
 void RoomBase::Update() {
@@ -38,23 +83,23 @@ void RoomBase::Update() {
   IntenalUpdateProjectileObject();
 }
 
-void RoomBase::InsertProjectileObject(std::shared_ptr<ProjectileObject>&& projectileObject) {
+void RoomBase::InsertProjectileObject(std::shared_ptr<ProjectileObject>& projectileObject) {
   m_projectileObjects.push_back(projectileObject);
 }
 
-void RoomBase::InsertGameObject(std::shared_ptr<GameObject>&& gameObject) {
+void RoomBase::InsertGameObject(std::shared_ptr<GameObject>& gameObject) {
   m_gameObjects.push_back(gameObject);
 }
 
 void RoomBase::IntenalUpdateGameObjet() {
   for (auto& gameObj : m_gameObjects) {
-    // gameObj->
+    gameObj->Update();
   }
 }
 
 void RoomBase::IntenalUpdateProjectileObject() {
   for (auto projectileIter = m_projectileObjects.begin(); projectileIter != m_projectileObjects.end();) {
-    if (true /*projectileIter->()*/) {
+    if (true /*projectileIter->()*/) {//check Expire
       projectileIter = m_projectileObjects.erase(projectileIter);
       continue;
     }

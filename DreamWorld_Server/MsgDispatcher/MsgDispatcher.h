@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <functional>
 
 namespace sh::IO_Engine {
 class ISession;

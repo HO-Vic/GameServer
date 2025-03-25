@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include <unordered_set>
 #include <list>
 #include <shared_mutex>
@@ -35,20 +36,23 @@ class RoomBase
 
   virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) override;
 
-  bool InsertPlayer(Session* caster);
+  bool InsertPlayer(std::shared_ptr<Session>& player);
 
-  void DiscardPlayer(Session* caster);
+  void DiscardPlayer(std::shared_ptr<Session>& player);
 
-  void Broadcast(PacketHeader*, Session* ignore = nullptr);
+  void Broadcast(PacketHeader*, std::shared_ptr<Session> ignore = nullptr);
 
-  void Broadcast(PacketHeader*, const std::vector<std::shared_ptr<Session>>& ignorePlayers);
+  // 비추천 함수
+  void Broadcast(PacketHeader*, std::vector<std::shared_ptr<Session>> ignorePlayers);
+
+  void BroadCast(PacketHeader*, const std::unordered_set<uint32_t>& ignoreUniqueNos);
 
  protected:
   virtual void Update();
 
-  void InsertProjectileObject(std::shared_ptr<ProjectileObject>&& projectileObject);
+  void InsertProjectileObject(std::shared_ptr<ProjectileObject>& projectileObject);
 
-  void InsertGameObject(std::shared_ptr<GameObject>&& gameObject);
+  void InsertGameObject(std::shared_ptr<GameObject>& gameObject);
 
  private:
   void IntenalUpdateGameObjet();
@@ -64,7 +68,7 @@ class RoomBase
   // 패킷을 보내는건 2개 이상의 쓰레드에서 하는 경우가 많은데
   // read만 하는데도 mutex는 안좋은 방법이라고 판단-> read lock으로 변경, 유저가 들어올 때, 나갈때는 write-lock을 할 의도
   std::shared_mutex m_userLock;
-  std::unordered_set<std::shared_ptr<Session>> m_Sessions;
+  std::unordered_map<uint32_t, std::shared_ptr<Session>> m_Sessions;
 
   // 투사체는 사라질 수 있으니 list로 처리
   std::list<std::shared_ptr<ProjectileObject>> m_projectileObjects;

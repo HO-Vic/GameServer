@@ -7,7 +7,11 @@ ThWorkerJob::ThWorkerJob()
     : m_workItem(nullptr), m_type(WORKER_TYPE::NONE) {
 }
 
-ThWorkerJob::ThWorkerJob(WokerPtr workItem, WORKER_TYPE type)
+ThWorkerJob::ThWorkerJob(WokerPtr& workItem, WORKER_TYPE type)
+    : m_workItem(workItem), m_type(type) {
+}
+
+ThWorkerJob::ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type)
     : m_workItem(workItem), m_type(type) {
 }
 

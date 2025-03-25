@@ -19,7 +19,9 @@ class ThWorkerJob : public OVERLAPPED {
  public:
   ThWorkerJob();
 
-  ThWorkerJob(WokerPtr workItem, WORKER_TYPE type);
+  ThWorkerJob(WokerPtr& workItem, WORKER_TYPE type);
+
+  ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
 
   void operator()(const DWORD ioByte);
 

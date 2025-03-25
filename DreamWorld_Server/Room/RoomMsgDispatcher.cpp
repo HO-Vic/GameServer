@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <Windows.h>
 #include "RoomMsgDispatcher.h"
 
 namespace DreamWorld {

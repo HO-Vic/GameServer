@@ -20,7 +20,7 @@ void Server::OnLogin(sh::IO_Engine::ISessionPtr session, BYTE* message) {
     return;
   }
   // 이거 오브젝트 풀로 관리하면 좋을듯?
-  auto DBJob = std::make_shared<DBPlayerLogin>(session, recvPacket->id, recvPacket->pw);
+  DBJobPtr DBJob = std::make_shared<DBPlayerLogin>(session, recvPacket->id, recvPacket->pw);
   DBThreadPool::GetInstance().InsertDBJob(std::move(DBJob));  // 이러면 DB쓰레드에서 탈거임
 }
 

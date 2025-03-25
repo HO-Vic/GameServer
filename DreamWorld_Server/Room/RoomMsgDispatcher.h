@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <Windows.h>
 #include "Utility/SingletonBase/Singleton.h"
 #include "../MsgDispatcher/MsgDispatcher.h"
 
