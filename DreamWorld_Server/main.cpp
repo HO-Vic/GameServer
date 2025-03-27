@@ -13,6 +13,8 @@
 #include "DB/DBConnectionManager.h"
 #include "LogManager/LogManager.h"
 #include "Room/RoomThreadPool.h"
+#include "ObjectPools.h"
+#include "Room/RoomThreadPool.h"
 
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
@@ -22,12 +24,15 @@ int main() {
   //  -> pool 모아둔 코드?로
   DreamWorld::Server server(0);
   server.Init();
+
   DreamWorld::DBConnectionManager::GetInstance().Init(1);
   DreamWorld::DBThreadPool::GetInstance().Init(1);
   DreamWorld::DBThreadPool::GetInstance().Start();
 
   DreamWorld::RoomThreadPool::GetInstance().Init(1);
   DreamWorld::RoomThreadPool::GetInstance().Start();
+
+  DreamWorld::InitPool();
 
   server.Start();
 

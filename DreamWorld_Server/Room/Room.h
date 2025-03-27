@@ -35,6 +35,8 @@ class Room
 
   std::shared_ptr<NavMapData> GetBossMapData() const;
 
+  std::shared_ptr<CharacterObject> GetCharacter(const ROLE role);
+
  protected:
   virtual void Update() override;
 

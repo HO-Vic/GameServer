@@ -72,4 +72,11 @@ std::shared_ptr<MapData> Room::GetMapData() const {
 std::shared_ptr<NavMapData> Room::GetBossMapData() const {
   return m_bossMapData;
 }
+std::shared_ptr<CharacterObject> Room::GetCharacter(const ROLE role) {
+  auto findIter = m_characters.find(role);
+  if (findIter != m_characters.end()) {
+    return findIter->second;
+  }
+  return nullptr;
+}
 }  // namespace DreamWorld
