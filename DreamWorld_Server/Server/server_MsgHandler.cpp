@@ -36,4 +36,10 @@ void Server::OnMatchReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
 
 void Server::OnCancelMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
 }
+
+void Server::OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+  auto sendPacket = DreamWorld::SERVER_PACKET::NotifyPacket(static_cast<char>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY));
+  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+}
+
 }  // namespace DreamWorld

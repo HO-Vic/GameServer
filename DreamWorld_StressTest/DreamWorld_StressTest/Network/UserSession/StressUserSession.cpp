@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StressUserSession.h"
-#include "../../../../Server/Network/protocol/protocol.h"
+#include "../../Network/protocol/protocol.h"
 #include "../../Ingame/UserState/UserState.h"
 #include "../NetworkModule/NetworkModule.h"
 #include "../../Ingame/CoolTimeEventCtrl/EventController.h"
@@ -51,7 +51,7 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 		auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTIme - m_loginSendTime);
 		long long currentDelayTime = durationTime.count();//currentDelay
 
-		long long diffPrevDelay = currentDelayTime - m_delayTime;//ÀÌÀü µô·¹ÀÌ¿Í ÇöÀç µô·¹ÀÌ Â÷ÀÌ
+		long long diffPrevDelay = currentDelayTime - m_delayTime;//ì´ì „ ë”œë ˆì´ì™€ í˜„ì¬ ë”œë ˆì´ ì°¨ì´
 
 		auto prevGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
 		/*if (prevGlobalDelay > 2021090) {
@@ -132,12 +132,12 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 
 	}
 	break;
-	case SERVER_PACKET::TYPE::SHOOTING_ARROW://È­»ì
+	case SERVER_PACKET::TYPE::SHOOTING_ARROW://í™”ì‚´
 	{
 
 	}
 	break;
-	case SERVER_PACKET::TYPE::SHOOTING_ICE_LANCE://¾ÆÀÌ½º ·»½º
+	case SERVER_PACKET::TYPE::SHOOTING_ICE_LANCE://ì•„ì´ìŠ¤ ë ŒìŠ¤
 	{
 
 	}
@@ -282,9 +282,9 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 	case SERVER_PACKET::TYPE::STRESS_TEST_DELAY:
 	{
 		static std::atomic_llong MIN_DELAY = 100;
-		//¿©±â¼­ µô·¹ÀÌ ÆÄ¾Ç
+		//ì—¬ê¸°ì„œ ë”œë ˆì´ íŒŒì•…
 		auto nowTime = Time::now();
-		//ÇöÀç ½Ã°£°ú º¸³½ ½Ã°£ÀÇ Â÷ÀÌ¸¦ °è»ê
+		//í˜„ì¬ ì‹œê°„ê³¼ ë³´ë‚¸ ì‹œê°„ì˜ ì°¨ì´ë¥¼ ê³„ì‚°
 		auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - m_lastDelaySendTime);
 		long long currentDelayTime = durationTime.count();//currentDelay
 
@@ -296,8 +296,8 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 			std::cout << currentDelayTime << std::endl;
 		}
 
-		long long diffPrevDelay = currentDelayTime - m_delayTime;//ÀÌÀü µô·¹ÀÌ¿Í ÇöÀç µô·¹ÀÌ Â÷ÀÌ
-		//»¡¶óÁ³´Ù¸é globalDelay°¡ ÁÙ¾îµé °Í.
+		long long diffPrevDelay = currentDelayTime - m_delayTime;//ì´ì „ ë”œë ˆì´ì™€ í˜„ì¬ ë”œë ˆì´ ì°¨ì´
+		//ë¹¨ë¼ì¡Œë‹¤ë©´ globalDelayê°€ ì¤„ì–´ë“¤ ê²ƒ.
 		auto prevGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
 		/*if (prevGlobalDelay > 2021090) {
 			std::cout << "asf" << std::endl;
@@ -335,7 +335,7 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 void DreamWorld::StressUserSession::Connect(SOCKET connectSocket)
 {
 	UserSession::Connect(connectSocket);
-	m_loginSendTime = TIME::now();//Login ÆĞÅ¶ ÀÌÈÄ¿¡ Çß´Ù°¡, 0À¸·Î ÃÊ±âÈ­µÈ °ªÀÌ¾î¼­ µô·¹ÀÌ ¾û¸Á
+	m_loginSendTime = TIME::now();//Login íŒ¨í‚· ì´í›„ì— í–ˆë‹¤ê°€, 0ìœ¼ë¡œ ì´ˆê¸°í™”ëœ ê°’ì´ì–´ì„œ ë”œë ˆì´ ì—‰ë§
 	SendLoginPacket();
 }
 

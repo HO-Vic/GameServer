@@ -19,8 +19,8 @@
 #include <string>
 #include <string_view>
 
-#include "tbb/concurrent_priority_queue.h"
-#include "tbb/concurrent_queue.h"
+#include <tbb/concurrent_priority_queue.h>
+#include <tbb/concurrent_queue.h>
 
 
 #include <windows.h>		// Header File For Windows
@@ -46,23 +46,20 @@ using namespace DirectX;
 //#define _CRT_SECURE_NO_WARNINGS
 //#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-enum class IOCP_OP_CODE
-{
+enum class IOCP_OP_CODE{
 	OP_NONE,
 	OP_SEND,
 	OP_RECV
 };
 
-enum PLAYER_STATE
-{
+enum PLAYER_STATE{
 	FREE,
 	ALLOC,
 	IN_GAME,
 	IN_GAME_ROOM
 };
 
-enum DIRECTION : char
-{
+enum DIRECTION : char{
 	IDLE = 0x00,
 	FRONT = 0x01,
 	RIGHT = 0x02,
@@ -70,12 +67,11 @@ enum DIRECTION : char
 	BACK = 0x08
 };
 
-enum ROTATE_AXIS :char
-{
+enum ROTATE_AXIS :char{
 	X, Y, Z
 };
 
-enum ROLE :char {
+enum ROLE :char{
 	NONE_SELECT = 0x00,
 	WARRIOR = 0x01,
 	PRIEST = 0x02,

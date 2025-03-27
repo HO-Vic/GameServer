@@ -1,123 +1,109 @@
 #include "stdafx.h"
 #include "UserSession.h"
 #include "../ExpOver/ExpOver.h"
-#include "../../../../Server/Network/protocol/protocol.h"
+#include "../../Network/protocol/protocol.h"
 #include "../IocpEvent/IocpEventManager.h"
 #include "../UserManager/UserManager.h"
 #include "../NetworkModule/NetworkModule.h"
 
-int Network::UserSession::GetInitUserId()
-{
+int Network::UserSession::GetInitUserId(){
 	static int InitUserId = 0;
 	return InitUserId++;
 }
 
-void Network::UserSession::Disconnect()
-{
+void Network::UserSession::Disconnect(){
 	m_isConnect = false;
 	UserManager::GetInstance().InsertDisconnectId(m_id);
 	DreamWorld::StressTestNetwork::GetInstance().DisconnectClient();
 }
 
-void Network::UserSession::DoRecv(ExpOver*& expOver)
-{
-	if (!m_isConnect) return;
-	//wsaBuf length ±æÀÌ Àç ¼³Á¤
+void Network::UserSession::DoRecv(ExpOver*& expOver){
+	if ( !m_isConnect ) return;
+	//wsaBuf length ê¸¸ì´ ìž¬ ì„¤ì •
 	m_recvDataStorage.m_wsabuf.len = MAX_RECV_BUF_SIZE - m_recvDataStorage.m_remainDataLength;
 	DWORD immediateRecvByte = 0;
 	DWORD recvFlag = 0;
 	int recvRes = WSARecv(m_socket, &m_recvDataStorage.m_wsabuf, 1, nullptr, &recvFlag, expOver, nullptr);
-	if (recvRes != 0) {
+	if ( recvRes != 0 ){
 		int errCode = WSAGetLastError();
-		if (WSA_IO_PENDING != errCode) {
+		if ( WSA_IO_PENDING != errCode ){
 			Disconnect();
 		}
 	}
 }
 
-void Network::UserSession::ConstructPacket(const DWORD& ioSize)
-{
+void Network::UserSession::ConstructPacket(const DWORD& ioSize){
 	int remainSize = ioSize + m_recvDataStorage.m_remainDataLength;
 	char* bufferPosition = m_recvDataStorage.m_buffer;
-	while (remainSize > sizeof(PacketHeader::size)) {
-		PacketHeader* currentPacket = reinterpret_cast<PacketHeader*>(bufferPosition);
-		if (currentPacket->size > remainSize) {
-			//¿Ï¼ºµÈ ÆÐÅ¶ÀÌ ¸¸µé¾îÁöÁö ¾ÊÀ½.
+	while ( remainSize > sizeof(PacketHeader::size) ){
+		PacketHeader* currentPacket = reinterpret_cast< PacketHeader* >( bufferPosition );
+		if ( currentPacket->size > remainSize ){
+			//ì™„ì„±ëœ íŒ¨í‚·ì´ ë§Œë“¤ì–´ì§€ì§€ ì•ŠìŒ.
 			break;
 		}
-		//¿Ï¼ºµÈ ÆÐÅ¶
+		//ì™„ì„±ëœ íŒ¨í‚·
 		ExecutePacket(currentPacket);
-		//³²Àº ÆÛ¹ö Å©±â ÃÖ½ÅÈ­, ÇöÀç ¹öÆÛ À§Ä¡ ´ÙÀ½ ÆÐÅ¶ ½ÃÀÛ À§Ä¡·Î
+		//ë‚¨ì€ í¼ë²„ í¬ê¸° ìµœì‹ í™”, í˜„ìž¬ ë²„í¼ ìœ„ì¹˜ ë‹¤ìŒ íŒ¨í‚· ì‹œìž‘ ìœ„ì¹˜ë¡œ
 		remainSize -= currentPacket->size;
 		bufferPosition = bufferPosition += currentPacket->size;
 	}
-	//ÇöÀç ³²Àº µ¥ÀÌÅÍ Å©±â ÀúÀå
+	//í˜„ìž¬ ë‚¨ì€ ë°ì´í„° í¬ê¸° ì €ìž¥
 	m_recvDataStorage.m_remainDataLength = remainSize;
-	//³²Àº ÆÐÅ¶ µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é, ¸Ç ¾ÕÀ¸·Î ´ç±â±â
-	if (remainSize > 0)
+	//ë‚¨ì€ íŒ¨í‚· ë°ì´í„°ê°€ ìžˆë‹¤ë©´, ë§¨ ì•žìœ¼ë¡œ ë‹¹ê¸°ê¸°
+	if ( remainSize > 0 )
 		std::memcpy(m_recvDataStorage.m_buffer, bufferPosition, remainSize);
-	//wsaBufÀÇ buf À§Ä¡¸¦ ¹Ù²Þ
+	//wsaBufì˜ buf ìœ„ì¹˜ë¥¼ ë°”ê¿ˆ
 	m_recvDataStorage.m_wsabuf.buf = m_recvDataStorage.m_buffer + remainSize;
 }
 
-Network::UserSession::UserSession() :m_id(GetInitUserId()), m_socket(NULL), m_recvDataStorage(RecvDataStorage()), m_isConnect(false)
-{
-}
+Network::UserSession::UserSession() :m_id(GetInitUserId()), m_socket(NULL), m_recvDataStorage(RecvDataStorage()), m_isConnect(false){}
 
-Network::UserSession::~UserSession()
-{
-	if (m_socket) {
+Network::UserSession::~UserSession(){
+	if ( m_socket ){
 		closesocket(m_socket);
 		m_socket = NULL;
 	}
 }
 
-void Network::UserSession::Execute(Network::ExpOver* expOver, const DWORD& ioByte, const ULONG_PTR& key)
-{
+void Network::UserSession::Execute(Network::ExpOver* expOver, const DWORD& ioByte, const ULONG_PTR& key){
 	const auto& opCode = expOver->GetOpCode();
-	if (IOCP_OP_CODE::OP_RECV == opCode) {
-		if (0 == ioByte) {
+	if ( IOCP_OP_CODE::OP_RECV == opCode ){
+		if ( 0 == ioByte ){
 			Disconnect();
 		}
 		ConstructPacket(ioByte);
 		DoRecv(expOver);
 		return;
-	}
-	else {
-		std::cout << "error UserSession::Execute() - Invalid OpCode: " << (int)opCode << std::endl;
+	} else{
+		std::cout << "error UserSession::Execute() - Invalid OpCode: " << ( int )opCode << std::endl;
 	}
 }
 
-void Network::UserSession::Fail(ExpOver* expOver)
-{
+void Network::UserSession::Fail(ExpOver* expOver){
 	Disconnect();
 	IocpEventManager::GetInstance().DeleteExpOver(expOver);
 }
 
-void Network::UserSession::Connect(SOCKET connectSocket)
-{
-	if (m_socket)
+void Network::UserSession::Connect(SOCKET connectSocket){
+	if ( m_socket )
 		closesocket(m_socket);
 	m_socket = connectSocket;
 	m_isConnect = true;
 	StartRecv();
 }
 
-void Network::UserSession::StartRecv()
-{
+void Network::UserSession::StartRecv(){
 	m_recvDataStorage.Reset();
 	auto expOver = IocpEventManager::GetInstance().CreateExpOver(IOCP_OP_CODE::OP_RECV, shared_from_this());
 	DoRecv(expOver);
 }
 
-void Network::UserSession::Send(PacketHeader* sendPacketHeader)
-{
-	if (!m_isConnect) return;
+void Network::UserSession::Send(PacketHeader* sendPacketHeader){
+	if ( !m_isConnect ) return;
 	IocpEventManager::GetInstance().Send(m_socket, sendPacketHeader);
 }
 
-void Network::UserSession::Send(std::shared_ptr<PacketHeader> sendPacketHeader)
-{
-	if (!m_isConnect) return;
+void Network::UserSession::Send(std::shared_ptr<PacketHeader> sendPacketHeader){
+	if ( !m_isConnect ) return;
 	IocpEventManager::GetInstance().Send(m_socket, sendPacketHeader.get());
 }

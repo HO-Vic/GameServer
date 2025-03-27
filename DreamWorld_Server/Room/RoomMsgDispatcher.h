@@ -37,6 +37,5 @@ class RoomMsgDispatcher final
   static void OnForceGameEnd(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
   static void OnGameEndOk(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
   static void OnTimeSyncReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
-  static void OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 };
 }  // namespace DreamWorld

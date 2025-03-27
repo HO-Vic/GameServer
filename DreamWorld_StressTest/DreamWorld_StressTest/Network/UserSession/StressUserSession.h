@@ -1,6 +1,6 @@
 #pragma once
 #include "UserSession.h"
-
+#include <unordered_map>
 class EventController;
 class UserState;
 enum class USER_STATE;

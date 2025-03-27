@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SendEvent.h"
-#include "../../../../Server/Network/protocol/protocol.h"
+#include "../../Network/protocol/protocol.h"
 #include "../ExpOver/ExpOver.h"
 #include "../IocpEvent/IocpEventManager.h"
 
@@ -14,10 +14,10 @@ Network::SendEvent::SendEvent()
 void Network::SendEvent::Execute(Network::ExpOver* over, const DWORD& ioByte, const ULONG_PTR& key)
 {
 	const auto& currentOpCode = over->GetOpCode();
-	//IocpEvent°´Ã¼ ¹İÈ¯
-	//IOCP::EventBase°¡ enable_shared_from_this<>»ó¼ÓÀÌ±â¶§¹®¿¡, shared_from_this()´Â shared_ptr<IOCP::EventBase>°¡ µÊ.
+	//IocpEventê°ì²´ ë°˜í™˜
+	//IOCP::EventBaseê°€ enable_shared_from_this<>ìƒì†ì´ê¸°ë•Œë¬¸ì—, shared_from_this()ëŠ” shared_ptr<IOCP::EventBase>ê°€ ë¨.
 	IocpEventManager::GetInstance().DeleteSendEvent(std::static_pointer_cast<Network::SendEvent>(shared_from_this()));
-	//over°´Ã¼ ¹İÈ¯
+	//overê°ì²´ ë°˜í™˜
 	IocpEventManager::GetInstance().DeleteExpOver(over);
 }
 

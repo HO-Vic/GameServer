@@ -1,2 +1,0 @@
-[2024-11-23 02:13:27.355] [Server Log] [info] Start Logger
-[2024-11-23 02:13:27.361] [Server Log] [info] Iocp::Iocp() - Create Iocp Handle

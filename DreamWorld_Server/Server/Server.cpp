@@ -19,7 +19,7 @@ Server::Server(const uint8_t ioThreadNo)
 
 void Server::Init() {
   m_ioCore.Init();
-  m_listener.Init(m_ioCore.GetHandle());
+  m_listener.Init(m_ioCore.GetHandle(), 9000, 0);
   m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) {
     AcceptHandle(sock);
   });
@@ -27,6 +27,7 @@ void Server::Init() {
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::LOGIN), std::bind(Server::OnLogin, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnMatchReq, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH_REQUEST), std::bind(Server::OnCancelMatch, std::placeholders::_1, std::placeholders::_2));
+  m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY), std::bind(Server::OnStressDelay, std::placeholders::_1, std::placeholders::_2));
 
   WRITE_LOG(logLevel::info, "{}({}) > Room Msg Init!", __FUNCTION__, __LINE__);
   RoomMsgDispatcher::GetInstance().Init();

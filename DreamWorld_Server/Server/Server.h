@@ -29,6 +29,8 @@ class Server {
 
   static void OnCancelMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 
+    static void OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
+
  private:
   sh::IO_Engine::IO_Core m_ioCore;
   sh::IO_Engine::Listener m_listener;

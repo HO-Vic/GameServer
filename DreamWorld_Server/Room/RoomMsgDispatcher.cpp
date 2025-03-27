@@ -31,7 +31,6 @@ void RoomMsgDispatcher::Init() {
 #pragma region CHEAT
   AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::STAGE_CHANGE_BOSS), std::bind(RoomMsgDispatcher::OnStageChangeBoss, std::placeholders::_1, std::placeholders::_2));
   AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::TEST_GAME_END), std::bind(RoomMsgDispatcher::OnForceGameEnd, std::placeholders::_1, std::placeholders::_2));
-  AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY), std::bind(RoomMsgDispatcher::OnStressDelay, std::placeholders::_1, std::placeholders::_2));
 #pragma endregion
 }
 
@@ -228,11 +227,6 @@ void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::ISessionPtr sessionPtr, BYTE*
 
 void RoomMsgDispatcher::OnTimeSyncReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
   DreamWorld::SERVER_PACKET::TimeSyncPacket sendPacket{};
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
-}
-
-void RoomMsgDispatcher::OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
-  auto sendPacket = DreamWorld::SERVER_PACKET::NotifyPacket(static_cast<char>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY));
   sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }
 

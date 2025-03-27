@@ -17,7 +17,7 @@
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
   // Trace – Debug – Info – Warning – Error – Critical
-  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(0), "Console");
+  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(0), "ConsoleFile");
   // DreamWorld 객체 풀 하나 만들어서 하는게 좋을듯
   //  -> pool 모아둔 코드?로
   DreamWorld::Server server(0);
