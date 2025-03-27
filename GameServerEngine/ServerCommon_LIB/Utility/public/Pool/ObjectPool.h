@@ -2,6 +2,7 @@
 #include <atomic>
 #include <mutex>
 #include <stack>
+#include <memory>
 
 namespace sh::Utility {
 template <typename T>
@@ -62,7 +63,7 @@ class ObjectPool {
   }
 
   template <typename... Args>
-  std::unique_ptr<T> MakeUnique(Args&&... args) {
+  std::unique_ptr<T, std::function<void(T*)>> MakeUnique(Args&&... args) {
     T* ptr = nullptr;
     {
       std::lock_guard<std::mutex> lg(m_lock);
@@ -78,9 +79,9 @@ class ObjectPool {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
 
-    return std::unique_ptr<T>(ptr, std::move([=](T* ptr) {
-                                Release(ptr);
-                              }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+    return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::move([=](T* ptr) {
+                                                         Release(ptr);
+                                                       }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
  private:

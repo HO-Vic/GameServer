@@ -21,11 +21,11 @@ class LFJobQ_MT : public JobQBase {
 
   virtual void DoJobs(const uint64_t execCnt = 0) override;
 
-  virtual void InsertJob(std::unique_ptr<Job>&& job) override;
+  virtual void InsertJob(std::unique_ptr<Job, std::function<void(Job*)>>&& job) override;
 
  protected:
  private:
-  tbb::concurrent_queue<std::unique_ptr<Job>> m_jobs;
+  tbb::concurrent_queue<std::unique_ptr<Job, std::function<void(Job*)>>> m_jobs;
   std::atomic_uint64_t m_jobSize;
 };
 }

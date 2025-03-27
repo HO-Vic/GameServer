@@ -11,7 +11,7 @@ void JobQ_MT::DoJobs(const uint64_t execCnt) {
   if (ALL_JOB_EXEC == execCnt && executeCnt != MAX_EXEC_CNT) {
     while (!m_jobs.empty()) {
       m_lock.lock();
-      std::unique_ptr<Job> job = std::move(m_jobs.front());
+      std::unique_ptr<Job, std::function<void(Job*)>> job = std::move(m_jobs.front());
       m_jobs.pop();
       m_lock.unlock();
       job->Execute();
@@ -20,7 +20,7 @@ void JobQ_MT::DoJobs(const uint64_t execCnt) {
   } else {
     while (!m_jobs.empty() && execCnt != executeCnt) {
       m_lock.lock();
-      std::unique_ptr<Job> job = std::move(m_jobs.front());
+      std::unique_ptr<Job, std::function<void(Job*)>> job = std::move(m_jobs.front());
       m_jobs.pop();
       m_lock.unlock();
       job->Execute();
@@ -29,7 +29,7 @@ void JobQ_MT::DoJobs(const uint64_t execCnt) {
   }
 }
 
-void JobQ_MT::InsertJob(std::unique_ptr<Job>&& job) {
+void JobQ_MT::InsertJob(std::unique_ptr<Job, std::function<void(Job*)>>&& job) {
   m_lock.lock();
   m_jobs.push(std::move(job));
   m_lock.unlock();
