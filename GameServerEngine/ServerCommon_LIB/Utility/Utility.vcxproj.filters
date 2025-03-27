@@ -26,9 +26,6 @@
     <Filter Include="Job\JobQ">
       <UniqueIdentifier>{a09a0e0b-f14e-4ab9-a49b-586fa1f7bc14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Job\JobPool">
-      <UniqueIdentifier>{db9e57f1-ed4a-4196-93b8-9f4e9823790c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Job\JobQ\MT">
       <UniqueIdentifier>{4043785e-c4a4-4eff-b6d2-87dc020d7b86}</UniqueIdentifier>
     </Filter>
@@ -57,9 +54,6 @@
     </ClCompile>
     <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp">
       <Filter>TimeCalculator</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Job\JobPool\JobPool.cpp">
-      <Filter>Job\JobPool</Filter>
     </ClCompile>
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
@@ -95,9 +89,6 @@
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQBase.h">
       <Filter>Job\JobQ</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Job\JobPool\JobPool.h">
-      <Filter>Job\JobPool</Filter>
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h">
       <Filter>Job\JobQ\MT</Filter>

@@ -18,10 +18,10 @@ class JobQ_MT
 
   virtual void DoJobs(const uint64_t execCnt = 0) override;  // 수행할 갯수 지정: 0이면 전부 다 수행
 
-  virtual void InsertJob(std::shared_ptr<Job>& job) override;
+  virtual void InsertJob(std::unique_ptr<Job>&& job) override;
 
  private:
-  std::queue<std::shared_ptr<Job>> m_jobs;
+  std::queue<std::unique_ptr<Job>> m_jobs;
   // std::mutex m_lock;
   SpinLock m_lock;
 };

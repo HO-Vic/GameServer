@@ -1,4 +1,4 @@
-﻿#include <pch.h>
+#include <pch.h>
 #include <Job/JobQueue/JobQ_MT/LFJobQ_MT.h>
 #include "Job/Job.h"
 
@@ -15,15 +15,15 @@ void LFJobQ_MT::DoJobs(const uint64_t execCnt) {
     executeSize = m_jobSize;
   }
   for (int i = 0; i < executeSize; ++i) {
-    std::shared_ptr<Job> execJob = nullptr;
+    std::unique_ptr<Job> execJob = nullptr;
     m_jobs.try_pop(execJob);
     execJob->Execute();
   }
   m_jobSize -= executeSize;
 }
 
-void LFJobQ_MT::InsertJob(std::shared_ptr<Job>& job) {
-  m_jobs.push(job);
+void LFJobQ_MT::InsertJob(std::unique_ptr<Job>&& job) {
+  m_jobs.push(std::move(job));
   m_jobSize += 1;
 }
 

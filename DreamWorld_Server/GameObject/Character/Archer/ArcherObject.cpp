@@ -3,6 +3,9 @@
 #include "../Room/Room.h"
 #include "../../EventController/EventController.h"
 #include "../GameObject/Projectile/ProjectileObject.h"
+#include <Utility/Job/Job.h>
+#include "../ObjectPools.h"
+#include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
 ArcherObject::ArcherObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -29,53 +32,59 @@ void ArcherObject::RecvSkill(const SKILL_TYPE& type) {
 }
 
 void ArcherObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;  // Already Room Expire;
+  }
+  std::unique_ptr<PlayerSkillBase> skillPtr = nullptr;
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
-    auto tripleArrow = std::make_shared<ArcherSKill::TripleArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(tripleArrow)));
-    }
+    skillPtr = std::make_unique<ArcherSKill::TripleArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
   } else if (SKILL_TYPE::SKILL_TYPE_E == type) {
-    auto rainArrow = std::make_shared<ArcherSKill::RainArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(rainArrow)));
-    }
+    skillPtr = std::make_unique<ArcherSKill::RainArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
+  }
+
+  if (nullptr != skillPtr) {
+    roomRef->InsertJob(
+        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([skill = std::move(skillPtr)]() {
+          skill->Execute();
+        })));
   }
 }
 
 void ArcherObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
-  auto commonAttack = std::make_shared<ArcherSKill::CommonAttack>(std::static_pointer_cast<ArcherObject>(shared_from_this()), attackDir, power);
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
-    // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(commonAttack)));
+    auto commonAttack = std::make_unique<ArcherSKill::CommonAttack>(std::static_pointer_cast<ArcherObject>(shared_from_this()), attackDir, power);
+    roomRef->InsertJob(
+        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([skill = std::move(commonAttack)]() {
+          skill->Execute();
+        })));
   }
 }
 
 void ArcherObject::ExecuteTripleArrow(const XMFLOAT3& direction) {
-  //  .
-  // . . <= 이런 형태
-  auto currentPosition = GetPosition();
-  auto rightVector = GetRightVector();
-
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr == roomRef) {
     return;
   }
+  //  .
+  // . . <= 이런 형태
+  auto currentPosition = GetPosition();
+  auto rightVector = GetRightVector();
 
   for (int i = 0; i < 3; ++i) {
     XMFLOAT3 startPosition = currentPosition;
     startPosition.y = 6.0f + float(i % 2) * 4.0f;
     startPosition = Vector3::Add(startPosition, rightVector, float(1 - i) * 4.0f);
     startPosition = Vector3::Add(startPosition, direction);
-    auto tripleArrowObject = std::make_shared<TripleArrowObject>(roomRef, startPosition, direction);
-    // roomRef->InsertProjectileObject(tripleArrowObject);
+    std::shared_ptr<ProjectileObject> tripleArrowObject = std::make_shared<TripleArrowObject>(roomRef, startPosition, direction);
+    roomRef->InsertProjectileObject(tripleArrowObject);
   }
-  //auto shootingArrowEvent = std::make_shared<ShootingArrowEvent>(direction);
-  // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(shootingArrowEvent));
+  DreamWorld::SERVER_PACKET::ShootingObject sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHOOTING_ARROW), direction);
+  roomRef->Broadcast(&sendPacket);
 }
 
-void ArcherObject::ExecuteRainArrow(const XMFLOAT3& position) {
+void ArcherObject::ExecuteRainArrow(const XMFLOAT3& position) {  // 이런 타이머적인 스킬은 player Tickable Object 둬서 업데이트 처리하자
   using namespace std::chrono;
   static constexpr seconds SKY_ARROW_ATTACK_TIME = seconds(1);
 
@@ -85,9 +94,9 @@ void ArcherObject::ExecuteRainArrow(const XMFLOAT3& position) {
   }
 
   m_attackRainArrowPosition = position;
-  //TIMER::Timer& timerRef = TIMER::Timer::GetInstance();
-  //auto skyArrowEvent = std::make_shared<TIMER::RoomEvent>(TIMER_EVENT_TYPE::EV_RAIN_ARROW_ATTACK, SKY_ARROW_ATTACK_TIME, roomRef);
-  //timerRef.InsertTimerEvent(std::static_pointer_cast<TIMER::EventBase>(skyArrowEvent));
+  // TIMER::Timer& timerRef = TIMER::Timer::GetInstance();
+  // auto skyArrowEvent = std::make_shared<TIMER::RoomEvent>(TIMER_EVENT_TYPE::EV_RAIN_ARROW_ATTACK, SKY_ARROW_ATTACK_TIME, roomRef);
+  // timerRef.InsertTimerEvent(std::static_pointer_cast<TIMER::EventBase>(skyArrowEvent));
 }
 
 void ArcherObject::ExecuteCommonAttack(const XMFLOAT3& direction, const int& power) {
@@ -115,10 +124,10 @@ void ArcherObject::ExecuteCommonAttack(const XMFLOAT3& direction, const int& pow
   if (nullptr == roomRef) {
     return;
   }
-  auto arrowObject = std::make_shared<CommonArrowObject>(Speed, roomRef, currentPosition, direction, attackDamage);
-  // roomRef->InsertProjectileObject(arrowObject);
-  //auto shootingArrowEvent = std::make_shared<ShootingArrowEvent>(direction);
-  // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(shootingArrowEvent));
+  std::shared_ptr<ProjectileObject> arrowObject = std::make_shared<CommonArrowObject>(Speed, roomRef, currentPosition, direction, attackDamage);
+  roomRef->InsertProjectileObject(arrowObject);
+  SERVER_PACKET::ShootingObject sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHOOTING_ARROW), direction);
+  roomRef->Broadcast(&sendPacket);
 }
 
 void ArcherObject::AttackRainArrow() {

@@ -48,10 +48,10 @@ class RoomBase
 
   virtual std::vector<std::shared_ptr<GameObject>> GetLiveObjects();
 
+  void InsertProjectileObject(std::shared_ptr<ProjectileObject>& projectileObject);
+
  protected:
   virtual void Update();
-
-  void InsertProjectileObject(std::shared_ptr<ProjectileObject>& projectileObject);
 
   void InsertGameObject(std::shared_ptr<GameObject>& gameObject);
 

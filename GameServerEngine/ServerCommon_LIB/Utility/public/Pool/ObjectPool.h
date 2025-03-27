@@ -61,6 +61,28 @@ class ObjectPool {
                               }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
+  template <typename... Args>
+  std::unique_ptr<T> MakeUnique(Args&&... args) {
+    T* ptr = nullptr;
+    {
+      std::lock_guard<std::mutex> lg(m_lock);
+      if (!m_pools.empty()) {
+        ptr = m_pools.top();
+        m_pools.pop();
+      }
+    }
+
+    if (nullptr == ptr) {
+      ptr = new T(std::forward<Args>(args)...);
+    } else {
+      std::construct_at<T>(ptr, std::forward<Args>(args)...);
+    }
+
+    return std::unique_ptr<T>(ptr, std::move([=](T* ptr) {
+                                Release(ptr);
+                              }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+  }
+
  private:
   void Release(T* ptr) {
     std::lock_guard<std::mutex> lg(m_lock);
