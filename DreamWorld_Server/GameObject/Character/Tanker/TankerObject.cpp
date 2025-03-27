@@ -1,12 +1,10 @@
 #include "stdafx.h"
 #include "TankerObject.h"
 #include "../Room/Room.h"
-#include "../Room/RoomEvent.h"
 #include "../../EventController/CoolDownEventBase.h"
 #include "../../EventController/DurationEvent.h"
 #include "../GameObject/Monster/MonsterObject.h"
-#include "../Timer/Timer.h"
-#include "../Room/TimerRoomEvent.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 TankerObject::TankerObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -29,25 +27,32 @@ void TankerObject::SetStagePosition(const ROOM_STATE& roomState) {
 }
 
 void TankerObject::RecvSkill(const SKILL_TYPE& type) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
     auto durationEvent = std::static_pointer_cast<DurationEvent>(m_skillCtrl->GetEventData(SKILL_Q));
     auto shieldSkill = std::make_shared<TankerSkill::ShieldSkill>(std::static_pointer_cast<TankerObject>(shared_from_this()), durationEvent->GetDurationTIme());
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(shieldSkill)));
-    }
+    // 이거 2.4초 뒤에, 쉴드 적용, 2.4+durationTime 뒤에 제거인데, 이것도 player Tickable Object에 넣으면 될듯?
+    //  roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(shieldSkill)));
   } else {
     spdlog::critical("TankerObject::RecvSkill(const SKILL_TYPE& ) - Non Use SKILL_E");
   }
 }
 
 void TankerObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
+
   if (SKILL_TYPE::SKILL_TYPE_E == type) {
-    auto hammerSkill = std::make_shared<TankerSkill::ThunderHammerSkill>(std::static_pointer_cast<TankerObject>(shared_from_this()), vector3);
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(hammerSkill)));
-    }
+    roomRef->InsertJob(
+        ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+          TankerSkill::ThunderHammerSkill skill(std::static_pointer_cast<TankerObject>(shared_from_this()), vector3);
+          skill.Execute();
+        }));
   } else {
     spdlog::critical("TankerObject::RecvSkill(const SKILL_TYPE& ) - Non Use SKILL_Q");
   }
@@ -56,8 +61,11 @@ void TankerObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
 void TankerObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
-    auto tankerCommonAttackSkill = std::make_shared<TankerSkill::CommonAttack>(std::static_pointer_cast<TankerObject>(shared_from_this()), attackDir);
-    // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(tankerCommonAttackSkill)));
+    roomRef->InsertJob(
+        ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+          TankerSkill::CommonAttack skill(std::static_pointer_cast<TankerObject>(shared_from_this()), attackDir);
+          skill.Execute();
+        }));
   }
 }
 

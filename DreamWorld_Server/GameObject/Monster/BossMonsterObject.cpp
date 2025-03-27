@@ -2,9 +2,9 @@
 #include "BossMonsterObject.h"
 #include "../Room/Room.h"
 #include "../Character/ChracterObject.h"
-#include "../Room/RoomEvent.h"
 #include "../EventController/CoolDownEventBase.h"
 #include "BossEvent.h"
+#include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
 BossMonsterObject::BossMonsterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -67,16 +67,15 @@ void BossMonsterObject::CheckUpdateRoad() {
     }
     XMFLOAT3 startPosition = GetPosition();
 
-    // spdlog::info("Find Path Start Position - x: {}, y: {}, z: {}", startPosition.x, startPosition.y, startPosition.z);
-    // auto aggroEvent = std::make_shared<TIMER::BossAggroEvent>(roomRef, characterRef->GetPosition(), startPosition, characterRef);
-    // roomRef->InserTimerEvent(aggroEvent);
+    // 이거는 RoomThreadPool에서 돌려서 결과 받는거로?
+    //  auto aggroEvent = std::make_shared<TIMER::BossAggroEvent>(roomRef, characterRef->GetPosition(), startPosition, characterRef);
+    //  roomRef->InserTimerEvent(aggroEvent);
     return;
   }
   auto researchRoadEvent = m_behaviorTimeEventCtrl->GetEventData(RESEARCH_ROAD);
   const bool isAbleResearchRoad = researchRoadEvent->IsAbleExecute();
   if (isAbleResearchRoad) {
     XMFLOAT3 startPosition = GetPosition();
-    // spdlog::info("Find Path Start Position - x: {}, y: {}, z: {}", startPosition.x, startPosition.y, startPosition.z);
     // auto researchEvent = std::make_shared<TIMER::BossCalculateRoadEvent>(roomRef, m_aggroCharacter->GetPosition(), startPosition);
     // roomRef->InserTimerEvent(researchEvent);
   }
@@ -119,7 +118,8 @@ void BossMonsterObject::SendBossState(const BossState::STATE& state) {
       // 어그로를 바로 따라가야 하기 때문에, 강제로
       sendAggroPositionEvent->ForceExecute();
       m_currentAggroPosition = m_aggroCharacter->GetPosition();
-      // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossSameNodeEvent>(m_currentAggroPosition)));
+      DreamWorld::SERVER_PACKET::BossOnSameNodePacket sendPacket(m_currentAggroPosition);
+      roomRef->Broadcast(&sendPacket);
     } break;
     case BossState::STATE::MOVE: {
       spdlog::debug("changeBossState: MOVE");
@@ -131,19 +131,23 @@ void BossMonsterObject::SendBossState(const BossState::STATE& state) {
     } break;
     case BossState::STATE::FIRE: {
       spdlog::debug("changeBossState: FIRE");
-      // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossFireEvent>()));
+      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_FIRE);
+      roomRef->Broadcast(&sendPacket);
     } break;
     case BossState::STATE::SPIN: {
       spdlog::debug("changeBossState: SPIN");
-      // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossSpinEvent>()));
+      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_SPIN);
+      roomRef->Broadcast(&sendPacket);
     } break;
     case BossState::STATE::KICK: {
       spdlog::debug("changeBossState: KICK");
-      // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossKickEvent>(GetLookVector())));
+      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_KICK);
+      roomRef->Broadcast(&sendPacket);
     } break;
     case BossState::STATE::PUNCH: {
       spdlog::debug("changeBossState: PUNCH");
-      // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossPunchEvent>(GetLookVector())));
+      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_PUNCH);
+      roomRef->Broadcast(&sendPacket);
     } break;
     default:
       break;
@@ -282,7 +286,8 @@ void BossMonsterObject::MoveAggro() {
   const bool isAbleSendAggroPosition = aggroPositionSendCoolTimeData->IsAbleExecute();
   if (isAbleSendAggroPosition) {
     m_currentAggroPosition = m_aggroCharacter->GetPosition();
-    // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(std::make_shared<BossSameNodeEvent>(m_aggroCharacter->GetPosition())));
+    DreamWorld::SERVER_PACKET::BossOnSameNodePacket sendPacket(m_currentAggroPosition);
+    roomRef->Broadcast(&sendPacket);
   }
   MoveAggroUpdate();
 }
@@ -368,8 +373,8 @@ void BossMonsterObject::MoveUpdate() {
     spdlog::debug("ChangeLook prevLook - x: {}, y: {}, z: {}", prevLook.x, prevLook.y, prevLook.z);
     spdlog::debug("ChangeLook newLook - x: {}, y: {}, z: {}", toDestinationVector.x, toDestinationVector.y, toDestinationVector.z);
 
-    // auto changeDestinationEvent = std::make_shared<BossMoveDestinationEvent>(currentDestinationPosition);
-    // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(changeDestinationEvent));
+    DreamWorld::SERVER_PACKET::BossMoveDestnationPacket sendPacket(currentDestinationPosition);
+    roomRef->Broadcast(&sendPacket);
     m_roadUpdate = false;
     return;
   }
@@ -405,8 +410,8 @@ void BossMonsterObject::MoveUpdate() {
     currentDestinationPosition = m_road->front();
     m_currentDestinationPosition = currentDestinationPosition;
     spdlog::debug("Change Boss DestinationPosition - x: {}, y: {}, z: {}", currentDestinationPosition.x, currentDestinationPosition.y, currentDestinationPosition.z);
-    // auto changeDestinationEvent = std::make_shared<BossMoveDestinationEvent>(currentDestinationPosition);
-    // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(changeDestinationEvent));
+    DreamWorld::SERVER_PACKET::BossMoveDestnationPacket sendPacket(currentDestinationPosition);
+    roomRef->Broadcast(&sendPacket);
     toDestinationVector = Vector3::Subtract(currentDestinationPosition, currentPosition);
     toDestinationVector = Vector3::Normalize(toDestinationVector);
     XMFLOAT3 prevLook = GetLookVector();

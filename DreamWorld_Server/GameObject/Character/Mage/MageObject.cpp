@@ -1,15 +1,16 @@
 #include "stdafx.h"
 #include "MageObject.h"
+#include <Utility/Job/Job.h>
 #include "../Room/Room.h"
-#include "../Room/RoomEvent.h"
+#include "../Room/RoomBase.h"
 #include "../../EventController/EventController.h"
 #include "../../EventController/CoolDownEventBase.h"
 #include "../../EventController/DurationEvent.h"
 #include "../GameObject/Monster/MonsterObject.h"
-#include "../Timer/Timer.h"
-#include "../Room/TimerRoomEvent.h"
-#include "../Room/RoomEvent.h"
 #include "../GameObject/Projectile/ProjectileObject.h"
+#include "../LogManager/LogManager.h"
+#include "../ObjectPools.h"
+#include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
 MageObject::MageObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -32,35 +33,43 @@ void MageObject::SetStagePosition(const ROOM_STATE& roomState) {
 }
 
 void MageObject::RecvSkill(const SKILL_TYPE& type) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
     auto durationEventData = std::static_pointer_cast<DurationEvent>(m_skillCtrl->GetEventData(SKILL_Q));
-    auto headlEvent = std::make_shared<MageSkill::HealSkill>(std::static_pointer_cast<MageObject>(shared_from_this()), durationEventData->GetDurationTIme());
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(headlEvent)));
-    }
+    roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+      MageSkill::HealSkill skill(std::static_pointer_cast<MageObject>(shared_from_this()), durationEventData->GetDurationTIme());
+      skill.Execute();
+    }));
   } else {
-    spdlog::critical("MageObject::RecvSkill(const SKILL_TYPE& ) - Non Use SKILL_E");
+    WRITE_LOG(logLevel::critical, "{}({}) > Mage Can not Execute Skill E, But Executed", __FUNCTION__, __LINE__);
   }
 }
 
 void MageObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
   if (SKILL_TYPE::SKILL_TYPE_E == type) {
-    auto thunderSkillEvent = std::make_shared<MageSkill::ThunderSkill>(std::static_pointer_cast<MageObject>(shared_from_this()), vector3);
-    auto roomRef = m_roomWeakRef.lock();
-    if (nullptr != roomRef) {
-      // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(thunderSkillEvent)));
-    }
+    roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+      MageSkill::ThunderSkill skill(std::static_pointer_cast<MageObject>(shared_from_this()), vector3);
+      skill.Execute();
+    }));
   } else {
-    spdlog::critical("MageObject::RecvSkill(const SKILL_TYPE&, const XMFLOAT3&) - Non Use SKILL_Q");
+    WRITE_LOG(logLevel::critical, "{}({}) > Mage Can not Execute Skill Q, But Executed", __FUNCTION__, __LINE__);
   }
 }
 
 void MageObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
-    auto commonAttackEvent = std::make_shared<MageSkill::CommonAttack>(std::static_pointer_cast<MageObject>(shared_from_this()), attackDir);
-    // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(commonAttackEvent)));
+    roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+      MageSkill::CommonAttack commonAttackEvent(std::static_pointer_cast<MageObject>(shared_from_this()), attackDir);
+      commonAttackEvent.Execute();
+    }));
   }
 }
 
@@ -69,8 +78,8 @@ void MageObject::ExecuteThunderSkill(const XMFLOAT3& position) {
   if (nullptr == roomRef) {
     return;
   }
-  //auto thunderEvent = std::make_shared<ThunderEvent>(position);
-  // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(thunderEvent));
+  DreamWorld::SERVER_PACKET::ShootingObject sendPacket(static_cast<char>(SERVER_PACKET::TYPE::EXECUTE_LIGHTNING), position);
+  roomRef->Broadcast(&sendPacket);
 
   static constexpr float THUNDER_RANGE = 35.0f;
   static constexpr float THUNDER_DAMAGE = 150.0f;
@@ -83,7 +92,7 @@ void MageObject::ExecuteThunderSkill(const XMFLOAT3& position) {
   }
 }
 
-void MageObject::ExecuteHeal(const CommonDurationSkill_MILSEC::DURATION_TIME_RATIO& durationTime) {
+void MageObject::ExecuteHeal(const CommonDurationSkill_MILSEC::DURATION_TIME_RATIO& durationTime) {  // 얘도 PlayerCharacter에 Tickable Ojbect
   using namespace std::chrono;
 
   auto roomRef = m_roomWeakRef.lock();
@@ -106,11 +115,11 @@ void MageObject::ExecuteCommonAttack(const XMFLOAT3& attackDir) {
   }
   auto currentPosition = GetPosition();
   currentPosition.y += 8.0f;
-  auto iceLance = std::make_shared<IceLanceBall>(roomRef, currentPosition, attackDir);
-  // roomRef->InsertProjectileObject(iceLance);
+  std::shared_ptr<ProjectileObject> iceLance = std::make_shared<IceLanceBall>(roomRef, currentPosition, attackDir);
+  roomRef->InsertProjectileObject(iceLance);
 
-  //auto shootingIceLanceEvent = std::make_shared<ShootingIceLaneEvent>(attackDir);
-  // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(shootingIceLanceEvent));
+  DreamWorld::SERVER_PACKET::ShootingObject sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHOOTING_ICE_LANCE), attackDir);
+  roomRef->Broadcast(&sendPacket);
 }
 
 void MageSkill::ThunderSkill::Execute() {

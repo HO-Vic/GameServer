@@ -4,7 +4,7 @@
 #include "../Room/RoomEvent.h"
 #include "../GameObject/Monster/MonsterObject.h"
 #include "../GameObject/Monster/SmallMonsterObject.h"
-// #include "../GameObject/Monster/BossMonsterObject.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 WarriorObject::WarriorObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -34,7 +34,10 @@ void WarriorObject::RecvSkill(const SKILL_TYPE& skillType, const XMFLOAT3& vecto
 
   if (SKILL_TYPE::SKILL_TYPE_Q == skillType) {
     auto longSwordSkill = std::make_shared<WarriorSkill::LongSwordSkill>(std::static_pointer_cast<WarriorObject>(shared_from_this()), vector3);
-    // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(longSwordSkill)));
+    roomRef->InsertJob(
+        ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([skill = std::move(longSwordSkill)]() {
+          skill->Execute();
+        }));
   }
 }
 
@@ -45,7 +48,10 @@ void WarriorObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power
   }
 
   auto warriorCommonAttackSkill = std::make_shared<WarriorSkill::CommonAttack>(std::static_pointer_cast<WarriorObject>(shared_from_this()), attackDir, power);
-  // roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(warriorCommonAttackSkill)));
+  roomRef->InsertJob(
+      ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([skill = std::move(warriorCommonAttackSkill)]() {
+        skill->Execute();
+      }));
 }
 
 void WarriorObject::ExecuteSwordSkill(const XMFLOAT3& direction) {

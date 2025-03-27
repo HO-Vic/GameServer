@@ -4,6 +4,7 @@
 #include "../../EventController/EventController.h"
 #include "../GameObject/Projectile/ProjectileObject.h"
 #include <Utility/Job/Job.h>
+#include <Utility/Pool/ObjectPool.h>
 #include "../ObjectPools.h"
 #include "../Server/MsgProtocol.h"
 
@@ -36,17 +37,17 @@ void ArcherObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
   if (nullptr == roomRef) {
     return;  // Already Room Expire;
   }
-  std::unique_ptr<PlayerSkillBase> skillPtr = nullptr;
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
-    skillPtr = std::make_unique<ArcherSKill::TripleArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
-  } else if (SKILL_TYPE::SKILL_TYPE_E == type) {
-    skillPtr = std::make_unique<ArcherSKill::RainArrow>(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
-  }
-
-  if (nullptr != skillPtr) {
     roomRef->InsertJob(
-        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([skill = std::move(skillPtr)]() {
-          skill->Execute();
+        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
+          ArcherSKill::TripleArrow skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
+          skill.Execute();
+        })));
+  } else if (SKILL_TYPE::SKILL_TYPE_E == type) {
+    roomRef->InsertJob(
+        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
+          ArcherSKill::RainArrow skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
+          skill.Execute();
         })));
   }
 }
@@ -54,10 +55,10 @@ void ArcherObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
 void ArcherObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
-    auto commonAttack = std::make_unique<ArcherSKill::CommonAttack>(std::static_pointer_cast<ArcherObject>(shared_from_this()), attackDir, power);
     roomRef->InsertJob(
-        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([skill = std::move(commonAttack)]() {
-          skill->Execute();
+        DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
+          ArcherSKill::CommonAttack skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), attackDir, power);
+          skill.Execute();
         })));
   }
 }

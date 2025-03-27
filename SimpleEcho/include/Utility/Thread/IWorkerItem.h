@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-
+#include <memory>
 namespace sh::Utility {
 class ThWorkerJob;
 class IWorkerItem : public std::enable_shared_from_this<IWorkerItem> {

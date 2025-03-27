@@ -4,9 +4,10 @@
 #include "../Character/ChracterObject.h"
 #include "../EventController/CoolDownEventBase.h"
 #include "../EventController/DurationEvent.h"
-#include "../Room/RoomEvent.h"
 #include "../MapData/MapData.h"
 #include "../MapData/MapCollision/MapCollision.h"
+#include "../Server/MsgProtocol.h"
+
 // #include "SmallMonsterSessionObject.h"
 
 namespace DreamWorld {
@@ -52,12 +53,13 @@ void SmallMonsterObject::Attacked(const float& damage) {
   }
 
   m_hp -= damage;
-  //auto damagedEvent = std::make_shared<SmallMonsterDamagedEvent>(m_idx, m_hp);
-  // roomRef->InsertAftrerUpdateSendEvent(damagedEvent);
+
+  DreamWorld::SERVER_PACKET::SmallMonsterDamagedPacket sendPacket(m_idx, m_hp);
+  roomRef->Broadcast(&sendPacket);
   if (m_hp <= 0) {
     m_hp = 0;
-    //auto dieEvent = std::make_shared<SmallMonsterDieEvent>(m_idx);
-    // roomRef->InsertAftrerUpdateSendEvent(dieEvent);
+    DreamWorld::SERVER_PACKET::SmallMonsterPacket sendDiePacket(m_idx, static_cast<char>(SERVER_PACKET::TYPE::SMALL_MONSTER_DIE));
+    roomRef->Broadcast(&sendDiePacket);
     m_isAlive = false;
   }
 }
@@ -116,8 +118,8 @@ void SmallMonsterObject::UpdateDestinationPosition() {
       return;
     }
     m_destinationPosition = aggroCharacter->GetPosition();
-    //auto eventData = std::make_shared<SmallMonsterDestinationEvent>(m_idx, m_destinationPosition);
-    // roomRef->InsertAftrerUpdateSendEvent(std::static_pointer_cast<RoomSendEvent>(eventData));
+    DreamWorld::SERVER_PACKET::SmallMonsterDestinationPacket sendPacket(m_idx, m_destinationPosition);
+    roomRef->Broadcast(&sendPacket);
   }
 }
 
@@ -132,8 +134,8 @@ void SmallMonsterObject::SetMove() {
   }
 
   m_isMove = true;
-  //auto eventData = std::make_shared<SmallMonsterMoveEvent>(SmallMonsterMoveEvent::EventType::SMALL_MONSTER_MOVE, m_idx);
-  // roomRef->InsertAftrerUpdateSendEvent(eventData);
+  SERVER_PACKET::SmallMonsterPacket sendPacket(m_idx, static_cast<char>(SERVER_PACKET::TYPE::SMALL_MONSTER_MOVE));
+  roomRef->Broadcast(&sendPacket);
 }
 
 void SmallMonsterObject::SetStop() {
@@ -147,8 +149,8 @@ void SmallMonsterObject::SetStop() {
   }
 
   m_isMove = false;
-  //auto eventData = std::make_shared<SmallMonsterMoveEvent>(SmallMonsterMoveEvent::EventType::SMALL_MONSTER_STOP, m_idx);
-  // roomRef->InsertAftrerUpdateSendEvent(eventData);
+  SERVER_PACKET::SmallMonsterPacket sendPacket(m_idx, static_cast<char>(SERVER_PACKET::TYPE::SMALL_MONSTER_STOP));
+  roomRef->Broadcast(&sendPacket);
 }
 
 void SmallMonsterObject::Move() {
@@ -208,32 +210,32 @@ std::optional<const XMFLOAT3> SmallMonsterObject::UpdateNextPosition(const float
 }
 
 std::optional<std::pair<bool, XMFLOAT3>> SmallMonsterObject::CollideWall(const XMFLOAT3& nextPosition, const float& elapsedTime, const bool& isSlidingPosition) {
-  auto roomRef = m_roomWeakRef.lock();
+  auto roomRef = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
   if (nullptr == roomRef) {
     return std::nullopt;
   }
   return std::pair<bool, XMFLOAT3>(false, nextPosition);  // 없애야 됨
   BoundingSphere boudingSphere{nextPosition, m_collisionSphere.Radius};
-  // boudingSphere.Center.y = 0;
-  // auto mapData = roomRef->GetMapData();
-  // auto& mapCollision = mapData->GetCollisionData();
-  // std::shared_ptr<MapCollision> collideMap{nullptr};
-  // for (auto& collision : mapCollision) {
-  //   if (collision->CollideMap(boudingSphere)) {
-  //     if (nullptr != collideMap) {
-  //       return std::nullopt;
-  //     }
-  //     collideMap = collision;
-  //   }
-  // }
-  // if (nullptr == collideMap) {
-  //   return std::pair<bool, XMFLOAT3>(false, nextPosition);
-  // }
-  // auto moveVector = GetLookVector();
-  // auto slidingVectorResult = collideMap->GetSlidingVector(shared_from_this(), moveVector);  // power, vector
-  // XMFLOAT3 applySlidingPosition = GetPosition();
-  // applySlidingPosition = Vector3::Add(applySlidingPosition, slidingVectorResult.second, m_moveSpeed * elapsedTime * slidingVectorResult.first);
-  // return std::pair<bool, XMFLOAT3>(true, applySlidingPosition);
+  boudingSphere.Center.y = 0;
+  auto mapData = roomRef->GetMapData();
+  auto& mapCollision = mapData->GetCollisionData();
+  std::shared_ptr<MapCollision> collideMap{nullptr};
+  for (auto& collision : mapCollision) {
+    if (collision->CollideMap(boudingSphere)) {
+      if (nullptr != collideMap) {
+        return std::nullopt;
+      }
+      collideMap = collision;
+    }
+  }
+  if (nullptr == collideMap) {
+    return std::pair<bool, XMFLOAT3>(false, nextPosition);
+  }
+  auto moveVector = GetLookVector();
+  auto slidingVectorResult = collideMap->GetSlidingVector(shared_from_this(), moveVector);  // power, vector
+  XMFLOAT3 applySlidingPosition = GetPosition();
+  applySlidingPosition = Vector3::Add(applySlidingPosition, slidingVectorResult.second, m_moveSpeed * elapsedTime * slidingVectorResult.first);
+  return std::pair<bool, XMFLOAT3>(true, applySlidingPosition);
 }
 
 const bool SmallMonsterObject::IsAbleAttack() {
@@ -262,8 +264,8 @@ void SmallMonsterObject::Attack() {
   }
 
   auto aggroCharacter = m_aggroCharacter.lock();
-  //auto eventData = std::make_shared<SmallMonsterAttakEvent>(m_idx);
-  // roomRef->InsertAftrerUpdateSendEvent(eventData);
   aggroCharacter->Attacked(MONSTER_DAMAGE);
+  DreamWorld::SERVER_PACKET::SmallMonsterAttackPacket sendPacket(m_idx);
+  roomRef->Broadcast(&sendPacket);
 }
 }  // namespace DreamWorld

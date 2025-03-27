@@ -14,19 +14,26 @@ class SmallMonsterObject;
 class BossMonsterObject;
 class MonsterMapData;
 class LiveObject;
-class NavMapData;
 class Session;
+
+class MapData;
+class NavMapData;
+class MonsterMapData;
 
 class Room
     : public RoomBase {
  public:
-  Room();
+  Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef);
 
-  virtual void Init();
+  void Init();
 
   std::vector<std::shared_ptr<LiveObject>> GetMonsters();
 
   std::vector<std::shared_ptr<LiveObject>> GetCharacters(bool checkAlive = false);
+
+  std::shared_ptr<MapData> GetMapData() const;
+
+  std::shared_ptr<NavMapData> GetBossMapData() const;
 
  protected:
   virtual void Update() override;
@@ -39,5 +46,8 @@ class Room
 
   std::shared_ptr<BossMonsterObject> m_bossMonster;
   chrono_clock::time_point m_bossStartTime;
+
+  std::shared_ptr<MonsterMapData> m_stageMapData;
+  std::shared_ptr<NavMapData> m_bossMapData;
 };
 }  // namespace DreamWorld

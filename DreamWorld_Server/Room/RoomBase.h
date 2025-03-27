@@ -25,7 +25,7 @@ class MonsterMapData;
 class NavMapData;
 class Session;
 
-class PacketHeader;
+struct PacketHeader;
 
 class RoomBase
     : public sh::Utility::IWorkerItem,
@@ -60,8 +60,10 @@ class RoomBase
 
   void IntenalUpdateProjectileObject();
 
- private:
+ protected:
   ROOM_STATE m_roomState = ROOM_STATE::ROOM_COMMON;
+
+ private:
   int m_updateCnt;
   uint16_t m_maxExecJobCnt;
 

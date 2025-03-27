@@ -4,6 +4,7 @@
 #include "MapCollision/MapCollision.h"
 #include "AstarNode/AstarNode.h"
 
+namespace DreamWorld {
 MapData::MapData(const std::string& mapCollisionFile) {
   std::ifstream collisionFile(mapCollisionFile);
 
@@ -610,3 +611,4 @@ MonsterMapData::MonsterMapData(const std::string& mapCollisionFile, const std::s
 const std::vector<MonsterInitData>& MonsterMapData::GetMonsterInitData() const {
   return m_monsterInitData;
 }
+}  // namespace DreamWorld

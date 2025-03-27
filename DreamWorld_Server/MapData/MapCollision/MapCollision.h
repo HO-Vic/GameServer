@@ -2,10 +2,9 @@
 #include "../../PCH/stdafx.h"
 
 using namespace DirectX;
+
 namespace DreamWorld {
 class GameObject;
-}
-
 class MapCollision : public std::enable_shared_from_this<MapCollision> {
  public:
   MapCollision() = delete;
@@ -25,3 +24,4 @@ class MapCollision : public std::enable_shared_from_this<MapCollision> {
   std::array<std::pair<float, XMFLOAT3>, 2> normalVectorData;    // 직사각형 콜리전 노말 벡터
   std::vector<std::weak_ptr<MapCollision>> m_relationCollsions;  // 연결된 콜리전 정보
 };
+}  // namespace DreamWorld

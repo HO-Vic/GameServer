@@ -5,8 +5,7 @@
 #include "../MapData/MapCollision/MapCollision.h"
 #include "../EventController/CoolDownEventBase.h"
 #include "../EventController/DurationEvent.h"
-#include "../Room/RoomEvent.h"
-#include "../Network/protocol/protocol.h"
+#include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
 CharacterObject::CharacterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, const float& attackDamage, std::shared_ptr<RoomBase>& roomRef, const ROLE& role)
@@ -74,6 +73,11 @@ const float CharacterObject::GetShield() const {
 }
 
 void CharacterObject::Attacked(const float& damage) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
+
   float applyDamage = damage;
   if (m_activeShield) {
     applyDamage *= REDUCE_DAMAGE_APPLY_RATIO;
@@ -87,17 +91,11 @@ void CharacterObject::Attacked(const float& damage) {
   }
   m_hp -= applyDamage;
 
-  auto roomRef = m_roomWeakRef.lock();
-  if (nullptr == roomRef) {
-    return;
-  }
-
-  //auto damagedEvent = std::make_shared<PlayerDamagedEvent>(m_role, m_hp, m_Shield);
-  //roomRef->InsertAftrerUpdateSendEvent(damagedEvent);
-
+  DreamWorld::SERVER_PACKET::PlayerDamagedPacket sendPacket(m_role, m_hp, m_Shield);
+  roomRef->Broadcast(&sendPacket);
   if (m_hp < FLT_EPSILON) {
-    //auto dieEvent = std::make_shared<PlayerDieEvent>(m_role);
-    //roomRef->InsertAftrerUpdateSendEvent(dieEvent);
+    DreamWorld::SERVER_PACKET::PlayerDiePacket sendPlayerDiePacket(m_role);
+    roomRef->Broadcast(&sendPlayerDiePacket);
     m_hp = 0.0;
     m_isAlive = false;
   }
@@ -109,23 +107,23 @@ void CharacterObject::RecvMouseInput(const bool& LmouseInput, const bool& Rmouse
 }
 
 void CharacterObject::RecvSkillInput(const SKILL_TYPE& type) {
+  auto roomRef = m_roomWeakRef.lock();
+  if (nullptr == roomRef) {
+    return;
+  }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
     auto skillData = m_skillCtrl->GetEventData(SKILL_Q);
     const bool isAbleSkill = skillData->IsAbleExecute();
     if (isAbleSkill) {
-      auto roomRef = m_roomWeakRef.lock();
-      if (nullptr != roomRef) {
-        //roomRef->BroadCastPacket(std::make_shared<SERVER_PACKET::NotifyPlayerAnimationPacket>(static_cast<char>(SERVER_PACKET::TYPE::START_ANIMATION_Q), GetRole(), skillData->GetLastExeTime()));
-      }
+      DreamWorld::SERVER_PACKET::NotifyPlayerAnimationPacket sendPacket(static_cast<char>(SERVER_PACKET::TYPE::START_ANIMATION_Q), GetRole(), skillData->GetLastExeTime());
+      roomRef->Broadcast(&sendPacket);
     }
   } else if (SKILL_TYPE::SKILL_TYPE_E == type) {
     auto skillData = m_skillCtrl->GetEventData(SKILL_E);
     const bool isAbleSkill = skillData->IsAbleExecute();
     if (isAbleSkill) {
-      auto roomRef = m_roomWeakRef.lock();
-      if (nullptr != roomRef) {
-        //roomRef->BroadCastPacket(std::make_shared<SERVER_PACKET::NotifyPlayerAnimationPacket>(static_cast<char>(SERVER_PACKET::TYPE::START_ANIMATION_E), GetRole(), skillData->GetLastExeTime()));
-      }
+      SERVER_PACKET::NotifyPlayerAnimationPacket sendPacket(static_cast<char>(SERVER_PACKET::TYPE::START_ANIMATION_E), GetRole(), skillData->GetLastExeTime());
+      roomRef->Broadcast(&sendPacket);
     }
   }
 }
@@ -182,7 +180,7 @@ std::optional<const XMFLOAT3> CharacterObject::UpdateNextPosition(const float& e
 
 std::optional<std::pair<bool, XMFLOAT3>> CharacterObject::CollideWall(const XMFLOAT3& nextPosition, const float& elapsedTime, const bool& isSlidingPosition) {
   // characters와 같은 방법으로 수행
-  auto roomRef = m_roomWeakRef.lock();
+  auto roomRef = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
   if (nullptr == roomRef) {
     return std::nullopt;
   }
@@ -190,24 +188,24 @@ std::optional<std::pair<bool, XMFLOAT3>> CharacterObject::CollideWall(const XMFL
   BoundingSphere boudingSphere{nextPosition, m_collisionSphere.Radius};
   boudingSphere.Center.y = 0;
   return std::pair<bool, XMFLOAT3>(false, nextPosition);
-  //auto mapData = roomRef->GetMapData();
-  //auto& mapCollision = mapData->GetCollisionData();
-  //std::shared_ptr<MapCollision> collideMap{nullptr};
-  //for (auto& collision : mapCollision) {
-  //  if (collision->CollideMap(boudingSphere)) {
-  //    if (nullptr != collideMap) {
-  //      return std::nullopt;
-  //    }
-  //    collideMap = collision;
-  //  }
-  //}
-  //if (nullptr == collideMap) {
-  //  return std::pair<bool, XMFLOAT3>(false, nextPosition);
-  //}
-  //auto slidingVectorResult = collideMap->GetSlidingVector(shared_from_this(), m_moveVector);  // power, vector
-  //XMFLOAT3 applySlidingPosition = GetPosition();
-  //applySlidingPosition = Vector3::Add(applySlidingPosition, slidingVectorResult.second, m_moveSpeed * elapsedTime * slidingVectorResult.first);
-  //return std::pair<bool, XMFLOAT3>(true, applySlidingPosition);
+  auto mapData = roomRef->GetMapData();
+  auto& mapCollision = mapData->GetCollisionData();
+  std::shared_ptr<MapCollision> collideMap{nullptr};
+  for (auto& collision : mapCollision) {
+    if (collision->CollideMap(boudingSphere)) {
+      if (nullptr != collideMap) {
+        return std::nullopt;
+      }
+      collideMap = collision;
+    }
+  }
+  if (nullptr == collideMap) {
+    return std::pair<bool, XMFLOAT3>(false, nextPosition);
+  }
+  auto slidingVectorResult = collideMap->GetSlidingVector(shared_from_this(), m_moveVector);  // power, vector
+  XMFLOAT3 applySlidingPosition = GetPosition();
+  applySlidingPosition = Vector3::Add(applySlidingPosition, slidingVectorResult.second, m_moveSpeed * elapsedTime * slidingVectorResult.first);
+  return std::pair<bool, XMFLOAT3>(true, applySlidingPosition);
 }
 
 MeleeCharacterObject::MeleeCharacterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, const float& attackDamage, std::shared_ptr<RoomBase>& roomRef, const ROLE& role)

@@ -100,6 +100,9 @@
     <Filter Include="MsgDispatcher">
       <UniqueIdentifier>{e946ddf0-360d-4f10-9d46-7ecef6e88cba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ObjectPools">
+      <UniqueIdentifier>{d16c6ba0-1a7e-4c11-80f8-945ea66deb15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
@@ -271,6 +274,9 @@
     <ClCompile Include="DreamWorldDefine.cpp" />
     <ClCompile Include="Server\server_MsgHandler.cpp">
       <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPools.cpp">
+      <Filter>ObjectPools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -450,8 +456,12 @@
     <ClInclude Include="DB\DBPlayerLogin.h">
       <Filter>DB</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectPools.h">
+      <Filter>ObjectPools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
