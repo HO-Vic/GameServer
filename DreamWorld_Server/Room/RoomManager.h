@@ -17,6 +17,8 @@ class Session;
 class RoomManager
     : public sh::Utility::SingletonBase<RoomManager> {
  public:
+  RoomManager();
+
   void Init();
 
   void EraseRoom(std::shared_ptr<Room> roomRef);

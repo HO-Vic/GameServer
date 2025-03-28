@@ -6,6 +6,10 @@
 #include "../Network/Session/Session.h"
 #include "../LogManager/LogManager.h"
 #include "../Server/MsgProtocol.h"
+#include "../Timer/Timer.h"
+#include "../Timer/TimerJob.h"
+#include "RoomThreadPool.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 RoomBase::RoomBase(const uint16_t maxExecuteJobCnt)
@@ -93,6 +97,21 @@ void RoomBase::InsertProjectileObject(std::shared_ptr<ProjectileObject>& project
 
 void RoomBase::InsertGameObject(std::shared_ptr<GameObject>& gameObject) {
   m_gameObjects.push_back(gameObject);
+}
+
+std::vector<std::shared_ptr<Session>> RoomBase::GetUserSession() {
+  std::vector<std::shared_ptr<Session>> returnUsers;
+  returnUsers.reserve(4);
+  std::shared_lock lg{m_userLock};
+  for (auto& [role, session] : m_Sessions) {
+    returnUsers.push_back(session);
+  }
+  return returnUsers;
+}
+
+size_t RoomBase::GetActiveUser() {
+  std::shared_lock lg{m_userLock};
+  return m_Sessions.size();
 }
 
 void RoomBase::IntenalUpdateGameObjet() {

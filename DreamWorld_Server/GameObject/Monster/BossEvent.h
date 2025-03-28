@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Network/IocpEvent/IocpEventBase.h"
-#include "../Timer/TimerEventBase.h"
+//#include "../../Network/IocpEvent/IocpEventBase.h"
+//nclude "../Timer/TimerEventBase.h"
 
 //class Room;
 //class CharacterObject;

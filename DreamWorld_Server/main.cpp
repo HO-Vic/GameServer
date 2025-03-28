@@ -1,39 +1,35 @@
 #include "stdafx.h"
-#include "../ThreadManager/ThreadManager.h"
-#include "Network/IOCP/Iocp.h"
-#include "Timer/Timer.h"
-#include "Network/UserSession/UserManager.h"
-#include "Network/IocpEvent/IocpEventManager.h"
-#include "DB/DB.h"
-#include "Match/Matching.h"
-#include "Room/RoomManager.h"
-//
 #include "Server/Server.h"
+#include "Match/Matching.h"
 #include "DB/DBThreadPool.h"
 #include "DB/DBConnectionManager.h"
-#include "LogManager/LogManager.h"
 #include "Room/RoomThreadPool.h"
+#include "Room/RoomManager.h"
 #include "ObjectPools.h"
-#include "Room/RoomThreadPool.h"
+#include "LogManager/LogManager.h"
+#include "Match/Matching.h"
+#include "Timer/Timer.h"
 
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
   // Trace – Debug – Info – Warning – Error – Critical
-  START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(0), "ConsoleFile");
-  // DreamWorld 객체 풀 하나 만들어서 하는게 좋을듯
-  //  -> pool 모아둔 코드?로
-  DreamWorld::Server server(0);
+  START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(0), "ConsoleFile");
+
+  DreamWorld::Server server(6);  // ioThread
   server.Init();
 
-  DreamWorld::DBConnectionManager::GetInstance().Init(1);
-  DreamWorld::DBThreadPool::GetInstance().Init(1);
+  DreamWorld::DBConnectionManager::GetInstance().Init(2);  // DB Connector
+  DreamWorld::DBThreadPool::GetInstance().Init(2);         // DB Thread
   DreamWorld::DBThreadPool::GetInstance().Start();
 
-  DreamWorld::RoomThreadPool::GetInstance().Init(1);
+  DreamWorld::RoomThreadPool::GetInstance().Init(4);  // Room Thread
   DreamWorld::RoomThreadPool::GetInstance().Start();
 
   DreamWorld::InitPool();
+  DreamWorld::RoomManager::GetInstance().Init();
 
+  DreamWorld::Timer::GetInstance().Start();
+  DreamWorld::Matching::GetInstance().StartMatching();
   server.Start();
 
   /*

@@ -1,11 +1,11 @@
 #pragma once
-#include "../SingletonBase.h"
+#include <Utility/SingletonBase/Singleton.h>
 #include "MatchQueue.h"
 #include "../DreamWorldDefine.h"
 
 namespace DreamWorld {
 class Session;
-class Matching : public SingletonBase<Matching> {
+class Matching : public sh::Utility::SingletonBase<Matching> {
  public:
   void InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role);
   void CancelMatch(std::shared_ptr<Session>& userRef, const ROLE role);
@@ -13,7 +13,7 @@ class Matching : public SingletonBase<Matching> {
   void StartMatching();
 
  private:
-  void MatchFunc();
+  void MatchFunc(std::stop_token stopToken);
 
   std::shared_ptr<Session> GetCurrentMatchUserSession(MatchQueue& matchQueue, std::shared_ptr<Session> lastUserSession);
 

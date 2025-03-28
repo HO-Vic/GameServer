@@ -1,10 +1,12 @@
 #pragma once
 #include <string>
+#include <chrono>
 
 #ifndef DreamWorldDefine
 #define DreamWorldDefine
 
-#define chrono_clock std::chrono::high_resolution_clock
+#define _chrono std::chrono
+#define chrono_clock std::chrono::steady_clock
 
 enum class DIRECTION : char {
   IDLE = 0x00,
@@ -41,8 +43,14 @@ enum class PLAYER_STATE : char {
   RECONN_FAIL
 };
 
+namespace DreamWorld {
+using MS = _chrono::milliseconds;
+
+constexpr MS ROOM_UPDATE_TICK = MS(30);
+}  // namespace DreamWorld
+
 #endif  // !DreamWorldDefine
-// wchar->char
+        // wchar->char
 std::string ConvertWideStringToString(const wchar_t* wstr);
 // char->wchar
 std::wstring ConvertStringToWideString(const char* str);

@@ -162,10 +162,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DB\DB.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="DB\DBConnection.cpp" />
     <ClCompile Include="DB\DBConnectionManager.cpp" />
     <ClCompile Include="DB\DBJobBase.cpp" />
@@ -256,18 +252,10 @@
     </ClCompile>
     <ClCompile Include="Server\Server.cpp" />
     <ClCompile Include="Server\server_MsgHandler.cpp" />
-    <ClCompile Include="ThreadManager\ThreadManager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Timer\Timer.cpp" />
-    <ClCompile Include="Timer\TimerEventBase.cpp" />
+    <ClCompile Include="Timer\TimerJob.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DB\DB.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="DB\DBConnection.h" />
     <ClInclude Include="DB\DBConnectionManager.h" />
     <ClInclude Include="DB\DBJobBase.h" />
@@ -362,11 +350,11 @@
     <ClInclude Include="Server\Server.h" />
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="ThreadManager\ThreadManager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Timer\Timer.h" />
-    <ClInclude Include="Timer\TimerEventBase.h" />
+    <ClInclude Include="Timer\TimerJob.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

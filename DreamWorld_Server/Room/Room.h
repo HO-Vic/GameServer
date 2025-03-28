@@ -20,12 +20,18 @@ class MapData;
 class NavMapData;
 class MonsterMapData;
 
-class Room
+class Room final
     : public RoomBase {
+  static constexpr uint8_t GAME_STATE_TICK_COUNT = 3;
+
  public:
+  Room() = default;
+
   Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef);
 
   void Init();
+
+  void StartGame();
 
   std::vector<std::shared_ptr<LiveObject>> GetMonsters();
 
@@ -41,6 +47,15 @@ class Room
   virtual void Update() override;
 
  private:
+  void SetRoomEndState();
+
+  void SendGameState();
+
+  void CommonStageGameState();
+
+  void BossStageGameState();
+
+ private:
   std::unordered_map<ROLE, std::shared_ptr<CharacterObject>> m_characters;
   // Update를 위한 모든 게임 오브젝트를 담는 vector
 
@@ -51,5 +66,8 @@ class Room
 
   std::shared_ptr<MonsterMapData> m_stageMapData;
   std::shared_ptr<NavMapData> m_bossMapData;
+
+  uint8_t m_currentUpdateTickCount = 0;
+  ROOM_STATE m_roomState = ROOM_STATE::ROOM_COMMON;
 };
 }  // namespace DreamWorld

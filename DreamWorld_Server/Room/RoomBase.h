@@ -15,7 +15,6 @@ class ThWorkerJob;
 }
 
 namespace DreamWorld {
-#define _chrono std::chrono;
 class SmallMonsterObject;
 class BossMonsterObject;
 class ProjectileObject;
@@ -55,13 +54,13 @@ class RoomBase
 
   void InsertGameObject(std::shared_ptr<GameObject>& gameObject);
 
- private:
+  std::vector<std::shared_ptr<Session>> GetUserSession();
+
+  size_t GetActiveUser();
+
   void IntenalUpdateGameObjet();
 
   void IntenalUpdateProjectileObject();
-
- protected:
-  ROOM_STATE m_roomState = ROOM_STATE::ROOM_COMMON;
 
  private:
   int m_updateCnt;

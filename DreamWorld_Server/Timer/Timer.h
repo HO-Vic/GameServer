@@ -1,37 +1,31 @@
 #pragma once
-#include "../PCH/stdafx.h"
-#include "../SingletonBase.h"
+#include <memory>
+#include <functional>
+#include <tbb/tbb.h>
+#include <Utility/SingletonBase/Singleton.h>
+#include "TimerJob.h"
 
-namespace IOCP {
-class Iocp;
-}
-namespace TIMER {
-class EventBase;
-struct TimerQueueComp {
-  bool operator()(const std::shared_ptr<TIMER::EventBase>& l, const std::shared_ptr<TIMER::EventBase>& r);
-};
-class Timer : public SingletonBase<Timer> {
-  friend SingletonBase;
-
- private:
-  Timer();  // : iocpRef(nullptr) {}
-  ~Timer();
+namespace DreamWorld {
+class Timer
+    : public sh::Utility::SingletonBase<Timer> {
+  using TimerJobPtr = std::unique_ptr<TimerJob, std::function<void(TimerJob*)>>;
+  struct TimerQueueComp {
+    constexpr bool operator()(TimerJobPtr& l, TimerJobPtr& r) {
+      return *l < *r;
+    }
+  };
 
  public:
-  void TimerThreadFunc();
+  ~Timer() = default;
 
- public:
-  void StartTimer();
-  void RegisterIocp(std::shared_ptr<IOCP::Iocp>& iocp);
-  void InsertTimerEvent(std::shared_ptr<TIMER::EventBase>& timer);
+  void Start();
+
+  void InsertTimerEvent(std::unique_ptr<TimerJob, std::function<void(TimerJob*)>>&& timer);
 
  private:
-  // decltype에서 그냥 함수를 넘겨도 되지만, 명시적으로 함수의 주소를 가져올 수 있음(이건 좀 알아봐야 할듯)
-  tbb::concurrent_priority_queue<std::shared_ptr<TIMER::EventBase>, TimerQueueComp> m_timerQueue;
-  // tbb::concurrent_priority_queue<std::shared_ptr<TIMER::EventBase>, decltype(&TIMER::TimerQueueComp)> m_timerQueue;
-  // std::priority_queue <TimerEvent*> m_timerQueue;
-  // std::mutex m_timerQueueLock;
+  void TimerThreadFunc(std::stop_token stopToken);
 
-  std::shared_ptr<IOCP::Iocp> iocpRef;
+ private:
+  tbb::concurrent_priority_queue<std::unique_ptr<TimerJob, std::function<void(TimerJob*)>>, Timer::TimerQueueComp> m_timerQueue;
 };
-}  // namespace TIMER
+}  // namespace DreamWorld

@@ -31,9 +31,6 @@
     <Filter Include="Network\IocpEvent\DBEvent">
       <UniqueIdentifier>{aad6529a-738a-43e1-b01c-78b28442001d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Timer\TimerEvent">
-      <UniqueIdentifier>{a3175507-e8a9-4aaa-bf71-7d52b3ad0ca3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="InGame">
       <UniqueIdentifier>{01b795a2-581c-4218-a79a-bc5b226f5d0b}</UniqueIdentifier>
     </Filter>
@@ -103,13 +100,13 @@
     <Filter Include="ObjectPools">
       <UniqueIdentifier>{d16c6ba0-1a7e-4c11-80f8-945ea66deb15}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Timer\TimerJob">
+      <UniqueIdentifier>{a3175507-e8a9-4aaa-bf71-7d52b3ad0ca3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
       <Filter>PCH</Filter>
-    </ClCompile>
-    <ClCompile Include="DB\DB.cpp">
-      <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="Room\DeprecatedRoom.cpp">
       <Filter>InGame\Room</Filter>
@@ -175,8 +172,8 @@
     <ClCompile Include="Network\IocpEvent\IocpDBEvent.cpp">
       <Filter>Network\IocpEvent\DBEvent</Filter>
     </ClCompile>
-    <ClCompile Include="Timer\TimerEventBase.cpp">
-      <Filter>Timer\TimerEvent</Filter>
+    <ClCompile Include="Timer\TimerJob.cpp">
+      <Filter>Timer\TimerJob</Filter>
     </ClCompile>
     <ClCompile Include="Room\TimerRoomEvent.cpp">
       <Filter>InGame\Room\RoomEvent</Filter>
@@ -186,9 +183,6 @@
     </ClCompile>
     <ClCompile Include="Match\Matching.cpp">
       <Filter>InGame\Match</Filter>
-    </ClCompile>
-    <ClCompile Include="ThreadManager\ThreadManager.cpp">
-      <Filter>ThreadManager</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\Monster\BossMonsterObject.cpp">
       <Filter>InGame\GameObject\Monster</Filter>
@@ -283,9 +277,6 @@
     <ClInclude Include="PCH\stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="DB\DB.h">
-      <Filter>DB</Filter>
-    </ClInclude>
     <ClInclude Include="Room\DeprecatedRoom.h">
       <Filter>InGame\Room</Filter>
     </ClInclude>
@@ -356,8 +347,8 @@
     <ClInclude Include="Network\IocpEvent\IocpDBEvent.h">
       <Filter>Network\IocpEvent\DBEvent</Filter>
     </ClInclude>
-    <ClInclude Include="Timer\TimerEventBase.h">
-      <Filter>Timer\TimerEvent</Filter>
+    <ClInclude Include="Timer\TimerJob.h">
+      <Filter>Timer\TimerJob</Filter>
     </ClInclude>
     <ClInclude Include="Room\TimerRoomEvent.h">
       <Filter>InGame\Room\RoomEvent</Filter>

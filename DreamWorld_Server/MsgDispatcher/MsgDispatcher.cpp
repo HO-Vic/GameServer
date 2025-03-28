@@ -16,7 +16,6 @@ bool MsgDispatcher::AddMsgHandler(const uint8_t msgId, MsgHandler handler) {
 
 bool MsgDispatcher::GetHandler(const uint8_t msgId, MsgHandler& handler) {
   if (!m_dispatcher.contains(msgId)) {
-    WRITE_LOG(logLevel::warn, "{}({}) > Can not Find Msg Id! [MsgId:{}]", __FUNCTION__, __LINE__, msgId);
     return false;
   }
   auto handlerIter = m_dispatcher.find(msgId);

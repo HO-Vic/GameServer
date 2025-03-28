@@ -16,7 +16,9 @@ namespace sh::Utility {
 
 class ThreadManager {
  public:
-  ThreadManager(const uint8_t threadNum = 1);
+  ThreadManager() = default;
+
+  ThreadManager(const uint8_t threadNum);
 
   virtual ~ThreadManager();
 

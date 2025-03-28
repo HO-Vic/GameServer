@@ -4,10 +4,16 @@
 #include "../Room/RoomManager.h"
 #include "../Room/Room.h"
 #include "../LogManager/LogManager.h"
+#include "../ObjectPools.h"
+#include "../Timer/TimerJob.h"
+#include "../Timer/Timer.h"
+#include "../Room/RoomThreadPool.h"
+#include "../ThreadManager/ThreadManager.h"
+#include <Utility/Thread/ThreadManager.h>
 
-#define ALONE_TEST
-// 테스트할 때, 한 게임당 들어올 인원 수
-// #define TEST_MODE_PEOPLE 2
+// #define ALONE_TEST
+//  테스트할 때, 한 게임당 들어올 인원 수
+//  #define TEST_MODE_PEOPLE 2
 
 namespace DreamWorld {
 void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
@@ -17,12 +23,16 @@ void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
   auto roomRef = RoomManager::GetInstance().MakeRunningRoomAloneMode(userRef);
   auto characterPtr = roomRef->GetCharacter(role);
   if (nullptr == characterPtr) {
-    WRITE_LOG(logLevel::err, "{}({}) > role is Invalid [role:{}]", __FUNCTION__, __LINE__, role);
+    WRITE_LOG(logLevel::err, "{}({}) > role is Invalid [role:{}]", __FUNCTION__, __LINE__, static_cast<char>(role));
     RoomManager::GetInstance().EraseRoom(roomRef);
     return;
   }
-  userRef->SetIngameRef(std::static_pointer_cast<RoomBase>(roomRef), characterPtr);
-//  roomRef->Start();
+  auto roomBasePtr = std::static_pointer_cast<RoomBase>(roomRef);
+  userRef->SetIngameRef(roomBasePtr, characterPtr);
+  Timer::GetInstance().InsertTimerEvent(
+      ObjectPool<TimerJob>::GetInstance().MakeUnique(chrono_clock::now() + ROOM_UPDATE_TICK, std::move([=]() {
+                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(roomBasePtr);
+                                                     })));
 #else
   switch (role) {
     case ROLE::WARRIOR:
@@ -64,7 +74,7 @@ void Matching::CancelMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
   }
 }
 
-void Matching::MatchFunc() {
+void Matching::MatchFunc(std::stop_token stopToken) {
   static constexpr BYTE matchSuccessCondition = static_cast<BYTE>(ROLE::WARRIOR) |
                                                 static_cast<BYTE>(ROLE::MAGE) |
                                                 static_cast<BYTE>(ROLE::TANKER) |
@@ -73,6 +83,9 @@ void Matching::MatchFunc() {
   std::vector<std::shared_ptr<Session>> userRefVec;
   userRefVec.reserve(4);
   while (true) {
+    if (stopToken.stop_requested()) {
+      break;
+    }
     BYTE matchState = 0;
     int currentMatchedUserCnt = 0;
 
@@ -169,8 +182,11 @@ void Matching::MatchFunc() {
           return;
         }
         userRef->SetIngameRef(std::static_pointer_cast<RoomBase>(roomRef), characterPtr);
+        roomRef->InsertPlayer(userRef);
       }
-      // roomRef->Start();
+      roomRef->Init();
+      roomRef->StartGame();
+
       m_lastWarriorUser.reset();
       m_lastMageUser.reset();
       m_lastTankerUser.reset();
@@ -214,7 +230,9 @@ void Matching::StartMatching() {
   m_lastArcherUser.reset();
 #ifndef ALONE_TEST
   spdlog::info("Matching::StartMatching() - Matching Thread Start");
-  ThreadManager::GetInstance().CreateThread(std::thread([this]() { MatchFunc(); }));
+  ThreadManager::GetInstance().InsertThread([](std::stop_token stopToken) {
+    Matching::GetInstance().MatchFunc(stopToken);
+  });
 
 #else
   spdlog::info("Matching::StartMatching() - AloneTestMode, Matching Thread do not run");

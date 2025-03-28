@@ -18,6 +18,7 @@ ThWorkerJob::ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type)
 void ThWorkerJob::operator()(const DWORD ioByte) {
   m_workItem->Execute(this, ioByte);
 }
+
 void ThWorkerJob::Reset() {
   m_workItem = nullptr;
   m_type = WORKER_TYPE::NONE;
