@@ -27,7 +27,7 @@ void ISession::StartRecv() {
 
 void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
   static constexpr bool DESIRE_DISCONNECT = true;
-  static bool CONNECTED = false;
+  bool CONNECTED = false;
   switch (thWorkerJob->GetType()) {
     case Utility::WORKER_TYPE::RECV: {
       m_sessionImpl->RecvComplete(thWorkerJob, ioByte);
@@ -40,7 +40,6 @@ void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
         Disconnect();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
-      thWorkerJob->Reset();
       ThWorkerJobPool::GetInstance().Release(thWorkerJob);
     } break;
     default: {

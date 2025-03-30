@@ -27,7 +27,9 @@ class Room final
  public:
   Room() = default;
 
-  Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef);
+  Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef, uint32_t roomId);
+
+  ~Room();
 
   void Init();
 
@@ -66,6 +68,9 @@ class Room final
 
   std::shared_ptr<MonsterMapData> m_stageMapData;
   std::shared_ptr<NavMapData> m_bossMapData;
+
+  chrono_clock::time_point m_prevUpdateTime;
+  uint32_t m_roomId;
 
   uint8_t m_currentUpdateTickCount = 0;
   ROOM_STATE m_roomState = ROOM_STATE::ROOM_COMMON;

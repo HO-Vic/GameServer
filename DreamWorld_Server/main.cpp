@@ -15,20 +15,20 @@ int main() {
   // Trace – Debug – Info – Warning – Error – Critical
   START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(0), "ConsoleFile");
 
-  DreamWorld::Server server(6);  // ioThread
+  DreamWorld::Server server(4);  // ioThread
   server.Init();
 
-  DreamWorld::DBConnectionManager::GetInstance().Init(2);  // DB Connector
-  DreamWorld::DBThreadPool::GetInstance().Init(2);         // DB Thread
-  DreamWorld::DBThreadPool::GetInstance().Start();
+  // DreamWorld::DBConnectionManager::GetInstance().Init(2);  // DB Connector
+  // DreamWorld::DBThreadPool::GetInstance().Init(2);         // DB Thread
+  // DreamWorld::DBThreadPool::GetInstance().Start();
 
-  DreamWorld::RoomThreadPool::GetInstance().Init(4);  // Room Thread
+  DreamWorld::RoomThreadPool::GetInstance().Init(8);  // Room Thread
   DreamWorld::RoomThreadPool::GetInstance().Start();
 
   DreamWorld::InitPool();
   DreamWorld::RoomManager::GetInstance().Init();
 
-  DreamWorld::Timer::GetInstance().Start();
+  DreamWorld::Timer::GetInstance().Start(3);
   DreamWorld::Matching::GetInstance().StartMatching();
   server.Start();
 

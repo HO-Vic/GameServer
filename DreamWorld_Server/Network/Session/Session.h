@@ -6,12 +6,14 @@
 namespace DreamWorld {
 class RoomBase;
 class CharacterObject;
-class Session
+class Session final
     : public sh::IO_Engine::ISession {
  public:
   Session();
 
   Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, uint32_t uniqueNo);
+
+  ~Session();
 
   virtual void Disconnect() override;
 

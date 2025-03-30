@@ -36,6 +36,6 @@ class RoomManager
 
  public:
   std::atomic<double> globalAvrRoomTick = 0;
-  std::atomic_int globalRoomCnt = 0;
+  std::atomic_uint globalRoomCnt = 0;
 };
 }  // namespace DreamWorld

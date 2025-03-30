@@ -187,7 +187,6 @@ std::optional<std::pair<bool, XMFLOAT3>> CharacterObject::CollideWall(const XMFL
 
   BoundingSphere boudingSphere{nextPosition, m_collisionSphere.Radius};
   boudingSphere.Center.y = 0;
-  return std::pair<bool, XMFLOAT3>(false, nextPosition);
   auto mapData = roomRef->GetMapData();
   auto& mapCollision = mapData->GetCollisionData();
   std::shared_ptr<MapCollision> collideMap{nullptr};

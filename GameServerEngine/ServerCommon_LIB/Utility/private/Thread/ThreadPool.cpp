@@ -53,8 +53,10 @@ void ThreadPool::Init() {
 }
 
 void ThreadPool::Start() {
-  m_threadManager.InsertThread([this](std::stop_token stopToken) {
-    this->RunningThread(stopToken);
-  });
+  for (auto i = 0; i != m_threadNo; ++i) {
+    m_threadManager.InsertThread([this](std::stop_token stopToken) {
+      this->RunningThread(stopToken);
+    });
+  }
 }
 }  // namespace sh::Utility

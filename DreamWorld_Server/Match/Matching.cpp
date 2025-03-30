@@ -11,9 +11,9 @@
 #include "../ThreadManager/ThreadManager.h"
 #include <Utility/Thread/ThreadManager.h>
 
-// #define ALONE_TEST
-//  테스트할 때, 한 게임당 들어올 인원 수
-//  #define TEST_MODE_PEOPLE 2
+//#define ALONE_TEST
+//   테스트할 때, 한 게임당 들어올 인원 수
+//   #define TEST_MODE_PEOPLE 2
 
 namespace DreamWorld {
 void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
@@ -28,11 +28,10 @@ void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
     return;
   }
   auto roomBasePtr = std::static_pointer_cast<RoomBase>(roomRef);
+  roomRef->Init();
   userRef->SetIngameRef(roomBasePtr, characterPtr);
-  Timer::GetInstance().InsertTimerEvent(
-      ObjectPool<TimerJob>::GetInstance().MakeUnique(chrono_clock::now() + ROOM_UPDATE_TICK, std::move([=]() {
-                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(roomBasePtr);
-                                                     })));
+  roomBasePtr->InsertPlayer(userRef);
+  roomRef->StartGame();
 #else
   switch (role) {
     case ROLE::WARRIOR:
@@ -198,7 +197,8 @@ void Matching::MatchFunc(std::stop_token stopToken) {
       m_lastTankerUser = tankerUserRef;
       m_lastArcherUser = archerUserRef;
       userRefVec.clear();
-      std::this_thread::yield();
+      Sleep(500);
+      // std::this_thread::yield();
     }
 #endif  // TEST_MODE_PEOPLE
   }

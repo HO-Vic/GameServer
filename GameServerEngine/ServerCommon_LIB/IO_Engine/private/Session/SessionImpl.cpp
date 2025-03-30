@@ -21,16 +21,18 @@ void SessionImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, const DWORD io
     PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
     return;
   }
-  thWorkerJob->Reset();
   ThWorkerJobPool::GetInstance().Release(thWorkerJob);
 }
 
 void SessionImpl::DoSend(Utility::WokerPtr session, const BYTE* data, const size_t len) {
-  if (SESSION_STATE::NON_ERR == m_state) {
-    if (0 == m_sendContext.DoSend(session, data, len)) {
-      return;
-    }
+  if (SESSION_STATE::DISCONNECT_STATE == m_state) {  // 이미 바뀐건, 누군가 Disconnect 요청한거
+    return;
   }
+
+  if (0 == m_sendContext.DoSend(session, data, len)) {
+    return;
+  }
+
   m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::SEND_ERR));
   if (SESSION_STATE::DISCONNECT_STATE == m_state) {
     auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::DISCONN);
@@ -40,23 +42,31 @@ void SessionImpl::DoSend(Utility::WokerPtr session, const BYTE* data, const size
 }
 
 void SessionImpl::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioByte) {
+  if (SESSION_STATE::DISCONNECT_STATE == m_state) {  // 이미 바뀐건, 누군가 Disconnect 요청한거
+    return;
+  }
+
   if (SESSION_STATE::NON_ERR != m_state) {
     m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::RECV_ERR));
-    // post
+    thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
+    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+    return;
   }
+
   if (0 == ioByte) {  // Session 종료
     m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::DISCONNECT_STATE));
     thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
     PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
     return;
   }
+
   int32_t recvError = m_recvContext.RecvComplete(thWorkerJob, ioByte);
   if (0 != recvError) {
     m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::RECV_ERR));
-  }
-  if (SESSION_STATE::DISCONNECT_STATE == m_state) {
-    thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
-    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+    if (SESSION_STATE::DISCONNECT_STATE == m_state) {  // 만약에 recv에러 없었지만, send에서 상태 바꿨다면 곤란한 상황이 생길 수 있음
+      thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
+      PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+    }
   }
 }
 
@@ -64,10 +74,10 @@ void SessionImpl::StartRecv(Utility::WokerPtr session) {
   int32_t recvError = m_recvContext.StartRecv(session);
   if (0 != recvError) {
     m_state.store(static_cast<SESSION_STATE>(m_state.load() | SESSION_STATE::RECV_ERR));
-  }
-  if (SESSION_STATE::DISCONNECT_STATE == m_state) {
-    auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::DISCONN);
-    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+    if (SESSION_STATE::DISCONNECT_STATE == m_state) {
+      auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::DISCONN);
+      PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+    }
   }
 }
 }  // namespace sh::IO_Engine

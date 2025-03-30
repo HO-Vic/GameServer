@@ -74,7 +74,6 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
   Clear(workerJob);
 }
 void DBJobBase::Clear(sh::Utility::ThWorkerJob* workerJob) {
-  workerJob->Reset();
   sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
 }
 

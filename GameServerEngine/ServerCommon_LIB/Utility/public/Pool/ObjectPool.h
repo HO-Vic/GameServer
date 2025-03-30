@@ -3,6 +3,7 @@
 #include <mutex>
 #include <stack>
 #include <memory>
+#include <unordered_set>
 
 namespace sh::Utility {
 template <typename T>
@@ -86,6 +87,7 @@ class ObjectPool {
 
  private:
   void Release(T* ptr) {
+    std::destroy_at<T>(ptr);
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
   }
@@ -152,11 +154,11 @@ class RawObjectPool {
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
-
     return ptr;
   }
 
   void Release(T* ptr) {
+    std::destroy_at(ptr);
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
   }
@@ -170,5 +172,7 @@ class RawObjectPool {
   std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
   std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
   std::atomic<uint32_t> m_addedCnt;       // 추가
+
+  std::unordered_set<uint64_t> m_usingPtr;
 };
 }  // namespace sh::Utility

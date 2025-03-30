@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "GameObject.h"
 #include "../Room/RoomBase.h"
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include "../PCH/stdafx.h"
 
 namespace DreamWorld {
 GameObject::GameObject(const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)

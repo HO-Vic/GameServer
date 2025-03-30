@@ -12,7 +12,7 @@ int32_t TCP_SendContextImpl::DoSend(Utility::WorkerPtr& session, const BYTE* dat
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
-    m_sendQueue.push(sendData);
+    m_sendQueue.push(std::move(sendData));
   }
 
   if (!m_isSendAble) {
@@ -40,7 +40,6 @@ int32_t TCP_SendContextImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, con
     if (0 == m_sendQueue.size()) {
       m_isSendAble = true;
       // 보낼게 없다면 overlappedEx 반납
-      thWorkerJob->Reset();  // 여기서 해제를 안하게되면 오브젝트풀에서 다시 쓰여지기 전까지 이 섹션은 메모리 해제 불가
       ThWorkerJobPool::GetInstance().Release(thWorkerJob);
       return 0;
     }

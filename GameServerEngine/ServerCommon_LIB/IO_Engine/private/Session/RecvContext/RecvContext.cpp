@@ -22,8 +22,11 @@ RecvContext::~RecvContext() {
 int32_t RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize) {
   auto errorNo = m_recvContextImpl->RecvComplete(thWorkerJob, ioSize);
   if (0 != errorNo) {
-    if (WSA_IO_PENDING == WSAGetLastError()) {
+    auto wsaErr = WSAGetLastError();
+    if (WSA_IO_PENDING == wsaErr) {
       errorNo = 0;
+    } else {
+      errorNo = 1;
     }
   }
   return errorNo;

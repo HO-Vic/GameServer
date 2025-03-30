@@ -272,6 +272,9 @@
     <ClCompile Include="ObjectPools.cpp">
       <Filter>ObjectPools</Filter>
     </ClCompile>
+    <ClCompile Include="Server\ServerConfig.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\stdafx.h">
@@ -431,9 +434,6 @@
     <ClInclude Include="MsgDispatcher\MsgDispatcher.h">
       <Filter>MsgDispatcher</Filter>
     </ClInclude>
-    <ClInclude Include="Server\MsgProtocol.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="DreamWorldDefine.h" />
     <ClInclude Include="Room\Room.h">
       <Filter>InGame\Room</Filter>
@@ -449,6 +449,12 @@
     </ClInclude>
     <ClInclude Include="ObjectPools.h">
       <Filter>ObjectPools</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MsgProtocol.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\ServerConfig.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

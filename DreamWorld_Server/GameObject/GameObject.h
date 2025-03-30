@@ -1,6 +1,9 @@
 #pragma once
 #include "../DreamWorldDefine.h"
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
 
+using namespace DirectX;
 namespace DreamWorld {
 
 class RoomBase;
@@ -13,8 +16,8 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
 
   void Rotate(const ROTATE_AXIS& axis, const float& angle);
 
-  bool IsCollide(const BoundingSphere& otherCollision);
-  bool IsCollide(const BoundingOrientedBox& otherCollision);
+  bool IsCollide(const DirectX::BoundingSphere& otherCollision);
+  bool IsCollide(const DirectX::BoundingOrientedBox& otherCollision);
 
   void SetPosition(const DirectX::XMFLOAT3& newPosition);
   const DirectX::XMFLOAT3 GetPosition() const;
@@ -22,7 +25,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
   const DirectX::XMFLOAT3 GetLookVector() const;
   const DirectX::XMFLOAT3 GetRightVector() const;
 
-  const BoundingSphere& GetCollision() const;
+  const DirectX::BoundingSphere& GetCollision() const;
   const XMFLOAT3 GetFromVector(const XMFLOAT3& from) const;
   const XMFLOAT3 GetToVector(const XMFLOAT3& to) const;
   const float GetDistance(const XMFLOAT3& other) const;
@@ -41,7 +44,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> {
   // 41 42 43 pos
   DirectX::XMFLOAT4X4 m_worldMatrix;
 
-  BoundingSphere m_collisionSphere;
+  DirectX::BoundingSphere m_collisionSphere;
 
   // Room의 멤버 변수여서 먼저 소멸자 호출되니, 문제 없을거로 생각 됨. => 잘못된 생각을 했네.
   // 얘 때문에 소멸자가 안불려서 메모리 해제가 안되는 상황이 발생하게 되네
@@ -80,7 +83,7 @@ class LiveObject : public MoveObject {
 
   virtual const XMFLOAT3 GetCommonNextPosition(const float& elapsedTime) = 0;
 
-  static BoundingOrientedBox GetMeleeAttackJudgeBox(const XMFLOAT3& startPosition, const XMFLOAT3& forwardVector, const float& offsetLegth, const float& width, const float& attackLegth, const float& height);
+  static DirectX::BoundingOrientedBox GetMeleeAttackJudgeBox(const XMFLOAT3& startPosition, const XMFLOAT3& forwardVector, const float& offsetLegth, const float& width, const float& attackLegth, const float& height);
 
  protected:
   std::atomic_bool m_isAlive;

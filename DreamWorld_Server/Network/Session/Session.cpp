@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Session.h"
 #include "SessionMananger.h"
+#include "../LogManager/LogManager.h"
+#include "../Room/RoomThreadPool.h"
+#include "../Room/RoomBase.h"
+#include "../Room/Room.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 Session::Session()
@@ -11,8 +16,21 @@ Session::Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine
     : sh::IO_Engine::ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
 }
 
+Session::~Session() {
+  WRITE_LOG(logLevel::trace, "{}({}) > Call Session Destructor [playerUniqueId:{}]", __FUNCTION__, __LINE__, m_uniqueNo);
+}
+
 void Session::Disconnect() {
   SessionMananger::GetInstance().OnDisconnect(m_uniqueNo);
+  WRITE_LOG(logLevel::trace, "{}({}) > player Disconn! [playerUniqueId:{}]", __FUNCTION__, __LINE__, m_uniqueNo);
+  auto roomPtr = m_roomWeakRef.lock();
+  if (nullptr == roomPtr) {
+    return;
+  }
+  roomPtr->InsertJob(
+      DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+        roomPtr->DiscardPlayer(std::static_pointer_cast<DreamWorld::Session>(shared_from_this()));
+      }));
 }
 
 const uint32_t Session::GetUniqueNo() const {

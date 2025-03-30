@@ -21,8 +21,8 @@ copy .\Export_LIB\Debug\IO_Engine.pdb ..\..\..\DreamWorld_Server\bin\x64\Debug\I
 if exist .\Export_LIB\Release\IO_Engine.lib (
 	copy .\Export_LIB\Release\IO_Engine.lib ..\..\..\SimpleEcho\lib\Release\IO_Engine.lib
 	copy .\Export_LIB\Release\IO_Engine.pdb ..\..\..\SimpleEcho\bin\x64\Release\IO_Engine.pdb
-	copy .\Export_LIB\Debug\IO_Engine.lib ..\..\..\DreamWorld_Server\lib\x64\Release\IO_EngineD.lib
-	copy .\Export_LIB\Debug\IO_Engine.pdb ..\..\..\DreamWorld_Server\bin\x64\Release\IO_Engine.pdb
+	copy .\Export_LIB\Release\IO_Engine.lib ..\..\..\DreamWorld_Server\lib\x64\Release\IO_Engine.lib
+	copy .\Export_LIB\Release\IO_Engine.pdb ..\..\..\DreamWorld_Server\bin\x64\Release\IO_Engine.pdb
 )
 echo [End Deploy IO_Engine LIB]
 

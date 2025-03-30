@@ -18,11 +18,18 @@
 #include "../ObjectPools.h"
 #include "RoomThreadPool.h"
 #include "RoomManager.h"
+#include "../LogManager/LogManager.h"
+#include <thread>
 
 namespace DreamWorld {
-Room::Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef)
-    : m_stageMapData(mapDataRef), m_bossMapData(navMapDataRef) {
+Room::Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef, uint32_t roomId)
+    : m_stageMapData(mapDataRef), m_bossMapData(navMapDataRef), m_roomId(roomId) {
 }
+
+Room::~Room() {
+  WRITE_LOG(logLevel::trace, "{}({}) > destructor Room", __FUNCTION__, __LINE__);
+}
+
 void Room::Init() {
   static constexpr float SMALL_MONSTER_HP = 250.0f;
   static constexpr float BOSS_HP = 2500.0f;
@@ -57,6 +64,7 @@ void Room::Init() {
   for (auto& character : m_characters) {
     character.second->SetStagePosition(m_roomState);
   }
+  m_prevUpdateTime = chrono_clock::now();
 }
 
 void Room::StartGame() {
@@ -81,11 +89,26 @@ void Room::StartGame() {
 }
 
 std::vector<std::shared_ptr<LiveObject>> Room::GetMonsters() {
-  return std::vector<std::shared_ptr<LiveObject>>();
+  std::vector<std::shared_ptr<LiveObject>> smallMonsters;
+  smallMonsters.reserve(15);
+  for (auto& monster : m_smallMonsters) {
+    smallMonsters.push_back(monster);
+  }
+  return smallMonsters;
 }
 
 std::vector<std::shared_ptr<LiveObject>> Room::GetCharacters(bool checkAlive) {
-  return std::vector<std::shared_ptr<LiveObject>>();
+  std::vector<std::shared_ptr<LiveObject>> liveCaharacters;
+  liveCaharacters.reserve(4);
+  for (auto& [role, character] : m_characters) {
+    if (checkAlive) {
+      if (!character->IsAlive()) {
+        continue;
+      }
+    }
+    liveCaharacters.push_back(character);
+  }
+  return liveCaharacters;
 }
 
 void Room::Update() {
@@ -129,10 +152,20 @@ void Room::Update() {
     SendGameState();
     m_currentUpdateTickCount = 0;
   }
+  auto now = chrono_clock::now();
   Timer::GetInstance().InsertTimerEvent(
-      ObjectPool<TimerJob>::GetInstance().MakeUnique(chrono_clock::now() + ROOM_UPDATE_TICK, std::move([=]() {
+      ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([this]() {
                                                        RoomThreadPool::GetInstance().InsertRoomUpdateEvent(std::static_pointer_cast<RoomBase>(shared_from_this()));
+                                                       // auto execTime = chrono_clock::now();
+                                                       // auto diff = _chrono::duration_cast<_chrono::milliseconds>(execTime - now).count();
+                                                       // WRITE_LOG(logLevel::debug, "{}({}) > Room Update Time Check Diff Insert to Execute [Diff:{}] [tick: {}]]", __FUNCTION__, __LINE__, diff, ROOM_UPDATE_TICK.count());
                                                      })));
+  auto tDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevUpdateTime);
+
+  m_prevUpdateTime = now;
+  size_t threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+
+  WRITE_LOG(logLevel::debug, "{}({}) > Room Update Tick Diff {}ms [thId:{}]", __FUNCTION__, __LINE__, tDiff.count(), threadId);
 }
 
 void Room::SetRoomEndState() {

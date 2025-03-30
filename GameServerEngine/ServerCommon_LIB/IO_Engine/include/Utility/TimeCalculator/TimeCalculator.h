@@ -12,18 +12,18 @@
 */
 
 namespace sh::Utility {
-class TimeCalculator final : public SingletonBase<TimeCalculator> {
- private:
-  TimeCalculator();
-  ~TimeCalculator() {
-  }
-
-  TimeCalculator(const TimeCalculator&) = delete;
-  TimeCalculator& operator=(const TimeCalculator&) = delete;
-
- public:
-  bool Init();
-
- private:
-};
+//class TimeCalculator final : public SingletonBase<TimeCalculator> {
+// private:
+//  TimeCalculator();
+//  ~TimeCalculator() {
+//  }
+//
+//  TimeCalculator(const TimeCalculator&) = delete;
+//  TimeCalculator& operator=(const TimeCalculator&) = delete;
+//
+// public:
+//  bool Init();
+//
+// private:
+//};
 }  // namespace sh::Utility

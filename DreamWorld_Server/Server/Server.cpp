@@ -22,7 +22,7 @@ void Server::Init() {
   m_listener.Init(m_ioCore.GetHandle(), 9000, 0);
   m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) {
     AcceptHandle(sock);
-  });
+  }, 4);
 
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::LOGIN), std::bind(Server::OnLogin, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnMatchReq, std::placeholders::_1, std::placeholders::_2));

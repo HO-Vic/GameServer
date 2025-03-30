@@ -13,7 +13,7 @@ IO_Core::IO_Core(const uint8_t ioThreadNo)
 
 void IO_Core::Init() {
   m_threadPool.Init();
-  ThWorkerJobPool::GetInstance().Init(100);
+  ThWorkerJobPool::GetInstance().Init(1);
 }
 
 void IO_Core::Start() {
