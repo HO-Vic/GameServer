@@ -8,7 +8,7 @@
 
 namespace DreamWorld {
 ServerConfig::ServerConfig()
-    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1) {
+    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1), logTickSec(0) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -28,12 +28,28 @@ void ServerConfig::LoadXML(const char* configFile) {
       if (strcmp(root->name(), "Properties") == 0) {
         if (root->first_node() != nullptr) {
           for (auto node = root->first_node(); node != nullptr; node = node->next_sibling()) {
-            if (strcmp(node->name(), "property") == 0) {
+            if (strcmp(node->name(), "Log") == 0) {
               for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
                 if (strcmp(attr->name(), "LogLevel") == 0) {
                   logLevel = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "LogMode") == 0) {
                   logMode = attr->value();
+                }
+              }
+            } else if (strcmp(node->name(), "RoomMetric") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "targetRoomId") == 0) {
+                  std::string roomIds = attr->value();
+                  size_t findOffset = -1;
+                  while (true) {
+                    findOffset = roomIds.find(',', findOffset + 1);
+                    if (std::string::npos == findOffset) {
+                      break;
+                    }
+                    targetRoomIds.insert(std::stoi(&roomIds[findOffset + 1]));
+                  }
+                } else if (strcmp(attr->name(), "logTickSec") == 0) {
+                  logTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
                 }
               }
             }

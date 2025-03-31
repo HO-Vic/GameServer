@@ -29,7 +29,8 @@ void SessionImpl::DoSend(Utility::WokerPtr session, const BYTE* data, const size
     return;
   }
 
-  if (0 == m_sendContext.DoSend(session, data, len)) {
+  auto sendErr = m_sendContext.DoSend(session, data, len);
+  if (0 == sendErr) {
     return;
   }
 

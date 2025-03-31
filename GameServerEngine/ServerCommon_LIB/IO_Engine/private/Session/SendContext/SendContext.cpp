@@ -22,8 +22,11 @@ SendContext::~SendContext() {
 int32_t SendContext::DoSend(Utility::WorkerPtr& session, const BYTE* sendPacket, const size_t len) {
   auto errorNo = m_sendContextImpl->DoSend(session, sendPacket, len);
   if (0 != errorNo) {
-    if (WSA_IO_PENDING == WSAGetLastError()) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
       errorNo = 0;
+    } else {
+      errorNo = ioError;
     }
   }
   return errorNo;
@@ -32,8 +35,11 @@ int32_t SendContext::DoSend(Utility::WorkerPtr& session, const BYTE* sendPacket,
 int32_t SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) {
   auto errorNo = m_sendContextImpl->SendComplete(thWorkerJob, ioByte);
   if (0 != errorNo) {
-    if (WSA_IO_PENDING == WSAGetLastError()) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
       errorNo = 0;
+    } else {
+      errorNo = ioError;
     }
   }
   return errorNo;

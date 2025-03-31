@@ -25,9 +25,6 @@
       <Filter>EchoServer</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ServerConfig\ServerConfig.cpp">
-      <Filter>ServerConfig</Filter>
-    </ClCompile>
     <ClCompile Include="EchoServer\Session\SessionManager.cpp">
       <Filter>EchoServer\Session</Filter>
     </ClCompile>
@@ -36,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="LogManager\LogManager.cpp">
       <Filter>LogMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerConfig\ServerConfig.cpp">
+      <Filter>ServerConfig</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,9 +48,6 @@
     <ClInclude Include="PCH\PCH.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="ServerConfig\ServerConfig.h">
-      <Filter>ServerConfig</Filter>
-    </ClInclude>
     <ClInclude Include="EchoServer\Session\SessionManager.h">
       <Filter>EchoServer\Session</Filter>
     </ClInclude>
@@ -62,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="LogManager\LogManager.h">
       <Filter>LogMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerConfig\ServerConfig.h">
+      <Filter>ServerConfig</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Room.h"
+#include <thread>
 #include "../GameObject/GameObject.h"
 #include "../GameObject/Character/ChracterObject.h"
 #include "../GameObject/Monster/MonsterObject.h"
@@ -19,7 +20,7 @@
 #include "RoomThreadPool.h"
 #include "RoomManager.h"
 #include "../LogManager/LogManager.h"
-#include <thread>
+#include "../Server/ServerConfig.h"
 
 namespace DreamWorld {
 Room::Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef, uint32_t roomId)
@@ -65,6 +66,7 @@ void Room::Init() {
     character.second->SetStagePosition(m_roomState);
   }
   m_prevUpdateTime = chrono_clock::now();
+  m_prevLogTime = m_prevUpdateTime;
 }
 
 void Room::StartGame() {
@@ -153,19 +155,28 @@ void Room::Update() {
     m_currentUpdateTickCount = 0;
   }
   auto now = chrono_clock::now();
-  Timer::GetInstance().InsertTimerEvent(
-      ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([this]() {
-                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(std::static_pointer_cast<RoomBase>(shared_from_this()));
-                                                       // auto execTime = chrono_clock::now();
-                                                       // auto diff = _chrono::duration_cast<_chrono::milliseconds>(execTime - now).count();
-                                                       // WRITE_LOG(logLevel::debug, "{}({}) > Room Update Time Check Diff Insert to Execute [Diff:{}] [tick: {}]]", __FUNCTION__, __LINE__, diff, ROOM_UPDATE_TICK.count());
-                                                     })));
   auto tDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevUpdateTime);
 
-  m_prevUpdateTime = now;
-  size_t threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+  auto logTimeDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevLogTime);
+  bool isLogging = ServerConfig::GetInstance().logTickSec <= logTimeDiff;
+  Timer::GetInstance().InsertTimerEvent(
+      ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([isLogging, now, this]() {
+                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(std::static_pointer_cast<RoomBase>(shared_from_this()));
 
-  WRITE_LOG(logLevel::debug, "{}({}) > Room Update Tick Diff {}ms [thId:{}]", __FUNCTION__, __LINE__, tDiff.count(), threadId);
+                                                       if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
+                                                         auto execTime = chrono_clock::now();
+                                                         auto diff = _chrono::duration_cast<_chrono::milliseconds>(execTime - now).count();
+                                                         WRITE_LOG(logLevel::debug, "{}({}) > Room Update Time Check Diff Insert to Execute [roomId:{}][Diff:{}] [tick: {}]]", __FUNCTION__, __LINE__, m_roomId, diff, ROOM_UPDATE_TICK.count());
+                                                       }
+                                                     })));
+
+  m_prevUpdateTime = now;
+  if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
+    m_prevLogTime = now;
+    size_t threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+
+    WRITE_LOG(logLevel::debug, "{}({}) > Room Update Tick Diff {}ms [roomId:{}][thId:{}]", __FUNCTION__, __LINE__, tDiff.count(), m_roomId, threadId);
+  }
 }
 
 void Room::SetRoomEndState() {

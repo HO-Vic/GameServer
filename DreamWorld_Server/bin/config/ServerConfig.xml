@@ -9,12 +9,13 @@
 	OFF 6
 	-->
 <Properties>
-	<property LogLevel="0" LogMode="ConsoleFile"/>
+	<Log LogLevel="0" LogMode="ConsoleFile"/>
+	<RoomMetric targetRoomId="20,50,75,100,200,300,350,400,450,500,550" logTickSec="2"/>
 </Properties>
 <!-- ioThreadNo가 0이면 최대-->
 
 <Server>
-	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="4" roomThreadNo="6" timerThreadNo="3" DBThreadNo="2"/>
+	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="2" roomThreadNo="9" timerThreadNo="1" DBThreadNo="2"/>
 </Server>
 
 <!-- Name은 ms sql에서 data base, my sql에서는 schema-->

@@ -74,6 +74,7 @@ class Room final
   std::shared_ptr<NavMapData> m_bossMapData;
 
   chrono_clock::time_point m_prevUpdateTime;
+  chrono_clock::time_point m_prevLogTime;  // 로그가 한번에 너무 많이 찍힘
   uint32_t m_roomId;
 
   uint8_t m_currentUpdateTickCount = 0;

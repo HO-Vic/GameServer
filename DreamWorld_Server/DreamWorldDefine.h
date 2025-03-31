@@ -45,6 +45,7 @@ enum class PLAYER_STATE : char {
 
 namespace DreamWorld {
 using MS = _chrono::milliseconds;
+using SEC = _chrono::seconds;
 
 constexpr MS ROOM_UPDATE_TICK = MS(50);
 }  // namespace DreamWorld

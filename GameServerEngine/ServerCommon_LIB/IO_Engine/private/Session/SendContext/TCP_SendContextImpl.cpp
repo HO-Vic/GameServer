@@ -50,6 +50,10 @@ int32_t TCP_SendContextImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, con
 int32_t TCP_SendContextImpl::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
+    if (m_sendQueue.empty()) {  // this thread context switched + other thread already sended queue!!
+      m_isSendAble = true;
+      return 0;
+    }
     while (!m_sendQueue.empty()) {
       m_sendBuffer.push_back(std::move(m_sendQueue.front()));
       m_sendQueue.pop();

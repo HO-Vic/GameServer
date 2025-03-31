@@ -1,7 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 #include <Utility/SingletonBase/Singleton.h>
+#include "../DreamWorldDefine.h"
 
 namespace DreamWorld {
 class ServerConfig
@@ -26,6 +28,9 @@ class ServerConfig
   std::string dbName;
   std::string dbId;
   std::string dbpw;
+
+  std::unordered_set<uint32_t> targetRoomIds;  // Room Update Tick 체크를 위한
+  DreamWorld::SEC logTickSec;
 
   std::string logMode;
   uint8_t logLevel;
