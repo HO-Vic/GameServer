@@ -16,7 +16,7 @@ DBConnection::~DBConnection() {
   SQLFreeConnect(m_hdbc);
 }
 
-bool DBConnection::Connect(SQLHENV env) {
+bool DBConnection::Connect(SQLHENV env, const std::string& DBName, const std::string& dbAddr, const std::string& dbPort, const std::string& dbId, const std::string& dbPw) {
   SQLRETURN retCode;
   // SQLAllocHandle() - ODBC 핸들 변수 할당
   retCode = SQLAllocHandle(SQL_HANDLE_DBC, env, &m_hdbc);
@@ -26,15 +26,25 @@ bool DBConnection::Connect(SQLHENV env) {
     if (SQL_SUCCESS == retCode) {
       // Connect to data source
       // SQL 연결, dbc, ODBC, 사용자 이름, 비밀번호...
-      SQLWCHAR connStr[] =
-          L"DRIVER={ODBC Driver 17 for SQL Server};"
-          L"SERVER=127.0.0.1,1433;"
-          L"DATABASE=Dream_World;"  // ms sql은 하나의 host에서 여러 database를 가짐, mysql은 하나의 host 여러 스키마여서 헷갈림+mysql은 이게 기본 스키마
-          L"UID=test;"
-          L"PWD=test;";
-      // 윈도우로 로그인이기때문에, id,pw없이
+      std::string addr = "SERVER=" + dbAddr + "," + dbPort + ";";
+      std::string name = "DATABASE=" + DBName + ";";
+      std::string id = "UID=" + dbId + ";";
+      std::string pw = "PWD=" + dbPw + ";";
+      std::wstring connStr = L"DRIVER={ODBC Driver 17 for SQL Server};";
+      connStr += ConvertStringToWideString(addr.c_str());
+      connStr += ConvertStringToWideString(name.c_str());
+      connStr += ConvertStringToWideString(id.c_str());
+      connStr += ConvertStringToWideString(pw.c_str());
+
+      // SQLWCHAR connStr[] =
+      //     L"DRIVER={ODBC Driver 17 for SQL Server};"
+      //     L"SERVER=127.0.0.1,1433;"
+      //     L"DATABASE=Dream_World;"  // ms sql은 하나의 host에서 여러 database를 가짐, mysql은 하나의 host 여러 스키마여서 헷갈림+mysql은 이게 기본 스키마
+      //     L"UID=test;"
+      //     L"PWD=test;";
+      //  윈도우로 로그인이기때문에, id,pw없이
       ;
-      retCode = SQLDriverConnect(m_hdbc, NULL, connStr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
+      retCode = SQLDriverConnect(m_hdbc, NULL, (SQLWCHAR*)connStr.c_str(), SQL_NTS, NULL, 0, NULL, SQL_DRIVER_NOPROMPT);
       // retCode = SQLConnect(m_hdbc, (SQLWCHAR*)L"Dream_World_DB", SQL_NTS, (SQLWCHAR*)NULL, SQL_NTS, NULL, SQL_NTS);
       if (SQL_SUCCESS == retCode) {
         WRITE_LOG(spdlog::level::info, "{}({}) > DB Connect Success", __FUNCTION__, __LINE__);

@@ -29,7 +29,7 @@ class DBConnectionManager : public sh::Utility::SingletonBase<DBConnectionManage
  public:
   ~DBConnectionManager();
 
-  void Init(const uint8_t dbConnectionNo);
+  void Init(const uint8_t dbConnectionNo, const std::string& DBName, const std::string& dbAddr, const std::string& dbPort, const std::string& dbId, const std::string& dbpw);
 
   // RAII구조로 메모리 해지 명시안해도 할 수있게(오브젝트 풀로 들어감)
   ConnectionGuard GetConnection();

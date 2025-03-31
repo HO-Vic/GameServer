@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+	TRACE 0
+	DEBUG 1
+	INFO 2
+	WARN 3
+	ERROR 4
+	CRITICAL 5
+	OFF 6
+	-->
+<Properties>
+	<property LogLevel="0" LogMode="ConsoleFile"/>
+</Properties>
+<!-- ioThreadNo가 0이면 최대-->
+
+<Server>
+	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="4" roomThreadNo="6" timerThreadNo="3" DBThreadNo="2"/>
+</Server>
+
+<!-- Name은 ms sql에서 data base, my sql에서는 schema-->
+<DB>
+	<UserDB ip="127.0.0.1" port="1433" name="Dream_World" id="test" pw="test"/>
+</DB>

@@ -8,7 +8,7 @@
 
 namespace DreamWorld {
 ServerConfig::ServerConfig()
-    : ip("0.0.0.0"), port(9000), threadNo(4), ipAddr(0), logLevel(1) {
+    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -39,15 +39,45 @@ void ServerConfig::LoadXML(const char* configFile) {
             }
           }
         }
-      } else if (strcmp(root->name(), "EchoServer") == 0) {
-        if (root->first_attribute() != nullptr) {
-          for (auto attr = root->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
-            if (strcmp(attr->name(), "ip") == 0) {
-              ip = attr->value();
-            } else if (strcmp(attr->name(), "port") == 0) {
-              port = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
-            } else if (strcmp(attr->name(), "ioThreadNo") == 0) {
-              threadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+      } else if (strcmp(root->name(), "Server") == 0) {
+        if (root->first_node() != nullptr) {
+          for (auto node = root->first_node(); node != nullptr; node = node->next_sibling()) {
+            if (strcmp(node->name(), "DreamWorldServer") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "ip") == 0) {
+                  ip = attr->value();
+                } else if (strcmp(attr->name(), "port") == 0) {
+                  port = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "ioThreadNo") == 0) {
+                  ioThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "roomThreadNo") == 0) {
+                  roomThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "timerThreadNo") == 0) {
+                  timerThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "DBThreadNo") == 0) {
+                  DBThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                }
+              }
+            }
+          }
+        }
+      } else if (strcmp(root->name(), "DB") == 0) {
+        if (root->first_node() != nullptr) {
+          for (auto node = root->first_node(); node != nullptr; node = node->next_sibling()) {
+            if (strcmp(node->name(), "UserDB") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "ip") == 0) {
+                  dbIp = attr->value();
+                } else if (strcmp(attr->name(), "port") == 0) {
+                  dbPort = attr->value();
+                } else if (strcmp(attr->name(), "name") == 0) {
+                  dbName = attr->value();
+                } else if (strcmp(attr->name(), "id") == 0) {
+                  dbId = attr->value();
+                } else if (strcmp(attr->name(), "pw") == 0) {
+                  dbpw = attr->value();
+                }
+              }
             }
           }
         }
@@ -56,10 +86,8 @@ void ServerConfig::LoadXML(const char* configFile) {
   }
   xmlFile.close();
 }
-const uint16_t ServerConfig::GetPort() const {
-  return port;
-}
-const uint32_t ServerConfig::GetIp() {
+
+const uint32_t ServerConfig::GetServerIp() {
   if (ipAddr != 0) {
     return ipAddr;
   }
@@ -68,14 +96,5 @@ const uint32_t ServerConfig::GetIp() {
   inet_pton(AF_INET, ip.data(), &addr.sin_addr);
   ipAddr = addr.sin_addr.S_un.S_addr;
   return ipAddr;
-}
-const uint16_t ServerConfig::GetThreadNo() const {
-  return threadNo;
-}
-const uint8_t ServerConfig::GetLogLevel() const {
-  return logLevel;
-}
-const std::string& ServerConfig::GetLogMode() const {
-  return logMode;
 }
 }  // namespace DreamWorld

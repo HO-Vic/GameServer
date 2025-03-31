@@ -22,7 +22,7 @@ class DBConnection {
 
   ~DBConnection();
 
-  bool Connect(SQLHENV env);
+  bool Connect(SQLHENV env, const std::string& DBName, const std::string& dbAddr, const std::string& dbPort, const std::string& dbId, const std::string& dbPw);
 
   SQLHDBC GetConection() const {
     return m_hdbc;

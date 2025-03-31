@@ -5,6 +5,7 @@
 #include <memory>
 #include "DBConnection.h"
 #include "../LogManager/LogManager.h"
+#include "../Server/ServerConfig.h"
 
 namespace DreamWorld {
 ConnectionGuard::ConnectionGuard(DBConnectionPtr&& connection)
@@ -25,7 +26,7 @@ DBConnectionManager::~DBConnectionManager() {
   SQLFreeEnv(m_henv);
 }
 
-void DBConnectionManager::Init(const uint8_t dbConnectionNo) {
+void DBConnectionManager::Init(const uint8_t dbConnectionNo, const std::string& DBName, const std::string& dbAddr, const std::string& dbPort, const std::string& dbId, const std::string& dbpw) {
   WRITE_LOG(spdlog::level::info, "{}({})> Init!", __FUNCTION__, __LINE__);
   SQLRETURN retCode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_henv);
   // Set the ODBC version environment attribute
@@ -59,7 +60,7 @@ void DBConnectionManager::Init(const uint8_t dbConnectionNo) {
   std::lock_guard lg{m_lock};
   for (uint8_t i = 0; i < dbConnectionNo; ++i) {
     m_connections.emplace(std::make_unique<DBConnection>());
-    allConnected = allConnected && m_connections.top()->Connect(m_henv);
+    allConnected = allConnected && m_connections.top()->Connect(m_henv, DBName, dbAddr, dbPort, dbId, dbpw);
   }
   if (!allConnected) {
     WRITE_LOG(logLevel::critical, "{}({}) > Specific Connection Raised Error", __FUNCTION__, __LINE__);
@@ -78,7 +79,12 @@ ConnectionGuard DBConnectionManager::GetConnection() {
   }
   WRITE_LOG(logLevel::warn, "{}({}) > Non Exist Connection In Pool, Create New Connection", __FUNCTION__, __LINE__);
   auto newConn = std::make_unique<DBConnection>();
-  newConn->Connect(m_henv);
+  newConn->Connect(m_henv,
+                   ServerConfig::GetInstance().dbName,
+                   ServerConfig::GetInstance().dbIp,
+                   ServerConfig::GetInstance().dbPort,
+                   ServerConfig::GetInstance().dbId,
+                   ServerConfig::GetInstance().dbpw);
   return ConnectionGuard{std::move(newConn)};
 }
 

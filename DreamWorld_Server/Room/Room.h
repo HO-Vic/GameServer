@@ -33,6 +33,10 @@ class Room final
 
   void Init();
 
+  const uint32_t GetId() const {
+    return m_roomId;
+  }
+
   void StartGame();
 
   std::vector<std::shared_ptr<LiveObject>> GetMonsters();

@@ -9,26 +9,30 @@
 #include "LogManager/LogManager.h"
 #include "Match/Matching.h"
 #include "Timer/Timer.h"
+#include "Server/ServerConfig.h"
 
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
-  // Trace – Debug – Info – Warning – Error – Critical
-  START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(0), "ConsoleFile");
 
-  DreamWorld::Server server(4);  // ioThread
+  DreamWorld::ServerConfig::GetInstance().LoadXML("bin/config/ServerConfig.xml");
+  auto& serverConfig = DreamWorld::ServerConfig::GetInstance();
+  // Trace – Debug – Info – Warning – Error – Critical
+  START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(serverConfig.logLevel), serverConfig.logMode);
+
+  DreamWorld::Server server(serverConfig.ioThreadNo);  // ioThread
   server.Init();
 
-  // DreamWorld::DBConnectionManager::GetInstance().Init(2);  // DB Connector
-  // DreamWorld::DBThreadPool::GetInstance().Init(2);         // DB Thread
-  // DreamWorld::DBThreadPool::GetInstance().Start();
+  DreamWorld::DBConnectionManager::GetInstance().Init(serverConfig.DBThreadNo, serverConfig.dbName, serverConfig.dbIp, serverConfig.dbPort, serverConfig.dbId, serverConfig.dbpw);  // DB Connector
+  DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                       // DB Thread
+  DreamWorld::DBThreadPool::GetInstance().Start();
 
-  DreamWorld::RoomThreadPool::GetInstance().Init(8);  // Room Thread
+  DreamWorld::RoomThreadPool::GetInstance().Init(serverConfig.roomThreadNo);  // Room Thread
   DreamWorld::RoomThreadPool::GetInstance().Start();
 
   DreamWorld::InitPool();
   DreamWorld::RoomManager::GetInstance().Init();
 
-  DreamWorld::Timer::GetInstance().Start(3);
+  DreamWorld::Timer::GetInstance().Start(serverConfig.timerThreadNo);
   DreamWorld::Matching::GetInstance().StartMatching();
   server.Start();
 

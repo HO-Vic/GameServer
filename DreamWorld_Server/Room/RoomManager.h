@@ -33,6 +33,8 @@ class RoomManager
   std::shared_ptr<MonsterMapData> m_stageMap;
   std::shared_ptr<NavMapData> m_bossMap;
   sh::Utility::ObjectPool<Room> m_roomPool;
+  std::atomic<uint32_t> m_roomId;
+  tbb::concurrent_queue<uint32_t> m_freeRoomIds;
 
  public:
   std::atomic<double> globalAvrRoomTick = 0;
