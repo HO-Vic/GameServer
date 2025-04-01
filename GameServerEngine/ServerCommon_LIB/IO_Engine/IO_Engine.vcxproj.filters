@@ -43,6 +43,9 @@
     <Filter Include="IO_Core\Listener">
       <UniqueIdentifier>{6aecfe52-c1d2-41c6-a8af-4a7d9c8ff8cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Metric">
+      <UniqueIdentifier>{ef5c2e48-5484-41a7-8055-3c3b4a498117}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Session\ISession.cpp">
@@ -86,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="private\Session\SessionImpl.cpp">
       <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Metric\IO_Metric.cpp">
+      <Filter>Metric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h">
       <Filter>IO_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Metric\IO_Metric.h">
+      <Filter>Metric</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

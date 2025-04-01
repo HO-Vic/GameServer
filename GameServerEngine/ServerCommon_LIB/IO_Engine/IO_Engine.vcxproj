@@ -28,6 +28,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="private\IO_Metric\IO_Metric.cpp" />
     <ClCompile Include="private\Session\ISession.cpp" />
     <ClCompile Include="private\Session\RecvContext\RecvContext.cpp" />
     <ClCompile Include="private\Session\RecvContext\TCP_RecvContextImpl.cpp" />
@@ -58,6 +59,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h" />
+    <ClInclude Include="public\IO_Metric\IO_Metric.h" />
     <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Session\ISession.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h" />

@@ -12,7 +12,7 @@ using ISessionPtr = std::shared_ptr<ISession>;
 namespace DreamWorld {
 class Server {
  public:
-  Server(const uint8_t ioThreadNo);
+  Server(const uint8_t ioThreadNo, const bool useIoMetric = false, const bool useMetric = false);
 
   void Init();
 
@@ -29,12 +29,13 @@ class Server {
 
   static void OnCancelMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 
-    static void OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
+  static void OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message);
 
  private:
   sh::IO_Engine::IO_Core m_ioCore;
   sh::IO_Engine::Listener m_listener;
   sh::IO_Engine::Acceptor m_acceptor;
+  uint32_t m_acceptorCnt;
 
   MsgDispatcher m_dispatcher;
 };

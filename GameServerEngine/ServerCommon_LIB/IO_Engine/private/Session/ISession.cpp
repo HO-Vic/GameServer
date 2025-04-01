@@ -3,6 +3,7 @@
 #include <Session/SessionImpl.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
+#include <IO_Metric/IO_Metric.h>
 
 namespace sh::IO_Engine {
 ISession::ISession()
@@ -27,20 +28,23 @@ void ISession::StartRecv() {
 
 void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
   static constexpr bool DESIRE_DISCONNECT = true;
-  bool CONNECTED = false;
+  bool expectedDisconn = false;
   switch (thWorkerJob->GetType()) {
     case Utility::WORKER_TYPE::RECV: {
       m_sessionImpl->RecvComplete(thWorkerJob, ioByte);
+      IO_MetricSlot::GetInstance().RecordRecv(ioByte);
     } break;
     case Utility::WORKER_TYPE::SEND: {
       m_sessionImpl->SendComplete(thWorkerJob, ioByte);
+      IO_MetricSlot::GetInstance().RecordSend(ioByte);
     } break;
     case Utility::WORKER_TYPE::DISCONN: {
-      if (m_isDisconnnected.compare_exchange_strong(CONNECTED, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
+      if (m_isDisconnnected.compare_exchange_strong(expectedDisconn, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
         Disconnect();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
       ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+      IO_MetricSlot::GetInstance().RecordDisconn();
     } break;
     default: {
     } break;

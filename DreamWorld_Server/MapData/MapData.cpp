@@ -3,6 +3,7 @@
 #include "TriangleMesh/TriangleNavMesh.h"
 #include "MapCollision/MapCollision.h"
 #include "AstarNode/AstarNode.h"
+#include "../LogManager/LogManager.h"
 
 namespace DreamWorld {
 MapData::MapData(const std::string& mapCollisionFile) {
@@ -117,7 +118,7 @@ MapData::MapData(const std::string& mapCollisionFile) {
       }
     }
   }
-  spdlog::info("{} - CollisionData Initialize Success", mapCollisionFile);
+  WRITE_LOG(logLevel::info, "CollisionData Initialize Success", __FUNCTION__, __LINE__);
 }
 
 const std::vector<std::shared_ptr<MapCollision>>& MapData::GetCollisionData() const {
@@ -201,7 +202,7 @@ NavMapData::NavMapData(const std::string& mapCollisionFile, const std::string& n
   auto bossStartMesh = m_navMeshQuadTree.GetOnPositionNavMesh(bossPos);
 
   m_bossStartMesh = bossStartMesh;
-  spdlog::info("{} - NavMeshData Initialize Success", navMeshFIle);
+  WRITE_LOG(logLevel::info, "NavMeshData Initialize Success", __FUNCTION__, __LINE__);
 }
 
 NavMapData::~NavMapData() {

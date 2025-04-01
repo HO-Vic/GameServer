@@ -11,9 +11,9 @@
 #include "../ThreadManager/ThreadManager.h"
 #include <Utility/Thread/ThreadManager.h>
 
-//#define ALONE_TEST
-//   테스트할 때, 한 게임당 들어올 인원 수
-//   #define TEST_MODE_PEOPLE 2
+// #define ALONE_TEST
+//    테스트할 때, 한 게임당 들어올 인원 수
+//    #define TEST_MODE_PEOPLE 2
 
 namespace DreamWorld {
 void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
@@ -174,6 +174,9 @@ void Matching::MatchFunc(std::stop_token stopToken) {
       archerUserRef->SetIngameRole(ROLE::ARCHER);
 
       auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
+      if (nullptr == roomRef) {
+        continue;
+      }
       for (auto& userRef : userRefVec) {
         auto characterPtr = roomRef->GetCharacter(userRef->GetIngameRole());
         if (nullptr == characterPtr) {

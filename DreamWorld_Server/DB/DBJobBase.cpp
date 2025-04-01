@@ -7,6 +7,7 @@
 #include "DBConnection.h"
 #include "Utility/Thread/ThWorkerJob.h"
 #include "IO_Engine/IO_Core/ThWorkerJobPool.h"
+#include "../Metric/Metric.h"
 
 using logLevel = spdlog::level::level_enum;
 
@@ -74,6 +75,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
   Clear(workerJob);
 }
 void DBJobBase::Clear(sh::Utility::ThWorkerJob* workerJob) {
+  MetricSlot::GetInstance().RecordDB();
   sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
 }
 

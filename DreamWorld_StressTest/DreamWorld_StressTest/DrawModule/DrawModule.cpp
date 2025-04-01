@@ -154,7 +154,7 @@ int DrawGLScene(GLvoid)									// Here's Where We Do All The Drawing
 	glPrint("STRESS TEST [%d]", activeNum);	// Print GL Text To The Screen
 
 
-	glRasterPos2f(0.0f, 0.05f);
+	glRasterPos2f(-0.02f, 0.05f);
 	glPrint("STAGE USER [%d]", stageSize);	// Print GL Text To The Screen
 
 	glRasterPos2f(0.0f, 0.10f);

@@ -8,47 +8,41 @@
 
 DreamWorld::StressUserSession::StressUserSession() : UserSession(), m_currentUserState(nullptr), m_isActive(false), m_delayTime(0), m_isAbleCheckDelay(true)
 , m_x(500000), m_z(50000)
-, m_currentRole(ROLE::NONE_SELECT), m_dDelayTime(0)
-{
+, m_currentRole(ROLE::NONE_SELECT), m_dDelayTime(0){
 	m_coolTimeCtrl = std::make_shared<EventController>();
 	m_coolTimeCtrl->InsertCoolDownEventData(MOVE, MOVE_COOL_TIME);
 	m_coolTimeCtrl->InsertCoolDownEventData(DELAY_CHECK, DELAY_CHECK_COOL_TIME);
 }
 
-void DreamWorld::StressUserSession::Initialize()
-{
-	m_userStates.try_emplace(USER_STATE::LOBBY, std::make_shared<LobbyState>(std::static_pointer_cast<DreamWorld::StressUserSession>(shared_from_this())));
-	m_userStates.try_emplace(USER_STATE::MATCH, std::make_shared<MatchState>(std::static_pointer_cast<DreamWorld::StressUserSession>(shared_from_this())));
-	m_userStates.try_emplace(USER_STATE::INGAME, std::make_shared<InGameState>(std::static_pointer_cast<DreamWorld::StressUserSession>(shared_from_this())));
+void DreamWorld::StressUserSession::Initialize(){
+	m_userStates.try_emplace(USER_STATE::LOBBY, std::make_shared<LobbyState>(std::static_pointer_cast< DreamWorld::StressUserSession >( shared_from_this() )));
+	m_userStates.try_emplace(USER_STATE::MATCH, std::make_shared<MatchState>(std::static_pointer_cast< DreamWorld::StressUserSession >( shared_from_this() )));
+	m_userStates.try_emplace(USER_STATE::INGAME, std::make_shared<InGameState>(std::static_pointer_cast< DreamWorld::StressUserSession >( shared_from_this() )));
 }
 
-void DreamWorld::StressUserSession::SendPacketByState()
-{
-	if (!m_isActive) return;
+void DreamWorld::StressUserSession::SendPacketByState(){
+	if ( !m_isActive ) return;
 	auto delayCheckCoolTime = m_coolTimeCtrl->GetEventData(DELAY_CHECK);
-	if (delayCheckCoolTime->IsAbleExecute()) {
-		if (!m_isAbleCheckDelay) {
+	if ( delayCheckCoolTime->IsAbleExecute() ){
+		if ( !m_isAbleCheckDelay ){
 			delayCheckCoolTime->ResetCoolTime();
-		}
-		else {
+		} else{
 			SendDelayCheckPacket();
 			m_isAbleCheckDelay = false;
 		}
 	}
-	if (nullptr == m_currentUserState) {
+	if ( nullptr == m_currentUserState ){
 		ChangeUserState(USER_STATE::LOBBY);
 	}
 	m_currentUserState->UpdateState();
 }
 
-void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePacketHeader)
-{
-	switch (static_cast<SERVER_PACKET::TYPE>(executePacketHeader->type))
-	{
+void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePacketHeader){
+	switch ( static_cast< SERVER_PACKET::TYPE >( executePacketHeader->type ) ){
 	case SERVER_PACKET::TYPE::LOGIN_SUCCESS:
 	{
 		auto currentTIme = TIME::now();
-		auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTIme - m_loginSendTime);
+		auto durationTime = std::chrono::duration_cast< std::chrono::milliseconds >( currentTIme - m_loginSendTime );
 		long long currentDelayTime = durationTime.count();//currentDelay
 
 		long long diffPrevDelay = currentDelayTime - m_delayTime;//이전 딜레이와 현재 딜레이 차이
@@ -67,8 +61,8 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 		DreamWorld::StressTestNetwork::GetInstance().IncreaseActiveClient();
 		int activeNum = DreamWorld::StressTestNetwork::GetInstance().GetActiveNum();
 		double averValue = 0.0f;
-		averValue = (double)currentDelayTime / (double)activeNum;
-		DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += (averValue - m_dDelayTime);
+		averValue = ( double )currentDelayTime / ( double )activeNum;
+		DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += ( averValue - m_dDelayTime );
 		m_dDelayTime = averValue;
 		m_isActive = true;
 	}
@@ -107,7 +101,7 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 	break;
 	case SERVER_PACKET::TYPE::INTO_GAME:
 	{
-		const SERVER_PACKET::IntoGamePacket* recvPacket = reinterpret_cast<const SERVER_PACKET::IntoGamePacket*>(executePacketHeader);
+		const SERVER_PACKET::IntoGamePacket* recvPacket = reinterpret_cast< const SERVER_PACKET::IntoGamePacket* >( executePacketHeader );
 		m_currentRole = recvPacket->role;
 	}
 	break;
@@ -149,11 +143,11 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 	break;
 	case SERVER_PACKET::TYPE::GAME_STATE_STAGE:
 	{
-		const SERVER_PACKET::GameState_STAGE* recvPacket = reinterpret_cast<const SERVER_PACKET::GameState_STAGE*>(executePacketHeader);
-		for (int i = 0; i < 4; ++i) {
-			if (recvPacket->userState[i].role == m_currentRole) {
-				m_x = recvPacket->userState[i].position.x;
-				m_z = recvPacket->userState[i].position.z;
+		const SERVER_PACKET::GameState_STAGE* recvPacket = reinterpret_cast< const SERVER_PACKET::GameState_STAGE* >( executePacketHeader );
+		for ( int i = 0; i < 4; ++i ){
+			if ( recvPacket->userState[ i ].role == m_currentRole ){
+				m_x = recvPacket->userState[ i ].position.x;
+				m_z = recvPacket->userState[ i ].position.z;
 				break;
 			}
 		}
@@ -162,11 +156,11 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 
 	case SERVER_PACKET::TYPE::GAME_STATE_BOSS:
 	{
-		const SERVER_PACKET::GameState_BOSS* recvPacket = reinterpret_cast<const SERVER_PACKET::GameState_BOSS*>(executePacketHeader);
-		for (int i = 0; i < 4; ++i) {
-			if (recvPacket->userState[i].role == m_currentRole) {
-				m_x = recvPacket->userState[i].position.x;
-				m_z = recvPacket->userState[i].position.z;
+		const SERVER_PACKET::GameState_BOSS* recvPacket = reinterpret_cast< const SERVER_PACKET::GameState_BOSS* >( executePacketHeader );
+		for ( int i = 0; i < 4; ++i ){
+			if ( recvPacket->userState[ i ].role == m_currentRole ){
+				m_x = recvPacket->userState[ i ].position.x;
+				m_z = recvPacket->userState[ i ].position.z;
 				break;
 			}
 		}
@@ -285,13 +279,13 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 		//여기서 딜레이 파악
 		auto nowTime = Time::now();
 		//현재 시간과 보낸 시간의 차이를 계산
-		auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - m_lastDelaySendTime);
+		auto durationTime = std::chrono::duration_cast< std::chrono::milliseconds >( nowTime - m_lastDelaySendTime );
 		long long currentDelayTime = durationTime.count();//currentDelay
 
-		if (StressTestNetwork::GetInstance().globalMaxDelay < currentDelayTime)
+		if ( StressTestNetwork::GetInstance().globalMaxDelay < currentDelayTime )
 			StressTestNetwork::GetInstance().globalMaxDelay = currentDelayTime;
 
-		if (MIN_DELAY < currentDelayTime) {
+		if ( MIN_DELAY < currentDelayTime ){
 			MIN_DELAY = currentDelayTime;
 			std::cout << currentDelayTime << std::endl;
 		}
@@ -311,8 +305,8 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 
 
 		int activeNum = DreamWorld::StressTestNetwork::GetInstance().GetActiveNum();
-		double averValue = (double)currentDelayTime / (double)activeNum;
-		DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += (averValue - m_dDelayTime);
+		double averValue = ( double )currentDelayTime / ( double )activeNum;
+		DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += ( averValue - m_dDelayTime );
 		m_dDelayTime = averValue;
 		m_isAbleCheckDelay = true;
 	}
@@ -326,76 +320,70 @@ void DreamWorld::StressUserSession::ExecutePacket(const PacketHeader* executePac
 
 	default:
 	{
-		std::cout << "Unknown Packet Recv: " << (int)executePacketHeader->type << std::endl;
+		std::cout << "Unknown Packet Recv: " << ( int )executePacketHeader->type << std::endl;
 	}
 	break;
 	}
 }
 
-void DreamWorld::StressUserSession::Connect(SOCKET connectSocket)
-{
+void DreamWorld::StressUserSession::Connect(SOCKET connectSocket){
 	UserSession::Connect(connectSocket);
 	m_loginSendTime = TIME::now();//Login 패킷 이후에 했다가, 0으로 초기화된 값이어서 딜레이 엉망
 	SendLoginPacket();
 }
 
-void DreamWorld::StressUserSession::Disconnect()
-{
+void DreamWorld::StressUserSession::Disconnect(){
 	UserSession::Disconnect();
 	DreamWorld::StressTestNetwork::GetInstance().globalDelay -= m_delayTime;
 	m_delayTime = 0;
+	m_isActive = false;
+	closesocket(m_socket);
 }
 
-DIRECTION DreamWorld::StressUserSession::GetRandomDirection()
-{
+DIRECTION DreamWorld::StressUserSession::GetRandomDirection(){
 	std::random_device rd;
 	std::default_random_engine dre(rd());
 	std::uniform_int_distribution directionRandom(-1, 3);
 
 	int randomDirection = directionRandom(dre);
-	if (-1 == randomDirection) return DIRECTION::IDLE;
+	if ( -1 == randomDirection ) return DIRECTION::IDLE;
 
-	if (0 == randomDirection) return DIRECTION::RIGHT;
-	if (1 == randomDirection) return DIRECTION::BACK;
-	if (2 == randomDirection) return DIRECTION::FRONT;
+	if ( 0 == randomDirection ) return DIRECTION::RIGHT;
+	if ( 1 == randomDirection ) return DIRECTION::BACK;
+	if ( 2 == randomDirection ) return DIRECTION::FRONT;
 	return DIRECTION::LEFT;
 }
 
-ROLE DreamWorld::StressUserSession::GetRandomRole()
-{
+ROLE DreamWorld::StressUserSession::GetRandomRole(){
 	std::random_device rd;
 	std::default_random_engine dre(rd());
 	std::uniform_int_distribution roleRandom(0, 3);
 	int radomRole = roleRandom(dre);
-	if (0 == radomRole) return ROLE::ARCHER;
-	if (1 == radomRole) return ROLE::PRIEST;
-	if (2 == radomRole) return ROLE::TANKER;
+	if ( 0 == radomRole ) return ROLE::ARCHER;
+	if ( 1 == radomRole ) return ROLE::PRIEST;
+	if ( 2 == radomRole ) return ROLE::TANKER;
 	return ROLE::WARRIOR;
 }
 
-void DreamWorld::StressUserSession::ChangeUserState(const USER_STATE& state)
-{
-	if (nullptr != m_currentUserState)
+void DreamWorld::StressUserSession::ChangeUserState(const USER_STATE& state){
+	if ( nullptr != m_currentUserState )
 		m_currentUserState->ExitState();
-	m_currentUserState = m_userStates[state];
+	m_currentUserState = m_userStates[ state ];
 	m_currentUserState->EnterState();
 }
 
-void DreamWorld::StressUserSession::SendLoginPacket()
-{
+void DreamWorld::StressUserSession::SendLoginPacket(){
 	CLIENT_PACKET::LoginPacket loginPacket;
 	int id = GetId();
 	sprintf_s(loginPacket.id, "module%d", id);
 	Send(&loginPacket);
 }
 
-void DreamWorld::StressUserSession::SendMatchPacket()
-{
+void DreamWorld::StressUserSession::SendMatchPacket(){
 	//ROLE randRole = GetRandomRole();
 	int role = m_id % 4;
 	ROLE randRole = ROLE::WARRIOR;
-	switch (role)
-	{
+	switch ( role ){
 	case 0:
 		randRole = ROLE::WARRIOR;
 		break;
@@ -411,24 +399,23 @@ void DreamWorld::StressUserSession::SendMatchPacket()
 	default:
 		break;
 	}
-	CLIENT_PACKET::MatchPacket sendPacket(randRole, static_cast<unsigned char>(CLIENT_PACKET::TYPE::MATCH));
+	CLIENT_PACKET::MatchPacket sendPacket(randRole, static_cast< unsigned char >( CLIENT_PACKET::TYPE::MATCH ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendIngamePacket()
-{
+void DreamWorld::StressUserSession::SendIngamePacket(){
 	std::random_device rd;
 	std::default_random_engine dre(rd());
 	std::uniform_int_distribution rotate(0, 1);
 	int randRotate = rotate(dre);
-	if (randRotate) {
+	if ( randRotate ){
 		SendRotatePacket();
 	}
 	auto moveCoolTime = m_coolTimeCtrl->GetEventData(MOVE);
-	if (!moveCoolTime->IsAbleExecute()) return;
+	if ( !moveCoolTime->IsAbleExecute() ) return;
 
 	DIRECTION randDIr = GetRandomDirection();
-	if (DIRECTION::IDLE == randDIr) {
+	if ( DIRECTION::IDLE == randDIr ){
 		SendStopPacket();
 		return;
 	}
@@ -437,50 +424,43 @@ void DreamWorld::StressUserSession::SendIngamePacket()
 	SendMovePacket(randDIr, keyDown);
 }
 
-void DreamWorld::StressUserSession::SendMovePacket(const DIRECTION& direction, const bool& isApply)
-{
-	if (isApply) {
-		CLIENT_PACKET::MovePacket sendPacket(direction, static_cast<unsigned char>(CLIENT_PACKET::TYPE::MOVE_KEY_DOWN));
+void DreamWorld::StressUserSession::SendMovePacket(const DIRECTION& direction, const bool& isApply){
+	if ( isApply ){
+		CLIENT_PACKET::MovePacket sendPacket(direction, static_cast< unsigned char >( CLIENT_PACKET::TYPE::MOVE_KEY_DOWN ));
 		Send(&sendPacket);
 		return;
 	}
-	CLIENT_PACKET::MovePacket sendPacket(direction, static_cast<unsigned char>(CLIENT_PACKET::TYPE::MOVE_KEY_UP));
+	CLIENT_PACKET::MovePacket sendPacket(direction, static_cast< unsigned char >( CLIENT_PACKET::TYPE::MOVE_KEY_UP ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendStopPacket()
-{
+void DreamWorld::StressUserSession::SendStopPacket(){
 	CLIENT_PACKET::StopPacket sendPacket;
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendRotatePacket()
-{
-	CLIENT_PACKET::RotatePacket sendPacket(ROTATE_AXIS::Y, 1.0f, static_cast<unsigned char>(CLIENT_PACKET::TYPE::ROTATE));
+void DreamWorld::StressUserSession::SendRotatePacket(){
+	CLIENT_PACKET::RotatePacket sendPacket(ROTATE_AXIS::Y, 1.0f, static_cast< unsigned char >( CLIENT_PACKET::TYPE::ROTATE ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendStageChangeToBoss()
-{
-	CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(CLIENT_PACKET::TYPE::STAGE_CHANGE_BOSS));
+void DreamWorld::StressUserSession::SendStageChangeToBoss(){
+	CLIENT_PACKET::NotifyPacket sendPacket(static_cast< unsigned char >( CLIENT_PACKET::TYPE::STAGE_CHANGE_BOSS ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendForceGameEnd()
-{
-	CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(CLIENT_PACKET::TYPE::TEST_GAME_END));
+void DreamWorld::StressUserSession::SendForceGameEnd(){
+	CLIENT_PACKET::NotifyPacket sendPacket(static_cast< unsigned char >( CLIENT_PACKET::TYPE::TEST_GAME_END ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendGameEndOkayPacket()
-{
-	CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(CLIENT_PACKET::TYPE::GAME_END_OK));
+void DreamWorld::StressUserSession::SendGameEndOkayPacket(){
+	CLIENT_PACKET::NotifyPacket sendPacket(static_cast< unsigned char >( CLIENT_PACKET::TYPE::GAME_END_OK ));
 	Send(&sendPacket);
 }
 
-void DreamWorld::StressUserSession::SendDelayCheckPacket()
-{
+void DreamWorld::StressUserSession::SendDelayCheckPacket(){
 	m_lastDelaySendTime = Time::now();
-	CLIENT_PACKET::NotifyPacket sendPacket(static_cast<char>(CLIENT_PACKET::TYPE::STRESS_TEST_DELAY));
+	CLIENT_PACKET::NotifyPacket sendPacket(static_cast< char >( CLIENT_PACKET::TYPE::STRESS_TEST_DELAY ));
 	Send(&sendPacket);
 }

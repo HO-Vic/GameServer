@@ -27,7 +27,7 @@ namespace DreamWorld
 	static const std::string_view SERVER_IP = "127.0.0.1";
 	static const short SERVER_PORT = 9000;
 
-	static constexpr int MAX_TEST = 3000;
+	static constexpr int MAX_TEST = 5000;
 	static constexpr int MAX_CLIENTS = MAX_TEST * 2;
 
 	using Time = std::chrono::high_resolution_clock;

@@ -96,7 +96,9 @@ void DreamWorld::StressTestNetwork::AdjustClientNumber(){
 	} else if ( DELAY_LIMIT.count() < averageDelay ){//평균 달레이가 좀 클 때
 		// 커넥트 딜레이 시간을 10배 늘리게 함.
 		DELAY_MULTIPLIER = 10;
-		return;
+		if ( !CONNECTION_INCREASING ){
+			return;
+		}
 	}
 
 	//현재 연결된 클라이언트수가 딜레이가 클 때 set한 MAX_LIMIT값의 80%보다 클 때 => 딜레이가 클 때, 찍힌 인원의 80%까지 축소

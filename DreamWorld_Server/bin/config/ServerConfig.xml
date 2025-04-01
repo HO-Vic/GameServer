@@ -9,13 +9,23 @@
 	OFF 6
 	-->
 <Properties>
-	<Log LogLevel="0" LogMode="ConsoleFile"/>
+	<Log LogLevel="2" LogMode="ConsoleFile"/>
+
+	<!-- 특정 룸 업데이트 틱 시간 로그(더 이상 안씀)-->
 	<RoomMetric targetRoomId="20,50,75,100,200,300,350,400,450,500,550" logTickSec="2"/>
+
+	<!-- 룸 평균 틱 로깅 시간-->
+	<RoomAvgMetric logTickSec="3"/>
+
+	<!-- 룸 업데이트 틱 로깅 임계치, Max초과: 게임 인스턴스 생성x, reActvie: 이하 다시 게임 인스턴스 생성 가능-->
+	<RoomAvgDelayTick MaxTickMs="140" ReActiveTickMs="120"/>
+
+	<!--Metric 미사용 시, IO_Metric, Game_Metric 0으로 수정-->
+	<Metric IO_Metric="1" Game_Metric="1" logTickSec="1"/>
 </Properties>
-<!-- ioThreadNo가 0이면 최대-->
 
 <Server>
-	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="2" roomThreadNo="9" timerThreadNo="1" DBThreadNo="2"/>
+	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="6" roomThreadNo="6" timerThreadNo="1" DBThreadNo="2"/>
 </Server>
 
 <!-- Name은 ms sql에서 data base, my sql에서는 schema-->

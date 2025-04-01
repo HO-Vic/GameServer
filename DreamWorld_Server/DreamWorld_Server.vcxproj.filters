@@ -73,6 +73,9 @@
     <Filter Include="Session">
       <UniqueIdentifier>{1c05ab28-1e77-4534-b2bb-2f11d19bdde9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Metric">
+      <UniqueIdentifier>{bea4b763-1551-4aac-8b65-6a45c718c061}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="Server\ServerConfig.cpp">
       <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Metric\Metric.cpp">
+      <Filter>Metric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="Server\ServerConfig.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Metric\Metric.h">
+      <Filter>Metric</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

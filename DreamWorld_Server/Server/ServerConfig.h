@@ -18,10 +18,10 @@ class ServerConfig
   uint32_t ipAddr;
   std::string ip;
   uint16_t port;
-  uint16_t ioThreadNo;
-  uint16_t roomThreadNo;
-  uint16_t timerThreadNo;
-  uint16_t DBThreadNo;
+  uint8_t ioThreadNo;
+  uint8_t roomThreadNo;
+  uint8_t timerThreadNo;
+  uint8_t DBThreadNo;
 
   std::string dbIp;
   std::string dbPort;
@@ -29,8 +29,21 @@ class ServerConfig
   std::string dbId;
   std::string dbpw;
 
+#pragma region Metric
   std::unordered_set<uint32_t> targetRoomIds;  // Room Update Tick 체크를 위한
-  DreamWorld::SEC logTickSec;
+  DreamWorld::SEC targetRoomLogTickSec;
+
+  DreamWorld::SEC avgRoomLogTickSec;
+
+  uint32_t maxRoomTickMs;
+  uint32_t reactiveTickMs;
+
+  bool useIOMetric;
+
+  bool useGameMetric;
+
+  DreamWorld::SEC meticLoggingTickSec;
+#pragma endregion
 
   std::string logMode;
   uint8_t logLevel;

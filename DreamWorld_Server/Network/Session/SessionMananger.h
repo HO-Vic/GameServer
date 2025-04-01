@@ -16,10 +16,13 @@ class SessionMananger
 
   void BroadCast(std::vector<uint32_t> ignoreSessionId);
 
+  const uint32_t GetCurrentActiveUserCnt() const;
+
  private:
   sh::Utility::ObjectPool<Session> m_userPool;
   std::unordered_map<uint32_t, std::shared_ptr<Session>> m_activeUsers;
   std::mutex m_lock;
   std::atomic<uint32_t> m_uniqueNo;
+  std::atomic<uint32_t> m_currentActiveUser;
 };
 }  // namespace DreamWorld

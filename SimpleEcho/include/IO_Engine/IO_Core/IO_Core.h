@@ -7,7 +7,7 @@
 namespace sh::IO_Engine {
 class IO_Core {
  public:
-  IO_Core(const uint8_t ioThreadNo);
+  IO_Core(const uint8_t ioThreadNo, const bool metricUse = false);
 
   void Init();
 

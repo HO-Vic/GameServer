@@ -6,6 +6,7 @@
 #include "TimerJob.h"
 #include "../ThreadManager/ThreadManager.h"
 #include "../LogManager/LogManager.h"
+#include "../Metric/Metric.h"
 
 namespace DreamWorld {
 void Timer::Start(const uint8_t threadNo) {
@@ -45,6 +46,7 @@ void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
       }
       //  임시 타이머 객체니 수행 가능
       immediateTimerEvent->Execute();
+      MetricSlot::GetInstance().RecordTimerExec();
       immediateTimer.pop();
     }
 
@@ -65,13 +67,16 @@ void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
       if (currentEvent->IsReady()) {  // 수행할 시간이 됐다면 수행
         // WRITE_LOG(logLevel::debug, "{}({}) > wake up time : {}", __FUNCTION__, __LINE__, currentEvent->GetWakeTime());
         currentEvent->Execute();
+        MetricSlot::GetInstance().RecordTimerExec();
         continue;
       }
       // 아니라면 다시 삽입
       if (currentEvent->GetRestTime() <= PUSH_IMMEDIATE_TIMER_QUEUE_TIME) {  // 기준 시간보다 적은 시간이 남았다면, 임시 큐에 삽입
         immediateTimer.push(std::move(currentEvent));
+        MetricSlot::GetInstance().RecordTimerImmediate();
       } else {
         TimerQueue.push(std::move(currentEvent));  // 아니라면 concurrent에 삽입
+        MetricSlot::GetInstance().RecordTimerAlready();
       }
       Sleep(1);
       break;

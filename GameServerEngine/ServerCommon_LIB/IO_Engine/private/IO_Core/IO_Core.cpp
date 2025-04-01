@@ -1,14 +1,16 @@
 #include <pch.h>
 #include <IO_Core/IO_Core.h>
 #include <IO_Core/ThWorkerJobPool.h>
+#include <IO_Metric/IO_Metric.h>
 
 namespace sh::IO_Engine {
-IO_Core::IO_Core(const uint8_t ioThreadNo)
+IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
     : m_threadPool(ioThreadNo) {
   WSADATA wsaData{};
   if (WSAStartup(WINSOCK_VERSION, &wsaData) != 0) {
     assert("WSAData init fail");
   }
+  IO_MetricSlot::GetInstance().Init(metricUse);
 }
 
 void IO_Core::Init() {

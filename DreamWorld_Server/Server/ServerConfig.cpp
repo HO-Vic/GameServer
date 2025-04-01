@@ -8,7 +8,7 @@
 
 namespace DreamWorld {
 ServerConfig::ServerConfig()
-    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1), logTickSec(0) {
+    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1), targetRoomLogTickSec(1), avgRoomLogTickSec(1), maxRoomTickMs(120), reactiveTickMs(100) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -49,7 +49,31 @@ void ServerConfig::LoadXML(const char* configFile) {
                     targetRoomIds.insert(std::stoi(&roomIds[findOffset + 1]));
                   }
                 } else if (strcmp(attr->name(), "logTickSec") == 0) {
-                  logTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
+                  targetRoomLogTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
+                }
+              }
+            } else if (strcmp(node->name(), "RoomAvgMetric") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "logTickSec") == 0) {
+                  avgRoomLogTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
+                }
+              }
+            } else if (strcmp(node->name(), "RoomAvgDelayTick") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "MaxTickMs") == 0) {
+                  maxRoomTickMs = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "ReActiveTickMs") == 0) {
+                  reactiveTickMs = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
+                }
+              }
+            } else if (strcmp(node->name(), "Metric") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "IO_Metric") == 0) {
+                  useIOMetric = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "Game_Metric") == 0) {
+                  useGameMetric = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "logTickSec") == 0) {
+                  meticLoggingTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
                 }
               }
             }
@@ -65,13 +89,13 @@ void ServerConfig::LoadXML(const char* configFile) {
                 } else if (strcmp(attr->name(), "port") == 0) {
                   port = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "ioThreadNo") == 0) {
-                  ioThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                  ioThreadNo = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "roomThreadNo") == 0) {
-                  roomThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                  roomThreadNo = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "timerThreadNo") == 0) {
-                  timerThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                  timerThreadNo = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "DBThreadNo") == 0) {
-                  DBThreadNo = static_cast<uint16_t>(std::stoi(attr->value(), nullptr));
+                  DBThreadNo = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 }
               }
             }

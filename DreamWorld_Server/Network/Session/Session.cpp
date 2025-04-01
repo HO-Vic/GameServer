@@ -27,6 +27,9 @@ void Session::Disconnect() {
   if (nullptr == roomPtr) {
     return;
   }
+  // OnGameEndOk 패킷에서도 DiscardPlayer 호출 -> Room에서 session에 대한 strong 없어짐 -> 해당 부분 룸에 인서트(비동기적 수행) -> session delete -> shared_from_this()는 bad_weak일 수 밖에
+  // 안전하게 복사 캡쳐로 넘겨서 strong 유지
+  // 차라리 session::m_uniqueId 넘기는게 안전할듯ㅠ
   auto sessionPtr = std::static_pointer_cast<DreamWorld::Session>(shared_from_this());
   roomPtr->InsertJob(
       DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {

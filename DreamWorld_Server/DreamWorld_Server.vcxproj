@@ -194,6 +194,7 @@
     <ClCompile Include="MapData\TriangleMesh\TriangleNavMesh.cpp" />
     <ClCompile Include="Match\Matching.cpp" />
     <ClCompile Include="Match\MatchQueue.cpp" />
+    <ClCompile Include="Metric\Metric.cpp" />
     <ClCompile Include="MsgDispatcher\MsgDispatcher.cpp" />
     <ClCompile Include="Network\Session\Session.cpp" />
     <ClCompile Include="Network\Session\SessionMananger.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="MapData\TriangleMesh\TriangleNavMesh.h" />
     <ClInclude Include="Match\Matching.h" />
     <ClInclude Include="Match\MatchQueue.h" />
+    <ClInclude Include="Metric\Metric.h" />
     <ClInclude Include="MsgDispatcher\MsgDispatcher.h" />
     <ClInclude Include="Network\Session\Session.h" />
     <ClInclude Include="Network\Session\SessionMananger.h" />

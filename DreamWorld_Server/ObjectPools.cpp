@@ -7,6 +7,6 @@
 namespace DreamWorld {
 void InitPool() {
   WRITE_LOG(logLevel::info, "{}({}) > DreamWorld Init Pool!", __FUNCTION__, __LINE__);
-  ObjectPool<sh::Utility::Job>::GetInstance().InitSize(200);
+  ObjectPool<sh::Utility::Job>::GetInstance().InitSize(1000);
 }
 }  // namespace DreamWorld

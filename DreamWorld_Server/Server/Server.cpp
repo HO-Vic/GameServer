@@ -10,19 +10,24 @@
 #include "../Room/RoomMsgDispatcher.h"
 #include "MsgProtocol.h"
 #include "../LogManager/LogManager.h"
+#include "../Room/RoomManager.h"
+#include "ServerConfig.h"
+#include <IO_Engine/IO_Metric/IO_Metric.h>
+#include "../Metric/Metric.h"
 
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
-Server::Server(const uint8_t ioThreadNo)
-    : m_ioCore(ioThreadNo) {
+Server::Server(const uint8_t ioThreadNo, const bool useIoMetric /* = false*/, const bool useMetric /* = false*/)
+    : m_ioCore(ioThreadNo), m_acceptorCnt(2) {
+  sh::IO_Engine::IO_MetricSlot::GetInstance().Init(useIoMetric);
+  MetricSlot::GetInstance().Init(useMetric);
 }
 
 void Server::Init() {
   m_ioCore.Init();
   m_listener.Init(m_ioCore.GetHandle(), 9000, 0);
-  m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) {
-    AcceptHandle(sock);
-  }, 4);
+  m_ioCore;
+  m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) { AcceptHandle(sock); }, m_acceptorCnt);
 
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::LOGIN), std::bind(Server::OnLogin, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnMatchReq, std::placeholders::_1, std::placeholders::_2));
@@ -39,7 +44,50 @@ void Server::Start() {
   m_acceptor.SetListenSocket(m_listener.GetListenSocket());
   m_acceptor.Start();
   WRITE_LOG(logLevel::info, "{}({}) > Server Start!", __FUNCTION__, __LINE__);
+  auto prevMetricLoggingTime = chrono_clock::now();
+  auto& roomMgr = RoomManager::GetInstance();
   while (true) {
+    auto nowTime = chrono_clock::now();
+    {  // IO_Metric
+      auto loggingDiff = _chrono::duration_cast<_chrono::seconds>(nowTime - prevMetricLoggingTime);
+      if (loggingDiff > ServerConfig::GetInstance().meticLoggingTickSec) {
+        auto& ioMetric = sh::IO_Engine::IO_MetricSlot::GetInstance().SwapAndLoad();
+        auto sendCompletion = ioMetric.sendCompletion.load();
+        auto sendByte = ioMetric.sendByte.load();
+        auto recvCompletion = ioMetric.recvCompletion.load();
+        auto recvByte = ioMetric.recvByte.load();
+        auto disconn = ioMetric.disconn.load();
+
+        WRITE_LOG(logLevel::info, "{}({}) > IO Metric [sendCompletion:{}] [sendByte:{}] [recvCompletion:{}] [recvByte:{}] [disconn:{}]", __FUNCTION__, __LINE__,
+                  sendCompletion, sendByte, recvCompletion, recvByte, disconn);
+
+        auto& gameMetric = MetricSlot::GetInstance().SwapAndLoad();
+        auto roomExec = gameMetric.roomExec.load();
+        auto DBExec = gameMetric.DBExec.load();
+        auto timerExec = gameMetric.timerExec.load();
+        auto timerAlready = gameMetric.timerAlreadyExec.load();
+        auto timerIm = gameMetric.timerImmediate.load();
+
+        WRITE_LOG(logLevel::info, "{}({}) > Server Metric [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
+                  roomExec, DBExec, timerExec, timerAlready, timerIm);
+        prevMetricLoggingTime = nowTime;
+      }
+    }
+    {  // Room Metric Logging
+      auto loggingDiff = _chrono::duration_cast<_chrono::seconds>(nowTime - roomMgr.m_prevLoggingTime);
+      if (loggingDiff > ServerConfig::GetInstance().avgRoomLogTickSec) {
+        uint64_t globalTick = roomMgr.globalAvgRoomTick;
+        uint32_t roomCnt = roomMgr.globalRoomCnt;
+        if (0 == roomCnt) {
+          continue;
+        }
+        globalTick = globalTick / roomCnt;
+        roomMgr.m_prevLoggingTime = nowTime;
+
+        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, SessionMananger::GetInstance().GetCurrentActiveUserCnt(), roomCnt, globalTick);
+      }
+    }
+    Sleep(100);
   }
 }
 

@@ -24,11 +24,13 @@
 
 namespace DreamWorld {
 Room::Room(std::shared_ptr<MonsterMapData>& mapDataRef, std::shared_ptr<NavMapData>& navMapDataRef, uint32_t roomId)
-    : m_stageMapData(mapDataRef), m_bossMapData(navMapDataRef), m_roomId(roomId) {
+    : m_stageMapData(mapDataRef), m_bossMapData(navMapDataRef), m_roomId(roomId), m_prevTickDiff(0) {
 }
 
 Room::~Room() {
   WRITE_LOG(logLevel::trace, "{}({}) > destructor Room", __FUNCTION__, __LINE__);
+  RoomManager::GetInstance().globalRoomCnt--;
+  RoomManager::GetInstance().globalAvgRoomTick -= m_prevTickDiff;
 }
 
 void Room::Init() {
@@ -82,11 +84,10 @@ void Room::StartGame() {
     sendPacket.role = session->GetIngameRole();
     session->DoSend(&sendPacket, sendPacket.size);
   };
-
+  auto roomBasePtr = std::static_pointer_cast<RoomBase>(shared_from_this());
   Timer::GetInstance().InsertTimerEvent(
       ObjectPool<TimerJob>::GetInstance().MakeUnique(chrono_clock::now() + ROOM_UPDATE_TICK, std::move([=]() {
-                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(
-                                                           std::static_pointer_cast<RoomBase>(shared_from_this()));
+                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(roomBasePtr);
                                                      })));
 }
 
@@ -158,13 +159,14 @@ void Room::Update() {
     m_currentUpdateTickCount = 0;
   }
   auto now = chrono_clock::now();
-  auto tDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevUpdateTime);
+  auto tickDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevUpdateTime).count();
 
-  auto logTimeDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevLogTime);
-  bool isLogging = ServerConfig::GetInstance().logTickSec <= logTimeDiff;
+  // auto logTimeDiff = _chrono::duration_cast<_chrono::milliseconds>(now - m_prevLogTime);
+  // bool isLogging = ServerConfig::GetInstance().targetRoomLogTickSec <= logTimeDiff;
+  auto roomBasePtr = std::static_pointer_cast<RoomBase>(shared_from_this());
   Timer::GetInstance().InsertTimerEvent(
-      ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([isLogging, now, this]() {
-                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(std::static_pointer_cast<RoomBase>(shared_from_this()));
+      ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([=]() {
+                                                       RoomThreadPool::GetInstance().InsertRoomUpdateEvent(roomBasePtr);
                                                        /*if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
                                                          auto execTime = chrono_clock::now();
                                                          auto diff = _chrono::duration_cast<_chrono::milliseconds>(execTime - now).count();
@@ -172,13 +174,15 @@ void Room::Update() {
                                                        }*/
                                                      })));
 
+  RoomManager::GetInstance().globalAvgRoomTick += (tickDiff - m_prevTickDiff);
+  m_prevTickDiff = static_cast<uint32_t>(tickDiff);
   m_prevUpdateTime = now;
-  if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
-    m_prevLogTime = now;
-    size_t threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
+  // if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
+  //   m_prevLogTime = now;
+  //   size_t threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
 
-    WRITE_LOG(logLevel::debug, "{}({}) > Room Update Tick Diff {}ms [roomId:{}][thId:{}]", __FUNCTION__, __LINE__, tDiff.count(), m_roomId, threadId);
-  }
+  //  WRITE_LOG(logLevel::debug, "{}({}) > Room Update Tick Diff {}ms [roomId:{}][thId:{}]", __FUNCTION__, __LINE__, tDiff.count(), m_roomId, threadId);
+  //}
 }
 
 void Room::SetRoomEndState() {

@@ -36,8 +36,14 @@ class RoomManager
   std::atomic<uint32_t> m_roomId;
   tbb::concurrent_queue<uint32_t> m_freeRoomIds;
 
+  bool m_isAbleMakeRoom;
+
  public:
-  std::atomic<double> globalAvrRoomTick = 0;
+  // RoomMetric
+  std::atomic_llong globalAvgRoomTick = 0;  // Ms
   std::atomic_uint globalRoomCnt = 0;
+
+  chrono_clock::time_point m_prevLoggingTime;
+  chrono_clock::time_point m_prevMaxRoomLoggingTime;
 };
 }  // namespace DreamWorld

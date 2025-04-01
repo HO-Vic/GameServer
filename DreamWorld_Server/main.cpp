@@ -19,11 +19,11 @@ int main() {
   // Trace – Debug – Info – Warning – Error – Critical
   START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(serverConfig.logLevel), serverConfig.logMode);
 
-  DreamWorld::Server server(serverConfig.ioThreadNo);  // ioThread
+  DreamWorld::Server server(serverConfig.ioThreadNo, serverConfig.useIOMetric, serverConfig.useGameMetric);  // ioThread
   server.Init();
 
   DreamWorld::DBConnectionManager::GetInstance().Init(serverConfig.DBThreadNo, serverConfig.dbName, serverConfig.dbIp, serverConfig.dbPort, serverConfig.dbId, serverConfig.dbpw);  // DB Connector
-  DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                       // DB Thread
+  DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                                            // DB Thread
   DreamWorld::DBThreadPool::GetInstance().Start();
 
   DreamWorld::RoomThreadPool::GetInstance().Init(serverConfig.roomThreadNo);  // Room Thread
