@@ -11,10 +11,11 @@
 #include "../LogManager/LogManager.h"
 #include "../ObjectPools.h"
 #include "../Server/MsgProtocol.h"
+#include "../Timer/TimerJob.h"
 
 namespace DreamWorld {
 MageObject::MageObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
-    : RangedCharacterObject(maxHp, moveSpeed, boundingSize, 80.0f, roomRef, ROLE::MAGE) {
+    : RangedCharacterObject(maxHp, moveSpeed, boundingSize, 80.0f, roomRef, ROLE::MAGE), m_healing(false) {
   m_skillCtrl->InsertDurationEventData(SKILL_Q, EventController::MS(15'000), EventController::MS(10'000));
   m_skillCtrl->InsertCoolDownEventData(SKILL_E, EventController::MS(10'000));
   /*
@@ -38,11 +39,20 @@ void MageObject::RecvSkill(const SKILL_TYPE& type) {
     return;
   }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
+    m_healing = true;
     auto durationEventData = std::static_pointer_cast<DurationEvent>(m_skillCtrl->GetEventData(SKILL_Q));
-    roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+    InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + MS(500),  // 바로 실행할 수 있게
+                                          [this]() {
+                                            ExecHeal();
+                                          }));
+    InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + durationEventData->GetDurationTIme(),  // 바로 실행할 수 있게
+                                          [this]() {
+                                            m_healing = false;
+                                          }));
+    /*roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
       MageSkill::HealSkill skill(std::static_pointer_cast<MageObject>(shared_from_this()), durationEventData->GetDurationTIme());
       skill.Execute();
-    }));
+    }));*/
   } else {
     WRITE_LOG(logLevel::critical, "{}({}) > Mage Can not Execute Skill E, But Executed", __FUNCTION__, __LINE__);
   }
@@ -93,6 +103,7 @@ void MageObject::ExecuteThunderSkill(const XMFLOAT3& position) {
 }
 
 void MageObject::ExecuteHeal(const CommonDurationSkill_MILSEC::DURATION_TIME_RATIO& durationTime) {  // 얘도 PlayerCharacter에 Tickable Ojbect
+                                                                                                     // 더 이상 쓰지 않음
   using namespace std::chrono;
 
   auto roomRef = m_roomWeakRef.lock();
@@ -120,6 +131,33 @@ void MageObject::ExecuteCommonAttack(const XMFLOAT3& attackDir) {
 
   DreamWorld::SERVER_PACKET::ShootingObject sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHOOTING_ICE_LANCE), attackDir);
   roomRef->Broadcast(&sendPacket);
+}
+
+void MageObject::ExecHeal() {
+  static constexpr float HEAL_HP = 75.0f;
+  if (!m_healing) {
+    return;
+  }
+  auto roomPtr = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
+  if (nullptr == roomPtr) {
+    return;
+  }
+  DreamWorld::SERVER_PACKET::NotifyHealPacket sendPacket(static_cast<char>(SERVER_PACKET::TYPE::NOTIFY_HEAL_HP));
+  int i = 0;
+  auto characters = roomPtr->GetCharacters(true);
+  for (auto& character : characters) {
+    auto characterPtr = std::static_pointer_cast<CharacterObject>(character);
+    characterPtr->Heal(HEAL_HP);
+    sendPacket.applyHealPlayerInfo[i].role = characterPtr->GetRole();
+    sendPacket.applyHealPlayerInfo[i].hp = character->GetHp();
+    ++i;
+  }
+  roomPtr->Broadcast(&sendPacket);
+  // 1초 뒤에 다시 이벤트 삽입
+  InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + MS(1000),  // 바로 실행할 수 있게
+                                        [this]() {
+                                          ExecHeal();
+                                        }));
 }
 
 void MageSkill::ThunderSkill::Execute() {

@@ -1,10 +1,14 @@
 #pragma once
 #include "../GameObject.h"
+#include <memory>
 #include "../EventController/EventController.h"
+#include "../Timer/TimerJob.h"
 
 // User 플레이 캐릭터
 namespace DreamWorld {
 class RoomBase;
+using CharTimerJobPtr = std::unique_ptr<TimerJob>;
+
 class CharacterObject : public LiveObject {
  public:
   enum SKILL_TYPE {
@@ -99,6 +103,7 @@ class CharacterObject : public LiveObject {
   }
 
   void ForceStopMove();
+
   void ResetSkillCoolTime();
 
  protected:
@@ -112,6 +117,11 @@ class CharacterObject : public LiveObject {
   // 근데, 어쨌든 움직일 수있다 없다면
   // 움직이면 슬라이딩 벡터 적용하든, nextPosition리턴하면 되지 않나?
   std::optional<std::pair<bool, XMFLOAT3>> CollideWall(const XMFLOAT3& nextPosition, const float& elapsedTime, const bool& isSlidingPosition);
+
+  void InsertJobQ(CharTimerJobPtr&& job);
+
+ private:
+  void ExecJobQ();
 
  protected:
   bool m_leftMouseInput;
@@ -133,6 +143,10 @@ class CharacterObject : public LiveObject {
   ROLE m_role;
   // Skill Contoller
   std::unique_ptr<EventController> m_skillCtrl;
+
+ private:
+  std::recursive_mutex m_jobQLock;
+  std::priority_queue<CharTimerJobPtr> m_timerJobQ;
 };
 
 class MeleeCharacterObject : public CharacterObject {

@@ -4,35 +4,31 @@
 #include "../UserManager/UserManager.h"
 #include "../UserSession/UserSession.h"
 
-void Network::NetworkModule::InitializeNetwork()
-{
+void Network::NetworkModule::InitializeNetwork(){
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	m_iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, MAX_THREAD_NUM);
 
-	for (int i = 0; i < MAX_THREAD_NUM; ++i)
-		m_workerThread.emplace_back([this]() {WorkerThread(); });
+	for ( int i = 0; i < MAX_THREAD_NUM; ++i )
+		m_workerThread.emplace_back([this](){WorkerThread(); });
 }
 
-void Network::NetworkModule::RegistHandle(HANDLE& registHandle)
-{
-	CreateIoCompletionPort(registHandle, m_iocpHandle, reinterpret_cast<ULONG_PTR>(registHandle), 0);
+void Network::NetworkModule::RegistHandle(HANDLE& registHandle){
+	CreateIoCompletionPort(registHandle, m_iocpHandle, reinterpret_cast< ULONG_PTR >(registHandle), 0);
 }
 
-void Network::NetworkModule::WorkerThread()
-{
-	while (true) {
+void Network::NetworkModule::WorkerThread(){
+	while ( true ){
 		DWORD ioByte;
 		ULONG_PTR key;
 		ExpOver* overlapped;
-		bool success = GetQueuedCompletionStatus(m_iocpHandle, &ioByte, &key, reinterpret_cast<LPOVERLAPPED*>(&overlapped), INFINITE);
+		bool success = GetQueuedCompletionStatus(m_iocpHandle, &ioByte, &key, reinterpret_cast< LPOVERLAPPED* >( &overlapped ), INFINITE);
 		overlapped->Execute(success, ioByte, key);
 	}
 }
 
-void DreamWorld::StressTestNetwork::InitializeNetwork()
-{
+void DreamWorld::StressTestNetwork::InitializeNetwork(){
 	NetworkModule::InitializeNetwork();
 	Network::UserManager::GetInstance().Initialize();
 
@@ -40,35 +36,31 @@ void DreamWorld::StressTestNetwork::InitializeNetwork()
 	m_connections = 0;
 	globalMaxDelay = 0;
 
-	//¿¬°áµÈ Å¬¶óÀÌ¾ğÆ®ÀÇ µô·¹ÀÌ ÃÑÇÕ
+	//ì—°ê²°ëœ í´ë¼ì´ì–¸íŠ¸ì˜ ë”œë ˆì´ ì´í•©
 	globalDelay = 0;
 	dGlobalDelay = 0;
 	globalMaxDelay = 0;
 
-	m_connectThread = std::thread([this]() { ConnectThread(); });
+	m_connectThread = std::thread([this](){ ConnectThread(); });
 }
 
-void DreamWorld::StressTestNetwork::IncreaseActiveClient()
-{
+void DreamWorld::StressTestNetwork::IncreaseActiveClient(){
 	m_activeClientNum++;
 }
 
-void DreamWorld::StressTestNetwork::DisconnectClient()
-{
+void DreamWorld::StressTestNetwork::DisconnectClient(){
 	m_activeClientNum--;
 	m_connections--;
 }
 
-void DreamWorld::StressTestNetwork::ConnectThread()
-{
-	while (true) {
+void DreamWorld::StressTestNetwork::ConnectThread(){
+	while ( true ){
 		AdjustClientNumber();
 		Network::UserManager::GetInstance().RunActiveClient(m_activeClientNum);
 	}
 }
 
-void DreamWorld::StressTestNetwork::AdjustClientNumber()
-{
+void DreamWorld::StressTestNetwork::AdjustClientNumber(){
 	static int DELAY_MULTIPLIER = 1;
 	static int MAX_LIMIT = MAXINT;
 	static bool CONNECTION_INCREASING = true;
@@ -77,39 +69,38 @@ void DreamWorld::StressTestNetwork::AdjustClientNumber()
 	static constexpr MS DELAY_LIMIT2 = MS(150);
 	static constexpr MS CONNECTION_DELAY = MS(50);
 
-	if (m_activeClientNum >= MAX_TEST) return;
-	if (m_connections >= MAX_CLIENTS) return;
+	if ( m_activeClientNum >= MAX_TEST ) return;
+	if ( m_connections >= MAX_CLIENTS ) return;
 
 	auto nowTime = Time::now();
-	auto lastConnectDurationTime = std::chrono::duration_cast<MS>(nowTime - m_lastConnectTime);
+	auto lastConnectDurationTime = std::chrono::duration_cast< MS >( nowTime - m_lastConnectTime );
 
-	//(¸¶Áö¸· Ä¿³ØÆ® ½Ã°£ - ÇöÀç ½Ã°£) < Ä¿³ØÆ® µô·¹ÀÌ => ³Ê¹« ºü¸£°Ô connect °É¸é Èûµé¾î¼­?
-	if (CONNECTION_DELAY * DELAY_MULTIPLIER > lastConnectDurationTime) return;
+	//(ë§ˆì§€ë§‰ ì»¤ë„¥íŠ¸ ì‹œê°„ - í˜„ì¬ ì‹œê°„) < ì»¤ë„¥íŠ¸ ë”œë ˆì´ => ë„ˆë¬´ ë¹ ë¥´ê²Œ connect ê±¸ë©´ í˜ë“¤ì–´ì„œ?
+	if ( CONNECTION_DELAY * DELAY_MULTIPLIER > lastConnectDurationTime ) return;
 
-	//¿¬°áµÈ Å¬¶óÀÌ¾ğÆ® Æò±Õ µô·¹ÀÌ ½Ã°£
+	//ì—°ê²°ëœ í´ë¼ì´ì–¸íŠ¸ í‰ê·  ë”œë ˆì´ ì‹œê°„
 	unsigned long long averageDelay = globalDelay;
-	if (m_activeClientNum != 0)
+	if ( m_activeClientNum != 0 )
 		averageDelay /= m_activeClientNum;
 
-	if (DELAY_LIMIT2.count() < averageDelay) {//Æò±Õ µô·¹ÀÌ°¡ ³Ê¹« Å¬ ¶§
-		if (CONNECTION_INCREASING) {//Æò±Õ µô·¹ÀÌ ½Ã°£ÀÌ ±âÁØÁ¡º¸´Ù ÀÌ»óÀÌ¶ó¸é Ä¿³Ø¼Ç Áõ°¡ Á¾·á
+	if ( DELAY_LIMIT2.count() < averageDelay ){//í‰ê·  ë”œë ˆì´ê°€ ë„ˆë¬´ í´ ë•Œ
+		if ( CONNECTION_INCREASING ){//í‰ê·  ë”œë ˆì´ ì‹œê°„ì´ ê¸°ì¤€ì ë³´ë‹¤ ì´ìƒì´ë¼ë©´ ì»¤ë„¥ì…˜ ì¦ê°€ ì¢…ë£Œ
 			MAX_LIMIT = m_activeClientNum;
 			CONNECTION_INCREASING = false;
 		}
-		if (m_activeClientNum < 100) return;
-		if (CONNECTION_DELAY * 10 > lastConnectDurationTime) return;
+		if ( m_activeClientNum < 100 ) return;
+		if ( CONNECTION_DELAY * 10 > lastConnectDurationTime ) return;
 		m_lastConnectTime = nowTime;
 		Network::UserManager::GetInstance().ForceDisconnect(m_disconnectClientNum++);
 		return;
-	}
-	else if (DELAY_LIMIT.count() < averageDelay) {//Æò±Õ ´Ş·¹ÀÌ°¡ Á» Å¬ ¶§
-		// Ä¿³ØÆ® µô·¹ÀÌ ½Ã°£À» 10¹è ´Ã¸®°Ô ÇÔ.
+	} else if ( DELAY_LIMIT.count() < averageDelay ){//í‰ê·  ë‹¬ë ˆì´ê°€ ì¢€ í´ ë•Œ
+		// ì»¤ë„¥íŠ¸ ë”œë ˆì´ ì‹œê°„ì„ 10ë°° ëŠ˜ë¦¬ê²Œ í•¨.
 		DELAY_MULTIPLIER = 10;
 		return;
 	}
 
-	//ÇöÀç ¿¬°áµÈ Å¬¶óÀÌ¾ğÆ®¼ö°¡ µô·¹ÀÌ°¡ Å¬ ¶§ setÇÑ MAX_LIMIT°ªÀÇ 80%º¸´Ù Å¬ ¶§ => µô·¹ÀÌ°¡ Å¬ ¶§, ÂïÈù ÀÎ¿øÀÇ 80%±îÁö Ãà¼Ò
-	if (float(MAX_LIMIT) * 0.8f < m_activeClientNum) return;
+	//í˜„ì¬ ì—°ê²°ëœ í´ë¼ì´ì–¸íŠ¸ìˆ˜ê°€ ë”œë ˆì´ê°€ í´ ë•Œ setí•œ MAX_LIMITê°’ì˜ 80%ë³´ë‹¤ í´ ë•Œ => ë”œë ˆì´ê°€ í´ ë•Œ, ì°íŒ ì¸ì›ì˜ 80%ê¹Œì§€ ì¶•ì†Œ
+	if ( float(MAX_LIMIT) * 0.8f < m_activeClientNum ) return;
 
 	CONNECTION_INCREASING = true;
 	m_lastConnectTime = Time::now();
@@ -121,11 +112,12 @@ void DreamWorld::StressTestNetwork::AdjustClientNumber()
 	serverAddr.sin_port = htons(SERVER_PORT);
 	inet_pton(AF_INET, SERVER_IP.data(), &serverAddr.sin_addr.s_addr);
 
-	int connectResult = WSAConnect(connectSocket, (sockaddr*)&serverAddr, sizeof(serverAddr), NULL, NULL, NULL, NULL);
-	if (0 != connectResult) {
+	int connectResult = WSAConnect(connectSocket, ( sockaddr* )&serverAddr, sizeof(serverAddr), NULL, NULL, NULL, NULL);
+	if ( 0 != connectResult ){
+		auto errNo = WSAGetLastError();
 		return;
 	}
-	RegistHandle(reinterpret_cast<HANDLE&>(connectSocket));
+	RegistHandle(reinterpret_cast< HANDLE& >( connectSocket ));
 	auto connectUserSession = Network::UserManager::GetInstance().GetTryConnectUserSession();
 	connectUserSession->Connect(connectSocket);
 	m_connections++;

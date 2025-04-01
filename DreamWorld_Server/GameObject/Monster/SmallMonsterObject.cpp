@@ -15,7 +15,7 @@ SmallMonsterObject::SmallMonsterObject(const float& maxHp, const float& moveSpee
     : MonsterObject(maxHp, moveSpeed, boundingSize, roomRef), m_idx(idx) {
   m_behaviorTimeEventCtrl->InsertCoolDownEventData(FIND_PLAYER, EventController::MS(600));
   m_behaviorTimeEventCtrl->InsertCoolDownEventData(ATTACK_PLAYER, EventController::MS(2500));
-  m_behaviorTimeEventCtrl->InsertCoolDownEventData(UPDATE_DESTINATION, EventController::MS(200));
+  m_behaviorTimeEventCtrl->InsertCoolDownEventData(UPDATE_DESTINATION, EventController::MS(500));
 }
 
 void SmallMonsterObject::Update() {

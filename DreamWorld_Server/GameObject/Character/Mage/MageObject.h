@@ -74,5 +74,10 @@ class MageObject : public RangedCharacterObject {
   void ExecuteThunderSkill(const XMFLOAT3& position);
   void ExecuteHeal(const CommonDurationSkill_MILSEC::DURATION_TIME_RATIO& durationTime);
   void ExecuteCommonAttack(const XMFLOAT3& attackDir);
+
+  void ExecHeal();
+
+ private:
+  bool m_healing;
 };
 }  // namespace DreamWorld

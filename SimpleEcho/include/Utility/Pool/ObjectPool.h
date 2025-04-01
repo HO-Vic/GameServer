@@ -86,6 +86,7 @@ class ObjectPool {
 
  private:
   void Release(T* ptr) {
+    std::destroy_at<T>(ptr);
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
   }
@@ -152,11 +153,11 @@ class RawObjectPool {
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
-
     return ptr;
   }
 
   void Release(T* ptr) {
+    std::destroy_at(ptr);
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
   }

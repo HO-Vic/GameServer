@@ -27,7 +27,7 @@ namespace DreamWorld
 	static const std::string_view SERVER_IP = "127.0.0.1";
 	static const short SERVER_PORT = 9000;
 
-	static constexpr int MAX_TEST = 10000;
+	static constexpr int MAX_TEST = 3000;
 	static constexpr int MAX_CLIENTS = MAX_TEST * 2;
 
 	using Time = std::chrono::high_resolution_clock;
@@ -48,24 +48,24 @@ namespace DreamWorld
 	private:
 		void ConnectThread();
 
-		//Å¬¶óÀÌ¾ğÆ® ¿¬°á °ü¸®
+		//í´ë¼ì´ì–¸íŠ¸ ì—°ê²° ê´€ë¦¬
 		void AdjustClientNumber();
 	private:
 		std::thread m_connectThread;
 
-		//°­Á¦·Î ¿¬°á ²÷À» ¶§ »ç¿ëÇÏ´Â idx¹øÈ£
+		//ê°•ì œë¡œ ì—°ê²° ëŠì„ ë•Œ ì‚¬ìš©í•˜ëŠ” idxë²ˆí˜¸
 		std::atomic_int m_disconnectClientNum;
 
-		//¸¶Áö¸·À¸·Î connect¿Í °ü·ÃµÈ ÀÏÀ» ÇÑ ½Ã°£
+		//ë§ˆì§€ë§‰ìœ¼ë¡œ connectì™€ ê´€ë ¨ëœ ì¼ì„ í•œ ì‹œê°„
 		Time::time_point m_lastConnectTime;
 
-		//connect±îÁö¸¸ ¼º°øÇÑ Å¬¶óÀÌ¾ğÆ® ¼ö
+		//connectê¹Œì§€ë§Œ ì„±ê³µí•œ í´ë¼ì´ì–¸íŠ¸ ìˆ˜
 		std::atomic_int m_connections;
 
-		//ÇöÀç ·Î±×ÀÎ±îÁö ¼º°øÇÑ Å¬¶óÀÌ¾ğÆ® ¼ö
+		//í˜„ì¬ ë¡œê·¸ì¸ê¹Œì§€ ì„±ê³µí•œ í´ë¼ì´ì–¸íŠ¸ ìˆ˜
 		std::atomic_int m_activeClientNum;
 	public:
-		//¿¬°áµÈ Å¬¶óÀÌ¾ğÆ®ÀÇ µô·¹ÀÌ ÃÑÇÕ
+		//ì—°ê²°ëœ í´ë¼ì´ì–¸íŠ¸ì˜ ë”œë ˆì´ ì´í•©
 		std::atomic_llong globalDelay;
 		std::atomic<double> dGlobalDelay;
 		std::atomic_int globalMaxDelay;

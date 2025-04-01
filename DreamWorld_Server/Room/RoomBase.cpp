@@ -14,7 +14,7 @@
 
 namespace DreamWorld {
 RoomBase::RoomBase(const uint16_t maxExecuteJobCnt)
-    : sh::Utility::LFJobQ_MT("RoomBase"), m_maxExecJobCnt(maxExecuteJobCnt) {
+    : sh::Utility::DoubleJobQ_MT("RoomBase"), m_maxExecJobCnt(maxExecuteJobCnt) {
 }
 
 void RoomBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) {

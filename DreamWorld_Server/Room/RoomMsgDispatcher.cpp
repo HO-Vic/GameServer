@@ -3,12 +3,15 @@
 #include <memory>
 #include <chrono>
 #include <functional>
+#include <Utility/Job/Job.h>
+#include <Utility/Pool/ObjectPool.h>
 #include "RoomMsgDispatcher.h"
 #include "../Server/MsgProtocol.h"
 #include "../Network/Session/Session.h"
 #include "../Room/RoomBase.h"
 #include "../Room/Room.h"
 #include "../GameObject/Character/ChracterObject.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 void RoomMsgDispatcher::Init() {
@@ -200,8 +203,9 @@ void RoomMsgDispatcher::OnStageChangeBoss(sh::IO_Engine::ISessionPtr sessionPtr,
   if (nullptr == possessObject || nullptr == roomRef) {
     return;  // Already Expired Room
   }
-  // auto changeBossStageEvent = std::make_shared<ChangeBossStageEvent>(roomRef);
-  // roomRef->InsertPrevUpdateEvent(std::static_pointer_cast<PrevUpdateEvent>(changeBossStageEvent));
+  roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+    std::static_pointer_cast<Room>(roomRef)->SetBossStage();
+  }));
 }
 
 void RoomMsgDispatcher::OnForceGameEnd(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
@@ -211,7 +215,9 @@ void RoomMsgDispatcher::OnForceGameEnd(sh::IO_Engine::ISessionPtr sessionPtr, BY
   if (nullptr == possessObject || nullptr == roomRef) {
     return;  // Already Expired Room
   }
-  // roomRef->ForceGameEnd();
+  roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
+    std::static_pointer_cast<Room>(roomRef)->ForceGameEnd();
+  }));
 }
 
 void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {

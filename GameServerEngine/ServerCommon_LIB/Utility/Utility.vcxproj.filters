@@ -79,6 +79,9 @@
     <ClCompile Include="private\Thread\IWorkerItem.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Job\Job.h">
@@ -128,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="public\Thread\IWorkerItem.h">
       <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h">
+      <Filter>Job\JobQ\MT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

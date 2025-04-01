@@ -14,7 +14,7 @@ ThreadPool::ThreadPool(const uint8_t threadNo)
 }
 
 void ThreadPool::RunningThread(std::stop_token stopToken) {
-  static constexpr uint16_t MAX_COMPLETION_CNT = 10;
+  static constexpr uint16_t MAX_COMPLETION_CNT = 32;
   OVERLAPPED_ENTRY overlappedEntry[MAX_COMPLETION_CNT];
 
   while (true) {
@@ -26,7 +26,6 @@ void ThreadPool::RunningThread(std::stop_token stopToken) {
       auto& workerJob = *(reinterpret_cast<ThWorkerJob*>(overlappedEntry[i].lpOverlapped));
 
       if (WORKER_TYPE::TERMINATE == workerJob.GetType()) {
-        BUILD_MESSAGE(__FILE__, __LINE__, "TERMINATE가 호출 됐을 때, stopToken으로 모든 IO Thread 종료 기대");
         m_threadManager.ForceStop();
         return;
       }

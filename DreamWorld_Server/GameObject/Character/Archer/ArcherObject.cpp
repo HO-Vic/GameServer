@@ -7,6 +7,7 @@
 #include <Utility/Pool/ObjectPool.h>
 #include "../ObjectPools.h"
 #include "../Server/MsgProtocol.h"
+#include "../Timer/TimerJob.h"
 
 namespace DreamWorld {
 ArcherObject::ArcherObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -95,9 +96,10 @@ void ArcherObject::ExecuteRainArrow(const XMFLOAT3& position) {  // 이런 타�
   }
 
   m_attackRainArrowPosition = position;
-  // TIMER::Timer& timerRef = TIMER::Timer::GetInstance();
-  // auto skyArrowEvent = std::make_shared<TIMER::RoomEvent>(TIMER_EVENT_TYPE::EV_RAIN_ARROW_ATTACK, SKY_ARROW_ATTACK_TIME, roomRef);
-  // timerRef.InsertTimerEvent(std::static_pointer_cast<TIMER::EventBase>(skyArrowEvent));
+  InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + SKY_ARROW_ATTACK_TIME,
+                                        [this]() {
+                                          AttackRainArrow();
+                                        }));
 }
 
 void ArcherObject::ExecuteCommonAttack(const XMFLOAT3& direction, const int& power) {

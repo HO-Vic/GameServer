@@ -115,6 +115,9 @@ std::vector<std::shared_ptr<LiveObject>> Room::GetCharacters(bool checkAlive) {
 
 void Room::Update() {
   DoJobs(0);
+  if (ROOM_STATE::ROOM_END == m_roomState) {
+    return;
+  }
 
   int aliveCharacterCnt = 0;
   for (auto& [role, character] : m_characters) {
@@ -162,12 +165,11 @@ void Room::Update() {
   Timer::GetInstance().InsertTimerEvent(
       ObjectPool<TimerJob>::GetInstance().MakeUnique(now + ROOM_UPDATE_TICK, std::move([isLogging, now, this]() {
                                                        RoomThreadPool::GetInstance().InsertRoomUpdateEvent(std::static_pointer_cast<RoomBase>(shared_from_this()));
-
-                                                       if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
+                                                       /*if (isLogging && ServerConfig::GetInstance().targetRoomIds.contains(m_roomId)) {
                                                          auto execTime = chrono_clock::now();
                                                          auto diff = _chrono::duration_cast<_chrono::milliseconds>(execTime - now).count();
                                                          WRITE_LOG(logLevel::debug, "{}({}) > Room Update Time Check Diff Insert to Execute [roomId:{}][Diff:{}] [tick: {}]]", __FUNCTION__, __LINE__, m_roomId, diff, ROOM_UPDATE_TICK.count());
-                                                       }
+                                                       }*/
                                                      })));
 
   m_prevUpdateTime = now;
@@ -242,11 +244,45 @@ std::shared_ptr<MapData> Room::GetMapData() const {
 std::shared_ptr<NavMapData> Room::GetBossMapData() const {
   return m_bossMapData;
 }
+
 std::shared_ptr<CharacterObject> Room::GetCharacter(const ROLE role) {
   auto findIter = m_characters.find(role);
   if (findIter != m_characters.end()) {
     return findIter->second;
   }
   return nullptr;
+}
+
+void Room::SetBossStage() {
+  static constexpr std::chrono::seconds BOSS_START_AFTER_TIME = std::chrono::seconds(11);
+  if (ROOM_STATE::ROOM_COMMON != m_roomState) {
+    return;
+  }
+  m_roomState = ROOM_STATE::ROOM_BOSS;
+  m_bossStartTime = std::chrono::high_resolution_clock::now() + BOSS_START_AFTER_TIME;
+
+  SERVER_PACKET::BossStageInitPacket sendPacket{};
+  int characterCnt = 0;
+  for (auto& [role, character] : m_characters) {
+    character->ForceStopMove();
+    character->SetStagePosition(ROOM_STATE::ROOM_BOSS);
+    character->ResetSkillCoolTime();
+    character->SetFullHp();
+    sendPacket.userState[characterCnt].role = role;
+    sendPacket.userState[characterCnt].hp = character->GetHp();
+    sendPacket.userState[characterCnt].position = character->GetPosition();
+    sendPacket.userState[characterCnt].resetShield = character->GetShield();
+    ++characterCnt;
+  }
+  sendPacket.bossPosition = m_bossMonster->GetPosition();
+  sendPacket.bossLookVector = m_bossMonster->GetLookVector();
+  sendPacket.bossHp = m_bossMonster->GetMaxHp();
+  Broadcast(&sendPacket);
+}
+
+void Room::ForceGameEnd() {
+  if (ROOM_STATE::ROOM_END != m_roomState) {
+    SetRoomEndState();
+  }
 }
 }  // namespace DreamWorld

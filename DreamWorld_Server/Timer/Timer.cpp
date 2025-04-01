@@ -73,7 +73,7 @@ void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
       } else {
         TimerQueue.push(std::move(currentEvent));  // 아니라면 concurrent에 삽입
       }
-      // Sleep(1);
+      Sleep(1);
       break;
     }
   }
@@ -97,7 +97,7 @@ void Timer::TimerThreadFunc2(std::stop_token stopToken, uint8_t thId) {
     }
     // 아니라면 다시 삽입
     TimerQueue.push(std::move(currentEvent));  // 아니라면 concurrent에 삽입
-    // Sleep(1);
+    Sleep(1);
   }
   while (true) {
     if (stopToken.stop_requested()) {

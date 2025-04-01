@@ -20,3 +20,5 @@
 *.ifc
 /**/ServerCore
 /**/DreamWorldLog
+*.ipdb
+*.iobj

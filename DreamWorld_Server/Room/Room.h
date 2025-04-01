@@ -49,6 +49,10 @@ class Room final
 
   std::shared_ptr<CharacterObject> GetCharacter(const ROLE role);
 
+  void SetBossStage();
+
+  void ForceGameEnd();  // Cheat
+
  protected:
   virtual void Update() override;
 

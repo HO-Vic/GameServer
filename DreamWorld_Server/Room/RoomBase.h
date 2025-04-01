@@ -8,7 +8,9 @@
 #include <shared_mutex>
 #include <Utility/Thread/IWorkerItem.h>
 #include <Utility/Job/JobQueue/JobQ_MT/LFJobQ_MT.h>
+#include <Utility/Job/JobQueue/JobQ_MT/DoubleJobQ_MT.h>
 #include "../DreamWorldDefine.h"
+
 
 namespace sh::Utility {
 class ThWorkerJob;
@@ -28,7 +30,7 @@ struct PacketHeader;
 
 class RoomBase
     : public sh::Utility::IWorkerItem,
-      public sh::Utility::LFJobQ_MT {
+      public sh::Utility::DoubleJobQ_MT {
  public:
   RoomBase(const uint16_t maxExecuteJobCnt = 0);
 

@@ -5,6 +5,8 @@
 #include "../../EventController/DurationEvent.h"
 #include "../GameObject/Monster/MonsterObject.h"
 #include "../ObjectPools.h"
+#include "../Server/MsgProtocol.h"
+#include "../Timer/TimerJob.h"
 
 namespace DreamWorld {
 TankerObject::TankerObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -27,6 +29,7 @@ void TankerObject::SetStagePosition(const ROOM_STATE& roomState) {
 }
 
 void TankerObject::RecvSkill(const SKILL_TYPE& type) {
+  static constexpr MS SHIELD_APPLY_TIME = MS(2400);
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr == roomRef) {
     return;
@@ -34,8 +37,35 @@ void TankerObject::RecvSkill(const SKILL_TYPE& type) {
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
     auto durationEvent = std::static_pointer_cast<DurationEvent>(m_skillCtrl->GetEventData(SKILL_Q));
     auto shieldSkill = std::make_shared<TankerSkill::ShieldSkill>(std::static_pointer_cast<TankerObject>(shared_from_this()), durationEvent->GetDurationTIme());
-    // 이거 2.4초 뒤에, 쉴드 적용, 2.4+durationTime 뒤에 제거인데, 이것도 player Tickable Object에 넣으면 될듯?
-    //  roomRef->InsertPrevUpdateEvent(std::make_shared<PlayerSkillEvent>(std::static_pointer_cast<PlayerSkillBase>(shieldSkill)));
+
+    InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + SHIELD_APPLY_TIME,  // 2.4초 뒤에 쉴드 적용
+                                          [this]() {
+                                            auto roomPtr = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
+                                            if (nullptr == roomPtr) {
+                                              return;
+                                            }
+                                            auto characters = roomPtr->GetCharacters(true);
+                                            for (auto& character : characters) {
+                                              auto characterPtr = std::static_pointer_cast<CharacterObject>(character);
+                                              characterPtr->SetShield(true);
+                                              DreamWorld::SERVER_PACKET::NotifyPacket sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHIELD_START));
+                                              roomPtr->Broadcast(&sendPacket);
+                                            }
+                                          }));
+    InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + SHIELD_APPLY_TIME + durationEvent->GetDurationTIme(),  // 바로 실행할 수 있게
+                                          [this]() {
+                                            auto roomPtr = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
+                                            if (nullptr == roomPtr) {
+                                              return;
+                                            }
+                                            auto characters = roomPtr->GetCharacters(true);
+                                            for (auto& character : characters) {
+                                              auto characterPtr = std::static_pointer_cast<CharacterObject>(character);
+                                              characterPtr->SetShield(false);
+                                              DreamWorld::SERVER_PACKET::NotifyPacket sendPacket(static_cast<char>(SERVER_PACKET::TYPE::SHIELD_END));
+                                              roomPtr->Broadcast(&sendPacket);
+                                            }
+                                          }));
   } else {
     spdlog::critical("TankerObject::RecvSkill(const SKILL_TYPE& ) - Non Use SKILL_E");
   }
@@ -99,6 +129,7 @@ void TankerObject::ExecuteHammerSkill(const XMFLOAT3& direction) {
 }
 
 void TankerObject::ExecuteShield(const CommonDurationSkill_MILSEC::DURATION_TIME_RATIO& durationTime) {
+  // 더 이상 쓰지 않는 함수
   using namespace std::chrono;
 
   auto roomRef = m_roomWeakRef.lock();
@@ -106,7 +137,6 @@ void TankerObject::ExecuteShield(const CommonDurationSkill_MILSEC::DURATION_TIME
     return;
   }
 
-  static constexpr milliseconds SHIELD_APPLY_TIME = milliseconds(2400);
   /*auto applyEvent = std::make_shared<TIMER::RoomEvent>(TIMER_EVENT_TYPE::EV_APPLY_SHIELD, SHIELD_APPLY_TIME, roomRef);
   auto removeEventEvent = std::make_shared<TIMER::RoomEvent>(TIMER_EVENT_TYPE::EV_APPLY_SHIELD, durationTime + SHIELD_APPLY_TIME, roomRef);
 

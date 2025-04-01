@@ -6,6 +6,7 @@
 #include "../EventController/CoolDownEventBase.h"
 #include "../EventController/DurationEvent.h"
 #include "../Server/MsgProtocol.h"
+#include "../Timer/TimerJob.h"
 
 namespace DreamWorld {
 CharacterObject::CharacterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, const float& attackDamage, std::shared_ptr<RoomBase>& roomRef, const ROLE& role)
@@ -14,6 +15,7 @@ CharacterObject::CharacterObject(const float& maxHp, const float& moveSpeed, con
 }
 
 void CharacterObject::Update() {
+  ExecJobQ();
   // 회전 각 업데이트
   UpdateRotate();
   // Move
@@ -205,6 +207,23 @@ std::optional<std::pair<bool, XMFLOAT3>> CharacterObject::CollideWall(const XMFL
   XMFLOAT3 applySlidingPosition = GetPosition();
   applySlidingPosition = Vector3::Add(applySlidingPosition, slidingVectorResult.second, m_moveSpeed * elapsedTime * slidingVectorResult.first);
   return std::pair<bool, XMFLOAT3>(true, applySlidingPosition);
+}
+
+void CharacterObject::InsertJobQ(CharTimerJobPtr&& job) {
+  std::lock_guard<std::recursive_mutex> lg{m_jobQLock};
+  m_timerJobQ.push(std::move(job));
+}
+
+void CharacterObject::ExecJobQ() {
+  std::lock_guard<std::recursive_mutex> lg{m_jobQLock};
+  while (!m_timerJobQ.empty()) {
+    if (m_timerJobQ.top().get()->IsReady()) {
+      m_timerJobQ.top().get()->Execute();
+      m_timerJobQ.pop();
+    } else {
+      return;  // 아직 수행 시간 안된거
+    }
+  }
 }
 
 MeleeCharacterObject::MeleeCharacterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, const float& attackDamage, std::shared_ptr<RoomBase>& roomRef, const ROLE& role)

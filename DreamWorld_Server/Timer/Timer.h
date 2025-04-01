@@ -6,9 +6,9 @@
 #include "TimerJob.h"
 
 namespace DreamWorld {
+using TimerJobPtr = std::unique_ptr<TimerJob, std::function<void(TimerJob*)>>;
 class Timer
     : public sh::Utility::SingletonBase<Timer> {
-  using TimerJobPtr = std::unique_ptr<TimerJob, std::function<void(TimerJob*)>>;
   struct TimerQueueComp {
     bool operator()(TimerJobPtr& l, TimerJobPtr& r) const {
       return l->GetWakeTime() > r->GetWakeTime();

@@ -167,6 +167,7 @@
     <ClInclude Include="public\BuildMsg\BuildMsg.h" />
     <ClInclude Include="public\Job\Job.h" />
     <ClInclude Include="public\Job\JobQueue\JobQBase.h" />
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\LFJobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h" />
@@ -183,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Job\Job.cpp" />
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
