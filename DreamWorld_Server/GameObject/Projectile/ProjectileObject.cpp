@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ProjectileObject.h"
 #include "../Room/RoomBase.h"
-#include "../Room/RoomEvent.h"
 #include "../Character/ChracterObject.h"
 #include "../Monster/MonsterObject.h"
 #include "../Room/Room.h"

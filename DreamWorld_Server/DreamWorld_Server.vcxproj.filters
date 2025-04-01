@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Network">
-      <UniqueIdentifier>{7faae775-2eb3-47f7-9e88-cb4d49437994}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IOCP">
-      <UniqueIdentifier>{1232dcad-1fa0-4a25-89e8-231977930a1f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PCH">
       <UniqueIdentifier>{d65f0c35-b6f5-41f7-a1a8-d5c230df8689}</UniqueIdentifier>
     </Filter>
@@ -15,21 +9,6 @@
     </Filter>
     <Filter Include="Timer">
       <UniqueIdentifier>{cf8ae021-9f8f-43cb-bc14-3e832e28ebfe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\ExpOver">
-      <UniqueIdentifier>{2c8d6f2a-b71a-49f8-8fe0-190b0e8e90fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IocpEvent">
-      <UniqueIdentifier>{616faf02-0af5-4bb0-8fd0-14d2210f909f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IocpEvent\SendEvent">
-      <UniqueIdentifier>{db41b7a6-3fc5-4a84-83e1-368d9c1d668a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IocpEvent\ListenEvent">
-      <UniqueIdentifier>{3a11b420-5649-47ed-835e-582868b460b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IocpEvent\DBEvent">
-      <UniqueIdentifier>{aad6529a-738a-43e1-b01c-78b28442001d}</UniqueIdentifier>
     </Filter>
     <Filter Include="InGame">
       <UniqueIdentifier>{01b795a2-581c-4218-a79a-bc5b226f5d0b}</UniqueIdentifier>
@@ -48,9 +27,6 @@
     </Filter>
     <Filter Include="InGame\Room">
       <UniqueIdentifier>{a13be899-e830-47cb-8b85-8dfe2f61fd3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="InGame\Room\RoomEvent">
-      <UniqueIdentifier>{39839b50-7efa-4ad0-9005-dfb67976c7a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="InGame\Match">
       <UniqueIdentifier>{6ed44798-c081-4f3b-ba5f-2ded23df14a0}</UniqueIdentifier>
@@ -79,17 +55,8 @@
     <Filter Include="InGame\GameObject\Monster\BossEvent">
       <UniqueIdentifier>{2efaaa55-3541-4fb9-b797-b201ab9964e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network\IocpEvent\protocol">
-      <UniqueIdentifier>{f5551efc-7820-4d42-9c7e-76d725544d9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\IocpEvent\UserSession">
-      <UniqueIdentifier>{117bfb1d-30a0-44fb-9963-935ceae9c30f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Server">
       <UniqueIdentifier>{2a662e64-2652-4fc7-9bc2-7432b3ae59ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Network\Session">
-      <UniqueIdentifier>{1c05ab28-1e77-4534-b2bb-2f11d19bdde9}</UniqueIdentifier>
     </Filter>
     <Filter Include="LogManager">
       <UniqueIdentifier>{7369c46a-ddca-433b-b9f0-b26d7c9d5433}</UniqueIdentifier>
@@ -103,22 +70,16 @@
     <Filter Include="Timer\TimerJob">
       <UniqueIdentifier>{a3175507-e8a9-4aaa-bf71-7d52b3ad0ca3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{1c05ab28-1e77-4534-b2bb-2f11d19bdde9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
-    <ClCompile Include="Room\DeprecatedRoom.cpp">
-      <Filter>InGame\Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\DeprecatedRoomManager.cpp">
-      <Filter>InGame\Room</Filter>
-    </ClCompile>
     <ClCompile Include="Timer\Timer.cpp">
       <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\IOCP\Iocp.cpp">
-      <Filter>Network\IOCP</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp">
@@ -154,29 +115,8 @@
     <ClCompile Include="MapData\AstarNode\AstarNode.cpp">
       <Filter>InGame\MapData\AstarNode</Filter>
     </ClCompile>
-    <ClCompile Include="Network\UserSession\UserManager.cpp">
-      <Filter>Network\IocpEvent\UserSession</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\ExpOver\ExpOver.cpp">
-      <Filter>Network\ExpOver</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\IocpEvent\IocpEventManager.cpp">
-      <Filter>Network\IocpEvent</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\IocpEvent\SendEvent.cpp">
-      <Filter>Network\IocpEvent\SendEvent</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\IocpEvent\ListenEvent.cpp">
-      <Filter>Network\IocpEvent\ListenEvent</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\IocpEvent\IocpDBEvent.cpp">
-      <Filter>Network\IocpEvent\DBEvent</Filter>
-    </ClCompile>
     <ClCompile Include="Timer\TimerJob.cpp">
       <Filter>Timer\TimerJob</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\TimerRoomEvent.cpp">
-      <Filter>InGame\Room\RoomEvent</Filter>
     </ClCompile>
     <ClCompile Include="Match\MatchQueue.cpp">
       <Filter>InGame\Match</Filter>
@@ -186,12 +126,6 @@
     </ClCompile>
     <ClCompile Include="GameObject\Monster\BossMonsterObject.cpp">
       <Filter>InGame\GameObject\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\UserSession\UserSession.cpp">
-      <Filter>Network\IocpEvent\UserSession</Filter>
-    </ClCompile>
-    <ClCompile Include="Room\RoomEvent.cpp">
-      <Filter>InGame\Room\RoomEvent</Filter>
     </ClCompile>
     <ClCompile Include="GameObject\EventController\CoolDownEventBase.cpp">
       <Filter>InGame\EventController</Filter>
@@ -224,10 +158,10 @@
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="Network\Session\Session.cpp">
-      <Filter>Network\Session</Filter>
+      <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="Network\Session\SessionMananger.cpp">
-      <Filter>Network\Session</Filter>
+      <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="DB\DBThreadPool.cpp">
       <Filter>DB</Filter>
@@ -280,20 +214,8 @@
     <ClInclude Include="PCH\stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="Room\DeprecatedRoom.h">
-      <Filter>InGame\Room</Filter>
-    </ClInclude>
-    <ClInclude Include="Room\DeprecatedRoomManager.h">
-      <Filter>InGame\Room</Filter>
-    </ClInclude>
     <ClInclude Include="Timer\Timer.h">
       <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IOCP\Iocp.h">
-      <Filter>Network\IOCP</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\protocol\protocol.h">
-      <Filter>Network\IocpEvent\protocol</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\GameObject.h">
       <Filter>InGame\GameObject</Filter>
@@ -328,33 +250,9 @@
     <ClInclude Include="MapData\AstarNode\AstarNode.h">
       <Filter>InGame\MapData\AstarNode</Filter>
     </ClInclude>
-    <ClInclude Include="Network\UserSession\UserManager.h">
-      <Filter>Network\IocpEvent\UserSession</Filter>
-    </ClInclude>
     <ClInclude Include="SingletonBase.h" />
-    <ClInclude Include="Network\ExpOver\ExpOver.h">
-      <Filter>Network\ExpOver</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IocpEvent\IocpEventBase.h">
-      <Filter>Network\IocpEvent</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IocpEvent\IocpEventManager.h">
-      <Filter>Network\IocpEvent</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IocpEvent\SendEvent.h">
-      <Filter>Network\IocpEvent\SendEvent</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IocpEvent\ListenEvent.h">
-      <Filter>Network\IocpEvent\ListenEvent</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\IocpEvent\IocpDBEvent.h">
-      <Filter>Network\IocpEvent\DBEvent</Filter>
-    </ClInclude>
     <ClInclude Include="Timer\TimerJob.h">
       <Filter>Timer\TimerJob</Filter>
-    </ClInclude>
-    <ClInclude Include="Room\TimerRoomEvent.h">
-      <Filter>InGame\Room\RoomEvent</Filter>
     </ClInclude>
     <ClInclude Include="Match\MatchQueue.h">
       <Filter>InGame\Match</Filter>
@@ -367,12 +265,6 @@
     </ClInclude>
     <ClInclude Include="GameObject\Monster\BossMonsterObject.h">
       <Filter>InGame\GameObject\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\UserSession\UserSession.h">
-      <Filter>Network\IocpEvent\UserSession</Filter>
-    </ClInclude>
-    <ClInclude Include="Room\RoomEvent.h">
-      <Filter>InGame\Room\RoomEvent</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\EventController\CoolDownEventBase.h">
       <Filter>InGame\EventController</Filter>
@@ -405,10 +297,10 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Network\Session\Session.h">
-      <Filter>Network\Session</Filter>
+      <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="Network\Session\SessionMananger.h">
-      <Filter>Network\Session</Filter>
+      <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="DB\DBThreadPool.h">
       <Filter>DB</Filter>

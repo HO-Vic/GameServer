@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "WarriorObject.h"
 #include "../Room/Room.h"
-#include "../Room/RoomEvent.h"
 #include "../GameObject/Monster/MonsterObject.h"
 #include "../GameObject/Monster/SmallMonsterObject.h"
 #include "../ObjectPools.h"
