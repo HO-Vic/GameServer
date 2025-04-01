@@ -64,8 +64,9 @@ void MageObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
     return;
   }
   if (SKILL_TYPE::SKILL_TYPE_E == type) {
+    auto magePtr = std::static_pointer_cast<MageObject>(shared_from_this());
     roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
-      MageSkill::ThunderSkill skill(std::static_pointer_cast<MageObject>(shared_from_this()), vector3);
+      MageSkill::ThunderSkill skill(magePtr, vector3);
       skill.Execute();
     }));
   } else {
@@ -76,8 +77,9 @@ void MageObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
 void MageObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
+    auto magePtr = std::static_pointer_cast<MageObject>(shared_from_this());
     roomRef->InsertJob(ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
-      MageSkill::CommonAttack commonAttackEvent(std::static_pointer_cast<MageObject>(shared_from_this()), attackDir);
+      MageSkill::CommonAttack commonAttackEvent(magePtr, attackDir);
       commonAttackEvent.Execute();
     }));
   }

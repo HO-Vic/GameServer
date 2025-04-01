@@ -39,15 +39,17 @@ void ArcherObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
     return;  // Already Room Expire;
   }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
+    auto archerPtr = std::static_pointer_cast<ArcherObject>(shared_from_this());
     roomRef->InsertJob(
         DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
-          ArcherSKill::TripleArrow skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
+          ArcherSKill::TripleArrow skill(archerPtr, vector3);
           skill.Execute();
         })));
   } else if (SKILL_TYPE::SKILL_TYPE_E == type) {
+    auto archerPtr = std::static_pointer_cast<ArcherObject>(shared_from_this());
     roomRef->InsertJob(
         DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
-          ArcherSKill::RainArrow skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), vector3);
+          ArcherSKill::RainArrow skill(archerPtr, vector3);
           skill.Execute();
         })));
   }
@@ -56,9 +58,10 @@ void ArcherObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
 void ArcherObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
+    auto archerPtr = std::static_pointer_cast<ArcherObject>(shared_from_this());
     roomRef->InsertJob(
         DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(std::move([=]() {
-          ArcherSKill::CommonAttack skill(std::static_pointer_cast<ArcherObject>(shared_from_this()), attackDir, power);
+          ArcherSKill::CommonAttack skill(archerPtr, attackDir, power);
           skill.Execute();
         })));
   }

@@ -27,9 +27,10 @@ void Session::Disconnect() {
   if (nullptr == roomPtr) {
     return;
   }
+  auto sessionPtr = std::static_pointer_cast<DreamWorld::Session>(shared_from_this());
   roomPtr->InsertJob(
       DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
-        roomPtr->DiscardPlayer(std::static_pointer_cast<DreamWorld::Session>(shared_from_this()));
+        roomPtr->DiscardPlayer(sessionPtr);
       }));
 }
 

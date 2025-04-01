@@ -35,8 +35,9 @@ void TankerObject::RecvSkill(const SKILL_TYPE& type) {
     return;
   }
   if (SKILL_TYPE::SKILL_TYPE_Q == type) {
+    auto tankerPtr = std::static_pointer_cast<TankerObject>(shared_from_this());
     auto durationEvent = std::static_pointer_cast<DurationEvent>(m_skillCtrl->GetEventData(SKILL_Q));
-    auto shieldSkill = std::make_shared<TankerSkill::ShieldSkill>(std::static_pointer_cast<TankerObject>(shared_from_this()), durationEvent->GetDurationTIme());
+    auto shieldSkill = std::make_shared<TankerSkill::ShieldSkill>(tankerPtr, durationEvent->GetDurationTIme());
 
     InsertJobQ(std::make_unique<TimerJob>(chrono_clock::now() + SHIELD_APPLY_TIME,  // 2.4초 뒤에 쉴드 적용
                                           [this]() {
@@ -78,9 +79,10 @@ void TankerObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
   }
 
   if (SKILL_TYPE::SKILL_TYPE_E == type) {
+    auto tankerPtr = std::static_pointer_cast<TankerObject>(shared_from_this());
     roomRef->InsertJob(
         ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
-          TankerSkill::ThunderHammerSkill skill(std::static_pointer_cast<TankerObject>(shared_from_this()), vector3);
+          TankerSkill::ThunderHammerSkill skill(tankerPtr, vector3);
           skill.Execute();
         }));
   } else {
@@ -91,9 +93,10 @@ void TankerObject::RecvSkill(const SKILL_TYPE& type, const XMFLOAT3& vector3) {
 void TankerObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power) {
   auto roomRef = m_roomWeakRef.lock();
   if (nullptr != roomRef) {
+    auto tankerPtr = std::static_pointer_cast<TankerObject>(shared_from_this());
     roomRef->InsertJob(
         ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
-          TankerSkill::CommonAttack skill(std::static_pointer_cast<TankerObject>(shared_from_this()), attackDir);
+          TankerSkill::CommonAttack skill(tankerPtr, attackDir);
           skill.Execute();
         }));
   }

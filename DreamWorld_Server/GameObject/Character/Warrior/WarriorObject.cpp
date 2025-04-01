@@ -32,7 +32,8 @@ void WarriorObject::RecvSkill(const SKILL_TYPE& skillType, const XMFLOAT3& vecto
   }
 
   if (SKILL_TYPE::SKILL_TYPE_Q == skillType) {
-    auto longSwordSkill = std::make_shared<WarriorSkill::LongSwordSkill>(std::static_pointer_cast<WarriorObject>(shared_from_this()), vector3);
+    auto warriorPtr = std::static_pointer_cast<WarriorObject>(shared_from_this());
+    auto longSwordSkill = std::make_shared<WarriorSkill::LongSwordSkill>(warriorPtr, vector3);
     roomRef->InsertJob(
         ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([skill = std::move(longSwordSkill)]() {
           skill->Execute();
@@ -46,7 +47,8 @@ void WarriorObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power
     return;
   }
 
-  auto warriorCommonAttackSkill = std::make_shared<WarriorSkill::CommonAttack>(std::static_pointer_cast<WarriorObject>(shared_from_this()), attackDir, power);
+  auto warriorPtr = std::static_pointer_cast<WarriorObject>(shared_from_this());
+  auto warriorCommonAttackSkill = std::make_shared<WarriorSkill::CommonAttack>(warriorPtr, attackDir, power);
   roomRef->InsertJob(
       ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([skill = std::move(warriorCommonAttackSkill)]() {
         skill->Execute();
