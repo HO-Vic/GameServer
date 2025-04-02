@@ -46,6 +46,9 @@
     <Filter Include="Metric">
       <UniqueIdentifier>{ef5c2e48-5484-41a7-8055-3c3b4a498117}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO_Core\Connector">
+      <UniqueIdentifier>{4457b665-85da-4dba-ba62-d8105d90f33c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Session\ISession.cpp">
@@ -92,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="private\IO_Metric\IO_Metric.cpp">
       <Filter>Metric</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\Connector\Connector.cpp">
+      <Filter>IO_Core\Connector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="public\IO_Metric\IO_Metric.h">
       <Filter>Metric</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\Connector\Connector.h">
+      <Filter>IO_Core\Connector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

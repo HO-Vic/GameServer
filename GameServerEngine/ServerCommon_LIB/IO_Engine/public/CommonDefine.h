@@ -32,6 +32,7 @@ class ISession;
 using ISessionPtr = std::shared_ptr<ISession>;
 using RecvHandler = std::function<void(ISessionPtr, size_t, BYTE*)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
+using ConnectCompleteHandler = std::function<void(ISessionPtr&&)>;
 #pragma endregion
 
 struct ConnectInfo {
