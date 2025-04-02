@@ -15,6 +15,7 @@ void Network::UserSession::Disconnect(){
 	m_isConnect = false;
 	UserManager::GetInstance().InsertDisconnectId(m_id);
 	DreamWorld::StressTestNetwork::GetInstance().DisconnectClient();
+	closesocket(m_socket);
 }
 
 void Network::UserSession::DoRecv(ExpOver*& expOver){

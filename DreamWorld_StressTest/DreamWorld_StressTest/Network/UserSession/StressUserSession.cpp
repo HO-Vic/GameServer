@@ -337,7 +337,6 @@ void DreamWorld::StressUserSession::Disconnect(){
 	DreamWorld::StressTestNetwork::GetInstance().globalDelay -= m_delayTime;
 	m_delayTime = 0;
 	m_isActive = false;
-	closesocket(m_socket);
 }
 
 DIRECTION DreamWorld::StressUserSession::GetRandomDirection(){
