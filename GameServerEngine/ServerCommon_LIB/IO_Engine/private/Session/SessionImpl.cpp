@@ -26,6 +26,8 @@ void SessionImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, const DWORD io
 
 void SessionImpl::DoSend(Utility::WokerPtr session, const BYTE* data, const size_t len) {
   if (SESSION_STATE::DISCONNECT_STATE == m_state) {  // 이미 바뀐건, 누군가 Disconnect 요청한거
+    auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::DISCONN);
+    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
     return;
   }
 
@@ -44,6 +46,8 @@ void SessionImpl::DoSend(Utility::WokerPtr session, const BYTE* data, const size
 
 void SessionImpl::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioByte) {
   if (SESSION_STATE::DISCONNECT_STATE == m_state) {  // 이미 바뀐건, 누군가 Disconnect 요청한거
+    thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
+    PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
     return;
   }
 

@@ -15,7 +15,7 @@ class Session final
 
   ~Session();
 
-  virtual void Disconnect() override;
+  virtual void OnDisconnect() override;
 
   const uint32_t GetUniqueNo() const;
 

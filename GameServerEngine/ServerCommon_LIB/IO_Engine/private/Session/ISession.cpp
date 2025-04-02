@@ -26,6 +26,9 @@ void ISession::StartRecv() {
   m_sessionImpl->StartRecv(shared_from_this());
 }
 
+void ISession::Disconnect() {
+}
+
 void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
   static constexpr bool DESIRE_DISCONNECT = true;
   bool expectedDisconn = false;
@@ -40,11 +43,11 @@ void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
     } break;
     case Utility::WORKER_TYPE::DISCONN: {
       if (m_isDisconnnected.compare_exchange_strong(expectedDisconn, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
-        Disconnect();
+        OnDisconnect();
+        IO_MetricSlot::GetInstance().RecordDisconn();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
       ThWorkerJobPool::GetInstance().Release(thWorkerJob);
-      IO_MetricSlot::GetInstance().RecordDisconn();
     } break;
     default: {
     } break;

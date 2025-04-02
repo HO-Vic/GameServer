@@ -30,7 +30,7 @@ bool RoomBase::InsertPlayer(std::shared_ptr<Session>& player) {
     return false;
   }
   if (m_Sessions.contains(player->GetUniqueNo())) {
-    WRITE_LOG(logLevel::err, "{}({}) > Already Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, 11);
+    WRITE_LOG(logLevel::err, "{}({}) > Already Exist User!! [userId:{}]", __FUNCTION__, __LINE__, player->GetUniqueNo());
     return false;
   }
   m_Sessions.emplace(player->GetUniqueNo(), player);
@@ -40,7 +40,7 @@ bool RoomBase::InsertPlayer(std::shared_ptr<Session>& player) {
 void RoomBase::DiscardPlayer(std::shared_ptr<Session> player) {
   std::lock_guard<std::shared_mutex> lg{m_userLock};
   if (!m_Sessions.contains(player->GetUniqueNo())) {
-    WRITE_LOG(logLevel::err, "{}({}) > Non Exist User!! [RoomNo:{}] [userId:{}]", __FUNCTION__, __LINE__, 0, 11);
+    WRITE_LOG(logLevel::err, "{}({}) > Non Exist User!! [userId:{}]", __FUNCTION__, __LINE__, player->GetUniqueNo());
     return;
   }
   m_Sessions.erase(player->GetUniqueNo());

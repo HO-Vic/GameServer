@@ -14,7 +14,7 @@
 int main() {
   std::wcout.imbue(std::locale("KOREAN"));
 
-  DreamWorld::ServerConfig::GetInstance().LoadXML("bin/config/ServerConfig.xml");
+  DreamWorld::ServerConfig::GetInstance().LoadXML("../../config/ServerConfig.xml");
   auto& serverConfig = DreamWorld::ServerConfig::GetInstance();
   // Trace – Debug – Info – Warning – Error – Critical
   START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(serverConfig.logLevel), serverConfig.logMode);

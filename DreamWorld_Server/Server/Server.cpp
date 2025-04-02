@@ -46,6 +46,8 @@ void Server::Start() {
   WRITE_LOG(logLevel::info, "{}({}) > Server Start!", __FUNCTION__, __LINE__);
   auto prevMetricLoggingTime = chrono_clock::now();
   auto& roomMgr = RoomManager::GetInstance();
+  constexpr uint32_t loggingMaxUserCntThreshold = 4500;
+  uint32_t maxActiveUserCnt = 0;
   while (true) {
     auto nowTime = chrono_clock::now();
     {  // IO_Metric
@@ -84,7 +86,14 @@ void Server::Start() {
         globalTick = globalTick / roomCnt;
         roomMgr.m_prevLoggingTime = nowTime;
 
-        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, SessionMananger::GetInstance().GetCurrentActiveUserCnt(), roomCnt, globalTick);
+        auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
+        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, userCnt, roomCnt, globalTick);
+        if (maxActiveUserCnt < userCnt) {
+          maxActiveUserCnt = userCnt;
+          if (maxActiveUserCnt >= loggingMaxUserCntThreshold) {
+            WRITE_LOG(logLevel::info, "{}({}) > Max Active User!!! [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, maxActiveUserCnt, roomCnt, globalTick);
+          }
+        }
       }
     }
     Sleep(100);

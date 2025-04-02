@@ -20,6 +20,8 @@ struct Metric {
   void Reset() {
     roomExec = 0;
     timerExec = 0;
+    timerAlreadyExec = 0;
+    timerImmediate = 0;
     DBExec = 0;
     totalReq = 0;
   }

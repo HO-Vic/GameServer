@@ -1,0 +1,195 @@
+Cube (0)
+<position>: -766 0 -1230.9 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -766 0 -1230.9 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (1)
+<position>: -849.2 0 -1267.9 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -849.2 0 -1267.9 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (2)
+<position>: -619.5 0 -1239.3 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -619.5 0 -1239.3 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (3)
+<position>: -669.8 0 -1154.5 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -669.8 0 -1154.5 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (4)
+<position>: -645 0 -960 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -645 0 -960 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (5)
+<position>: -625 0 -1045 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -625 0 -1045 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (6)
+<position>: -605 0 -870 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -605 0 -870 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (7)
+<position>: -701 0 -1265.9 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -701 0 -1265.9 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (8)
+<position>: -461 0 -798 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -461 0 -798 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (9)
+<position>: -358 0 -749 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -358 0 -749 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (10)
+<position>: -415 0 -814 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -415 0 -814 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (11)
+<position>: -961 0 -1255 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -961 0 -1255 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (12)
+<position>: -159 0 -485 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -159 0 -485 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (13)
+<position>: -230 0 -673 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -230 0 -673 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 
+Cube (14)
+<position>: -523 0 -840 
+<quaternion>: 0 0 0 1 
+<rotation>: 0 0 0 
+<scale>: 10 10 10 
+<BoxCollider>
+  <center>: -523 0 -840 
+  <boundSize>: 10 10 10 
+  <extent>: 5 5 5 
+  <forward>: 0 0 1 
+  <right>: 1 0 0 
+  <forwardDotRes>: 0.7071068 
+  <rightDotRes>: 0.7071068 

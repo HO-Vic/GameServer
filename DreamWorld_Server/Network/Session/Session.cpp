@@ -20,7 +20,7 @@ Session::~Session() {
   WRITE_LOG(logLevel::trace, "{}({}) > Call Session Destructor [playerUniqueId:{}]", __FUNCTION__, __LINE__, m_uniqueNo);
 }
 
-void Session::Disconnect() {
+void Session::OnDisconnect() {
   SessionMananger::GetInstance().OnDisconnect(m_uniqueNo);
   WRITE_LOG(logLevel::trace, "{}({}) > player Disconn! [playerUniqueId:{}]", __FUNCTION__, __LINE__, m_uniqueNo);
   auto roomPtr = m_roomWeakRef.lock();
@@ -34,6 +34,7 @@ void Session::Disconnect() {
   roomPtr->InsertJob(
       DreamWorld::ObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([=]() {
         roomPtr->DiscardPlayer(sessionPtr);
+        // roomPtr->DiscardPlayer(std::static_pointer_cast<DreamWorld::Session>(shared_from_this()););// 기존 코드
       }));
 }
 
