@@ -85,4 +85,10 @@ void SessionImpl::StartRecv(Utility::WokerPtr session) {
     }
   }
 }
+
+void SessionImpl::RaisedIoError(Utility::ThWorkerJob* thWorkerJob) {
+  m_state.store(SESSION_STATE::DISCONNECT_STATE);
+  thWorkerJob->SetType(Utility::WORKER_TYPE::DISCONN);
+  PostQueuedCompletionStatus(m_iocpHandle, 1, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob));
+}
 }  // namespace sh::IO_Engine

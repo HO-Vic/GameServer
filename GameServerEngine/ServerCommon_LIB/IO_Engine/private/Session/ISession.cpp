@@ -29,8 +29,13 @@ void ISession::StartRecv() {
 void ISession::Disconnect() {
 }
 
-void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) {
+void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
   static constexpr bool DESIRE_DISCONNECT = true;
+  if (0 != errorCode) {  // 0이 아니면 에러 발생
+    m_sessionImpl->RaisedIoError(thWorkerJob);
+    return;
+  }
+
   bool expectedDisconn = false;
   switch (thWorkerJob->GetType()) {
     case Utility::WORKER_TYPE::RECV: {

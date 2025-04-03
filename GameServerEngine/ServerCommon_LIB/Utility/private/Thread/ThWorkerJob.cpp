@@ -22,8 +22,8 @@ ThWorkerJob::ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type)
   ZeroMemory(this, sizeof(OVERLAPPED));
 }
 
-void ThWorkerJob::operator()(const DWORD ioByte) {
-  m_workItem->Execute(this, ioByte);
+void ThWorkerJob::operator()(const DWORD ioByte, const uint64_t errorCode) {
+  m_workItem->Execute(this, ioByte, errorCode);
   // ZeroMemory(this, sizeof(OVERLAPPED));
 }
 }  // namespace sh::Utility

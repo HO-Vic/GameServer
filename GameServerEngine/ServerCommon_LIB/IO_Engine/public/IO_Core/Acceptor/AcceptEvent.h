@@ -17,7 +17,7 @@ class AcceptEvent
 
   void Start(Utility::ThWorkerJob* thWorkerJob);
 
-  virtual void Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte) override;
+  virtual void Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
  private:
   SOCKET m_clientSocket;

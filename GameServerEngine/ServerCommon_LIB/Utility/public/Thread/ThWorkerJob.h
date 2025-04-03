@@ -34,7 +34,7 @@ class ThWorkerJob : public OVERLAPPED {
 
   ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
 
-  void operator()(const DWORD ioByte);
+  void operator()(const DWORD ioByte, const uint64_t errorCode);
 
   WORKER_TYPE GetType() const {
     return m_type;
