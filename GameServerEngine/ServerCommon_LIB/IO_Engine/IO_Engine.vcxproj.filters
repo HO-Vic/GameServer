@@ -99,6 +99,9 @@
     <ClCompile Include="private\IO_Core\Connector\Connector.cpp">
       <Filter>IO_Core\Connector</Filter>
     </ClCompile>
+    <ClCompile Include="private\IO_Core\Connector\AsyncConnector.cpp">
+      <Filter>IO_Core\Connector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Session\ISession.h">
@@ -171,6 +174,9 @@
       <Filter>Metric</Filter>
     </ClInclude>
     <ClInclude Include="public\IO_Core\Connector\Connector.h">
+      <Filter>IO_Core\Connector</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h">
       <Filter>IO_Core\Connector</Filter>
     </ClInclude>
   </ItemGroup>

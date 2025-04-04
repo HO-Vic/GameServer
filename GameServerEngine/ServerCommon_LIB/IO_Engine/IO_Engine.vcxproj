@@ -22,6 +22,7 @@
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
+    <ClCompile Include="private\IO_Core\Connector\AsyncConnector.cpp" />
     <ClCompile Include="private\IO_Core\Connector\Connector.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
     <ClCompile Include="private\IO_Core\Listener\Listener.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="public\CommonDefine.h" />
     <ClInclude Include="public\IO_Core\Acceptor\AcceptEvent.h" />
     <ClInclude Include="public\IO_Core\Acceptor\Acceptor.h" />
+    <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h" />
     <ClInclude Include="public\IO_Core\Connector\Connector.h" />
     <ClInclude Include="public\IO_Core\IO_Core.h" />
     <ClInclude Include="public\IO_Core\Listener\Listener.h" />
