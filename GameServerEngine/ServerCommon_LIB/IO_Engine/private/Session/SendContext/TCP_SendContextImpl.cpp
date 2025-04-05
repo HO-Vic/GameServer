@@ -69,4 +69,17 @@ int32_t TCP_SendContextImpl::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
   }
   return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
 }
+
+void TCP_SendContextImpl::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBuffer>&& buffer) {
+  std::lock_guard<std::mutex> lg{m_lock};
+  m_sendQueues[m_activeIdx].push(std::move(buffer));
+}
+
+std::queue<std::shared_ptr<SendBuffer>>& TCP_SendContextImpl::InternalDoubleBufferQueue::SwapAndLoad() {
+  {
+    std::lock_guard<std::mutex> lg{m_lock};
+    m_activeIdx = !m_activeIdx;
+  }
+  return m_sendQueues[!m_activeIdx];
+}
 }  // namespace sh::IO_Engine
