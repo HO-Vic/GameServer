@@ -26,9 +26,10 @@ bool SyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFail
       failHandle(WSAGetLastError());
       return false;
     }
-  } else {
-    // Retry 소켓인데, valid 체크해야 됨
   }
+  // else {
+  //   // Retry 소켓인데, valid 체크해야 됨
+  // }
 
   static constexpr size_t infoSize = sizeof(SOCKADDR_IN);
   DWORD sentByte = 0;
@@ -41,6 +42,7 @@ bool SyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFail
 
   failHandle(WSAGetLastError());
   closesocket(connSocket);
+  connSocket = NULL;
   return false;
 }
 }  // namespace sh::IO_Engine
