@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{31cd749b-f7be-4bab-ba55-0e4d66a359e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton">
+      <UniqueIdentifier>{c21fb9d7-5b61-4497-946b-ef5b22838616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SpinLock">
+      <UniqueIdentifier>{20721e6d-0ef8-4c7f-992d-dc256250d452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{cb8ea67f-d586-4702-aff6-f1e39ae7ece7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job">
+      <UniqueIdentifier>{f1c439d5-f119-4c87-8114-583eea297082}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TimeCalculator">
+      <UniqueIdentifier>{dd08a848-6af2-416a-92cf-5d5a62e2c9ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQ">
+      <UniqueIdentifier>{a09a0e0b-f14e-4ab9-a49b-586fa1f7bc14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQ\MT">
+      <UniqueIdentifier>{4043785e-c4a4-4eff-b6d2-87dc020d7b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job\JobQ\ST">
+      <UniqueIdentifier>{f25922ee-d7fd-4fb1-bc91-63733a4f3845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BuildMsg">
+      <UniqueIdentifier>{a4d4fb25-61be-475b-b069-7c48e68a7c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pool">
+      <UniqueIdentifier>{c14aedc9-e47d-46e0-9989-96d2ec9322ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pool\MemoryPool">
+      <UniqueIdentifier>{4ad8db50-492e-4a43-b446-4c6be29489f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pool\ObjectPool">
+      <UniqueIdentifier>{ecd04716-d3e3-40f2-849d-728003073893}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{bca4bd16-89ba-42a0-8d2b-f090f4120b7a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="private\Job\Job.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp">
+      <Filter>TimeCalculator</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp">
+      <Filter>Job\JobQ\ST</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Pool\MemoryPool.cpp">
+      <Filter>Pool\MemoryPool</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThreadManager.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThreadPool.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThWorkerJob.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Thread\IWorkerItem.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="public\Job\Job.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="public\TimeCalculator\TimeCalculator.h">
+      <Filter>TimeCalculator</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQBase.h">
+      <Filter>Job\JobQ</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h">
+      <Filter>Job\JobQ\ST</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\LFJobQ_MT.h">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClInclude>
+    <ClInclude Include="public\SpinLock\SpinLock.h">
+      <Filter>SpinLock</Filter>
+    </ClInclude>
+    <ClInclude Include="public\SingletonBase\Singleton.h">
+      <Filter>Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="public\BuildMsg\BuildMsg.h">
+      <Filter>BuildMsg</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Pool\MemoryPool.h">
+      <Filter>Pool\MemoryPool</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Pool\ObjectPool.h">
+      <Filter>Pool\ObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="public\PCH\pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThreadManager.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThreadPool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\ThWorkerJob.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Thread\IWorkerItem.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h">
+      <Filter>Job\JobQ\MT</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

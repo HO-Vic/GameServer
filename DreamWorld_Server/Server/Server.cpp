@@ -69,9 +69,10 @@ void Server::Start() {
         auto timerExec = gameMetric.timerExec.load();
         auto timerAlready = gameMetric.timerAlreadyExec.load();
         auto timerIm = gameMetric.timerImmediate.load();
-
-        WRITE_LOG(logLevel::info, "{}({}) > Server Metric [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
-                  roomExec, DBExec, timerExec, timerAlready, timerIm);
+        auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
+        uint32_t roomCnt = roomMgr.globalRoomCnt;
+        WRITE_LOG(logLevel::info, "{}({}) > Server Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
+                  userCnt, roomCnt, roomExec, DBExec, timerExec, timerAlready, timerIm);
         prevMetricLoggingTime = nowTime;
       }
     }
@@ -87,11 +88,11 @@ void Server::Start() {
         roomMgr.m_prevLoggingTime = nowTime;
 
         auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
-        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, userCnt, roomCnt, globalTick);
+        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, globalTick);
         if (maxActiveUserCnt < userCnt) {
           maxActiveUserCnt = userCnt;
           if (maxActiveUserCnt >= loggingMaxUserCntThreshold) {
-            WRITE_LOG(logLevel::info, "{}({}) > Max Active User!!! [ActiveUserCnt:{}] [ActiveroomCnt:{}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, maxActiveUserCnt, roomCnt, globalTick);
+            WRITE_LOG(logLevel::info, "{}({}) > Max Active User!!! [MaxActiveUserCnt:{}]  [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, maxActiveUserCnt, globalTick);
           }
         }
       }

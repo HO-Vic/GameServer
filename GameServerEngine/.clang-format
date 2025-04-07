@@ -1,9 +1,0 @@
-
-BasedOnStyle: Google
-ColumnLimit: 0
-
-SortIncludes: false
-CompactNamespaces: true
-AllowShortFunctionsOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: false
-InsertBraces: true

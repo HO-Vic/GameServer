@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{94620f69-0cf7-45a7-8f3e-7599beaaab8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{e1dbcc52-cf42-471d-b292-cc205eafc50d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\SendContext">
+      <UniqueIdentifier>{ac2e8145-62df-4cba-a79f-0028a0ffd490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\RecvContext">
+      <UniqueIdentifier>{aed1fe73-7ed7-43a2-9c2d-7fd1aec39af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{cf9da0b1-3813-4669-b575-71329af9cbd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffer\SendBuffer">
+      <UniqueIdentifier>{b9d100a5-f831-4e1d-97f4-e4883a798dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\SendContext\SendContextImpl">
+      <UniqueIdentifier>{ed1e5a9c-0ded-4359-9c0d-858894645c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonDefine">
+      <UniqueIdentifier>{41a0cc0d-95dd-409c-b938-06c78ac13870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\RecvContext\RecvContextImpl">
+      <UniqueIdentifier>{cadb90d1-b31f-4e3b-9984-dacc3a273cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core">
+      <UniqueIdentifier>{50cc62db-db6f-458b-babb-33088eb82492}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\OverlappedEx">
+      <UniqueIdentifier>{dc34b314-fc13-4791-b2ea-4fad67a5711b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\OveralppedEvent">
+      <UniqueIdentifier>{dbdf612c-42bb-4ebe-a6e5-acc33a949cb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\Acceptor">
+      <UniqueIdentifier>{88a8b297-6176-41f6-950f-6826c6875374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO_Core\Listener">
+      <UniqueIdentifier>{6aecfe52-c1d2-41c6-a8af-4a7d9c8ff8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Metric">
+      <UniqueIdentifier>{ef5c2e48-5484-41a7-8055-3c3b4a498117}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="private\Session\ISession.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Buffer\SendBuffer.cpp">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\SendContext.cpp">
+      <Filter>Session\SendContext</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\TCP_SendContextImpl.cpp">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SendContext\UDP_SendContextImpl.cpp">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\RecvContext\TCP_RecvContextImpl.cpp">
+      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\RecvContext\RecvContext.cpp">
+      <Filter>Session\RecvContext</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\RecvContext\UDP_RecvContextImpl.cpp">
+      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\IO_Core.cpp">
+      <Filter>IO_Core</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp">
+      <Filter>IO_Core\Acceptor</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp">
+      <Filter>IO_Core\Acceptor</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\Listener\Listener.cpp">
+      <Filter>IO_Core\Listener</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\SessionImpl.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Metric\IO_Metric.cpp">
+      <Filter>Metric</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="public\Session\ISession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Buffer\SendBuffer.h">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Buffer\SendBufferPool.h">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SessionImpl.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\SendContext.h">
+      <Filter>Session\SendContext</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\TCP_SendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\UDP_SendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\SendContext\ISendContextImpl.h">
+      <Filter>Session\SendContext\SendContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\CommonDefine.h">
+      <Filter>CommonDefine</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\RecvContext\IRecvContextImpl.h">
+      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\RecvContext\TCP_RecvContextImpl.h">
+      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\RecvContext\RecvContext.h">
+      <Filter>Session\RecvContext</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\RecvContext\UDP_RecvContextImpl.h">
+      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\IO_Core.h">
+      <Filter>IO_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h">
+      <Filter>IO_Core\OveralppedEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h">
+      <Filter>IO_Core\OverlappedEx</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\Acceptor\Acceptor.h">
+      <Filter>IO_Core\Acceptor</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\Acceptor\AcceptEvent.h">
+      <Filter>IO_Core\Acceptor</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\Listener\Listener.h">
+      <Filter>IO_Core\Listener</Filter>
+    </ClInclude>
+    <ClInclude Include="public\PCH\pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\ThWorkerJobPool.h">
+      <Filter>IO_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Metric\IO_Metric.h">
+      <Filter>Metric</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
