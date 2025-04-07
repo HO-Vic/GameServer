@@ -30,6 +30,8 @@
 
 #include <cassert>
 
+#include <chrono>
+
 #include <CommonDefine.h>
 
 #include <Utility/BuildMsg/BuildMsg.h>

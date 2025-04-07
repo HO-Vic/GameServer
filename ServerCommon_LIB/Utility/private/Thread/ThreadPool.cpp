@@ -30,7 +30,8 @@ void ThreadPool::RunningThread(std::stop_token stopToken) {
         return;
       }
 
-      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred);
+      // Internal은 에러 코드
+      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred, overlappedEntry[i].Internal);
     }
     if (stopToken.stop_requested()) {
       return;

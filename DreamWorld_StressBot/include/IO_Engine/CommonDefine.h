@@ -31,7 +31,11 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
 class ISession;
 using ISessionPtr = std::shared_ptr<ISession>;
 using RecvHandler = std::function<void(ISessionPtr, size_t, BYTE*)>;
+
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
+
+using ConnectCompleteHandler = std::function<void(SOCKET)>;
+using ConnectFailHandler = std::function<void(int)>;
 #pragma endregion
 
 struct ConnectInfo {
