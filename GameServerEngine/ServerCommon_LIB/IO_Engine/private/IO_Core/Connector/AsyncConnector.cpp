@@ -123,11 +123,9 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
     return false;
   }
 
-  // Insert Time Out Func
-  if (ConnectorBase::MS(0) != connector.m_timeOutThreshold) {
-    connector.InsertTimerJob(std::move(GetTimeOutFunc()));
-  }
   // IO Pending
+  // Insert Time Out Func
+  connector.InsertTimerJob(std::move(GetTimeOutFunc()));
   return true;
 }
 
