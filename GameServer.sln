@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleEcho", "SimpleEcho\Si
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleEchoClient", "SimpleEcho\SimpleEchoClient\SimpleEchoClient.vcxproj", "{E94DF828-E775-4D71-A414-DE22BE959E1D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DreamWorld_StressBot", "DreamWorld_StressBot\DreamWorld_StressBot.vcxproj", "{B934AB98-8C1D-4CA0-8041-75CB212AD85C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -89,6 +91,14 @@ Global
 		{E94DF828-E775-4D71-A414-DE22BE959E1D}.Release|x64.Build.0 = Release|x64
 		{E94DF828-E775-4D71-A414-DE22BE959E1D}.Release|x86.ActiveCfg = Release|Win32
 		{E94DF828-E775-4D71-A414-DE22BE959E1D}.Release|x86.Build.0 = Release|Win32
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Debug|x64.ActiveCfg = Debug|x64
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Debug|x64.Build.0 = Debug|x64
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Debug|x86.ActiveCfg = Debug|Win32
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Debug|x86.Build.0 = Debug|Win32
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Release|x64.ActiveCfg = Release|x64
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Release|x64.Build.0 = Release|x64
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Release|x86.ActiveCfg = Release|Win32
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +111,7 @@ Global
 		{F0D46F91-A5C1-4EC1-BFA1-6A4F31111AE8} = {F8081BB5-358A-40DB-B33F-2790DF5A2BF2}
 		{1A2BA10A-70B5-408E-94F8-3A03DF4E9637} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
 		{E94DF828-E775-4D71-A414-DE22BE959E1D} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
+		{B934AB98-8C1D-4CA0-8041-75CB212AD85C} = {F8081BB5-358A-40DB-B33F-2790DF5A2BF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DF6381F7-4434-42E9-9B1B-3F657951BD53}

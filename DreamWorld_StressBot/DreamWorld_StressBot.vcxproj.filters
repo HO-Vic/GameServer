@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="DrawModule.cpp" />
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkModule\NetworkModule.cpp">
+      <Filter>NetworkModule</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{675720b6-7e63-4f33-8d11-2819f8f3ebe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{18233bec-5eae-4b1b-b041-b6ffd5f200b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkModule">
+      <UniqueIdentifier>{9fee2846-f8dd-4108-9b57-a83e5be215e9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Session\Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkModule\NetworkModule.h">
+      <Filter>NetworkModule</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

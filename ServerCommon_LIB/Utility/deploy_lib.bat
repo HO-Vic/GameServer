@@ -9,12 +9,12 @@ echo Copy To IO_Engine From Utility
 if not exist ..\IO_Engine\lib\Debug (
 	mkdir ..\IO_Engine\lib\Debug
 )
+copy .\Export_LIB\Debug\Utility.lib ..\IO_Engine\lib\Debug\UtilityD.lib
 
 if not exist ..\IO_Engine\lib\Release (
 	mkdir ..\IO_Engine\lib\Release
 )
 
-copy .\Export_LIB\Debug\Utility.lib ..\IO_Engine\lib\Debug\UtilityD.lib
 copy .\Export_LIB\Release\Utility.lib ..\IO_Engine\lib\Release\Utility.lib
 
 :: SimpleEcho lib, pdb 배포
@@ -35,6 +35,39 @@ if not exist ..\..\SimpleEcho\bin\x64\Release (
 	mkdir ..\..\SimpleEcho\bin\x64\Release
 )
 
+if not exist ..\..\DreamWorld_Server\lib\Debug (
+	mkdir ..\..\DreamWorld_Server\lib\Debug
+)
+
+if not exist ..\..\DreamWorld_Server\lib\Release (
+	mkdir ..\..\DreamWorld_Server\lib\Release
+)
+
+if not exist ..\..\DreamWorld_Server\bin\x64\Debug (
+	mkdir ..\..\DreamWorld_Server\bin\x64\Debug
+)
+
+if not exist ..\..\DreamWorld_Server\bin\x64\Release (
+	mkdir ..\..\DreamWorld_Server\bin\x64\Release
+)
+
+if not exist ..\..\DreamWorld_StressBot\lib\x64\Debug (
+	mkdir ..\..\DreamWorld_StressBot\lib\x64\Debug
+)
+
+if not exist ..\..\DreamWorld_StressBot\lib\x64\Release (
+	mkdir ..\..\DreamWorld_StressBot\lib\x64\Release
+)
+
+if not exist ..\..\DreamWorld_StressBot\bin\x64\Debug (
+	mkdir ..\..\DreamWorld_StressBot\bin\x64\Debug
+)
+
+if not exist ..\..\DreamWorld_StressBot\bin\x64\Release (
+	mkdir ..\..\DreamWorld_StressBot\bin\x64\Release
+)
+
+
 copy .\Export_LIB\Debug\Utility.lib ..\..\SimpleEcho\lib\Debug\UtilityD.lib
 copy .\Export_LIB\Debug\Utility.pdb ..\..\SimpleEcho\bin\x64\Debug\Utility.pdb
 copy .\Export_LIB\Release\Utility.lib ..\..\SimpleEcho\lib\Release\Utility.lib
@@ -44,6 +77,11 @@ copy .\Export_LIB\Debug\Utility.lib ..\..\DreamWorld_Server\lib\x64\Debug\Utilit
 copy .\Export_LIB\Debug\Utility.pdb ..\..\DreamWorld_Server\bin\x64\Debug\Utility.pdb
 copy .\Export_LIB\Release\Utility.lib ..\..\DreamWorld_Server\lib\x64\Release\Utility.lib
 copy .\Export_LIB\Release\Utility.pdb ..\..\DreamWorld_Server\bin\x64\Release\Utility.pdb
+
+copy .\Export_LIB\Debug\Utility.lib ..\..\DreamWorld_StressBot\lib\x64\Debug\UtilityD.lib
+copy .\Export_LIB\Debug\Utility.pdb ..\..\DreamWorld_StressBot\bin\x64\Debug\Utility.pdb
+copy .\Export_LIB\Release\Utility.lib ..\..\DreamWorld_StressBot\lib\x64\Release\Utility.lib
+copy .\Export_LIB\Release\Utility.pdb ..\..\DreamWorld_StressBot\bin\x64\Release\Utility.pdb
 
 echo [End Deploy Utility LIB]
 
@@ -68,10 +106,17 @@ if not exist ..\..\SimpleEcho\include (
 )
 xcopy ".\public" "..\..\SimpleEcho\include\Utility\" /E /Y
 
+::DreamWorld Server 헤더 배포
 if not exist ..\..\DreamWorld_Server\include (
 	mkdir ..\..\DreamWorld_Server\include\Utility
 )
 xcopy ".\public" "..\..\DreamWorld_Server\include\Utility\" /E /Y
+
+::DreamWorld Server 헤더 배포
+if not exist ..\..\DreamWorld_StressBot\include (
+	mkdir ..\..\DreamWorld_StressBot\include\Utility
+)
+xcopy ".\public" "..\..\DreamWorld_StressBot\include\Utility\" /E /Y
 echo [End Deploy Utility Header File]
 
 
