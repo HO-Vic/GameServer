@@ -48,6 +48,8 @@ class SessionImpl {
 
   void StartRecv(Utility::WokerPtr session);
 
+  void RaisedIoError(Utility::ThWorkerJob* thWorkerJob);
+
  private:
   SendContext m_sendContext;
   RecvContext m_recvContext;

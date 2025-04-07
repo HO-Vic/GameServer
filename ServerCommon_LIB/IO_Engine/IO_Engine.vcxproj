@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
+    <ClCompile Include="private\Connector\AsyncConnector.cpp" />
+    <ClCompile Include="private\Connector\Connector.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
-    <ClCompile Include="private\IO_Core\Connector\AsyncConnector.cpp" />
-    <ClCompile Include="private\IO_Core\Connector\Connector.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
     <ClCompile Include="private\IO_Core\Listener\Listener.cpp" />
     <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">

@@ -13,7 +13,8 @@ enum WORKER_TYPE : uint8_t {
   ACCEPT = 3,
   DISCONN = 4,
   WORK = 5,
-  TERMINATE = 6,
+  CONNECT = 6,
+  TERMINATE = 7,
 };
 class IWorkerItem;
 using WokerPtr = std::shared_ptr<IWorkerItem>;
@@ -33,7 +34,7 @@ class ThWorkerJob : public OVERLAPPED {
 
   ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
 
-  void operator()(const DWORD ioByte);
+  void operator()(const DWORD ioByte, const uint64_t errorCode);
 
   WORKER_TYPE GetType() const {
     return m_type;

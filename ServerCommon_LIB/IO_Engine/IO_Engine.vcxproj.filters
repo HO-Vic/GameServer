@@ -96,10 +96,10 @@
     <ClCompile Include="private\IO_Metric\IO_Metric.cpp">
       <Filter>Metric</Filter>
     </ClCompile>
-    <ClCompile Include="private\IO_Core\Connector\Connector.cpp">
+    <ClCompile Include="private\Connector\AsyncConnector.cpp">
       <Filter>IO_Core\Connector</Filter>
     </ClCompile>
-    <ClCompile Include="private\IO_Core\Connector\AsyncConnector.cpp">
+    <ClCompile Include="private\Connector\Connector.cpp">
       <Filter>IO_Core\Connector</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,10 +173,10 @@
     <ClInclude Include="public\IO_Metric\IO_Metric.h">
       <Filter>Metric</Filter>
     </ClInclude>
-    <ClInclude Include="public\IO_Core\Connector\Connector.h">
+    <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h">
       <Filter>IO_Core\Connector</Filter>
     </ClInclude>
-    <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h">
+    <ClInclude Include="public\IO_Core\Connector\Connector.h">
       <Filter>IO_Core\Connector</Filter>
     </ClInclude>
   </ItemGroup>
