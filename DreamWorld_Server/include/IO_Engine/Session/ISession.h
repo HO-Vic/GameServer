@@ -25,6 +25,9 @@ class ISession
   virtual void OnDisconnect() = 0;
 
  private:
+  void Disconnect();
+
+ private:
   SessionImpl* m_sessionImpl;
   std::atomic_bool m_isDisconnnected;
 };
