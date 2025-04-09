@@ -149,9 +149,6 @@
     <ClCompile Include="ServerConfig\ServerConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h" />
     <ClInclude Include="EchoServer\Packet.h" />
     <ClInclude Include="EchoServer\Session\Session.h" />
@@ -160,10 +157,15 @@
     <ClInclude Include="PCH\PCH.h" />
     <ClInclude Include="ServerConfig\ServerConfig.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\GameServerEngine\packages\inteltbb.redist.win.2022.0.0.396\build\native\inteltbb.redist.win.targets" Condition="Exists('..\GameServerEngine\packages\inteltbb.redist.win.2022.0.0.396\build\native\inteltbb.redist.win.targets')" />
     <Import Project="..\GameServerEngine\packages\inteltbb.devel.win.2022.0.0.396\build\native\inteltbb.devel.win.targets" Condition="Exists('..\GameServerEngine\packages\inteltbb.devel.win.2022.0.0.396\build\native\inteltbb.devel.win.targets')" />
+    <Import Project="..\packages\inteltbb.redist.win.2022.1.0.426\build\native\inteltbb.redist.win.targets" Condition="Exists('..\packages\inteltbb.redist.win.2022.1.0.426\build\native\inteltbb.redist.win.targets')" />
+    <Import Project="..\packages\inteltbb.devel.win.2022.1.0.426\build\native\inteltbb.devel.win.targets" Condition="Exists('..\packages\inteltbb.devel.win.2022.1.0.426\build\native\inteltbb.devel.win.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -171,5 +173,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\GameServerEngine\packages\inteltbb.redist.win.2022.0.0.396\build\native\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GameServerEngine\packages\inteltbb.redist.win.2022.0.0.396\build\native\inteltbb.redist.win.targets'))" />
     <Error Condition="!Exists('..\GameServerEngine\packages\inteltbb.devel.win.2022.0.0.396\build\native\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\GameServerEngine\packages\inteltbb.devel.win.2022.0.0.396\build\native\inteltbb.devel.win.targets'))" />
+    <Error Condition="!Exists('..\packages\inteltbb.redist.win.2022.1.0.426\build\native\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.redist.win.2022.1.0.426\build\native\inteltbb.redist.win.targets'))" />
+    <Error Condition="!Exists('..\packages\inteltbb.devel.win.2022.1.0.426\build\native\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\inteltbb.devel.win.2022.1.0.426\build\native\inteltbb.devel.win.targets'))" />
   </Target>
 </Project>

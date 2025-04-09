@@ -11,6 +11,8 @@ class IO_Core {
 
   void Init();
 
+  void Init(const uint8_t ioThreadNo);
+
   void Start();
 
   HANDLE GetHandle() const;

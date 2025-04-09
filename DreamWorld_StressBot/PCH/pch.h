@@ -41,41 +41,52 @@ using namespace DirectX;
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "Debug/UtilityD.lib")
+#pragma comment(lib, "Debug/IO_EngineD.lib")
+#pragma comment(lib, "Debug/spdlogd.lib")
+#else
+#pragma comment(lib, "Release/IO_Engine.lib")
+#pragma comment(lib, "Release/Utility.lib")
+#pragma comment(lib, "Release/spdlog.lib")
+#endif
+
 // #pragma warning(disable: 4996)
 // #define _CRT_SECURE_NO_WARNINGS
 // #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-enum class IOCP_OP_CODE {
-  OP_NONE,
-  OP_SEND,
-  OP_RECV
-};
-
-enum PLAYER_STATE {
-  FREE,
-  ALLOC,
-  IN_GAME,
-  IN_GAME_ROOM
-};
-
-enum DIRECTION : char {
-  IDLE = 0x00,
-  FRONT = 0x01,
-  RIGHT = 0x02,
-  LEFT = 0x04,
-  BACK = 0x08
-};
-
-enum ROTATE_AXIS : char {
-  X,
-  Y,
-  Z
-};
-
-enum ROLE : char {
-  NONE_SELECT = 0x00,
-  WARRIOR = 0x01,
-  PRIEST = 0x02,
-  TANKER = 0x04,
-  ARCHER = 0x08
-};
+// enum class IOCP_OP_CODE {
+//  OP_NONE,
+//  OP_SEND,
+//  OP_RECV
+//};
+//
+// enum PLAYER_STATE {
+//  FREE,
+//  ALLOC,
+//  IN_GAME,
+//  IN_GAME_ROOM
+//};
+//
+// enum DIRECTION : char {
+//  IDLE = 0x00,
+//  FRONT = 0x01,
+//  RIGHT = 0x02,
+//  LEFT = 0x04,
+//  BACK = 0x08
+//};
+//
+// enum ROTATE_AXIS : char {
+//  X,
+//  Y,
+//  Z
+//};
+//
+// enum ROLE : char {
+//  NONE_SELECT = 0x00,
+//  WARRIOR = 0x01,
+//  PRIEST = 0x02,
+//  TANKER = 0x04,
+//  ARCHER = 0x08
+//};

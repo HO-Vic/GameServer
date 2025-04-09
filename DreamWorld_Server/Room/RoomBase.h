@@ -33,7 +33,7 @@ class RoomBase
  public:
   RoomBase(const uint16_t maxExecuteJobCnt = 0);
 
-  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) override;
+  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
   // InsertPlayer, DiscardPlayer는 Room생성 시 1회, JobQ로 호출되기때문에, 싱글 쓰레드로 동작
   bool InsertPlayer(std::shared_ptr<Session>& player);

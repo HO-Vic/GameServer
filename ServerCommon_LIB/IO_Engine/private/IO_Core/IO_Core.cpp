@@ -18,6 +18,11 @@ void IO_Core::Init() {
   ThWorkerJobPool::GetInstance().Init(1);
 }
 
+void IO_Core::Init(const uint8_t ioThreadNo) {
+  m_threadPool.Init(ioThreadNo);
+  IO_Core::Init();
+}
+
 void IO_Core::Start() {
   m_threadPool.Start();
 }

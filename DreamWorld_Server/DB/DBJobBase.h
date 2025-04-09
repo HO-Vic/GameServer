@@ -17,7 +17,7 @@ namespace DreamWorld {
 class DBJobBase
     : public sh::Utility::IWorkerItem {
  public:
-  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) override;
+  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
  protected:
   // 쿼리 결과 처리

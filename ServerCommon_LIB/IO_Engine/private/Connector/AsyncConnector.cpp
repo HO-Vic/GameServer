@@ -51,6 +51,10 @@ void AsyncConnector::IntenalTimer::InsertTimerJob(TimeOutJobPtr&& jobPtr) {
   m_timerJob.push(std::move(jobPtr));
 }
 
+AsyncConnector::AsyncConnector()
+    : ConnectorBase(), m_ioHandle(NULL), m_intenalTimer(nullptr), m_timeOutThreshold(0), ConnectEx(nullptr) {
+}
+
 AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold)
     : ConnectorBase(ipAddr, port, inetType, socketType, protocolType), m_ioHandle(ioHandle), m_timeOutThreshold(timeOutThreshold), m_intenalTimer(nullptr) {
   // 타임 아웃이 없다면 ,타임 아웃 이벤트를 해줄 타이머를 만들지 않는다
@@ -71,7 +75,32 @@ AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint1
   }
 }
 
+void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold) {
+  ConnectorBase::Init(ipAddr, port, inetType, socketType, protocolType);
+  m_ioHandle = ioHandle;
+  m_timeOutThreshold = timeOutThreshold;
+
+  if (m_timeOutThreshold != MS(0)) {
+    m_intenalTimer = std::make_unique<IntenalTimer>();
+    m_intenalTimer->Start();
+  }
+  // ConnectEx 함수 포인터 획득을 위한 소켓으로 획득했다면 close
+  SOCKET immediateSocket = WSASocketW(inetType, socketType, protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);
+  GUID guid = WSAID_CONNECTEX;
+  DWORD bytesReturned = 0;
+  auto result = WSAIoctl(immediateSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &ConnectEx, sizeof(ConnectEx), &bytesReturned, nullptr, nullptr);
+  closesocket(immediateSocket);
+  if (result != 0) {
+    char errorString[1024] = {0};
+    sprintf_s(errorString, "%s(%d) > Failed to Get ConnectEx Functor [errorCode: %d]", __FUNCTION__, __LINE__, WSAGetLastError());
+    assert(false && errorString);
+  }
+}
+
 bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) {
+  if (!m_isInit) {
+    assert(false && "Connector is not initialized");
+  }
   auto connectEvent = std::make_shared<AsyncConnectEvent>(std::move(successHandle), std::move(failHandle), ConnectEx, m_connectAddr);
   auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(connectEvent, Utility::WORKER_TYPE::CONNECT);
   return connectEvent->TryConnect(m_ioHandle, thWorkerJob, m_inetType, m_socketType, m_protocolType, *this);

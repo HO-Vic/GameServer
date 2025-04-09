@@ -12,7 +12,7 @@
 using logLevel = spdlog::level::level_enum;
 
 namespace DreamWorld {
-void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte) {
+void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
   auto connection = DBConnectionManager::GetInstance().GetConnection();
 
   SQLRETURN retCode;

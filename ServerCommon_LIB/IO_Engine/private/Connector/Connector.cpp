@@ -7,12 +7,29 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
+ConnectorBase::ConnectorBase()
+    : m_inetType(AF_INET), m_socketType(SOCK_STREAM), m_protocolType(IPPROTO_TCP), m_isInit(false) {
+  ZeroMemory(&m_connectAddr, sizeof(SOCKADDR_IN));
+}
+
 ConnectorBase::ConnectorBase(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType)
-    : m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType) {
+    : m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType), m_isInit(true) {
   ZeroMemory(&m_connectAddr, sizeof(SOCKADDR_IN));
   m_connectAddr.sin_family = m_inetType;
   m_connectAddr.sin_port = htons(port);
   inet_pton(m_inetType, ipAddr.data(), &m_connectAddr.sin_addr.s_addr);
+}
+
+void ConnectorBase::Init(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType) {
+  m_inetType = inetType;
+  m_socketType = socketType;
+  m_protocolType = protocolType;
+
+  ZeroMemory(&m_connectAddr, sizeof(SOCKADDR_IN));
+  m_connectAddr.sin_family = m_inetType;
+  m_connectAddr.sin_port = htons(port);
+  inet_pton(m_inetType, ipAddr.data(), &m_connectAddr.sin_addr.s_addr);
+  m_isInit = true;
 }
 
 SyncConnector::SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType)
@@ -20,6 +37,10 @@ SyncConnector::SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t 
 }
 
 bool SyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) {
+  if (!m_isInit) {
+    assert(false && "Connector is not initialized");
+  }
+
   SOCKET connSocket = WSASocketW(m_inetType, m_socketType, m_protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);
   if (NULL == connSocket) {
     if (connSocket == INVALID_SOCKET) {

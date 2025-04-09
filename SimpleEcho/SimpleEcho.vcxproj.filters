@@ -39,9 +39,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h">
       <Filter>EchoServer</Filter>
     </ClInclude>
@@ -63,5 +60,8 @@
     <ClInclude Include="ServerConfig\ServerConfig.h">
       <Filter>ServerConfig</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

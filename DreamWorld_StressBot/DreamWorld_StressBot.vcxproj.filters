@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="DrawModule.cpp" />
     <ClCompile Include="PCH\pch.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
@@ -10,6 +9,22 @@
     </ClCompile>
     <ClCompile Include="NetworkModule\NetworkModule.cpp">
       <Filter>NetworkModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\SessionManager.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager\LogManager.cpp">
+      <Filter>LogMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgDispatcher\MsgDispatcher.cpp">
+      <Filter>MsgDispatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkModule\MsgHandler.cpp">
+      <Filter>NetworkModule</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="DrawModule\DrawModule.cpp">
+      <Filter>DrawModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -22,9 +37,15 @@
     <Filter Include="NetworkModule">
       <UniqueIdentifier>{9fee2846-f8dd-4108-9b57-a83e5be215e9}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Filter Include="LogMgr">
+      <UniqueIdentifier>{296bfc38-7197-4307-b133-aaa2ba3742c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MsgDispatcher">
+      <UniqueIdentifier>{62980abb-53b2-4a95-8856-c6e6ade7af14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DrawModule">
+      <UniqueIdentifier>{1d01cacb-36a0-48f1-b647-afde220a8c60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCH\pch.h">
@@ -36,5 +57,20 @@
     <ClInclude Include="NetworkModule\NetworkModule.h">
       <Filter>NetworkModule</Filter>
     </ClInclude>
+    <ClInclude Include="Session\SessionManager.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager\LogManager.h">
+      <Filter>LogMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgDispatcher\MsgDispatcher.h">
+      <Filter>MsgDispatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawModule\DrawModule.h">
+      <Filter>DrawModule</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
