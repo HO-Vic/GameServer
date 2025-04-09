@@ -48,7 +48,7 @@ int main() {
   uint32_t sendCnt = 0;
 
   while (sendCnt != 100 - 1) {
-    sh::EchoServer::SimpleMsgPacket sendPacket{};
+    auto sendPacket = sh::EchoServer::SimpleMsgPacket{};
     sendPacket.type = sh::EchoServer::PACKET_TYPE::SIMPLE_MSG;
     memcpy(sendPacket.msg, sendBuffers[sendCnt].c_str(), sendBuffers[sendCnt].size());
     sendPacket.msg[sendBuffers[sendCnt].size()] = 0;

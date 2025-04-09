@@ -17,10 +17,12 @@ enum IO_TYPE : char {
 #pragma region PACKET
 #pragma pack(push, 1)
 struct PacketHeader {
-  uint16_t size;
+  PacketHeader() {
+  }
   PacketHeader(const uint16_t size)
       : size(size) {
   }
+  uint16_t size;
 };
 #pragma pack(pop)
 

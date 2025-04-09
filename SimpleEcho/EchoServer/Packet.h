@@ -7,10 +7,14 @@ enum PACKET_TYPE : char {
 
 struct PacketHeader
     : public IO_Engine::PacketHeader {
+  PacketHeader() {
+  }
   PACKET_TYPE type;
 };
 
 struct SimpleMsgPacket : public PacketHeader {
+  SimpleMsgPacket() {
+  }
   char msg[1024] = {0};
 };
 
