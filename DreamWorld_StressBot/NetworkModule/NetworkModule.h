@@ -17,7 +17,8 @@ constexpr sh::IO_Engine::ConnectorBase::MS TIMEOUT_MS = std::chrono::millisecond
 class NetworkModule final
     : public sh::Utility::SingletonBase<NetworkModule> {
  public:
-  NetworkModule() = default;
+  NetworkModule() {
+  }
 
   ~NetworkModule() = default;
 
@@ -29,7 +30,7 @@ class NetworkModule final
 
   void OnConnect(SOCKET sock);
 
-  void OnConnectFail();
+  void OnConnectFail(int errorCode);
 
   void RecvHandle(sh::IO_Engine::ISessionPtr, size_t, BYTE*);
 

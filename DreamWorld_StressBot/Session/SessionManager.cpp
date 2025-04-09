@@ -2,6 +2,7 @@
 #include "SessionManager.h"
 #include <IO_Engine/CommonDefine.h>
 #include "Session.h"
+#include "../LogManager/LogManager.h"
 
 namespace Stress {
 void Stress::SessionManager::Init() {
@@ -12,11 +13,11 @@ std::shared_ptr<Stress::Session> SessionManager::OnConnect(SOCKET sock, sh::IO_E
   auto uniqueNo = GetUniqueNo();
   auto sessionPtr = m_sessionPool.MakeShared(sock, sh::IO_Engine::IO_TYPE::TCP, recvHandler, ioHandle, uniqueNo);
   if (nullptr == sessionPtr) {
-    //
-  } else {
-    std::lock_guard<std::mutex> lg{m_sessionLock};
-    m_activeSessions.insert({uniqueNo, sessionPtr});
+    WRITE_LOG(logLevel::err, "{}({}) > Session Pool MakeShared Fail!!", __FUNCTION__, __LINE__);
+    return nullptr;
   }
+  std::lock_guard<std::mutex> lg{m_sessionLock};
+  m_activeSessions.insert({uniqueNo, sessionPtr});
   return sessionPtr;
 }
 

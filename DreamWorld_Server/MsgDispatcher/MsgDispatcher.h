@@ -9,7 +9,7 @@ class ISession;
 using ISessionPtr = std::shared_ptr<ISession>;
 }  // namespace sh::IO_Engine
 
-namespace Stress {
+namespace DreamWorld {
 using MsgHandler = std::function<void(sh::IO_Engine::ISessionPtr, BYTE*)>;
 class MsgDispatcher {
  public:
@@ -20,4 +20,4 @@ class MsgDispatcher {
  private:
   std::unordered_map<uint8_t, MsgHandler> m_dispatcher;
 };
-}  // namespace Stress
+}  // namespace DreamWorld

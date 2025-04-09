@@ -125,6 +125,19 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
     }
   }
 
+  sockaddr_in local = {};
+  local.sin_family = AF_INET;
+  local.sin_port = 0;  // 시스템이 임의 할당
+  local.sin_addr.s_addr = htonl(INADDR_ANY);
+
+  auto bindResult = bind(m_socket, (SOCKADDR*)&local, sizeof(local));
+  if (SOCKET_ERROR == bindResult) {
+    m_failHandle(WSAGetLastError());
+    closesocket(m_socket);
+    m_socket = NULL;
+    return false;
+  }
+
   m_connectingState = STATE::TRY_CONNECT;
   static constexpr size_t infoSize = sizeof(SOCKADDR_IN);
   if (m_tryCnt == 0) {
@@ -135,6 +148,7 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
   DWORD sentByte = 0;
   bool result = ConnectEx(m_socket, reinterpret_cast<sockaddr*>(&m_connectAddr), static_cast<int>(infoSize), nullptr, 0, &sentByte, thWorkerJob);
   if (result) {
+    setsockopt(m_socket, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0);
     m_successHandle(m_socket);
     m_socket = NULL;
     m_connectingState = STATE::CONNECTED;  // 성공했다면, ICCP에서 완료 처리가 오지 않음
@@ -170,6 +184,7 @@ void AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioB
     }
   } else {
     if (m_connectingState.compare_exchange_strong(tryState, STATE::CONNECTED)) {  // 못바꾸면, timeOut이 먼저 불림
+      setsockopt(m_socket, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0);
       m_successHandle(m_socket);
       m_socket = NULL;
     }

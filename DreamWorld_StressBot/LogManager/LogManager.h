@@ -49,8 +49,8 @@ class LogManager : public sh::Utility::SingletonBase<LogManager> {
  public:
   std::shared_ptr<spdlog::logger> m_combinedLog;
 };
-}  // namespace DreamWorld
+}  // namespace Stress
 
-#define LOGGER DreamWorld::LogManager::GetInstance()
-#define START_LOGGER DreamWorld::LogManager::GetInstance().StartLogger
-#define WRITE_LOG DreamWorld::LogManager::GetInstance().WriteLog
+#define LOGGER Stress::LogManager::GetInstance()
+#define START_LOGGER Stress::LogManager::GetInstance().StartLogger
+#define WRITE_LOG Stress::LogManager::GetInstance().WriteLog

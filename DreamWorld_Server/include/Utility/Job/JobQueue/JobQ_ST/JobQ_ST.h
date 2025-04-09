@@ -7,6 +7,8 @@ class Job;
 class JobPoolBase;
 class JobQ_ST : public JobQBase {
  public:
+  JobQ_ST() = default;
+
   JobQ_ST(const std::string& name)
       : JobQBase(name) {
   }

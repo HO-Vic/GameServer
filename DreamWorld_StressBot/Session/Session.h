@@ -17,7 +17,8 @@ io쓰레드에서 발생하는 이벤트는 jobQ로 넣고 업데이트 쓰레�
 
 namespace Stress {
 class Session
-    : public sh::IO_Engine::ISession {
+    : public sh::IO_Engine::ISession,
+      public sh::Utility::DoubleJobQ_MT {
  public:
   Session() = default;
 
@@ -31,8 +32,9 @@ class Session
     return m_uniqueNo;
   }
 
+  void Update();
+
  private:
   uint32_t m_uniqueNo;
-  sh::Utility::DoubleJobQ_MT m_jobQueue;
 };
 }  // namespace Stress

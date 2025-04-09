@@ -9,6 +9,8 @@ class Job;
 class JobQBase {
  public:
   static constexpr uint64_t ALL_JOB_EXEC = 0;
+  JobQBase() = default;
+
   JobQBase(const std::string& name)
       : m_name(name) {
   }

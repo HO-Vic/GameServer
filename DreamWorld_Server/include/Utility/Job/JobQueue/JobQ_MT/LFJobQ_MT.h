@@ -14,6 +14,8 @@ class Job;
 class JobPoolBase;
 class LFJobQ_MT : public JobQBase {
  public:
+  LFJobQ_MT() = default;
+
   LFJobQ_MT(const std::string& jobPoolName);
 
   virtual ~LFJobQ_MT() {

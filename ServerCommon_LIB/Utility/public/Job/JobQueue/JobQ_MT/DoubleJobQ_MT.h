@@ -11,6 +11,8 @@ class DoubleJobQ_MT
   using JobPtr = std::unique_ptr<Job, std::function<void(Job*)>>;
 
  public:
+  DoubleJobQ_MT() = default;
+
   DoubleJobQ_MT(const std::string& name)
       : JobQBase(name) {
   }
