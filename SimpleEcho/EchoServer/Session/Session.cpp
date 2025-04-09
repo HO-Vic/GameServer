@@ -9,7 +9,7 @@ Session::Session()
 Session::~Session() {
 }
 
-void Session::Disconnect() {
+void Session::OnDisconnect() {
   // Disconnect 됐을 때, 행동을 정의
   SessionManager::GetInstance().OnDisconnect(m_uniqueNo);
 }
