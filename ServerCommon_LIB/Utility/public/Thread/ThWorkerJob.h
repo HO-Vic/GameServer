@@ -30,7 +30,7 @@ class ThWorkerJob : public OVERLAPPED {
 
   ~ThWorkerJob();
 
-  ThWorkerJob(WokerPtr& workItem, WORKER_TYPE type);
+  ThWorkerJob(const WokerPtr& workItem, WORKER_TYPE type);
 
   ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
 

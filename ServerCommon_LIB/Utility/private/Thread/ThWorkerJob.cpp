@@ -12,7 +12,7 @@ ThWorkerJob::~ThWorkerJob() {
   m_workItem = nullptr;
 }
 
-ThWorkerJob::ThWorkerJob(WokerPtr& workItem, WORKER_TYPE type)
+ThWorkerJob::ThWorkerJob(const WokerPtr& workItem, WORKER_TYPE type)
     : m_workItem(workItem), m_type(type) {
   ZeroMemory(this, sizeof(OVERLAPPED));
 }

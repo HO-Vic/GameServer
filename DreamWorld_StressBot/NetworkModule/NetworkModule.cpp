@@ -4,9 +4,13 @@
 #include <ws2def.h>
 #include <WinSock2.h>
 #include <winsock.h>
+#include <Utility/Job/Job.h>
 #include "../Session/SessionManager.h"
 #include "../../DreamWorld_Server/Server/MsgProtocol.h"
 #include "../LogManager/LogManager.h"
+#include "../Session/SessionBatchUpdaters.h"
+#include "../Session/SessionBatchUpdater.h"
+#include "../GlobalObjectPool/GlobalObjectPool.h"
 
 namespace Stress {
 void NetworkModule::Init(const std::string& ipAddr, uint16_t port) {
@@ -27,6 +31,12 @@ void NetworkModule::OnConnect(SOCKET sock) {
   using namespace std::placeholders;
   auto sessionPtr = SessionManager::GetInstance().OnConnect(sock, sh::IO_Engine::IO_TYPE::TCP, m_ioCore.GetHandle(), std::bind(&NetworkModule::RecvHandle, this, _1, _2, _3));
   sessionPtr->StartRecv();
+
+  auto batchUpdater = SessionBatchUpdaters::GetInstance().GetBatchUpdater(sessionPtr->GetUniqueNo());
+  auto jobPtr = GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([batchUpdater, sessionPtr]() {
+    batchUpdater->InsertSession(sessionPtr);
+  });
+  batchUpdater->InsertJob(std::move(jobPtr));
 }
 
 void NetworkModule::OnConnectFail(int errorCode) {

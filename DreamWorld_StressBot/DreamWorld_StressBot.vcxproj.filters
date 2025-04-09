@@ -26,6 +26,15 @@
     <ClCompile Include="DrawModule\DrawModule.cpp">
       <Filter>DrawModule</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalObjectPool\GlobalObjectPool.cpp">
+      <Filter>GlobalObjectPool</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\SessionBatchUpdater.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\SessionBatchUpdaters.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">
@@ -45,6 +54,9 @@
     </Filter>
     <Filter Include="DrawModule">
       <UniqueIdentifier>{1d01cacb-36a0-48f1-b647-afde220a8c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GlobalObjectPool">
+      <UniqueIdentifier>{279dd8ab-6ca3-4e14-92ff-90e8c239aaa1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +80,15 @@
     </ClInclude>
     <ClInclude Include="DrawModule\DrawModule.h">
       <Filter>DrawModule</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalObjectPool\GlobalObjectPool.h">
+      <Filter>GlobalObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="Session\SessionBatchUpdater.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Session\SessionBatchUpdaters.h">
+      <Filter>Session</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
