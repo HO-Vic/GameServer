@@ -30,6 +30,7 @@ void NetworkModule::Start() {
 void NetworkModule::OnConnect(SOCKET sock) {
   using namespace std::placeholders;
   auto sessionPtr = SessionManager::GetInstance().OnConnect(sock, sh::IO_Engine::IO_TYPE::TCP, m_ioCore.GetHandle(), std::bind(&NetworkModule::RecvHandle, this, _1, _2, _3));
+  sessionPtr->Init();
   sessionPtr->StartRecv();
 
   auto batchUpdater = SessionBatchUpdaters::GetInstance().GetBatchUpdater(sessionPtr->GetUniqueNo());

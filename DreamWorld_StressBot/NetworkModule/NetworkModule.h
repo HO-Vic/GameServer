@@ -36,6 +36,18 @@ class NetworkModule final
 
   // void Disconnect();
  private:
+  void OnLoginSuccess(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
+  void OnIntoInGame(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
+  void OnGameState_Stage(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
+  void OnGameState_Boss(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
+  void OnGameEnd(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
+  void OnStressTestDelay(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader);
+
  private:
   sh::IO_Engine::IO_Core m_ioCore;
   sh::IO_Engine::AsyncConnector m_connector;

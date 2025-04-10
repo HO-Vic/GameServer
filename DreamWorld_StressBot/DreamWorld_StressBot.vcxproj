@@ -160,6 +160,10 @@
     <ClCompile Include="Session\SessionBatchUpdater.cpp" />
     <ClCompile Include="Session\SessionBatchUpdaters.cpp" />
     <ClCompile Include="Session\SessionManager.cpp" />
+    <ClCompile Include="StressFSM\StressFSM.cpp" />
+    <ClCompile Include="StressInGame\Character\CharacterObject.cpp" />
+    <ClCompile Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.cpp" />
+    <ClCompile Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DrawModule\DrawModule.h" />
@@ -172,6 +176,10 @@
     <ClInclude Include="Session\SessionBatchUpdater.h" />
     <ClInclude Include="Session\SessionBatchUpdaters.h" />
     <ClInclude Include="Session\SessionManager.h" />
+    <ClInclude Include="StressFSM\StressFSM.h" />
+    <ClInclude Include="StressInGame\Character\CharacterObject.h" />
+    <ClInclude Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.h" />
+    <ClInclude Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -35,6 +35,18 @@
     <ClCompile Include="Session\SessionBatchUpdaters.cpp">
       <Filter>Session</Filter>
     </ClCompile>
+    <ClCompile Include="StressFSM\StressFSM.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="StressInGame\Character\CharacterObject.cpp">
+      <Filter>InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.cpp">
+      <Filter>InGame\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.cpp">
+      <Filter>InGame\Skill</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">
@@ -57,6 +69,12 @@
     </Filter>
     <Filter Include="GlobalObjectPool">
       <UniqueIdentifier>{279dd8ab-6ca3-4e14-92ff-90e8c239aaa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InGame">
+      <UniqueIdentifier>{4113b66f-5d29-4ae1-9e2b-e38123c54c35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InGame\Skill">
+      <UniqueIdentifier>{b8423051-a1d2-45d5-a95a-0e40a37fb189}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +107,18 @@
     </ClInclude>
     <ClInclude Include="Session\SessionBatchUpdaters.h">
       <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="StressFSM\StressFSM.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="StressInGame\Character\CharacterObject.h">
+      <Filter>InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.h">
+      <Filter>InGame\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.h">
+      <Filter>InGame\Skill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

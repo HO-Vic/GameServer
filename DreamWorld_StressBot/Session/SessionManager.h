@@ -22,6 +22,8 @@ class SessionManager final
 
   void OnDisconnect(std::shared_ptr<Stress::Session>& sessionPtr);
 
+  void InsertRestUniqueNo(const uint32_t uniqueNo);
+
  private:
   uint32_t GetUniqueNo();
 

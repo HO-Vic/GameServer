@@ -26,6 +26,10 @@ void Stress::SessionManager::OnDisconnect(std::shared_ptr<Stress::Session>& sess
   m_activeSessions.erase(sessionPtr->GetUniqueNo());
 }
 
+void SessionManager::InsertRestUniqueNo(const uint32_t uniqueNo) {
+  m_restUniqueNo.push(uniqueNo);
+}
+
 uint32_t SessionManager::GetUniqueNo() {
   uint32_t uniqueNo = 0;
   if (m_restUniqueNo.try_pop(uniqueNo)) {
