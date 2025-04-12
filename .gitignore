@@ -22,6 +22,4 @@
 /**/DreamWorldLog
 *.ipdb
 *.iobj
-/**/GameServerEngine/PCH
-/**/GameServerEngine/lib
-/**/GameServerEngine/x64
+/**/StressTestLogs/*.txt

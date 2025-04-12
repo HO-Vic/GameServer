@@ -17,9 +17,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
-// #include "../Network/UserManager/UserManager.h"
-
-// #include "NetworkModule.h"
+#include "../NetworkModule/NetworkModule.h"
+#include "../Session/SessionManager.h"
+#include "../LogManager/LogManager.h"
 
 HDC hDC = NULL;          // Private GDI Device Context
 HGLRC hRC = NULL;        // Permanent Rendering Context
@@ -124,10 +124,10 @@ int InitGL(GLvoid)  // All Setup For OpenGL Goes Here
 
 int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
 {
-  int stageSize = 0;
+  /*int stageSize = 0;
   int bossSize = 0;
   float* stagePoints = nullptr;
-  float* bossPoints = nullptr;
+  float* bossPoints = nullptr;*/
   // Network::UserManager::GetInstance().GetPointCloud(stageSize, bossSize, stagePoints, bossPoints);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear Screen And Depth Buffer
@@ -137,59 +137,65 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   glColor3f(1, 1, 0);
   // Position The Text On The Screen
 
-  // int activeNum = DreamWorld::StressTestNetwork::GetInstance().GetActiveNum();
+  auto& netModule = Stress::NetworkModule::GetInstance();
 
-  // double globalDelay = DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay;
-  // glRasterPos2f(-0.67f, 0.75f);
-  // glPrint("Delay1 : %f ms", globalDelay);
+  uint64_t avgDelay = netModule.g_avgDelay;
+  glRasterPos2f(-0.67f, 0.75f);
+  glPrint("AVG IO Delay  [%llu ms]", avgDelay);
 
-  // unsigned long long globalDelay2 = DreamWorld::StressTestNetwork::GetInstance().globalDelay;
-  // unsigned long long delay2 = globalDelay2;
-  // if ( activeNum != 0 ) delay2 = globalDelay2 / activeNum;
-  // glRasterPos2f(-0.67f, 0.70f);
-  // glPrint("Delay2 : %d ms", delay2);
+  uint64_t maxDelay = netModule.g_maxDelayTime;
+  glRasterPos2f(-0.67f, 0.65f);
+  glPrint("MAX DELAY [%llu ms]", maxDelay);  // Print GL Text To The Screen
 
-  // glRasterPos2f(-0.67f, 0.65f);
-  // glPrint("SUM DELAY : %d ms", globalDelay2);
+  uint64_t activeUser = netModule.g_ActiveUserCnt;
+  glRasterPos2f(-0.67f, 0.00f);
+  glPrint("Active User [%llu]", activeUser);  // Print GL Text To The Screen
 
-  // int maxDelay = DreamWorld::StressTestNetwork::GetInstance().globalMaxDelay;
-  // glRasterPos2f(-0.67f, 0.60f);
-  // glPrint("MAX DELAY %d ms", maxDelay);	// Print GL Text To The Screen
+  uint64_t connUser = netModule.g_connectUserCnt;
+  glRasterPos2f(-0.67f, 0.05f);
+  glPrint("Conn User [%llu]", connUser);  // Print GL Text To The Screen
 
-  // glRasterPos2f(0.0f, 0.00f);
-  // glPrint("STRESS TEST [%d]", activeNum);	// Print GL Text To The Screen
-
-  // glRasterPos2f(-0.02f, 0.05f);
-  // glPrint("STAGE USER [%d]", stageSize);	// Print GL Text To The Screen
-
-  // glRasterPos2f(0.0f, 0.10f);
-  // glPrint("BOSS USER [%d]", bossSize);	// Print GL Text To The Screen
-
-  glColor3f(1, 1, 1);
+  auto sessions = Stress::SessionManager::GetInstance().GetSessionForRender();
+  if (sessions.empty()) {
+    return true;
+  }
+  static auto StageRender = [](float x, float z) {
+    glColor3f(1, 1, 1);
+    auto renderX = (x + 500.0f) / 2000.0f;
+    auto renderY = (z + 1000.0f) / 2000.0f;
+    static constexpr float rednerZ = -1.0f;
+    glVertex3f(renderX, renderY, rednerZ);
+  };
+  static auto BossRender = [](float x, float z) {
+    glColor3f(1, 0, 0);
+    auto renderX = (x + 500.0f) / 2000.0f;
+    auto renderY = (z + 1000.0f) / 2000.0f;
+    static constexpr float rednerZ = -1.0f;
+    glVertex3f(renderX, renderY, rednerZ);
+  };
+  uint32_t bossCnt = 0;
+  uint32_t stageCnt = 0;
 
   glPointSize(2.0);
   glBegin(GL_POINTS);
-  for (int i = 0; i < stageSize; ++i) {
-    float x, y, z;
-    x = (stagePoints[i * 2] + 500.0f) / 2000.0f;
-    y = (stagePoints[i * 2 + 1] + 1000.0f) / 2000.0f;
-    z = -1.0f;
-    glVertex3f(x, y, z);
+  for (auto& [id, session] : sessions) {
+    auto position = session->GetPosition();
+    if (abs(position.first) < 400 && abs(position.second) < 400) {
+      bossCnt++;
+      BossRender(position.first, position.second);
+    } else {
+      stageCnt++;
+      StageRender(position.first, position.second);
+    }
   }
   glEnd();
+  glColor3f(1, 1, 0);
+  glRasterPos2f(-0.02f, 0.05f);
+  glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 
-  glColor3f(1, 0, 0);
-  glPointSize(2.0);
-  glBegin(GL_POINTS);
-  for (int i = 0; i < bossSize; ++i) {
-    float x, y, z;
-    x = (bossPoints[i * 2] + 500.0f) / 2000.0f;
-    y = (bossPoints[i * 2 + 1] + 1000.0f) / 2000.0f;
-    z = -1.0f;
-    glVertex3f(x, y, z);
-  }
-  glEnd();
-  return TRUE;  // Everything Went OK
+  glRasterPos2f(0.0f, 0.00f);
+  glPrint("BOSS USER [%lu]", bossCnt);  // Print GL Text To The Screen
+  return TRUE;                          // Everything Went OK
 }
 
 GLvoid KillGLWindow(GLvoid)  // Properly Kill The Window

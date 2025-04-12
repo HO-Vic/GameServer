@@ -1,109 +1,93 @@
 #include "pch.h"
 #include "NetworkModule.h"
+#include <functional>
 #include "../../DreamWorld_Server/Server/MsgProtocol.h"
+#include "../Session/Session.h"
+#include "../GlobalObjectPool/GlobalObjectPool.h"
+#include "../LogManager/LogManager.h"
 
 namespace Stress {
 void NetworkModule::InitMsgDispatcher() {
-  DreamWorld::SERVER_PACKET::TYPE::LOGIN_SUCCESS;
-  DreamWorld::SERVER_PACKET::TYPE::INTO_GAME;
-  DreamWorld::SERVER_PACKET::TYPE::GAME_STATE_STAGE;
-  DreamWorld::SERVER_PACKET::TYPE::GAME_STATE_BOSS;
-  DreamWorld::SERVER_PACKET::TYPE::GAME_END;
-  DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY;
+  using namespace std::placeholders;
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::LOGIN_SUCCESS), std::bind(&NetworkModule::OnLoginSuccess, this, _1, _2));
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::INTO_GAME), std::bind(NetworkModule::OnIntoInGame, _1, _2));
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::GAME_STATE_STAGE), std::bind(NetworkModule::OnGameState_Stage, _1, _2));
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::GAME_STATE_BOSS), std::bind(NetworkModule::OnGameState_Boss, _1, _2));
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::GAME_END), std::bind(NetworkModule::OnGameEnd, _1, _2));
+  m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY), std::bind(NetworkModule::OnStressTestDelay, _1, _2));
 }
 
-void NetworkModule::OnLoginSuccess(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  // auto currentTIme = TIME::now();
-  // auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTIme - m_loginSendTime);
-  // long long currentDelayTime = durationTime.count();  // currentDelay
-
-  // long long diffPrevDelay = currentDelayTime - m_delayTime;  // 이전 딜레이와 현재 딜레이 차이
-
-  // auto prevGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
-  ///*if (prevGlobalDelay > 2021090) {
-  //        std::cout << "asf" << std::endl;
-  //}*/
-  // DreamWorld::StressTestNetwork::GetInstance().globalDelay += diffPrevDelay;
-  // auto debugGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
-  ///*if (debugGlobalDelay > 2021090) {
-  //        std::cout << "asf" << std::endl;
-  //}*/
-  // m_delayTime = currentDelayTime;
-
-  // DreamWorld::StressTestNetwork::GetInstance().IncreaseActiveClient();
-  // int activeNum = DreamWorld::StressTestNetwork::GetInstance().GetActiveNum();
-  // double averValue = 0.0f;
-  // averValue = (double)currentDelayTime / (double)activeNum;
-  // DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += (averValue - m_dDelayTime);
-  // m_dDelayTime = averValue;
-  // m_isActive = true;
+void NetworkModule::OnLoginSuccess(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
+  auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt++;
+  WRITE_LOG(logLevel::debug, "{}({}) > INC [Active User: {}]", __FUNCTION__, __LINE__, activeCnt);
+  std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
+  sessionPtr->InsertJob(
+      GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(
+          [weakSession]() {
+            auto sessionPtr = weakSession.lock();
+            if (nullptr == sessionPtr) {
+              return;
+            }
+            sessionPtr->ChangeState(Session::SESSION_STATE::MATCH);
+          }));
 }
 
-void NetworkModule::OnIntoInGame(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  /*const SERVER_PACKET::IntoGamePacket* recvPacket = reinterpret_cast<const SERVER_PACKET::IntoGamePacket*>(executePacketHeader);
-  m_currentRole = recvPacket->role;*/
+void NetworkModule::OnIntoInGame(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  const DreamWorld::SERVER_PACKET::IntoGamePacket* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::IntoGamePacket*>(packetHeader);
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
+  std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
+  sessionPtr->SetRole(recvPacket->role);
+  sessionPtr->InsertJob(
+      GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(
+          [weakSession]() {
+            auto sessionPtr = weakSession.lock();
+            if (nullptr == sessionPtr) {
+              return;
+            }
+            sessionPtr->ChangeState(Session::SESSION_STATE::INGAME);
+          }));
 }
 
-void NetworkModule::OnGameState_Stage(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  // const SERVER_PACKET::GameState_STAGE* recvPacket = reinterpret_cast<const SERVER_PACKET::GameState_STAGE*>(executePacketHeader);
-  // for (int i = 0; i < 4; ++i) {
-  //   if (recvPacket->userState[i].role == m_currentRole) {
-  //     m_x = recvPacket->userState[i].position.x;
-  //     m_z = recvPacket->userState[i].position.z;
-  //     break;
-  //   }
-  // }
-}
-
-void NetworkModule::OnGameState_Boss(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  /*const SERVER_PACKET::GameState_BOSS* recvPacket = reinterpret_cast<const SERVER_PACKET::GameState_BOSS*>(executePacketHeader);
+void NetworkModule::OnGameState_Stage(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  const DreamWorld::SERVER_PACKET::GameState_STAGE* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::GameState_STAGE*>(packetHeader);
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
   for (int i = 0; i < 4; ++i) {
-    if (recvPacket->userState[i].role == m_currentRole) {
-      m_x = recvPacket->userState[i].position.x;
-      m_z = recvPacket->userState[i].position.z;
+    if (recvPacket->userState[i].role == sessionPtr->GetRole()) {
+      sessionPtr->SetPosition(recvPacket->userState[i].position.x, recvPacket->userState[i].position.z);
       break;
     }
-  }*/
+  }
+  // 위치  좌표 W는 여기서하고 렌더링 쓰레드에서 따로 R하지만, 그정도는 감수(위치 움직이는거만 보기 위함)
 }
 
-void NetworkModule::OnGameEnd(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  // 상태 변경
+void NetworkModule::OnGameState_Boss(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  const DreamWorld::SERVER_PACKET::GameState_BOSS* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::GameState_BOSS*>(packetHeader);
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
+  for (int i = 0; i < 4; ++i) {
+    if (recvPacket->userState[i].role == sessionPtr->GetRole()) {
+      sessionPtr->SetPosition(recvPacket->userState[i].position.x, recvPacket->userState[i].position.z);
+      break;
+    }
+  }
 }
 
-void NetworkModule::OnStressTestDelay(sh::IO_Engine::ISessionPtr session, size_t, BYTE* packetHeader) {
-  // static std::atomic_llong MIN_DELAY = 100;
-  //// 여기서 딜레이 파악
-  // auto nowTime = Time::now();
-  //// 현재 시간과 보낸 시간의 차이를 계산
-  // auto durationTime = std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - m_lastDelaySendTime);
-  // long long currentDelayTime = durationTime.count();  // currentDelay
+void NetworkModule::OnGameEnd(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
+  std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
+  sessionPtr->InsertJob(
+      GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(
+          [weakSession]() {
+            auto sessionPtr = weakSession.lock();
+            if (nullptr == sessionPtr) {
+              return;
+            }
+            sessionPtr->ChangeState(Session::SESSION_STATE::MATCH);
+          }));
+}
 
-  // if (StressTestNetwork::GetInstance().globalMaxDelay < currentDelayTime) {
-  //   StressTestNetwork::GetInstance().globalMaxDelay = currentDelayTime;
-  // }
-
-  // if (MIN_DELAY < currentDelayTime) {
-  //   MIN_DELAY = currentDelayTime;
-  //   std::cout << currentDelayTime << std::endl;
-  // }
-
-  // long long diffPrevDelay = currentDelayTime - m_delayTime;  // 이전 딜레이와 현재 딜레이 차이
-  //// 빨라졌다면 globalDelay가 줄어들 것.
-  // auto prevGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
-  ///*if (prevGlobalDelay > 2021090) {
-  //        std::cout << "asf" << std::endl;
-  //}*/
-  // DreamWorld::StressTestNetwork::GetInstance().globalDelay += diffPrevDelay;
-  // auto debugGlobalDelay = DreamWorld::StressTestNetwork::GetInstance().globalDelay.load();
-  ///*if (debugGlobalDelay > 2021090) {
-  //        std::cout << "asf" << std::endl;
-  //}*/
-  // m_delayTime = currentDelayTime;
-
-  // int activeNum = DreamWorld::StressTestNetwork::GetInstance().GetActiveNum();
-  // double averValue = (double)currentDelayTime / (double)activeNum;
-  // DreamWorld::StressTestNetwork::GetInstance().dGlobalDelay += (averValue - m_dDelayTime);
-  // m_dDelayTime = averValue;
-  // m_isAbleCheckDelay = true;
+void NetworkModule::OnStressTestDelay(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+  auto sessionPtr = std::static_pointer_cast<Session>(session);
+  sessionPtr->OnDelayResponse();
 }
 }  // namespace Stress

@@ -34,15 +34,7 @@ int32_t RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSiz
 
 int32_t RecvContext::StartRecv(Utility::WorkerPtr& session) {
   auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::RECV);
-  auto errorNo = m_recvContextImpl->DoRecv(thWorkerJob);
-  if (0 != errorNo) {
-    auto wsaErr = WSAGetLastError();
-    if (WSA_IO_PENDING == wsaErr) {
-      errorNo = 0;
-    } else {
-      errorNo = wsaErr;
-    }
-  }
-  return errorNo;
+  return m_recvContextImpl->DoRecv(thWorkerJob);
+  
 }
 }  // namespace sh::IO_Engine

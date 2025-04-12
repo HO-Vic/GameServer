@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <random>
 #include "StressFSM.h"
 #include "../Session/Session.h"
 #include "../LogManager/LogManager.h"
@@ -8,12 +9,12 @@
 namespace Stress {
 void LoginState::EnterState() {
   auto sessionPtr = m_session.lock();
-  sessionPtr->GetUniqueNo();
-  /*CLIENT_PACKET::LoginPacket loginPacket;
-  int id = GetId();
-  sprintf_s(loginPacket.id, "module%d", id);
-  Send(&loginPacket);*/
-  // SendLoginPacket();
+  if (nullptr == sessionPtr) {
+    return;
+  }
+  DreamWorld::CLIENT_PACKET::LoginPacket sendPacket{};
+  sprintf_s(sendPacket.id, "module%ld", sessionPtr->GetUniqueNo());
+  sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }
 
 void LoginState::UpdateState() {
@@ -23,7 +24,16 @@ void LoginState::ExitState() {
 }
 
 void MatchState::EnterState() {
-  // Send Match Packet
+  auto sessionPtr = m_session.lock();
+  if (nullptr == sessionPtr) {
+    return;
+  }
+  std::random_device rd;
+  std::default_random_engine dre(rd());
+  std::uniform_int_distribution randRole(0, 3);
+  auto r = static_cast<ROLE>(std::pow(2, randRole(dre)));
+  DreamWorld::CLIENT_PACKET::MatchPacket sendPacket{r};
+  sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }
 
 void MatchState::UpdateState() {

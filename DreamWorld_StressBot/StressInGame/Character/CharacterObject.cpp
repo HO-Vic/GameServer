@@ -141,7 +141,6 @@ void WarriorObject::SendAttackPacket() {
 
 TankerObject::TankerObject(std::shared_ptr<Session>& sessionPtr)
     : CharacterObject(sessionPtr) {
-  m_coolTimeCtrl = std::make_shared<SkillTimeCtrl>();
   m_coolTimeCtrl->InsertDurationSkill(SKILL_Q, SkillTimeCtrl::MS(15'100), SkillTimeCtrl::MS(7'100));
   m_coolTimeCtrl->InsertCoolSkill(SKILL_E, SkillTimeCtrl::MS(10'100));
   m_coolTimeCtrl->InsertCoolSkill(ATTACK, SkillTimeCtrl::MS(2'100));
@@ -173,7 +172,6 @@ void TankerObject::SendAttackPacket() {
 
 MageObject::MageObject(std::shared_ptr<Session>& sessionPtr)
     : CharacterObject(sessionPtr) {
-  m_coolTimeCtrl = std::make_shared<SkillTimeCtrl>();
   m_coolTimeCtrl->InsertDurationSkill(SKILL_Q, SkillTimeCtrl::MS(15'100), SkillTimeCtrl::MS(10'100));
   m_coolTimeCtrl->InsertCoolSkill(SKILL_E, SkillTimeCtrl::MS(10'100));
   m_coolTimeCtrl->InsertCoolSkill(ATTACK, SkillTimeCtrl::MS(2'100));
@@ -205,7 +203,6 @@ void MageObject::SendAttackPacket() {
 
 ArcherObject::ArcherObject(std::shared_ptr<Session>& sessionPtr)
     : CharacterObject(sessionPtr) {
-  m_coolTimeCtrl = std::make_shared<SkillTimeCtrl>();
   m_coolTimeCtrl->InsertCoolSkill(SKILL_Q, SkillTimeCtrl::MS(10'100));
   m_coolTimeCtrl->InsertCoolSkill(SKILL_E, SkillTimeCtrl::MS(15'100));
   m_coolTimeCtrl->InsertCoolSkill(ATTACK, SkillTimeCtrl::MS(2'100));

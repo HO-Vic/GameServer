@@ -4,6 +4,7 @@
 #include <Session/ISession.h>
 #include <Utility/Thread/IWorkerItem.h>
 #include <Utility/Thread/ThWorkerJob.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
 int32_t TCP_RecvContextImpl::RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) {
@@ -38,6 +39,16 @@ int32_t TCP_RecvContextImpl::DoRecv(Utility::ThWorkerJob* thWorkerJob) {
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
   m_wsaBuf.len = static_cast<uint32_t>(MAX_RECV_BUF_SIZE - m_remainLen);
   DWORD flag = 0;
-  return WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  auto errorNo = WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  if (0 != errorNo) {
+    auto wsaErr = WSAGetLastError();
+    if (WSA_IO_PENDING == wsaErr) {
+      errorNo = 0;
+    } else {
+      errorNo = wsaErr;
+      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+    }
+  }
+  return errorNo;
 }
 }  // namespace sh::IO_Engine

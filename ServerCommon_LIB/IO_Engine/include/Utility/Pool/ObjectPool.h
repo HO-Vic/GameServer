@@ -3,6 +3,7 @@
 #include <mutex>
 #include <stack>
 #include <memory>
+#include <set>
 
 namespace sh::Utility {
 template <typename T>
@@ -52,11 +53,13 @@ class ObjectPool {
     }
 
     if (nullptr == ptr) {
+      m_addedCnt++;
+      m_totalCnt++;
       ptr = new T(std::forward<Args>(args)...);
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
-
+    m_usingCnt++;
     return std::shared_ptr<T>(ptr, std::move([=](T* ptr) {
                                 Release(ptr);
                               }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
@@ -74,11 +77,13 @@ class ObjectPool {
     }
 
     if (nullptr == ptr) {
+      m_addedCnt++;
+      m_totalCnt++;
       ptr = new T(std::forward<Args>(args)...);
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
-
+    m_usingCnt++;
     return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::move([=](T* ptr) {
                                                          Release(ptr);
                                                        }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
@@ -89,13 +94,13 @@ class ObjectPool {
     std::destroy_at<T>(ptr);
     std::lock_guard<std::mutex> lg(m_lock);
     m_pools.push(ptr);
+    m_usingCnt--;
   }
 
  private:
   // static은 T마다 할당 됨
   std::mutex m_lock;
   std::stack<T*> m_pools;
-
   std::atomic<uint32_t> m_totalCnt;       // 총 갯수
   std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
   std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
@@ -149,23 +154,47 @@ class RawObjectPool {
     }
 
     if (nullptr == ptr) {
+      m_addedCnt++;
       ptr = new T(std::forward<Args>(args)...);
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      m_usingSet.insert(ptr);
+    }
+#endif  // _DEBUG
+
+    m_usingCnt++;
     return ptr;
   }
 
   void Release(T* ptr) {
     std::destroy_at(ptr);
-    std::lock_guard<std::mutex> lg(m_lock);
-    m_pools.push(ptr);
+    {
+      std::lock_guard<std::mutex> lg(m_lock);
+      m_pools.push(ptr);
+    }
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      m_usingSet.erase(ptr);
+    }
+#endif  // _DEBUG
+
+    m_usingCnt--;
   }
 
  private:
   // static은 T마다 할당 됨
   std::mutex m_lock;
   std::stack<T*> m_pools;
+
+#ifdef _DEBUG
+  std::mutex m_usingLock;
+  std::set<T*> m_usingSet;
+#endif  // _DEBUG
 
   std::atomic<uint32_t> m_totalCnt;       // 총 갯수
   std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용

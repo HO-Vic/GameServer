@@ -26,7 +26,17 @@ int32_t TCP_SendContextImpl::DoSend(Utility::WorkerPtr& session, const BYTE* dat
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
   if (isSendAbleThread) {
     auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-    return SendExecute(thWorkerJob);
+    auto errorNo = SendExecute(thWorkerJob);
+    if (0 != errorNo) {
+      auto ioError = WSAGetLastError();
+      if (WSA_IO_PENDING == ioError) {
+        errorNo = 0;
+      } else {
+        errorNo = ioError;
+        ThWorkerJobPool::GetInstance().Release(thWorkerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
+      }
+    }
+    return errorNo;
   }
   return 0;
 }
@@ -44,13 +54,23 @@ int32_t TCP_SendContextImpl::SendComplete(Utility::ThWorkerJob* thWorkerJob, con
       return 0;
     }
   }
-  return SendExecute(thWorkerJob);
+  auto errorNo = SendExecute(thWorkerJob);
+  if (0 != errorNo) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
+      errorNo = 0;
+    } else {
+      errorNo = ioError;
+    }
+  }
+  return errorNo;
 }
 
 int32_t TCP_SendContextImpl::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
     if (m_sendQueue.empty()) {  // this thread context switched + other thread already sended queue!!
+      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
       m_isSendAble = true;
       return 0;
     }

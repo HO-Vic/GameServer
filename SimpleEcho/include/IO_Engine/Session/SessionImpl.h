@@ -40,6 +40,8 @@ class SessionImpl {
  public:
   SessionImpl(SOCKET sock, const IO_TYPE ioType, RecvHandler&& recvHandler, HANDLE iocpHandle);
 
+  ~SessionImpl();
+
   void SendComplete(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte);
 
   void DoSend(Utility::WokerPtr session, const BYTE* data, const size_t len);
@@ -48,12 +50,15 @@ class SessionImpl {
 
   void StartRecv(Utility::WokerPtr session);
 
-  void RaisedIoError(Utility::ThWorkerJob* thWorkerJob);
+  void ForceDisconnect(Utility::ThWorkerJob* thWorkerJob);
+
+  void OnDisconnect() const;
 
  private:
   SendContext m_sendContext;
   RecvContext m_recvContext;
   HANDLE m_iocpHandle;
+  SOCKET m_sock;
   std::atomic<SESSION_STATE> m_state;
 };
 }  // namespace sh::IO_Engine

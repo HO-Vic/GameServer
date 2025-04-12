@@ -20,6 +20,8 @@ class ISession
 
   void StartRecv();
 
+  bool IsDisconnected() const;
+
  protected:
   // 위에 레이어에서 상속받아서 Disconnect 상황에서 해야하는 일 정의
   virtual void OnDisconnect() = 0;
