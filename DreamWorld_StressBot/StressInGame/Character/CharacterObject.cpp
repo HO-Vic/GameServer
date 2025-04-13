@@ -14,7 +14,7 @@ CharacterObject::CharacterObject(std::shared_ptr<Session>& sessionPtr)
   m_coolTimeCtrl->InsertCoolSkill(MOVE, SkillTimeCtrl::MS(250));
   std::random_device rd;
   std::default_random_engine dre(rd());
-  std::uniform_int_distribution changeBossStage(30, 30 * 3);
+  std::uniform_int_distribution changeBossStage(10, 60);
   // std::uniform_int_distribution changeBossStage(2, 3);
 
   int randomBoss = changeBossStage(dre);
@@ -31,7 +31,7 @@ CharacterObject::CharacterObject(std::shared_ptr<Session>& sessionPtr)
 
 void CharacterObject::Update() {
   auto nowTime = std::chrono::high_resolution_clock::now();
-  if (m_isChangeBoss && nowTime > m_changeBossTime) {
+  if (!m_isChangeBoss && nowTime > m_changeBossTime) {
     auto sessionPtr = m_sessionPtr.lock();
     if (nullptr == sessionPtr) {
       return;
@@ -41,7 +41,7 @@ void CharacterObject::Update() {
     m_isChangeBoss = true;
   }
 
-  if (m_isGameEnd && nowTime > m_gameEndTime) {
+  if (!m_isGameEnd && nowTime > m_gameEndTime) {
     auto sessionPtr = m_sessionPtr.lock();
     if (nullptr == sessionPtr) {
       return;

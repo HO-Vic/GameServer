@@ -27,8 +27,8 @@ std::shared_ptr<SessionBatchUpdater>& SessionBatchUpdaters::GetBatchUpdater(cons
 }
 
 void SessionBatchUpdaters::InsertUpdaterTimerJob(const sh::Utility::WokerPtr& workerPtr) {
-  auto workerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(workerPtr, sh::Utility::WORKER_TYPE::WORK);
-  PostQueuedCompletionStatus(m_threadPool.GetHandle(), 1, reinterpret_cast<ULONG_PTR>(workerPtr.get()), static_cast<LPOVERLAPPED>(workerJob));
+  auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(workerPtr, sh::Utility::WORKER_TYPE::WORK);
+  PostQueuedCompletionStatus(m_threadPool.GetHandle(), 1, reinterpret_cast<ULONG_PTR>(workerPtr.get()), static_cast<LPOVERLAPPED>(thWorkerJob));
 }
 
 }  // namespace Stress

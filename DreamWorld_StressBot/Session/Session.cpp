@@ -13,14 +13,13 @@
 
 namespace Stress {
 Session::Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, const uint32_t uniqueNo)
-    : ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo), sh::Utility::DoubleJobQ_MT("Stress User"), m_currentState(SESSION_STATE::LOGIN), m_role(ROLE::NONE_SELECT), m_lastCheckTime(chrono_clock::now()), m_posX(0.0f), m_posZ(0.0f), m_isSendAbleDelayCheck(true), m_prevDelayTime(0) {
+    : ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo), sh::Utility::DoubleJobQ_MT("Stress User"), m_currentState(SESSION_STATE::LOGIN), m_role(ROLE::NONE_SELECT), m_lastCheckTime(chrono_clock::now()), m_posX(-12341251.0f), m_posZ(-2351235.0f), m_isSendAbleDelayCheck(true), m_prevDelayTime(0) {
 }
 
 Session ::~Session() {
   SessionManager::GetInstance().InsertRestUniqueNo(GetUniqueNo());
   if (SESSION_STATE::LOGIN != m_currentState) {
     auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt--;
-    WRITE_LOG(logLevel::debug, "{}({}) > DEC [Active User: {}]", __FUNCTION__, __LINE__, activeCnt);
   }
   NetworkModule::GetInstance().g_totalDelay -= m_prevDelayTime;
 }
@@ -40,7 +39,6 @@ void Session::OnDisconnect() {
   auto selfPtr = std::static_pointer_cast<Session>(shared_from_this());
   SessionManager::GetInstance().OnDisconnect(selfPtr);
   auto connectCnt = NetworkModule::GetInstance().g_connectUserCnt--;
-  WRITE_LOG(logLevel::debug, "{}({}) > DEC [ConnCnt: {}]", __FUNCTION__, __LINE__, connectCnt);
   auto jobPtr = GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([batchUpdater, selfPtr]() {
     batchUpdater->DiscardSession(selfPtr);
   });

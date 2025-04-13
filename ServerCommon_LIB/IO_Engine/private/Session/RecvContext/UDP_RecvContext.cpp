@@ -6,10 +6,6 @@ int32_t UDP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t 
   return 0;
 }
 
-int32_t UDP_RecvContext::StartRecv(Utility::WorkerPtr& session) {
-  return 0;
-}
-
 int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* thWorkerJob) {
   return 0;
 }

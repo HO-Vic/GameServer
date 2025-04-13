@@ -93,29 +93,25 @@ echo [Start Deploy Utility Header File]
 :: xcopy ".\include" "..\ServerCore\include\" /E /Y
 
 ::Io_Engine에 헤더 배포
-if not exist ..\IO_Engine\include (
-	mkdir ..\IO_Engine\include\Utility
-)
+rmdir /s /q "..\IO_Engine\include\Utility"
+mkdir ..\IO_Engine\include\Utility
 xcopy ".\public" "..\IO_Engine\include\Utility\" /E /Y
 
 ::  xcopy ".\include" "..\IO_Engine\include\" /E /Y
 
 ::SimpleEcho에 헤더 배포
-if not exist ..\..\SimpleEcho\include (
-	mkdir ..\..\SimpleEcho\include\Utility
-)
+rmdir /s /q "..\..\SimpleEcho\include\Utility"
+mkdir ..\..\SimpleEcho\include\Utility
 xcopy ".\public" "..\..\SimpleEcho\include\Utility\" /E /Y
 
 ::DreamWorld Server 헤더 배포
-if not exist ..\..\DreamWorld_Server\include (
-	mkdir ..\..\DreamWorld_Server\include\Utility
-)
+rmdir /s /q "..\..\DreamWorld_Server\include\Utility"
+mkdir ..\..\DreamWorld_Server\include\Utility
 xcopy ".\public" "..\..\DreamWorld_Server\include\Utility\" /E /Y
 
 ::DreamWorld Server 헤더 배포
-if not exist ..\..\DreamWorld_StressBot\include (
-	mkdir ..\..\DreamWorld_StressBot\include\Utility
-)
+rmdir /s /q "..\..\DreamWorld_StressBot\include\Utility"
+mkdir ..\..\DreamWorld_StressBot\include\Utility
 xcopy ".\public" "..\..\DreamWorld_StressBot\include\Utility\" /E /Y
 echo [End Deploy Utility Header File]
 

@@ -21,8 +21,8 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port) {
   g_connectUserCnt = 0;
   g_ActiveUserCnt = 0;
   m_ioCore.Init(4);
-  m_connectDelayTick = MS(3);
-  m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, AF_INET, SOCK_STREAM, IPPROTO_TCP, TIMEOUT_MS);
+  m_connectDelayTick = MS(1);
+  m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, AF_INET, SOCK_STREAM, IPPROTO_TCP, MS(0));
   m_lastTryConnTime = TIME::now();
 }
 
@@ -32,6 +32,7 @@ void NetworkModule::Start() {
   static constexpr uint64_t MAX_DELAY_THRESHOLD = 150;
   static constexpr uint64_t INC_DELAY_CONN_TICK_THRESHOLD = 80;
   bool incUser = true;
+  bool isAdjustConnDelay = false;
   uint32_t adjustUserCnt = UINT32_MAX;
   while (true) {
     if (incUser || (!incUser && g_ActiveUserCnt <= adjustUserCnt)) {  // 1차적으로 disconn후에, 일정 인원까지는 다시 채우자
@@ -53,12 +54,18 @@ void NetworkModule::Start() {
         auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<sh::Utility::IWorkerItem>(delSessionPtr), sh::Utility::WORKER_TYPE::FORCE_DISCONN);
         PostQueuedCompletionStatus(m_ioCore.GetHandle(), 1, 0, static_cast<LPOVERLAPPED>(thWorkerJob));
         adjustUserCnt = g_ActiveUserCnt * 0.8;
-        incUser = false;
+
+        if (incUser) {
+          incUser = false;
+          WRITE_LOG(logLevel::info, "{}({}) Dec User", __FUNCTION__, __LINE__);
+        }
       }
 
       // 딜레이 평균이 충분히 크다면, connect Tick을 늘리자
-      if (g_avgDelay >= INC_DELAY_CONN_TICK_THRESHOLD) {
-        m_connectDelayTick = MS(13);
+      if (!isAdjustConnDelay && g_avgDelay >= INC_DELAY_CONN_TICK_THRESHOLD) {
+        isAdjustConnDelay = true;
+        m_connectDelayTick = MS(10);
+        WRITE_LOG(logLevel::info, "{}({}) Adjust Conn Tick!!", __FUNCTION__, __LINE__);
       }
     }
   }
@@ -70,7 +77,6 @@ void NetworkModule::OnConnect(SOCKET sock) {
   sessionPtr->Init();
   sessionPtr->StartRecv();
   uint32_t connectCnt = NetworkModule::GetInstance().g_connectUserCnt++;
-  WRITE_LOG(logLevel::debug, "{}({}) > INC [ConnCnt: {}]", __FUNCTION__, __LINE__, connectCnt);
 
   auto batchUpdater = SessionBatchUpdaters::GetInstance().GetBatchUpdater(sessionPtr->GetUniqueNo());
   auto jobPtr = GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([batchUpdater, sessionPtr]() {

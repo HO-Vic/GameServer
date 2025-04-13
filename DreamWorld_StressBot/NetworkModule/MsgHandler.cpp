@@ -20,7 +20,6 @@ void NetworkModule::InitMsgDispatcher() {
 void NetworkModule::OnLoginSuccess(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt++;
-  WRITE_LOG(logLevel::debug, "{}({}) > INC [Active User: {}]", __FUNCTION__, __LINE__, activeCnt);
   std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
   sessionPtr->InsertJob(
       GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique(

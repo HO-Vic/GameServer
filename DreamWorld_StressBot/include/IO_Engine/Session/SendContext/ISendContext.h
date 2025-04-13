@@ -1,6 +1,4 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 #include <WinSock2.h>
 
 namespace sh {
@@ -18,13 +16,9 @@ class ISendContext {
       : m_socket(sock) {
   }
 
-  virtual int32_t DoSend(Utility::WorkerPtr& session, const BYTE* data, const size_t len) = 0;
+  virtual int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) = 0;
 
   virtual int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) = 0;
-
-  void OnDisconnect() {
-    m_socket = INVALID_SOCKET;
-  }
 
  protected:
   virtual int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob) = 0;

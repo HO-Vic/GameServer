@@ -1,10 +1,11 @@
 #pragma once
 #include <WinSock2.h>
+#include "../../CommonDefine.h"
 
-namespace sh::Utility {
+namespace sh {
+namespace Utility {
 class ThWorkerJob;
-class IWorkerItem;
-using WorkerPtr = std::shared_ptr<IWorkerItem>;
+}
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
@@ -18,13 +19,6 @@ class IRecvContext {
 
   virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) = 0;
 
-  virtual int32_t StartRecv(Utility::WorkerPtr& session) = 0;
-
-  void OnDisconnect() {
-    m_socket = INVALID_SOCKET;
-  }
-
- protected:
   virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) = 0;
 
  protected:

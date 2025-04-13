@@ -12,9 +12,6 @@ class TCP_RecvContext
 
   virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) override;
 
-  virtual int32_t StartRecv(Utility::WorkerPtr& session) override;
-
- protected:
   virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) override;
 };
 }  // namespace sh::IO_Engine

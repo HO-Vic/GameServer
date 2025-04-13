@@ -66,6 +66,10 @@ class Session final
     m_posZ = z;
   }
 
+  SESSION_STATE GetSessionState() const {
+    return m_currentState;
+  }
+
   void OnDelayResponse();
 
  private:

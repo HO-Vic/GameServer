@@ -82,6 +82,7 @@ void InGameState::ExitState() {
   DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::GAME_END_OK));
   sessionPtr->DoSend(&sendPacket, sendPacket.size);
   sessionPtr->SetRole(ROLE::NONE_SELECT);
+  sessionPtr->SetPosition(-12341251.0f, -2351235.0f);
 }
 
 }  // namespace Stress

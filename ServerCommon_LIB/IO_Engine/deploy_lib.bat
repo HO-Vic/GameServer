@@ -87,18 +87,27 @@ echo [End Deploy IO_Engine LIB]
 :: Header 파일 배포
 
 echo [Start Deploy IO_Engine Header File]
+rmdir /s /q "..\..\SimpleEcho\include\IO_Engine"
+mkdir "..\..\SimpleEcho\include\IO_Engine"
 xcopy ".\public" "..\..\SimpleEcho\include\IO_Engine\" /E /Y
+
+rmdir /s /q "..\..\DreamWorld_Server\include\IO_Engine\"
+mkdir "..\..\DreamWorld_Server\include\IO_Engine\"
 xcopy ".\public" "..\..\DreamWorld_Server\include\IO_Engine\" /E /Y
+
+rmdir /s /q "..\..\DreamWorld_StressBot\include\IO_Engine\"
+mkdir "..\..\DreamWorld_StressBot\include\IO_Engine\"
 xcopy ".\public" "..\..\DreamWorld_StressBot\include\IO_Engine\" /E /Y
+
 echo [End Deploy IO_Engine Header File]
 
 :: Export 폴더로 배포된 데이터 복사
 
 echo [Deployed Data To Export]
 
-if not exist .\Export\include\IO_Engine (
-    mkdir .\Export\include\IO_Engine
-)
+rmdir /s /q ".\Export\include\IO_Engine"
+mkdir .\Export\include\IO_Engine
+
 if not exist .\Export\lib\Debug (
     mkdir .\Export\lib\Debug
 )

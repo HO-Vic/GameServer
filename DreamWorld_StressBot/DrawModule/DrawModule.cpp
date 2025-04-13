@@ -173,29 +173,58 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
     static constexpr float rednerZ = -1.0f;
     glVertex3f(renderX, renderY, rednerZ);
   };
+
+  // 세션 상태는 세션 잡큐가 변경,여기선 read만
   uint32_t bossCnt = 0;
   uint32_t stageCnt = 0;
+  uint32_t ingameCnt = 0;
+
+  uint32_t matchCnt = 0;  // 매칭
+  uint32_t loginCnt = 0;
 
   glPointSize(2.0);
   glBegin(GL_POINTS);
   for (auto& [id, session] : sessions) {
-    auto position = session->GetPosition();
-    if (abs(position.first) < 400 && abs(position.second) < 400) {
-      bossCnt++;
-      BossRender(position.first, position.second);
-    } else {
-      stageCnt++;
-      StageRender(position.first, position.second);
+    switch (session->GetSessionState()) {
+      case Stress::Session::SESSION_STATE::LOGIN: {
+        loginCnt++;
+      } break;
+      case Stress::Session::SESSION_STATE::MATCH: {
+        matchCnt++;
+      } break;
+      case Stress::Session::SESSION_STATE::INGAME: {
+        auto position = session->GetPosition();
+        if (abs(position.first) < 400 && abs(position.second) < 400) {
+          bossCnt++;
+          BossRender(position.first, position.second);
+        } else {
+          stageCnt++;
+          StageRender(position.first, position.second);
+        }
+        ingameCnt++;
+      } break;
+      default:
+        break;
     }
   }
   glEnd();
   glColor3f(1, 1, 0);
-  glRasterPos2f(-0.02f, 0.05f);
+  glRasterPos2f(-0.04f, 0.05f);
   glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 
-  glRasterPos2f(0.0f, 0.00f);
+  glRasterPos2f(-0.04f, 0.00f);
   glPrint("BOSS USER [%lu]", bossCnt);  // Print GL Text To The Screen
-  return TRUE;                          // Everything Went OK
+
+  glRasterPos2f(-0.04f, 0.10f);
+  glPrint("INGAME USER [%lu]", ingameCnt);  // Print GL Text To The Screen
+
+  glRasterPos2f(-0.04f, 0.15f);
+  glPrint("Login USER [%lu]", loginCnt);  // Print GL Text To The Screen
+
+  glRasterPos2f(-0.04f, 0.20f);
+  glPrint("Matching USER [%lu]", matchCnt);  // Print GL Text To The Screen
+
+  return TRUE;  // Everything Went OK
 }
 
 GLvoid KillGLWindow(GLvoid)  // Properly Kill The Window

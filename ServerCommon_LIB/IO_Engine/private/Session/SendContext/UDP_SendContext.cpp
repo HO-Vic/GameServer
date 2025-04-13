@@ -2,7 +2,7 @@
 #include <Session/SendContext/UDP_SendContext.h>
 
 namespace sh::IO_Engine {
-int32_t UDP_SendContext::DoSend(Utility::WorkerPtr& session, const BYTE* data, const size_t len) {
+int32_t UDP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) {
   return 0;
 }
 

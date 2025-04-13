@@ -29,10 +29,10 @@ std::shared_ptr<Stress::Session> SessionManager::OnConnect(SOCKET sock, sh::IO_E
 
 void Stress::SessionManager::OnDisconnect(std::shared_ptr<Stress::Session>& sessionPtr) {
   IntenalDiscardRenderSession(sessionPtr);
-  //{
-  //  std::lock_guard<std::mutex> lg{m_sessionLock};
-  //  m_activeSessions.erase(sessionPtr->GetUniqueNo());
-  //}
+  {
+    std::lock_guard<std::mutex> lg{m_sessionLock};
+    m_activeSessions.erase(sessionPtr->GetUniqueNo());
+  }
 }
 
 void SessionManager::InsertRestUniqueNo(const uint32_t uniqueNo) {

@@ -12,9 +12,8 @@ void DreamWorld::RoomThreadPool::Init(const uint8_t threadNo) {
   sh::Utility::ThreadPool::Init(threadNo);
 }
 void RoomThreadPool::InsertRoomUpdateEvent(std::shared_ptr<RoomBase> roomPtr) {
-  LPOVERLAPPED overrlappedPtr = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(
+  auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(
       std::static_pointer_cast<sh::Utility::IWorkerItem>(roomPtr), sh::Utility::WORKER_TYPE::WORK);
-
-  PostQueuedCompletionStatus(GetHandle(), 1, reinterpret_cast<ULONG_PTR>(roomPtr.get()), overrlappedPtr);
+  PostQueuedCompletionStatus(GetHandle(), 1, reinterpret_cast<ULONG_PTR>(roomPtr.get()), static_cast<LPOVERLAPPED>(thWorkerJob));
 }
 }  // namespace DreamWorld

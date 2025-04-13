@@ -7,7 +7,8 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_SendContext::DoSend(Utility::WorkerPtr& session, const BYTE* data, const size_t len) {
+int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) {
+  // thWorker가 내부에서만 존재하니, 내부에서 해결
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
   {
@@ -28,11 +29,12 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr& session, const BYTE* data, c
     auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
     auto errorNo = SendExecute(thWorkerJob);
     if (0 != errorNo) {
-      auto wsaErr = WSAGetLastError();
-      if (WSA_IO_PENDING == wsaErr) {
+      auto ioError = WSAGetLastError();
+      if (WSA_IO_PENDING == ioError) {
         errorNo = 0;
       } else {
-        errorNo = wsaErr;
+        errorNo = ioError;
+        ThWorkerJobPool::GetInstance().Release(thWorkerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
       }
     }
     return errorNo;
@@ -44,34 +46,52 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
   m_sendBuffer.clear();
+  bool isEmptySendBuffer = false;
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
-    if (0 == m_sendQueue.size()) {
-      m_isSendAble = true;
-      // 보낼게 없다면 overlappedEx 반납
-      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
-      return 0;
-    }
+    isEmptySendBuffer = m_sendQueue.size();
   }
+  if (isEmptySendBuffer) {
+    m_isSendAble = true;
+    // 보낼게 없다면 overlappedEx 반납
+    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<ISession >::strong ref 1->0
+    // ~ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
+    // lock scope 외부에서 해제
+    ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+    return 0;
+  }
+
   auto errorNo = SendExecute(thWorkerJob);
   if (0 != errorNo) {
-    auto wsaErr = WSAGetLastError();
-    if (WSA_IO_PENDING == wsaErr) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
       errorNo = 0;
     } else {
-      errorNo = wsaErr;
+      errorNo = ioError;
     }
   }
   return errorNo;
 }
 
 int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
+  bool isSendEmpty = false;
   {
     std::lock_guard<std::mutex> lg(m_queueLock);
-    if (m_sendQueue.empty()) {  // this thread context switched + other thread already sended queue!!
-      m_isSendAble = true;
-      return 0;
-    }
+    isSendEmpty = m_sendQueue.empty();
+  }
+
+  // this thread context switched + other thread already sended queue!!
+  // DoSend() sendQeuue.push() -> thread sleep ..th1
+  // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
+  // th1 wake -> CAS -> send -> send Queue Empty -> m_isSendAble=true
+  if (isSendEmpty) {
+    m_isSendAble = true;
+    ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+    return 0;
+  }
+
+  {
+    std::lock_guard<std::mutex> lg(m_queueLock);
     while (!m_sendQueue.empty()) {
       m_sendBuffer.push_back(std::move(m_sendQueue.front()));
       m_sendQueue.pop();
@@ -86,5 +106,18 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
             .buf = reinterpret_cast<char*>(sendBuffer->m_buffer)});
   }
   return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+}
+
+void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBuffer>&& buffer) {
+  std::lock_guard<std::mutex> lg{m_lock};
+  m_sendQueues[m_activeIdx].push(std::move(buffer));
+}
+
+std::queue<std::shared_ptr<SendBuffer>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
+  {
+    std::lock_guard<std::mutex> lg{m_lock};
+    m_activeIdx = !m_activeIdx;
+  }
+  return m_sendQueues[!m_activeIdx];
 }
 }  // namespace sh::IO_Engine

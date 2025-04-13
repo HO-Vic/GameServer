@@ -31,31 +31,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t 
     std::memcpy(m_buffer, bufferPosition, remainSize);
   }
 
-  auto errorNo = DoRecv(thWorkerJob);
-  return errorNo;
-  if (0 != errorNo) {
-    auto wsaErr = WSAGetLastError();
-    if (WSA_IO_PENDING == wsaErr) {
-      errorNo = 0;
-    } else {
-      errorNo = wsaErr;
-    }
-  }
-  return errorNo;
-}
-
-int32_t TCP_RecvContext::StartRecv(Utility::WorkerPtr& session) {
-  auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::RECV);
-  auto errorNo = DoRecv(thWorkerJob);
-  if (0 != errorNo) {
-    auto wsaErr = WSAGetLastError();
-    if (WSA_IO_PENDING == wsaErr) {
-      errorNo = 0;
-    } else {
-      errorNo = wsaErr;
-    }
-  }
-  return errorNo;
+  return DoRecv(thWorkerJob);
 }
 
 int32_t TCP_RecvContext::DoRecv(Utility::ThWorkerJob* thWorkerJob) {
@@ -63,6 +39,15 @@ int32_t TCP_RecvContext::DoRecv(Utility::ThWorkerJob* thWorkerJob) {
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
   m_wsaBuf.len = static_cast<uint32_t>(MAX_RECV_BUF_SIZE - m_remainLen);
   DWORD flag = 0;
-  return WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  auto errorNo = WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  if (0 != errorNo) {
+    auto wsaErr = WSAGetLastError();
+    if (WSA_IO_PENDING == wsaErr) {
+      errorNo = 0;
+    } else {
+      errorNo = wsaErr;
+    }
+  }
+  return errorNo;
 }
 }  // namespace sh::IO_Engine
