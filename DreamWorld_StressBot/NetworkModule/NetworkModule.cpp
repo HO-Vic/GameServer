@@ -16,27 +16,29 @@
 #include "../GlobalObjectPool/GlobalObjectPool.h"
 
 namespace Stress {
-void NetworkModule::Init(const std::string& ipAddr, uint16_t port) {
+void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t maxDelayThreshold, const uint64_t adjustConnectDelayThreadshold) {
   InitMsgDispatcher();
   g_connectUserCnt = 0;
   g_ActiveUserCnt = 0;
-  m_ioCore.Init(4);
+  m_ioCore.Init(ioThreadNo);
   m_connectDelayTick = MS(1);
   m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, AF_INET, SOCK_STREAM, IPPROTO_TCP, MS(0));
   m_lastTryConnTime = TIME::now();
+  m_maxDelayThreshold = maxDelayThreshold;
+  m_adjustConnectDelayThreadshold = adjustConnectDelayThreadshold;
 }
 
 void NetworkModule::Start() {
   m_ioCore.Start();
   WRITE_LOG(logLevel::info, "{}({}) > Startr Network Module!!", __FUNCTION__, __LINE__);
-  static constexpr uint64_t MAX_DELAY_THRESHOLD = 150;
-  static constexpr uint64_t INC_DELAY_CONN_TICK_THRESHOLD = 80;
+  static constexpr MS DEC_USER_TICK = MS(10);
   bool incUser = true;
   bool isAdjustConnDelay = false;
   uint32_t adjustUserCnt = UINT32_MAX;
+  auto decTime = TIME::now();
   while (true) {
+    auto nowTime = TIME::now();
     if (incUser || (!incUser && g_ActiveUserCnt <= adjustUserCnt)) {  // 1차적으로 disconn후에, 일정 인원까지는 다시 채우자
-      auto nowTime = TIME::now();
       auto connTimeDiff = std::chrono::duration_cast<MS>(nowTime - m_lastTryConnTime);
       if (connTimeDiff > m_connectDelayTick) {
         m_connector.TryConnect(std::bind(&NetworkModule::OnConnect, this, std::placeholders::_1), std::bind(&NetworkModule::OnConnectFail, this, std::placeholders::_1));
@@ -46,7 +48,13 @@ void NetworkModule::Start() {
     if (0 != g_ActiveUserCnt) {
       g_avgDelay = g_totalDelay / g_ActiveUserCnt;
       // 여기서 딜레이 평균 측정해서 임계치 넘었다면, disconn
-      if (g_avgDelay >= MAX_DELAY_THRESHOLD) {
+      if (g_avgDelay >= m_maxDelayThreshold) {
+        auto connTimeDiff = std::chrono::duration_cast<MS>(nowTime - decTime);
+        if (connTimeDiff < DEC_USER_TICK) {  // 이거 설정 안하면 우수수 다 나가버리는...
+          continue;
+        }
+        decTime = nowTime;
+
         auto delSessionPtr = SessionManager::GetInstance().GetForceDiscardSession();
         if (nullptr == delSessionPtr) {
           continue;
@@ -57,15 +65,15 @@ void NetworkModule::Start() {
 
         if (incUser) {
           incUser = false;
-          WRITE_LOG(logLevel::info, "{}({}) Dec User", __FUNCTION__, __LINE__);
+          WRITE_LOG(logLevel::info, "{}({}) Dec User [Avg Tick:{}]", __FUNCTION__, __LINE__, g_avgDelay.load());
         }
       }
 
       // 딜레이 평균이 충분히 크다면, connect Tick을 늘리자
-      if (!isAdjustConnDelay && g_avgDelay >= INC_DELAY_CONN_TICK_THRESHOLD) {
+      if (!isAdjustConnDelay && g_avgDelay >= m_adjustConnectDelayThreadshold) {
         isAdjustConnDelay = true;
         m_connectDelayTick = MS(10);
-        WRITE_LOG(logLevel::info, "{}({}) Adjust Conn Tick!!", __FUNCTION__, __LINE__);
+        WRITE_LOG(logLevel::info, "{}({}) Adjust Conn Tick!! [Avg Tick:{}]", __FUNCTION__, __LINE__, g_avgDelay.load());
       }
     }
   }

@@ -209,19 +209,20 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   }
   glEnd();
   glColor3f(1, 1, 0);
-  glRasterPos2f(-0.04f, 0.05f);
+  static constexpr float GLPOSX = -0.05;
+  glRasterPos2f(GLPOSX, 0.05f);
   glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 
-  glRasterPos2f(-0.04f, 0.00f);
+  glRasterPos2f(GLPOSX, 0.00f);
   glPrint("BOSS USER [%lu]", bossCnt);  // Print GL Text To The Screen
 
-  glRasterPos2f(-0.04f, 0.10f);
+  glRasterPos2f(GLPOSX, 0.10f);
   glPrint("INGAME USER [%lu]", ingameCnt);  // Print GL Text To The Screen
 
-  glRasterPos2f(-0.04f, 0.15f);
+  glRasterPos2f(GLPOSX, 0.15f);
   glPrint("Login USER [%lu]", loginCnt);  // Print GL Text To The Screen
 
-  glRasterPos2f(-0.04f, 0.20f);
+  glRasterPos2f(GLPOSX, 0.20f);
   glPrint("Matching USER [%lu]", matchCnt);  // Print GL Text To The Screen
 
   return TRUE;  // Everything Went OK

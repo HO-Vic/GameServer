@@ -5,15 +5,18 @@
 #include "NetworkModule/NetworkModule.h"
 #include "GlobalObjectPool/GlobalObjectPool.h"
 #include "Session/SessionBatchUpdaters.h"
+#include "StressConfig/StressConfig.h"
 
 int main() {
-  START_LOGGER("StressTest", "DreamWorldBotLog/", "StressTest", static_cast<Stress::logLevel>(0), "ConsoleFile");
+  auto& config = Stress::Config::GetInstance();
+  config.LoadXML("../../config/StressConfig.xml");
+  START_LOGGER("StressTest", "DreamWorldBotLog/", "StressTest", static_cast<Stress::logLevel>(config.logLevel), config.logMode);
   Stress::InitGlobalObjectPool();
-  Stress::SessionBatchUpdaters::GetInstance().Init(2, 4, 1);
+  Stress::SessionBatchUpdaters::GetInstance().Init(config.batchUpdaterThreadNo, config.batchUpdaterCnt, config.timerThreadNo);
   Stress::SessionBatchUpdaters::GetInstance().Start();
-  std::thread thread([]() {
+  std::thread thread([&config]() {
     auto& netModule = Stress::NetworkModule::GetInstance();
-    netModule.Init("127.0.0.1", 9000);
+    netModule.Init(config.ip, config.port, config.ioThreadNo, config.decUserMaxDelayMs, config.adjustConnDelayMs);
     netModule.Start();
   });
 

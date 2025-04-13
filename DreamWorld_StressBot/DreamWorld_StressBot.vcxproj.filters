@@ -47,6 +47,9 @@
     <ClCompile Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.cpp">
       <Filter>InGame\Skill</Filter>
     </ClCompile>
+    <ClCompile Include="StressConfig\StressConfig.cpp">
+      <Filter>StressConfig</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">
@@ -75,6 +78,9 @@
     </Filter>
     <Filter Include="InGame\Skill">
       <UniqueIdentifier>{b8423051-a1d2-45d5-a95a-0e40a37fb189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StressConfig">
+      <UniqueIdentifier>{2faa14c3-b458-486e-8970-bea395b7eb0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.h">
       <Filter>InGame\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="StressConfig\StressConfig.h">
+      <Filter>StressConfig</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
