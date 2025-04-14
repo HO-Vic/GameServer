@@ -17,6 +17,8 @@ class IRecvContext {
     m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   }
 
+  virtual ~IRecvContext() = default;
+
   virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) = 0;
 
   virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) = 0;

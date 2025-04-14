@@ -16,6 +16,8 @@ class ISendContext {
       : m_socket(sock) {
   }
 
+  virtual ~ISendContext() = default;
+
   virtual int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) = 0;
 
   virtual int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) = 0;

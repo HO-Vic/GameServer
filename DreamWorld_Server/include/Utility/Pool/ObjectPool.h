@@ -4,6 +4,7 @@
 #include <stack>
 #include <memory>
 #include <set>
+#include <functional>
 
 namespace sh::Utility {
 template <typename T>
@@ -44,11 +45,13 @@ class ObjectPool {
   template <typename... Args>
   std::shared_ptr<T> MakeShared(Args&&... args) {
     T* ptr = nullptr;
+    bool isPool = false;
     {
       std::lock_guard<std::mutex> lg(m_lock);
       if (!m_pools.empty()) {
         ptr = m_pools.top();
         m_pools.pop();
+        isPool = true;
       }
     }
 
@@ -59,20 +62,35 @@ class ObjectPool {
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      if (m_usingSet.count(ptr) > 0) {
+        int i = 0;
+        i++;
+      }
+      m_usingSet.insert(ptr);
+      m_usingCnt++;
+    }
+#else
     m_usingCnt++;
-    return std::shared_ptr<T>(ptr, std::move([=](T* ptr) {
-                                Release(ptr);
-                              }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+#endif  // _DEBUG
+    // return std::shared_ptr<T>(ptr, std::move([this](T* ptr) {
+    //                             this->Release(ptr);
+    //                           }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+    return std::shared_ptr<T>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
   }
 
   template <typename... Args>
   std::unique_ptr<T, std::function<void(T*)>> MakeUnique(Args&&... args) {
     T* ptr = nullptr;
+    bool isPool = false;
     {
       std::lock_guard<std::mutex> lg(m_lock);
       if (!m_pools.empty()) {
         ptr = m_pools.top();
         m_pools.pop();
+        isPool = false;
       }
     }
 
@@ -83,10 +101,23 @@ class ObjectPool {
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      if (m_usingSet.count(ptr) > 0) {
+        int i = 0;
+        i++;
+      }
+      m_usingSet.insert(ptr);
+      m_usingCnt++;
+    }
+#else
     m_usingCnt++;
-    return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::move([=](T* ptr) {
-                                                         Release(ptr);
-                                                       }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+#endif  // _DEBUG
+    // return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::move([this](T* ptr) {
+    //                                                      this->Release(ptr);
+    //                                                    }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
+    return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
   }
 
   uint64_t GetTotalCnt() const {
@@ -104,9 +135,23 @@ class ObjectPool {
  private:
   void Release(T* ptr) {
     std::destroy_at<T>(ptr);
-    std::lock_guard<std::mutex> lg(m_lock);
-    m_pools.push(ptr);
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      if (m_usingSet.count(ptr) == 0) {
+        int i = 0;
+        i++;
+      }
+      m_usingSet.erase(ptr);
+      m_usingCnt--;
+    }
+#else
     m_usingCnt--;
+#endif  // _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_lock);
+      m_pools.push(ptr);
+    }
   }
 
  private:
@@ -117,6 +162,11 @@ class ObjectPool {
   std::atomic<uint64_t> m_totalUsingCnt;  // 누적 사용
   std::atomic<uint64_t> m_usingCnt;       // 현재 사용량
   std::atomic<uint64_t> m_addedCnt;       // 추가
+
+#ifdef _DEBUG
+  std::mutex m_usingLock;
+  std::set<T*> m_usingSet;
+#endif  // _DEBUG
 };
 
 template <typename T>
