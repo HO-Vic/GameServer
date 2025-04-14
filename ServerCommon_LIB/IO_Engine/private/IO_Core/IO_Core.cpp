@@ -25,13 +25,12 @@ IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
 
 void IO_Core::Init() {
   m_threadPool.Init();
-  ThWorkerJobPool::GetInstance().Init(500);
-  SendBufferPool::GetInstance().InitSize(1000);
 }
 
-void IO_Core::Init(const uint8_t ioThreadNo) {
+void IO_Core::Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolSize /*= 1500*/, const uint32_t sendBufferPoolSize /*= 1500*/) {
   m_threadPool.Init(ioThreadNo);
-  IO_Core::Init();
+  ThWorkerJobPool::GetInstance().Init(thWorkerPoolSize);
+  SendBufferPool::GetInstance().InitSize(sendBufferPoolSize);
 }
 
 void IO_Core::Start() {

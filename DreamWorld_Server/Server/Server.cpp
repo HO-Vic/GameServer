@@ -17,13 +17,13 @@
 
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
-Server::Server(const uint8_t ioThreadNo, const bool useIoMetric /* = false*/, const bool useMetric /* = false*/)
+Server::Server(const uint8_t ioThreadNo /*= 0*/, const bool useIoMetric /* = false*/, const bool useMetric /* = false*/)
     : m_ioCore(ioThreadNo, useIoMetric), m_acceptorCnt(2) {
   MetricSlot::GetInstance().Init(useMetric);
 }
 
-void Server::Init() {
-  m_ioCore.Init();
+void Server::Init(const uint8_t ioThreadNo /*= 0*/, const uint32_t thWorkerPoolSize /*= 1500*/, const uint32_t sendBufferPoolSize /*= 1500*/) {
+  m_ioCore.Init(ioThreadNo, thWorkerPoolSize, sendBufferPoolSize);
   m_listener.Init(m_ioCore.GetHandle(), 9000, 0);
   m_ioCore;
   m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) { AcceptHandle(sock); }, m_acceptorCnt);

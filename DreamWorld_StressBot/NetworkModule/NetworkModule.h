@@ -66,6 +66,8 @@ class NetworkModule final
  public:
   std::atomic_uint32_t g_connectUserCnt{};
   std::atomic_uint32_t g_ActiveUserCnt{};
+  std::atomic_uint32_t g_maxConnectUserCnt{};
+
   std::atomic_uint64_t g_maxDelayTime{};  // ms
   std::atomic_uint64_t g_totalDelay{};    // ms
   std::atomic_uint64_t g_avgDelay{};      // ms

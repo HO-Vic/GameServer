@@ -8,7 +8,7 @@
 
 namespace DreamWorld {
 ServerConfig::ServerConfig()
-    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1), targetRoomLogTickSec(1), avgRoomLogTickSec(1), maxRoomTickMs(120), reactiveTickMs(100) {
+    : ip("0.0.0.0"), port(9000), ioThreadNo(4), ipAddr(0), DBThreadNo(2), roomThreadNo(4), timerThreadNo(1), logLevel(1), targetRoomLogTickSec(1), avgRoomLogTickSec(1), maxRoomTickMs(120), reactiveTickMs(100), thWorkerPoolSize(5000), sendBufferPoolSize(2000), jobPoolSize(700), timerJobPoolSize(700) {
 }
 
 void ServerConfig::LoadXML(const char* configFile) {
@@ -75,6 +75,26 @@ void ServerConfig::LoadXML(const char* configFile) {
                 } else if (strcmp(attr->name(), "logTickSec") == 0) {
                   meticLoggingTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
                 }
+              }
+            }
+          }
+        }
+      } else if (strcmp(root->name(), "Pool") == 0) {
+        for (auto node = root->first_node(); node != nullptr; node = node->next_sibling()) {
+          if (strcmp(node->name(), "IO") == 0) {
+            for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+              if (strcmp(attr->name(), "ThWorkerJob") == 0) {
+                thWorkerPoolSize = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
+              } else if (strcmp(attr->name(), "SendBuffer") == 0) {
+                sendBufferPoolSize = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
+              }
+            }
+          } else if (strcmp(node->name(), "Server") == 0) {
+            for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+              if (strcmp(attr->name(), "Job") == 0) {
+                jobPoolSize = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
+              } else if (strcmp(attr->name(), "TimerJob") == 0) {
+                timerJobPoolSize = static_cast<uint32_t>(std::stoi(attr->value(), nullptr));
               }
             }
           }

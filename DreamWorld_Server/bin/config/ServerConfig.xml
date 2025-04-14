@@ -24,8 +24,13 @@
 	<Metric IO_Metric="1" Game_Metric="1" logTickSec="1"/>
 </Properties>
 
+<Pool>
+	<IO ThWorkerJob="6500" SendBuffer="3000"/>
+	<Server Job="700" TimerJob="1500"/>
+</Pool>
+
 <Server>
-	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="6" roomThreadNo="6" timerThreadNo="1" DBThreadNo="2"/>
+	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="8" roomThreadNo="4" timerThreadNo="1" DBThreadNo="2"/>
 </Server>
 
 <!-- Name은 ms sql에서 data base, my sql에서는 schema-->

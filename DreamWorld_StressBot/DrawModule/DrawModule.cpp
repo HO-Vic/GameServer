@@ -12,6 +12,7 @@
 #include "pch.h"  // Commenting out the problematic include
 #include "DrawModule.h"
 #include <windows.h>  // Including necessary headers directly
+#include <chrono>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <stdarg.h>
@@ -143,17 +144,26 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   glRasterPos2f(-0.67f, 0.75f);
   glPrint("AVG IO Delay  [%llu ms]", avgDelay);
 
+  static uint64_t prevMaxDelay = 0;
   uint64_t maxDelay = netModule.g_maxDelayTime;
-  glRasterPos2f(-0.67f, 0.65f);
-  glPrint("MAX DELAY [%llu ms]", maxDelay);  // Print GL Text To The Screen
+  if (prevMaxDelay != maxDelay) {
+    WRITE_LOG(Stress::logLevel::info, "[maxDelay: {}]", maxDelay);
+    prevMaxDelay = maxDelay;
+  }
+  // glRasterPos2f(-0.67f, 0.65f);
+  // glPrint("MAX DELAY [%llu ms]", maxDelay);  // Print GL Text To The Screen
 
   uint64_t activeUser = netModule.g_ActiveUserCnt;
-  glRasterPos2f(-0.67f, 0.00f);
+  glRasterPos2f(-0.67f, 0.60f);
   glPrint("Active User [%llu]", activeUser);  // Print GL Text To The Screen
 
   uint64_t connUser = netModule.g_connectUserCnt;
-  glRasterPos2f(-0.67f, 0.05f);
+  glRasterPos2f(-0.67f, 0.50f);
   glPrint("Conn User [%llu]", connUser);  // Print GL Text To The Screen
+
+  uint64_t maxConnUser = netModule.g_maxConnectUserCnt;
+  glRasterPos2f(-0.67f, 0.40f);
+  glPrint("Max Conn User [%llu]", maxConnUser);  // Print GL Text To The Screen
 
   auto sessions = Stress::SessionManager::GetInstance().GetSessionForRender();
   if (sessions.empty()) {
@@ -209,7 +219,7 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   }
   glEnd();
   glColor3f(1, 1, 0);
-  static constexpr float GLPOSX = -0.05;
+  static constexpr float GLPOSX = -0.06;
   glRasterPos2f(GLPOSX, 0.05f);
   glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 

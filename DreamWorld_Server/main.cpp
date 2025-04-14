@@ -20,7 +20,7 @@ int main() {
   START_LOGGER("GameServer", "DreamWorldLog/", "GameServer", static_cast<DreamWorld::logLevel>(serverConfig.logLevel), serverConfig.logMode);
 
   DreamWorld::Server server(serverConfig.ioThreadNo, serverConfig.useIOMetric, serverConfig.useGameMetric);  // ioThread
-  server.Init();
+  server.Init(serverConfig.ioThreadNo, serverConfig.thWorkerPoolSize, serverConfig.sendBufferPoolSize);
 
   DreamWorld::DBConnectionManager::GetInstance().Init(serverConfig.DBThreadNo, serverConfig.dbName, serverConfig.dbIp, serverConfig.dbPort, serverConfig.dbId, serverConfig.dbpw);  // DB Connector
   DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                                            // DB Thread

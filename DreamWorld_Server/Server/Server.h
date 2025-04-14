@@ -12,9 +12,9 @@ using ISessionPtr = std::shared_ptr<ISession>;
 namespace DreamWorld {
 class Server {
  public:
-  Server(const uint8_t ioThreadNo, const bool useIoMetric = false, const bool useMetric = false);
+  Server(const uint8_t ioThreadNo = 0, const bool useIoMetric = false, const bool useMetric = false);
 
-  void Init();
+  void Init(const uint8_t ioThreadNo = 0, const uint32_t thWorkerPoolSize = 1500, const uint32_t sendBufferPoolSize = 1500);
 
   void Start();
 

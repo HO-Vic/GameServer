@@ -13,7 +13,7 @@ class IO_Core {
 
   void Init();
 
-  void Init(const uint8_t ioThreadNo);
+  void Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolSize = 1500, const uint32_t sendBufferPoolSize = 1500);
 
   void Start();
 

@@ -20,6 +20,7 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t
   InitMsgDispatcher();
   g_connectUserCnt = 0;
   g_ActiveUserCnt = 0;
+  g_maxConnectUserCnt = 0;
   m_ioCore.Init(ioThreadNo);
   m_connectDelayTick = MS(1);
   m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, AF_INET, SOCK_STREAM, IPPROTO_TCP, MS(0));
@@ -85,6 +86,7 @@ void NetworkModule::OnConnect(SOCKET sock) {
   sessionPtr->Init();
   sessionPtr->StartRecv();
   uint32_t connectCnt = NetworkModule::GetInstance().g_connectUserCnt++;
+  NetworkModule::GetInstance().g_maxConnectUserCnt++;
 
   auto batchUpdater = SessionBatchUpdaters::GetInstance().GetBatchUpdater(sessionPtr->GetUniqueNo());
   auto jobPtr = GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([batchUpdater, sessionPtr]() {

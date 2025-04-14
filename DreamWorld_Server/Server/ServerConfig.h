@@ -45,6 +45,13 @@ class ServerConfig
   DreamWorld::SEC meticLoggingTickSec;
 #pragma endregion
 
+#pragma region PoolSize
+  uint32_t thWorkerPoolSize = 5000;
+  uint32_t sendBufferPoolSize = 2000;
+  uint32_t jobPoolSize = 700;
+  uint32_t timerJobPoolSize = 700;
+#pragma endregion
+
   std::string logMode;
   uint8_t logLevel;
 };
