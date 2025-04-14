@@ -21,7 +21,7 @@ int main() {
 
   DreamWorld::Server server(serverConfig.ioThreadNo, serverConfig.useIOMetric, serverConfig.useGameMetric);  // ioThread
   server.Init(serverConfig.ioThreadNo, serverConfig.thWorkerPoolSize, serverConfig.sendBufferPoolSize);
-
+  WRITE_LOG(DreamWorld::logLevel::info, "Thread Pool Info [ioThread: {}] [roomThread: {}] [DBThread: {}]", serverConfig.ioThreadNo, serverConfig.roomThreadNo, serverConfig.DBThreadNo);
   DreamWorld::DBConnectionManager::GetInstance().Init(serverConfig.DBThreadNo, serverConfig.dbName, serverConfig.dbIp, serverConfig.dbPort, serverConfig.dbId, serverConfig.dbpw);  // DB Connector
   DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                                            // DB Thread
   DreamWorld::DBThreadPool::GetInstance().Start();

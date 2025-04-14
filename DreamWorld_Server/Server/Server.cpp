@@ -117,7 +117,7 @@ void Server::Start() {
         roomMgr.m_prevLoggingTime = nowTime;
 
         auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
-        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, globalTick);
+        WRITE_LOG(logLevel::info, "{}({}) > Room Update Tick Metric [UserCnt: {}] [AvgRoomTick:{}Ms]", __FUNCTION__, __LINE__, userCnt, globalTick);
         if (maxActiveUserCnt < userCnt) {
           maxActiveUserCnt = userCnt;
           if (maxActiveUserCnt >= loggingMaxUserCntThreshold) {
