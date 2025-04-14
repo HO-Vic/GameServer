@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "Metric.h"
+#include "../Room/RoomManager.h"
+#include "../ObjectPools.h"
+#include <Utility/Job/Job.h>
+#include "../Timer/TimerJob.h"
 
 namespace DreamWorld {
 void MetricSlot::Init(bool isUse) {
@@ -8,6 +12,19 @@ void MetricSlot::Init(bool isUse) {
 
 Metric& MetricSlot::SwapAndLoad() {
   auto taskIndex = m_index.load();
+  {
+    m_metics[taskIndex].jobTotalCnt.store(ObjectPool<sh::Utility::Job>::GetInstance().GetTotalCnt());
+    m_metics[taskIndex].jobAddCnt.store(ObjectPool<sh::Utility::Job>::GetInstance().GetAddedCnt());
+    m_metics[taskIndex].jobUsingCnt.store(ObjectPool<sh::Utility::Job>::GetInstance().GetUsingCnt());
+
+    m_metics[taskIndex].timerJobTotalCnt.store(ObjectPool<TimerJob>::GetInstance().GetTotalCnt());
+    m_metics[taskIndex].timerJobAddCnt.store(ObjectPool<TimerJob>::GetInstance().GetAddedCnt());
+    m_metics[taskIndex].timerJobUsingCnt.store(ObjectPool<TimerJob>::GetInstance().GetUsingCnt());
+
+    m_metics[taskIndex].roomTotalCnt.store(RoomManager::GetInstance().GetRoomPool().GetTotalCnt());
+    m_metics[taskIndex].roomAddCnt.store(RoomManager::GetInstance().GetRoomPool().GetAddedCnt());
+    m_metics[taskIndex].roomUsingCnt.store(RoomManager::GetInstance().GetRoomPool().GetUsingCnt());
+  }
   auto otherIndex = (taskIndex + 1) % 2;
   m_metics[otherIndex].Reset();
   m_index.store(otherIndex);

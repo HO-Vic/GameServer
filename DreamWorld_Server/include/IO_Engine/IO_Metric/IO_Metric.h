@@ -5,13 +5,22 @@
 
 namespace sh::IO_Engine {
 struct IO_Metric {
-  std::atomic_uint32_t sendCompletion = 0;
-  std::atomic_uint32_t recvCompletion = 0;
+  std::atomic_uint64_t sendCompletion = 0;
+  std::atomic_uint64_t recvCompletion = 0;
 
   std::atomic_uint64_t sendByte = 0;
   std::atomic_uint64_t recvByte = 0;
 
   std::atomic_uint64_t disconn = 0;
+
+  std::atomic_uint64_t thWorkerJobTotal = 0;
+  std::atomic_uint64_t thWorkerJobUsing = 0;
+  std::atomic_uint64_t thWorkerJobAdd = 0;
+
+  std::atomic_uint64_t sendBufferTotal = 0;
+  std::atomic_uint64_t sendBufferUsing = 0;
+  std::atomic_uint64_t sendBufferAdd = 0;
+
   std::atomic_uint32_t totalReq = 0;
 
   void Reset() {

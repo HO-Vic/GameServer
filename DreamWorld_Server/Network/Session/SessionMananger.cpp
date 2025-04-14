@@ -6,7 +6,7 @@
 
 namespace DreamWorld {
 void SessionMananger::Init() {
-  m_userPool.InitSize(100);
+  m_userPool.InitSize(4500);
   m_uniqueNo = 1;
   m_currentActiveUser = 0;
 }

@@ -18,8 +18,7 @@
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
 Server::Server(const uint8_t ioThreadNo, const bool useIoMetric /* = false*/, const bool useMetric /* = false*/)
-    : m_ioCore(ioThreadNo), m_acceptorCnt(2) {
-  sh::IO_Engine::IO_MetricSlot::GetInstance().Init(useIoMetric);
+    : m_ioCore(ioThreadNo, useIoMetric), m_acceptorCnt(2) {
   MetricSlot::GetInstance().Init(useMetric);
 }
 
@@ -53,26 +52,54 @@ void Server::Start() {
     {  // IO_Metric
       auto loggingDiff = _chrono::duration_cast<_chrono::seconds>(nowTime - prevMetricLoggingTime);
       if (loggingDiff > ServerConfig::GetInstance().meticLoggingTickSec) {
-        auto& ioMetric = sh::IO_Engine::IO_MetricSlot::GetInstance().SwapAndLoad();
-        auto sendCompletion = ioMetric.sendCompletion.load();
-        auto sendByte = ioMetric.sendByte.load();
-        auto recvCompletion = ioMetric.recvCompletion.load();
-        auto recvByte = ioMetric.recvByte.load();
-        auto disconn = ioMetric.disconn.load();
+        if (sh::IO_Engine::IO_MetricSlot::GetInstance().IsUse()) {
+          auto& ioMetric = sh::IO_Engine::IO_MetricSlot::GetInstance().SwapAndLoad();
+          auto sendCompletion = ioMetric.sendCompletion.load();
+          auto sendByte = ioMetric.sendByte.load();
+          auto recvCompletion = ioMetric.recvCompletion.load();
+          auto recvByte = ioMetric.recvByte.load();
+          auto disconn = ioMetric.disconn.load();
+          auto thWorkerTotal = ioMetric.thWorkerJobTotal.load();
+          auto thWorkerAdded = ioMetric.thWorkerJobAdd.load();
+          auto thWorkerUsing = ioMetric.thWorkerJobUsing.load();
+          auto SendBufferTotal = ioMetric.sendBufferTotal.load();
+          auto SendBufferAdded = ioMetric.sendBufferAdd.load();
+          auto SendBufferUsing = ioMetric.sendBufferUsing.load();
 
-        WRITE_LOG(logLevel::info, "{}({}) > IO Metric [sendCompletion:{}] [sendByte:{}] [recvCompletion:{}] [recvByte:{}] [disconn:{}]", __FUNCTION__, __LINE__,
-                  sendCompletion, sendByte, recvCompletion, recvByte, disconn);
+          WRITE_LOG(logLevel::info, "{}({}) > IO Metric [sendCompletion:{}] [sendByte:{}] [recvCompletion:{}] [recvByte:{}] [disconn:{}]", __FUNCTION__, __LINE__,
+                    sendCompletion, sendByte, recvCompletion, recvByte, disconn);
+          WRITE_LOG(logLevel::info, "{}({}) > IO Pool [thWorkerJobTotal:{}] [thWorkerJobAdd:{}] [thWorkerJobUsing:{}] [sendBufferTotal:{}] [sendBufferAdd:{}] [sendBufferUsing:{}]", __FUNCTION__, __LINE__,
+                    thWorkerTotal, thWorkerAdded, thWorkerUsing, SendBufferTotal, SendBufferAdded, SendBufferUsing);
+        }
+        if (MetricSlot::GetInstance().IsUse()) {
+          auto& gameMetric = MetricSlot::GetInstance().SwapAndLoad();
+          auto roomExec = gameMetric.roomExec.load();
+          auto DBExec = gameMetric.DBExec.load();
+          auto timerExec = gameMetric.timerExec.load();
+          auto timerAlready = gameMetric.timerAlreadyExec.load();
+          auto timerIm = gameMetric.timerImmediate.load();
 
-        auto& gameMetric = MetricSlot::GetInstance().SwapAndLoad();
-        auto roomExec = gameMetric.roomExec.load();
-        auto DBExec = gameMetric.DBExec.load();
-        auto timerExec = gameMetric.timerExec.load();
-        auto timerAlready = gameMetric.timerAlreadyExec.load();
-        auto timerIm = gameMetric.timerImmediate.load();
-        auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
-        uint32_t roomCnt = roomMgr.globalRoomCnt;
-        WRITE_LOG(logLevel::info, "{}({}) > Server Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
-                  userCnt, roomCnt, roomExec, DBExec, timerExec, timerAlready, timerIm);
+          auto timerJobTotal = gameMetric.timerJobTotalCnt.load();
+          auto timerJobAdd = gameMetric.timerJobAddCnt.load();
+          auto timerJobUsing = gameMetric.timerJobUsingCnt.load();
+
+          auto jobTotal = gameMetric.jobTotalCnt.load();
+          auto jobAdd = gameMetric.jobAddCnt.load();
+          auto jobUsing = gameMetric.jobUsingCnt.load();
+
+          auto roomTotal = gameMetric.roomTotalCnt.load();
+          auto roomAdd = gameMetric.roomAddCnt.load();
+          auto roomUsing = gameMetric.roomUsingCnt.load();
+
+          auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
+          uint32_t roomCnt = roomMgr.globalRoomCnt;
+          WRITE_LOG(logLevel::info, "{}({}) > Server Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
+                    userCnt, roomCnt, roomExec, DBExec, timerExec, timerAlready, timerIm);
+          WRITE_LOG(logLevel::info, "{}({}) > Server Pool [jobTotal:{}] [jobAdd:{}] [jobUsing:{}] [timerJobTotal:{}] [timerJobAdd:{}] [timerJobUsing:{}]", __FUNCTION__, __LINE__,
+                    jobTotal, jobAdd, jobUsing, timerJobTotal, timerJobAdd, timerJobUsing);
+          WRITE_LOG(logLevel::info, "{}({}) > Server Pool [roomTotal:{}] [roomAdd:{}] [roomUsing:{}]]", __FUNCTION__, __LINE__,
+                    roomTotal, roomAdd, roomUsing);
+        }
         prevMetricLoggingTime = nowTime;
       }
     }

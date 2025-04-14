@@ -2,6 +2,7 @@
 #include <IO_Core/IO_Core.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
+#include <Buffer/SendBufferPool.h>
 
 namespace sh::IO_Engine {
 IO_Core::IO_Core()
@@ -24,7 +25,8 @@ IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
 
 void IO_Core::Init() {
   m_threadPool.Init();
-  ThWorkerJobPool::GetInstance().Init(1);
+  ThWorkerJobPool::GetInstance().Init(500);
+  SendBufferPool::GetInstance().InitSize(1000);
 }
 
 void IO_Core::Init(const uint8_t ioThreadNo) {

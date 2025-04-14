@@ -5,17 +5,29 @@
 
 namespace DreamWorld {
 struct Metric {
-  std::atomic_uint32_t roomExec = 0;
+  std::atomic_uint64_t roomExec = 0;
 
-  std::atomic_uint32_t timerExec = 0;
+  std::atomic_uint64_t timerExec = 0;
 
-  std::atomic_uint32_t timerAlreadyExec = 0;
+  std::atomic_uint64_t timerAlreadyExec = 0;
 
-  std::atomic_uint32_t timerImmediate = 0;
+  std::atomic_uint64_t timerImmediate = 0;
 
-  std::atomic_uint32_t DBExec = 0;
+  std::atomic_uint64_t DBExec = 0;
 
-  std::atomic_uint32_t totalReq = 0;
+  std::atomic_uint64_t jobTotalCnt = 0;
+  std::atomic_uint64_t jobUsingCnt = 0;
+  std::atomic_uint64_t jobAddCnt = 0;
+
+  std::atomic_uint64_t timerJobTotalCnt = 0;
+  std::atomic_uint64_t timerJobUsingCnt = 0;
+  std::atomic_uint64_t timerJobAddCnt = 0;
+
+  std::atomic_uint64_t roomTotalCnt = 0;
+  std::atomic_uint64_t roomUsingCnt = 0;
+  std::atomic_uint64_t roomAddCnt = 0;
+
+  std::atomic_uint64_t totalReq = 0;
 
   void Reset() {
     roomExec = 0;

@@ -27,6 +27,10 @@ class RoomManager
 
   std::shared_ptr<Room> MakeRunningRoomAloneMode(std::shared_ptr<Session>& userRef);
 
+  sh::Utility::ObjectPool<Room>& GetRoomPool() {
+    return m_roomPool;
+  }
+
  private:
   std::mutex m_runningRoomLock;
   std::unordered_map<uint64_t, std::shared_ptr<Room>> m_runningRooms;

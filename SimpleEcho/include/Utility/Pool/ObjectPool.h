@@ -89,6 +89,18 @@ class ObjectPool {
                                                        }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
   }
 
+  uint64_t GetTotalCnt() const {
+    return m_totalCnt;
+  }
+
+  uint64_t GetUsingCnt() const {
+    return m_usingCnt;
+  }
+
+  uint64_t GetAddedCnt() const {
+    return m_addedCnt;
+  }
+
  private:
   void Release(T* ptr) {
     std::destroy_at<T>(ptr);
@@ -101,10 +113,10 @@ class ObjectPool {
   // static은 T마다 할당 됨
   std::mutex m_lock;
   std::stack<T*> m_pools;
-  std::atomic<uint32_t> m_totalCnt;       // 총 갯수
-  std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
-  std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
-  std::atomic<uint32_t> m_addedCnt;       // 추가
+  std::atomic<uint64_t> m_totalCnt;       // 총 갯수
+  std::atomic<uint64_t> m_totalUsingCnt;  // 누적 사용
+  std::atomic<uint64_t> m_usingCnt;       // 현재 사용량
+  std::atomic<uint64_t> m_addedCnt;       // 추가
 };
 
 template <typename T>
@@ -155,6 +167,7 @@ class RawObjectPool {
 
     if (nullptr == ptr) {
       m_addedCnt++;
+      m_totalCnt++;
       ptr = new T(std::forward<Args>(args)...);
     } else {
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
@@ -186,6 +199,18 @@ class RawObjectPool {
     m_usingCnt--;
   }
 
+  uint64_t GetTotalCnt() const {
+    return m_totalCnt;
+  }
+
+  uint64_t GetUsingCnt() const {
+    return m_usingCnt;
+  }
+
+  uint64_t GetAddedCnt() const {
+    return m_addedCnt;
+  }
+
  private:
   // static은 T마다 할당 됨
   std::mutex m_lock;
@@ -196,9 +221,9 @@ class RawObjectPool {
   std::set<T*> m_usingSet;
 #endif  // _DEBUG
 
-  std::atomic<uint32_t> m_totalCnt;       // 총 갯수
-  std::atomic<uint32_t> m_totalUsingCnt;  // 누적 사용
-  std::atomic<uint32_t> m_usingCnt;       // 현재 사용량
-  std::atomic<uint32_t> m_addedCnt;       // 추가
+  std::atomic<uint64_t> m_totalCnt;       // 총 갯수
+  std::atomic<uint64_t> m_totalUsingCnt;  // 누적 사용
+  std::atomic<uint64_t> m_usingCnt;       // 현재 사용량
+  std::atomic<uint64_t> m_addedCnt;       // 추가
 };
 }  // namespace sh::Utility

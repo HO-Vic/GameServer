@@ -11,6 +11,7 @@ namespace sh::IO_Engine {
 constexpr static uint32_t MAX_SEND_BUFFER_SIZE = 1024;
 class SendBuffer {
  public:
+  SendBuffer() = default;
   SendBuffer(const BYTE* data, const size_t len);
 
  public:
