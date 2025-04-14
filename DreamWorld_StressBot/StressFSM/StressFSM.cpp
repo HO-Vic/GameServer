@@ -13,7 +13,8 @@ void LoginState::EnterState() {
     return;
   }
   DreamWorld::CLIENT_PACKET::LoginPacket sendPacket{};
-  sprintf_s(sendPacket.id, "module%ld", sessionPtr->GetUniqueNo());
+  sprintf_s(sendPacket.id, "tt_%ld", sessionPtr->GetUniqueNo());
+  sprintf_s(sendPacket.pw, "tt_%ld", sessionPtr->GetUniqueNo());
   sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }
 
@@ -28,10 +29,10 @@ void MatchState::EnterState() {
   if (nullptr == sessionPtr) {
     return;
   }
-  std::random_device rd;
+  /*std::random_device rd;
   std::default_random_engine dre(rd());
-  std::uniform_int_distribution randRole(0, 3);
-  auto r = static_cast<ROLE>(std::pow(2, randRole(dre)));
+  std::uniform_int_distribution randRole(0, 3);*/
+  auto r = static_cast<ROLE>(std::pow(2, sessionPtr->GetUniqueNo() % 4));
   DreamWorld::CLIENT_PACKET::MatchPacket sendPacket{r};
   sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }

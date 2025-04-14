@@ -18,9 +18,6 @@ Session::Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine
 
 Session ::~Session() {
   SessionManager::GetInstance().InsertRestUniqueNo(GetUniqueNo());
-  if (SESSION_STATE::LOGIN != m_currentState) {
-    auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt--;
-  }
   NetworkModule::GetInstance().g_totalDelay -= m_prevDelayTime;
 }
 
@@ -39,6 +36,9 @@ void Session::OnDisconnect() {
   auto selfPtr = std::static_pointer_cast<Session>(shared_from_this());
   SessionManager::GetInstance().OnDisconnect(selfPtr);
   auto connectCnt = NetworkModule::GetInstance().g_connectUserCnt--;
+  if (SESSION_STATE::LOGIN != m_currentState) {
+    auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt--;
+  }
   auto jobPtr = GlobalObjectPool<sh::Utility::Job>::GetInstance().MakeUnique([batchUpdater, selfPtr]() {
     batchUpdater->DiscardSession(selfPtr);
   });

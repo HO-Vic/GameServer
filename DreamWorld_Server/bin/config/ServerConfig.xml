@@ -30,7 +30,7 @@
 </Pool>
 
 <Server>
-	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="8" roomThreadNo="4" timerThreadNo="1" DBThreadNo="2"/>
+	<DreamWorldServer ip="127.0.0.1" port="9000" ioThreadNo="6" roomThreadNo="4" timerThreadNo="1" DBThreadNo="4"/>
 </Server>
 
 <!-- Name은 ms sql에서 data base, my sql에서는 schema-->
