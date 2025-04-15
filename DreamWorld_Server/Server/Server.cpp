@@ -4,6 +4,7 @@
 #include <string>
 #include <spdlog/common.h>
 #include <IO_Engine/Session/ISession.h>
+#include <IO_Engine/IO_Metric/IO_Metric.h>
 #include "../Network/Session/SessionMananger.h"
 #include "../Network/Session/Session.h"
 #include "../MsgDispatcher/MsgDispatcher.h"
@@ -12,8 +13,9 @@
 #include "../LogManager/LogManager.h"
 #include "../Room/RoomManager.h"
 #include "ServerConfig.h"
-#include <IO_Engine/IO_Metric/IO_Metric.h>
 #include "../Metric/Metric.h"
+#include "../DB/DBPlayerLogin.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
@@ -32,7 +34,6 @@ void Server::Init(const uint8_t ioThreadNo /*= 0*/, const uint32_t thWorkerPoolS
 
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::LOGIN), std::bind(Server::OnLogin, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH), std::bind(Server::OnMatchReq, std::placeholders::_1, std::placeholders::_2));
-  m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::MATCH_REQUEST), std::bind(Server::OnCancelMatch, std::placeholders::_1, std::placeholders::_2));
   m_dispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY), std::bind(Server::OnStressDelay, std::placeholders::_1, std::placeholders::_2));
 
   WRITE_LOG(logLevel::info, "{}({}) > Room Msg Init!", __FUNCTION__, __LINE__);
@@ -93,14 +94,18 @@ void Server::Start() {
           auto roomAdd = gameMetric.roomAddCnt.load();
           auto roomUsing = gameMetric.roomUsingCnt.load();
 
+          auto playerLoginTotal = ObjectPool<DBPlayerLogin>::GetInstance().GetTotalCnt();
+          auto playerLoginAdd = ObjectPool<DBPlayerLogin>::GetInstance().GetAddedCnt();
+          auto playerLoginUsing = ObjectPool<DBPlayerLogin>::GetInstance().GetUsingCnt();
+
           auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
           uint32_t roomCnt = roomMgr.globalRoomCnt;
           WRITE_LOG(logLevel::info, "{}({}) > Server Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
                     userCnt, roomCnt, roomExec, DBExec, timerExec, timerAlready, timerIm);
           WRITE_LOG(logLevel::info, "{}({}) > Server Pool [jobTotal:{}] [jobAdd:{}] [jobUsing:{}] [timerJobTotal:{}] [timerJobAdd:{}] [timerJobUsing:{}]", __FUNCTION__, __LINE__,
                     jobTotal, jobAdd, jobUsing, timerJobTotal, timerJobAdd, timerJobUsing);
-          WRITE_LOG(logLevel::info, "{}({}) > Server Pool [roomTotal:{}] [roomAdd:{}] [roomUsing:{}]]", __FUNCTION__, __LINE__,
-                    roomTotal, roomAdd, roomUsing);
+          WRITE_LOG(logLevel::info, "{}({}) > Server Pool [roomTotal:{}] [roomAdd:{}] [roomUsing:{}]] [playerLoginTotal:{}] [playerLoginAdd:{}] [playerLoginUsing:{}] ", __FUNCTION__, __LINE__,
+                    roomTotal, roomAdd, roomUsing, playerLoginTotal, playerLoginAdd, playerLoginUsing);
         }
         prevMetricLoggingTime = nowTime;
       }

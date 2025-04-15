@@ -12,6 +12,8 @@ constexpr short DB_NAME_SIZE = 20;
 class DBPlayerLogin final
     : public UserDBJobBase {
  public:
+  DBPlayerLogin() = default;
+
   DBPlayerLogin(sh::IO_Engine::ISessionPtr session, const char* loginId, const char* pw);
 
  private:

@@ -17,6 +17,8 @@ namespace DreamWorld {
 class DBJobBase
     : public sh::Utility::IWorkerItem {
  public:
+  DBJobBase() = default;
+
   virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
  protected:
@@ -33,6 +35,8 @@ class DBJobBase
 class UserDBJobBase
     : public DBJobBase {
  public:
+  UserDBJobBase() = default;
+
   UserDBJobBase(sh::IO_Engine::ISessionPtr session)
       : m_session(session) {
   }

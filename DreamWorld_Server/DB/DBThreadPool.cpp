@@ -7,7 +7,6 @@
 #include <Utility/Thread/ThWorkerJob.h>
 #include "DBJobBase.h"
 
-using logLevel = spdlog::level::level_enum;
 namespace DreamWorld {
 void DBThreadPool::InsertDBJob(std::shared_ptr<DBJobBase>&& jobPtr) {
   auto thWorkerjob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<sh::Utility::IWorkerItem>(jobPtr), sh::Utility::WORKER_TYPE::WORK);

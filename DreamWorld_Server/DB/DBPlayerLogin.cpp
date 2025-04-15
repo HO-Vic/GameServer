@@ -47,6 +47,7 @@ void DBPlayerLogin::PostExecute(SQLHSTMT hstmt) {
 
   if (SQL_NO_DATA == retCode) {  // 플레이어 정보가 없음
     // stmt종료는 함수 외부에서 수행
+    // 여기 유저 정보 없음을 처리해야하지만, 클라에 해당하는 에러 표시가 없어서 xx
     return;
   }
 

@@ -10,6 +10,7 @@
 #include "../DB/DBPlayerLogin.h"
 #include "../DB/DBThreadPool.h"
 #include "../Match/Matching.h"
+#include "../ObjectPools.h"
 
 namespace DreamWorld {
 void Server::OnLogin(sh::IO_Engine::ISessionPtr session, BYTE* message) {
@@ -22,8 +23,8 @@ void Server::OnLogin(sh::IO_Engine::ISessionPtr session, BYTE* message) {
     return;
   }
   // 이거 오브젝트 풀로 관리하면 좋을듯?
-  DBJobPtr DBJob = std::make_shared<DBPlayerLogin>(session, recvPacket->id, recvPacket->pw);
-  DBThreadPool::GetInstance().InsertDBJob(std::move(DBJob));  // 이러면 DB쓰레드에서 탈거임
+  DBJobPtr dbJob = ObjectPool<DBPlayerLogin>::GetInstance().MakeShared(session, recvPacket->id, recvPacket->pw);
+  DBThreadPool::GetInstance().InsertDBJob(std::move(dbJob));  // 이러면 DB쓰레드에서 탈거임
 }
 
 void Server::OnMatchReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
@@ -35,9 +36,6 @@ void Server::OnMatchReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
     // m_playerState = PLAYER_STATE::MATCH;
     // m_matchedRole = recvPacket->role;
   }
-}
-
-void Server::OnCancelMatch(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
 }
 
 void Server::OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
