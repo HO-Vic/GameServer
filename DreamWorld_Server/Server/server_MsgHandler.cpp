@@ -11,6 +11,7 @@
 #include "../DB/DBThreadPool.h"
 #include "../Match/Matching.h"
 #include "../ObjectPools.h"
+#include "../LogManager/LogManager.h"
 
 namespace DreamWorld {
 void Server::OnLogin(sh::IO_Engine::ISessionPtr session, BYTE* message) {
@@ -29,13 +30,14 @@ void Server::OnLogin(sh::IO_Engine::ISessionPtr session, BYTE* message) {
 
 void Server::OnMatchReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::MatchPacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::MatchPacket*>(message);
-  if (recvPacket->role != ROLE::NONE_SELECT) {
-    auto userSession = std::static_pointer_cast<Session>(sessionPtr);
-    Matching::GetInstance().InsertMatch(userSession, recvPacket->role);
-    userSession->SetIngameRole(recvPacket->role);
-    // m_playerState = PLAYER_STATE::MATCH;
-    // m_matchedRole = recvPacket->role;
+  if (recvPacket->role == ROLE::NONE_SELECT) {
+    WRITE_LOG(logLevel::err, "{}({}) > Invalid Role", __FUNCTION__, __LINE__);
   }
+  auto userSession = std::static_pointer_cast<Session>(sessionPtr);
+  Matching::GetInstance().InsertMatch(userSession, recvPacket->role);
+  userSession->SetIngameRole(recvPacket->role);
+  // m_playerState = PLAYER_STATE::MATCH;
+  // m_matchedRole = recvPacket->role;
 }
 
 void Server::OnStressDelay(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {

@@ -40,11 +40,16 @@ void SessionManager::InsertRestUniqueNo(const uint32_t uniqueNo) {
 }
 
 std::shared_ptr<Session> SessionManager::GetForceDiscardSession() {
+  static std::atomic_uint32_t disconnUserNo = 0;
   std::lock_guard<std::mutex> lg{m_sessionLock};
-  if (m_activeSessions.empty()) {
+  /*if (m_activeSessions.empty()) {
+    return nullptr;
+  }*/
+  auto result = m_activeSessions.find(disconnUserNo++);
+  if (result == m_activeSessions.end()) {
     return nullptr;
   }
-  return m_activeSessions.begin()->second;
+  return result->second;
 }
 
 const std::unordered_map<uint32_t, std::shared_ptr<Session>>& SessionManager::GetSessionForRender() {

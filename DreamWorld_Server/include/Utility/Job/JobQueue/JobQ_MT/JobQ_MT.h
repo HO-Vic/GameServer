@@ -1,6 +1,7 @@
 #pragma once
 #include "../JobQBase.h"
-#include "../../../SpinLock/SpinLock.h"
+#include <mutex>
+// #include "../../../SpinLock/SpinLock.h"
 
 namespace sh {
 namespace Utility {
@@ -25,7 +26,7 @@ class JobQ_MT
  private:
   std::queue<std::unique_ptr<Job, std::function<void(Job*)>>> m_jobs;
   // std::mutex m_lock;
-  SpinLock m_lock;
+  std::mutex m_lock;
 };
 }
 }  // namespace sh::Utility

@@ -12,6 +12,22 @@ class Matching : public sh::Utility::SingletonBase<Matching> {
 
   void StartMatching();
 
+  const size_t GetWarriorSize() const {
+    return m_warriorQueue.QueueSize();
+  }
+
+  const size_t GetMageSize() const {
+    return m_mageQueue.QueueSize();
+  }
+
+  const size_t GetArcherSize() const {
+    return m_archerQueue.QueueSize();
+  }
+
+  const size_t GetTankerSize() const {
+    return m_tankerQueue.QueueSize();
+  }
+
  private:
   void MatchFunc(std::stop_token stopToken);
 

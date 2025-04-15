@@ -13,6 +13,10 @@ class MatchQueue {
   void InsertMatchUser(std::shared_ptr<Session>& userRef);
   void InsertCancelUser(std::shared_ptr<Session>& userRef);
 
+  const size_t QueueSize() const {
+    return m_match.unsafe_size();
+  }
+
  private:
   // 취소한 유저가 없을 때, weak_ptr nullptr이 없음
   std::optional<std::shared_ptr<Session>> GetCancelUser();

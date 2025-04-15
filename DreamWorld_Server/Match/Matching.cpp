@@ -167,16 +167,22 @@ void Matching::MatchFunc(std::stop_token stopToken) {
     }
 #else
     if ((matchSuccessCondition & matchState) == matchSuccessCondition) {
+      auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
+      if (nullptr == roomRef) {
+        m_lastWarriorUser = warriorUserRef;
+        m_lastMageUser = mageUserRef;
+        m_lastTankerUser = tankerUserRef;
+        m_lastArcherUser = archerUserRef;
+        userRefVec.clear();
+        std::this_thread::yield();
+        continue;
+      }
       // match Success
       warriorUserRef->SetIngameRole(ROLE::WARRIOR);
       mageUserRef->SetIngameRole(ROLE::MAGE);
       tankerUserRef->SetIngameRole(ROLE::TANKER);
       archerUserRef->SetIngameRole(ROLE::ARCHER);
 
-      auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
-      if (nullptr == roomRef) {
-        continue;
-      }
       for (auto& userRef : userRefVec) {
         auto characterPtr = roomRef->GetCharacter(userRef->GetIngameRole());
         if (nullptr == characterPtr) {
@@ -200,8 +206,7 @@ void Matching::MatchFunc(std::stop_token stopToken) {
       m_lastTankerUser = tankerUserRef;
       m_lastArcherUser = archerUserRef;
       userRefVec.clear();
-      Sleep(500);
-      // std::this_thread::yield();
+      std::this_thread::yield();
     }
 #endif  // TEST_MODE_PEOPLE
   }

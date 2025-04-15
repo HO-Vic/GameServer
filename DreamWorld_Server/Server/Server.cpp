@@ -16,6 +16,7 @@
 #include "../Metric/Metric.h"
 #include "../DB/DBPlayerLogin.h"
 #include "../ObjectPools.h"
+#include "../Match/Matching.h"
 
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
@@ -98,6 +99,11 @@ void Server::Start() {
           auto playerLoginAdd = ObjectPool<DBPlayerLogin>::GetInstance().GetAddedCnt();
           auto playerLoginUsing = ObjectPool<DBPlayerLogin>::GetInstance().GetUsingCnt();
 
+          auto warriorSize = Matching::GetInstance().GetWarriorSize();
+          auto archerSize = Matching::GetInstance().GetArcherSize();
+          auto tankerSize = Matching::GetInstance().GetTankerSize();
+          auto mageSize = Matching::GetInstance().GetMageSize();
+
           auto userCnt = SessionMananger::GetInstance().GetCurrentActiveUserCnt();
           uint32_t roomCnt = roomMgr.globalRoomCnt;
           WRITE_LOG(logLevel::info, "{}({}) > Server Metric [ActiveUserCnt:{}] [ActiveroomCnt:{}] [roomExec:{}] [DBExec:{}] [timerExec:{}] [timerAlready:{}] [timerIm:{}]", __FUNCTION__, __LINE__,
@@ -106,6 +112,8 @@ void Server::Start() {
                     jobTotal, jobAdd, jobUsing, timerJobTotal, timerJobAdd, timerJobUsing);
           WRITE_LOG(logLevel::info, "{}({}) > Server Pool [roomTotal:{}] [roomAdd:{}] [roomUsing:{}]] [playerLoginTotal:{}] [playerLoginAdd:{}] [playerLoginUsing:{}] ", __FUNCTION__, __LINE__,
                     roomTotal, roomAdd, roomUsing, playerLoginTotal, playerLoginAdd, playerLoginUsing);
+          WRITE_LOG(logLevel::info, "{}({}) > Server Poo [warriorSize:{}] [archerSize:{}]] [tankerSize:{}] [mageSize:{}]", __FUNCTION__, __LINE__,
+                    warriorSize, archerSize, tankerSize, mageSize);
         }
         prevMetricLoggingTime = nowTime;
       }
