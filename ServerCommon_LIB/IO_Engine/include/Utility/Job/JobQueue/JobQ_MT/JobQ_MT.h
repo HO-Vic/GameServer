@@ -1,6 +1,6 @@
 #pragma once
 #include "../JobQBase.h"
-#include "../SpinLock/SpinLock.h"
+#include "../../../SpinLock/SpinLock.h"
 
 namespace sh {
 namespace Utility {
