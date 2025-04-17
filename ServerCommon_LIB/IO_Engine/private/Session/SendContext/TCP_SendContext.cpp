@@ -11,10 +11,7 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   // thWorker가 내부에서만 존재하니, 내부에서 해결
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
-  {
-    std::lock_guard<std::mutex> lg(m_queueLock);
-    m_sendQueue.push(std::move(sendData));
-  }
+  m_sendQueue.push(std::move(sendData));
 
   if (!m_isSendAble) {
     return 0;
@@ -46,12 +43,7 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
   m_sendBuffer.clear();
-  bool isEmptySendBuffer = false;
-  {
-    std::lock_guard<std::mutex> lg(m_queueLock);
-    isEmptySendBuffer = m_sendQueue.size();
-  }
-  if (isEmptySendBuffer) {
+  if (m_sendQueue.empty()) {
     m_isSendAble = true;
     // 보낼게 없다면 overlappedEx 반납
     // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<ISession >::strong ref 1->0
@@ -74,29 +66,26 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
 }
 
 int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
-  bool isSendEmpty = false;
-  {
-    std::lock_guard<std::mutex> lg(m_queueLock);
-    isSendEmpty = m_sendQueue.empty();
-  }
-
   // this thread context switched + other thread already sended queue!!
   // DoSend() sendQeuue.push() -> thread sleep ..th1
   // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
   // th1 wake -> CAS -> send -> send Queue Empty -> m_isSendAble=true
-  if (isSendEmpty) {
+  auto queueSize = m_sendQueue.unsafe_size();
+  for (auto i = 0; i < queueSize; ++i) {
+    std::shared_ptr<SendBuffer> currentBuf = nullptr;
+    bool isSuccess = m_sendQueue.try_pop(currentBuf);
+    if (!isSuccess) {
+      break;
+    }
+    m_sendBuffer.push_back(std::move(currentBuf));
+  }
+
+  if (m_sendBuffer.empty()) {
     m_isSendAble = true;
     ThWorkerJobPool::GetInstance().Release(thWorkerJob);
     return 0;
   }
 
-  {
-    std::lock_guard<std::mutex> lg(m_queueLock);
-    while (!m_sendQueue.empty()) {
-      m_sendBuffer.push_back(std::move(m_sendQueue.front()));
-      m_sendQueue.pop();
-    }
-  }
   std::vector<WSABUF> sendBuffers;
   sendBuffers.reserve(m_sendBuffer.size());
   for (const auto& sendBuffer : m_sendBuffer) {

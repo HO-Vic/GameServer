@@ -4,6 +4,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <tbb/concurrent_queue.h>
 
 namespace sh::IO_Engine {
 class SendBuffer;
@@ -40,8 +41,7 @@ class TCP_SendContext final
 
  private:
   std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함
-  std::queue<std::shared_ptr<SendBuffer>> m_sendQueue;
-  std::mutex m_queueLock;
+  tbb::concurrent_queue<std::shared_ptr<SendBuffer>> m_sendQueue;
   std::atomic_bool m_isSendAble;
 };
 }  // namespace sh::IO_Engine

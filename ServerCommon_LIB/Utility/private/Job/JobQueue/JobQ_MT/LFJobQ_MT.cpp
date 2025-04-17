@@ -14,12 +14,16 @@ void LFJobQ_MT::DoJobs(const uint64_t execCnt) {
   if (0 == execCnt) {
     executeSize = m_jobSize;
   }
+  uint64_t executeCnt = 0;
   for (int i = 0; i < executeSize; ++i) {
     std::unique_ptr<Job, std::function<void(Job*)>> execJob = nullptr;
-    m_jobs.try_pop(execJob);
+    if (!m_jobs.try_pop(execJob)) {
+      break;
+    }
     execJob->Execute();
+    executeCnt++;
   }
-  m_jobSize -= executeSize;
+  m_jobSize -= executeCnt;
 }
 
 void LFJobQ_MT::InsertJob(std::unique_ptr<Job, std::function<void(Job*)>>&& job) {
