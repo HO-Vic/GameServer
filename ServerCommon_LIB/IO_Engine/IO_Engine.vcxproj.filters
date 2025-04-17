@@ -31,12 +31,6 @@
     <Filter Include="IO_Core">
       <UniqueIdentifier>{50cc62db-db6f-458b-babb-33088eb82492}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO_Core\OverlappedEx">
-      <UniqueIdentifier>{dc34b314-fc13-4791-b2ea-4fad67a5711b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO_Core\OveralppedEvent">
-      <UniqueIdentifier>{dbdf612c-42bb-4ebe-a6e5-acc33a949cb7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="IO_Core\Acceptor">
       <UniqueIdentifier>{88a8b297-6176-41f6-950f-6826c6875374}</UniqueIdentifier>
     </Filter>
@@ -59,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="private\IO_Core\IO_Core.cpp">
       <Filter>IO_Core</Filter>
-    </ClCompile>
-    <ClCompile Include="private\IO_Core\OverlappedEx\OverlappedEx.cpp">
-      <Filter>IO_Core\OverlappedEx</Filter>
     </ClCompile>
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp">
       <Filter>IO_Core\Acceptor</Filter>
@@ -109,15 +100,6 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\IO_Core.h">
       <Filter>IO_Core</Filter>
-    </ClInclude>
-    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedEx.h">
-      <Filter>IO_Core\OverlappedEx</Filter>
-    </ClInclude>
-    <ClInclude Include="public\IO_Core\OverlappedEvent\IOverlappedEvent.h">
-      <Filter>IO_Core\OveralppedEvent</Filter>
-    </ClInclude>
-    <ClInclude Include="public\IO_Core\OverlappedEx\OverlappedExPool.h">
-      <Filter>IO_Core\OverlappedEx</Filter>
     </ClInclude>
     <ClInclude Include="public\IO_Core\Acceptor\Acceptor.h">
       <Filter>IO_Core\Acceptor</Filter>
