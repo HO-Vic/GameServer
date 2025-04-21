@@ -76,6 +76,14 @@ void ServerConfig::LoadXML(const char* configFile) {
                   meticLoggingTickSec = DreamWorld::SEC(static_cast<uint16_t>(std::stoi(attr->value(), nullptr)));
                 }
               }
+            } else if (strcmp(node->name(), "RoomUser") == 0) {
+              for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
+                if (strcmp(attr->name(), "Alone") == 0) {
+                  isLocal = static_cast<bool>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "TestPeople") == 0) {
+                  testPeople = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
+                }
+              }
             }
           }
         }

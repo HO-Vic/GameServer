@@ -282,7 +282,7 @@ class BossMonsterObject : public MonsterObject {
 
  private:
   std::shared_ptr<BossState::StateBase> m_currentState;
-  std::shared_ptr<std::list<XMFLOAT3>> m_road;
+  std::list<XMFLOAT3> m_road;
   // XMFLOAT3 m_prevDestinationPosition;
   XMFLOAT3 m_currentDestinationPosition;
   bool m_roadUpdate;

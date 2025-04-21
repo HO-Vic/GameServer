@@ -54,5 +54,8 @@ class ServerConfig
 
   std::string logMode;
   uint8_t logLevel;
+
+  bool isLocal = false;
+  uint8_t testPeople = 0;  // 0이면 정상 작동
 };
 }  // namespace DreamWorld

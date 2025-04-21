@@ -33,6 +33,7 @@ int main() {
   DreamWorld::RoomManager::GetInstance().Init();
 
   DreamWorld::Timer::GetInstance().Start(serverConfig.timerThreadNo);
+  DreamWorld::Matching::GetInstance().Init(serverConfig.isLocal, serverConfig.testPeople);
   DreamWorld::Matching::GetInstance().StartMatching();
   server.Start();
 }

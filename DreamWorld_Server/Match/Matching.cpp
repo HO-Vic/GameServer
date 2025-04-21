@@ -11,28 +11,29 @@
 #include "../ThreadManager/ThreadManager.h"
 #include <Utility/Thread/ThreadManager.h>
 
-// #define ALONE_TEST
-//    테스트할 때, 한 게임당 들어올 인원 수
-//    #define TEST_MODE_PEOPLE 2
-
 namespace DreamWorld {
+void Matching::Init(bool isLocal /*=false*/, uint8_t testPeople /*=0*/) {
+  m_isLocal = isLocal;
+  m_testPeople = testPeople;
+}
 void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
-#ifdef ALONE_TEST
-  spdlog::debug("Matching::InserMatch() - Alone Test Mode");
-  userRef->SetIngameRole(role);
-  auto roomRef = RoomManager::GetInstance().MakeRunningRoomAloneMode(userRef);
-  auto characterPtr = roomRef->GetCharacter(role);
-  if (nullptr == characterPtr) {
-    WRITE_LOG(logLevel::err, "{}({}) > role is Invalid [role:{}]", __FUNCTION__, __LINE__, static_cast<char>(role));
-    RoomManager::GetInstance().EraseRoom(roomRef);
+  if (m_isLocal) {
+    spdlog::debug("Matching::InserMatch() - Alone Test Mode");
+    userRef->SetIngameRole(role);
+    auto roomRef = RoomManager::GetInstance().MakeRunningRoomAloneMode(userRef);
+    auto characterPtr = roomRef->GetCharacter(role);
+    if (nullptr == characterPtr) {
+      WRITE_LOG(logLevel::err, "{}({}) > role is Invalid [role:{}]", __FUNCTION__, __LINE__, static_cast<char>(role));
+      RoomManager::GetInstance().EraseRoom(roomRef);
+      return;
+    }
+    auto roomBasePtr = std::static_pointer_cast<RoomBase>(roomRef);
+    roomRef->Init();
+    userRef->SetIngameRef(roomBasePtr, characterPtr);
+    roomBasePtr->InsertPlayer(userRef);
+    roomRef->StartGame();
     return;
   }
-  auto roomBasePtr = std::static_pointer_cast<RoomBase>(roomRef);
-  roomRef->Init();
-  userRef->SetIngameRef(roomBasePtr, characterPtr);
-  roomBasePtr->InsertPlayer(userRef);
-  roomRef->StartGame();
-#else
   switch (role) {
     case ROLE::WARRIOR:
       m_warriorQueue.InsertMatchUser(userRef);
@@ -50,7 +51,6 @@ void Matching::InsertMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
       spdlog::warn("Matching::InserMatch() - Undefined Role");
       break;
   }
-#endif  // ALONE_TEST
 }
 
 void Matching::CancelMatch(std::shared_ptr<Session>& userRef, const ROLE role) {
@@ -120,52 +120,53 @@ void Matching::MatchFunc(std::stop_token stopToken) {
       ++currentMatchedUserCnt;
     }
 
-#ifdef TEST_MODE_PEOPLE
-    if (TEST_MODE_PEOPLE == currentMatchedUserCnt) {
-      if (nullptr != warriorUserRef) {
-        warriorUserRef->SetIngameRole(ROLE::WARRIOR);
-        m_lastWarriorUser.reset();
-      }
-      if (nullptr != mageUserRef) {
-        mageUserRef->SetIngameRole(ROLE::MAGE);
-        m_lastMageUser.reset();
-      }
-      if (nullptr != tankerUserRef) {
-        tankerUserRef->SetIngameRole(ROLE::TANKER);
-        m_lastTankerUser.reset();
-      }
-      if (nullptr != archerUserRef) {
-        archerUserRef->SetIngameRole(ROLE::ARCHER);
-        m_lastArcherUser.reset();
-      }
-
-      auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
-      roomRef->InitializeAllGameObject();
-      for (auto& userRef : userRefVec) {
-        if (nullptr != userRef) {
-          userRef->SetIngameRef(roomRef, roomRef->GetCharacterObject(userRef->GetIngameRole()));
+    if (0 != m_testPeople) {
+      if (m_testPeople == currentMatchedUserCnt) {
+        if (nullptr != warriorUserRef) {
+          warriorUserRef->SetIngameRole(ROLE::WARRIOR);
+          m_lastWarriorUser.reset();
         }
-      }
-      roomRef->Start();
+        if (nullptr != mageUserRef) {
+          mageUserRef->SetIngameRole(ROLE::MAGE);
+          m_lastMageUser.reset();
+        }
+        if (nullptr != tankerUserRef) {
+          tankerUserRef->SetIngameRole(ROLE::TANKER);
+          m_lastTankerUser.reset();
+        }
+        if (nullptr != archerUserRef) {
+          archerUserRef->SetIngameRole(ROLE::ARCHER);
+          m_lastArcherUser.reset();
+        }
 
-      userRefVec.clear();
-    } else {
-      if (nullptr != warriorUserRef) {
-        m_lastWarriorUser = warriorUserRef;
+        //auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
+        //roomRef->InitializeAllGameObject();
+        //for (auto& userRef : userRefVec) {
+        //  if (nullptr != userRef) {
+        //    userRef->SetIngameRef(roomRef, roomRef->GetCharacterObject(userRef->GetIngameRole()));
+        //  }
+        //}
+        //roomRef->Start();
+
+        userRefVec.clear();
+      } else {
+        if (nullptr != warriorUserRef) {
+          m_lastWarriorUser = warriorUserRef;
+        }
+        if (nullptr != mageUserRef) {
+          m_lastMageUser = mageUserRef;
+        }
+        if (nullptr != tankerUserRef) {
+          m_lastTankerUser = tankerUserRef;
+        }
+        if (nullptr != archerUserRef) {
+          m_lastArcherUser = archerUserRef;
+        }
+        userRefVec.clear();
+        std::this_thread::yield();
       }
-      if (nullptr != mageUserRef) {
-        m_lastMageUser = mageUserRef;
-      }
-      if (nullptr != tankerUserRef) {
-        m_lastTankerUser = tankerUserRef;
-      }
-      if (nullptr != archerUserRef) {
-        m_lastArcherUser = archerUserRef;
-      }
-      userRefVec.clear();
-      std::this_thread::yield();
+      return;
     }
-#else
     if ((matchSuccessCondition & matchState) == matchSuccessCondition) {
       auto roomRef = RoomManager::GetInstance().MakeRunningRoom(userRefVec);
       if (nullptr == roomRef) {
@@ -208,7 +209,6 @@ void Matching::MatchFunc(std::stop_token stopToken) {
       userRefVec.clear();
       std::this_thread::yield();
     }
-#endif  // TEST_MODE_PEOPLE
   }
 }
 
@@ -236,14 +236,13 @@ void Matching::StartMatching() {
   m_lastMageUser.reset();
   m_lastTankerUser.reset();
   m_lastArcherUser.reset();
-#ifndef ALONE_TEST
-  spdlog::info("Matching::StartMatching() - Matching Thread Start");
-  ThreadManager::GetInstance().InsertThread([](std::stop_token stopToken) {
-    Matching::GetInstance().MatchFunc(stopToken);
-  });
-
-#else
-  spdlog::info("Matching::StartMatching() - AloneTestMode, Matching Thread do not run");
-#endif
+  if (!m_isLocal) {
+    spdlog::info("Matching::StartMatching() - Matching Thread Start");
+    ThreadManager::GetInstance().InsertThread([](std::stop_token stopToken) {
+      Matching::GetInstance().MatchFunc(stopToken);
+    });
+  } else {
+    spdlog::info("Matching::StartMatching() - AloneTestMode, Matching Thread do not run");
+  }
 }
 }  // namespace DreamWorld

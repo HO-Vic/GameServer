@@ -3,8 +3,10 @@
 #include "../Room/Room.h"
 #include "../Character/ChracterObject.h"
 #include "../EventController/CoolDownEventBase.h"
+#include "../MapData/MapData.h"
 #include "BossEvent.h"
 #include "../Server/MsgProtocol.h"
+#include "../LogManager/LogManager.h"
 
 namespace DreamWorld {
 BossMonsterObject::BossMonsterObject(const float& maxHp, const float& moveSpeed, const float& boundingSize, std::shared_ptr<RoomBase>& roomRef)
@@ -62,22 +64,31 @@ void BossMonsterObject::CheckUpdateRoad() {
     auto researchRoadEvent = m_behaviorTimeEventCtrl->GetEventData(RESEARCH_ROAD);
     researchRoadEvent->ForceExecute();
     auto characterRef = FindAggroCharacter();
-    if (characterRef == m_aggroCharacter) {
-      //
+    if (nullptr == characterRef) {
+      return;
     }
+    m_aggroCharacter = characterRef;
     XMFLOAT3 startPosition = GetPosition();
-
-    // 이거는 RoomThreadPool에서 돌려서 결과 받는거로?
-    //  auto aggroEvent = std::make_shared<TIMER::BossAggroEvent>(roomRef, characterRef->GetPosition(), startPosition, characterRef);
-    //  roomRef->InserTimerEvent(aggroEvent);
+    XMFLOAT3 destPosition = m_aggroCharacter->GetPosition();
+    WRITE_LOG(logLevel::warn, "Boss Cal Road [Start:{},{}] [Dest:{},{}]", startPosition.x, startPosition.z, destPosition.x, destPosition.z);
+    std::shared_ptr<NavMapData> navMapData = roomRef->GetBossMapData();
+    m_road = navMapData->GetAstarNode(startPosition, destPosition);
+    if (nullptr == m_currentState) {
+      ChangeBossState(BossState::STATE::MOVE);
+    }
     return;
   }
   auto researchRoadEvent = m_behaviorTimeEventCtrl->GetEventData(RESEARCH_ROAD);
   const bool isAbleResearchRoad = researchRoadEvent->IsAbleExecute();
   if (isAbleResearchRoad) {
     XMFLOAT3 startPosition = GetPosition();
-    // auto researchEvent = std::make_shared<TIMER::BossCalculateRoadEvent>(roomRef, m_aggroCharacter->GetPosition(), startPosition);
-    // roomRef->InserTimerEvent(researchEvent);
+    XMFLOAT3 destPosition = m_aggroCharacter->GetPosition();
+    std::shared_ptr<NavMapData> navMapData = roomRef->GetBossMapData();
+    WRITE_LOG(logLevel::warn, "Boss Cal Road [Start:{},{}] [Dest:{},{}]", startPosition.x, startPosition.z, destPosition.x, destPosition.z);
+    m_road = navMapData->GetAstarNode(startPosition, destPosition);
+    if (nullptr == m_currentState) {
+      ChangeBossState(BossState::STATE::MOVE);
+    }
   }
 }
 
@@ -90,13 +101,13 @@ void BossMonsterObject::UpdateAggro(std::shared_ptr<CharacterObject> aggroCharac
 }
 
 void BossMonsterObject::UpdateRoad(std::shared_ptr<std::list<XMFLOAT3>> nodeList) {
-  m_road = nodeList;
-  auto iter = m_road->begin();
-  for (int i = 0; i < 5 && iter != m_road->end(); ++i) {
-    // spdlog::info("Find Path Result Position{} - x: {}, y: {}, z: {}", i, iter->x, iter->y, iter->z);
-    ++iter;
-  }
-  m_roadUpdate = true;
+  // m_road = nodeList;
+  // auto iter = m_road->begin();
+  // for (int i = 0; i < 5 && iter != m_road->end(); ++i) {
+  //   // spdlog::info("Find Path Result Position{} - x: {}, y: {}, z: {}", i, iter->x, iter->y, iter->z);
+  //   ++iter;
+  // }
+  // m_roadUpdate = true;
 }
 
 void BossMonsterObject::SendBossState(const BossState::STATE& state) {
@@ -141,12 +152,12 @@ void BossMonsterObject::SendBossState(const BossState::STATE& state) {
     } break;
     case BossState::STATE::KICK: {
       spdlog::debug("changeBossState: KICK");
-      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_KICK);
+      DreamWorld::SERVER_PACKET::BossDirectionAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_KICK, GetLookVector());
       roomRef->Broadcast(&sendPacket);
     } break;
     case BossState::STATE::PUNCH: {
       spdlog::debug("changeBossState: PUNCH");
-      DreamWorld::SERVER_PACKET::BossAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_PUNCH);
+      DreamWorld::SERVER_PACKET::BossDirectionAttackPacket sendPacket(SERVER_PACKET::BOSS_ATTACK::ATTACK_PUNCH, GetLookVector());
       roomRef->Broadcast(&sendPacket);
     } break;
     default:
@@ -251,7 +262,7 @@ void BossMonsterObject::Move() {
   if (m_currentState != m_bossStates[BossState::STATE::MOVE]) {
     return;  // 현재 상태가 MOVE가 아니라면, 다른 상태로 변경 됨.
   }
-  if (m_road->empty()) {
+  if (m_road.empty()) {
     m_currentState->ExitState();
     ChangeBossState(BossState::STATE::MOVE_AGGRO);
     return;
@@ -272,7 +283,7 @@ void BossMonsterObject::MoveAggro() {
     return;  // 현재 상태가 MOVE가 아니라면, 다른 상태로 변경 됨.
   }
 
-  if (!m_road->empty()) {  // 다시 길 찾아기 때문에, Move로 상태 변화
+  if (!m_road.empty()) {  // 다시 길 찾아기 때문에, Move로 상태 변화
     XMFLOAT3 currentAggroPosition = m_currentAggroPosition;
     float distance = GetDistance(currentAggroPosition);
     if (distance > STOP_DISTANCE) {
@@ -313,11 +324,10 @@ std::shared_ptr<CharacterObject> BossMonsterObject::FindAggroCharacter() {
     return nullptr;
   }
 
-  auto characters = roomRef->GetCharacters();
-  auto ableRole = roomRef->GetLiveObjects();  // 커네팅 되어있고, 살아있는 캐릭터만
+  auto characters = roomRef->GetCharacters(true);  // 커네팅 되어있고, 살아있는 캐릭터만
   std::shared_ptr<CharacterObject> minDistanceObject = nullptr;
   float minDistance = 0.0f;
-  for (const auto& character : ableRole) {
+  for (const auto& character : characters) {
     float distance = character->GetDistance(shared_from_this());
     if (nullptr == minDistanceObject || minDistance > distance) {  // 아직 정해진 최소 거리 객체가 없거나, 최소거리보다 더 짧은 거리일 때
       minDistanceObject = std::static_pointer_cast<CharacterObject>(character);
@@ -345,84 +355,37 @@ void BossMonsterObject::MoveUpdate() {
 
   XMFLOAT3 currentDestinationPosition;  // = m_road->front();
   XMFLOAT3 toDestinationVector;         // = Vector3::Subtract(currentDestinationPosition, currentPosition);
-  if (m_roadUpdate) {
-    while (true) {
-      currentDestinationPosition = m_road->front();
-      m_currentDestinationPosition = currentDestinationPosition;
-      toDestinationVector = Vector3::Subtract(currentDestinationPosition, currentPosition);
-      float toDestinationDistance = Vector3::Length(toDestinationVector);
-      if (toDestinationDistance > FLT_EPSILON) {
-        break;
-      }
-      m_road->pop_front();
-      if (m_road->empty()) {
-        m_currentState->ExitState();
-        ChangeBossState(BossState::STATE::MOVE_AGGRO);
-        return;
-      }
-    }
 
-    spdlog::debug("Update Boss DestinationPosition - x: {}, y: {}, z: {}", currentDestinationPosition.x, currentDestinationPosition.y, currentDestinationPosition.z);
-
-    // currentPosition = GetPosition();
-    // toDestinationVector = Vector3::Subtract(currentDestinationPosition, currentPosition);
-    toDestinationVector = Vector3::Normalize(toDestinationVector);
-
-    XMFLOAT3 prevLook = GetLookVector();
-    SetLook(toDestinationVector);
-    spdlog::debug("ChangeLook prevLook - x: {}, y: {}, z: {}", prevLook.x, prevLook.y, prevLook.z);
-    spdlog::debug("ChangeLook newLook - x: {}, y: {}, z: {}", toDestinationVector.x, toDestinationVector.y, toDestinationVector.z);
-
-    DreamWorld::SERVER_PACKET::BossMoveDestnationPacket sendPacket(currentDestinationPosition);
-    roomRef->Broadcast(&sendPacket);
-    m_roadUpdate = false;
-    return;
-  }
-
-  bool isNextNodePositionUpdate = false;
+  // 새로 갈 노드 최신화
+  bool destChange = false;
   while (true) {
-    // 현재 정해진 목적지까지 거리
-    // m_prevDestinationPosition = currentDestinationPosition;
-    currentDestinationPosition = m_road->front();
+    currentDestinationPosition = m_road.front();
     m_currentDestinationPosition = currentDestinationPosition;
     toDestinationVector = Vector3::Subtract(currentDestinationPosition, currentPosition);
-    float destinationDistance = Vector3::Length(toDestinationVector);
-    if (destinationDistance < CHECK_ABLE_FIND_PATH_DISTANCE) {
-      m_isAbleRoadUpdate = false;
-    } else {
-      m_isAbleRoadUpdate = true;
-    }
+    float toDestinationDistance = Vector3::Length(toDestinationVector);
+    if (toDestinationDistance > 3.0f) {
+      DreamWorld::SERVER_PACKET::BossMoveDestnationPacket sendPacket(currentDestinationPosition);
+      roomRef->Broadcast(&sendPacket);
+      // if (destChange) {
+      // }
+      toDestinationVector = Vector3::Normalize(toDestinationVector);
+      XMFLOAT3 prevLook = GetLookVector();
+      SetLook(toDestinationVector);
+      // spdlog::debug("ChangeLook prevLook - x: {}, y: {}, z: {}", prevLook.x, prevLook.y, prevLook.z);
+      // spdlog::debug("ChangeLook newLook - x: {}, y: {}, z: {}", toDestinationVector.x, toDestinationVector.y, toDestinationVector.z);
 
-    if (destinationDistance < CHANGE_NODE_DISTANCE) {  // road가 새로 계산됐다면, front는 보스의 위치와 같을 것이기때문에, 알아서 send 됨
-      spdlog::debug("Change Boss DestinationPosition - distnace: {}", destinationDistance);
-      m_road->pop_front();
-      isNextNodePositionUpdate = true;
-      if (m_road->empty()) {  // 같은 노드에 있음
-        m_currentState->ExitState();
-        ChangeBossState(BossState::STATE::MOVE_AGGRO);
-        return;
-      }
-    } else {
-      break;
+      XMFLOAT3 nextPosition = GetCommonNextPosition(elapsedTime);
+      SetPosition(nextPosition);
+      return;
     }
+    m_road.pop_front();
+    if (m_road.empty()) {
+      m_currentState->ExitState();
+      ChangeBossState(BossState::STATE::MOVE_AGGRO);
+      return;
+    }
+    destChange = true;
   }
-  if (isNextNodePositionUpdate) {
-    currentDestinationPosition = m_road->front();
-    m_currentDestinationPosition = currentDestinationPosition;
-    spdlog::debug("Change Boss DestinationPosition - x: {}, y: {}, z: {}", currentDestinationPosition.x, currentDestinationPosition.y, currentDestinationPosition.z);
-    DreamWorld::SERVER_PACKET::BossMoveDestnationPacket sendPacket(currentDestinationPosition);
-    roomRef->Broadcast(&sendPacket);
-    toDestinationVector = Vector3::Subtract(currentDestinationPosition, currentPosition);
-    toDestinationVector = Vector3::Normalize(toDestinationVector);
-    XMFLOAT3 prevLook = GetLookVector();
-    SetLook(toDestinationVector);
-    spdlog::debug("ChangeLook prevLook - x: {}, y: {}, z: {}", prevLook.x, prevLook.y, prevLook.z);
-    spdlog::debug("ChangeLook newLook - x: {}, y: {}, z: {}", toDestinationVector.x, toDestinationVector.y, toDestinationVector.z);
-  }
-
-  XMFLOAT3 nextPosition = GetCommonNextPosition(elapsedTime);
-  SetPosition(nextPosition);
-  // spdlog::debug("Current Boss Position - x: {}, y: {}, z: {}", nextPosition.x, nextPosition.y, nextPosition.z);
 }
 
 void BossMonsterObject::MoveAggroUpdate() {
@@ -460,7 +423,7 @@ const bool BossMonsterObject::AbleSpinAttack() {
     return false;
   }
 
-  auto characters = roomRef->GetCharacters();
+  auto characters = roomRef->GetCharacters(true);
 
   // 범위 체크
   int validCnt = 0;
@@ -489,7 +452,7 @@ const bool BossMonsterObject::AbleFireAttack() {
     return false;
   }
 
-  auto characters = roomRef->GetCharacters();
+  auto characters = roomRef->GetCharacters(true);
 
   // 범위 체크
   int validCnt = 0;
@@ -527,7 +490,7 @@ const bool BossMonsterObject::AbleKickAttack() {
     return false;
   }
 
-  auto characters = roomRef->GetCharacters();
+  auto characters = roomRef->GetCharacters(true);
   // 범위 체크
   int validCnt = 0;
   for (auto& character : characters) {
@@ -557,7 +520,7 @@ const bool BossMonsterObject::AblePunchAttack() {
     return false;
   }
 
-  auto characters = roomRef->GetCharacters();
+  auto characters = roomRef->GetCharacters(true);
   // 범위 체크
   int validCnt = 0;
   for (auto& character : characters) {
