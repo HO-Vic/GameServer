@@ -21,9 +21,9 @@
 	<RoomAvgDelayTick MaxTickMs="140" ReActiveTickMs="120"/>
 
 	<!--Metric 미사용 시, IO_Metric, Game_Metric 0으로 수정-->
-	<Metric IO_Metric="0" Game_Metric="0" logTickSec="1"/>
+	<Metric IO_Metric="1" Game_Metric="1" logTickSec="1"/>
 
-	<RoomUser Alone="1" TestPeople="0"/>
+	<RoomUser Alone="0" TestPeople="0"/>
 </Properties>
 
 <Pool>

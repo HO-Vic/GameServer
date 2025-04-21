@@ -14,7 +14,7 @@ CharacterObject::CharacterObject(std::shared_ptr<Session>& sessionPtr)
   m_coolTimeCtrl->InsertCoolSkill(MOVE, SkillTimeCtrl::MS(250));
   std::random_device rd;
   std::default_random_engine dre(rd());
-  std::uniform_int_distribution changeBossStage(10, 60);
+  std::uniform_int_distribution changeBossStage(30, 60);
   // std::uniform_int_distribution changeBossStage(2, 3);
 
   int randomBoss = changeBossStage(dre);

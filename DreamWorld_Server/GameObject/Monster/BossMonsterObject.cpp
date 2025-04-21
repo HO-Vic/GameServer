@@ -70,7 +70,6 @@ void BossMonsterObject::CheckUpdateRoad() {
     m_aggroCharacter = characterRef;
     XMFLOAT3 startPosition = GetPosition();
     XMFLOAT3 destPosition = m_aggroCharacter->GetPosition();
-    WRITE_LOG(logLevel::warn, "Boss Cal Road [Start:{},{}] [Dest:{},{}]", startPosition.x, startPosition.z, destPosition.x, destPosition.z);
     std::shared_ptr<NavMapData> navMapData = roomRef->GetBossMapData();
     m_road = navMapData->GetAstarNode(startPosition, destPosition);
     if (nullptr == m_currentState) {
@@ -84,7 +83,6 @@ void BossMonsterObject::CheckUpdateRoad() {
     XMFLOAT3 startPosition = GetPosition();
     XMFLOAT3 destPosition = m_aggroCharacter->GetPosition();
     std::shared_ptr<NavMapData> navMapData = roomRef->GetBossMapData();
-    WRITE_LOG(logLevel::warn, "Boss Cal Road [Start:{},{}] [Dest:{},{}]", startPosition.x, startPosition.z, destPosition.x, destPosition.z);
     m_road = navMapData->GetAstarNode(startPosition, destPosition);
     if (nullptr == m_currentState) {
       ChangeBossState(BossState::STATE::MOVE);
