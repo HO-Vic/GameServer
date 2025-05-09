@@ -44,6 +44,20 @@ if exist ".\Export_LIB\Debug\IO_Engine.lib" (
     copy ".\Export_LIB\Debug\IO_Engine.pdb" "..\..\DreamWorld_StressBot\bin\x64\Debug\IO_Engine.pdb"
 )
 
+:: SimpleUDPEcho 배포 (Debug)
+
+if exist ".\Export_LIB\Debug\IO_Engine.lib" (
+    if not exist "..\..\SimpleUDPEcho\lib\x64\Debug" (
+        mkdir "..\..\SimpleUDPEcho\lib\x64\Debug"
+    )
+    copy ".\Export_LIB\Debug\IO_Engine.lib" "..\..\SimpleUDPEcho\lib\x64\Debug\IO_EngineD.lib"
+    
+    if not exist "..\..\SimpleUDPEcho\bin\x64\Debug" (
+        mkdir "..\..\SimpleUDPEcho\bin\x64\Debug"
+    )
+    copy ".\Export_LIB\Debug\IO_Engine.pdb" "..\..\SimpleUDPEcho\bin\x64\Debug\IO_Engine.pdb"
+)
+
 :: Release 배포
 
 if exist ".\Export_LIB\Release\IO_Engine.lib" (
@@ -82,6 +96,18 @@ if exist ".\Export_LIB\Release\IO_Engine.lib" (
     copy ".\Export_LIB\Release\IO_Engine.pdb" "..\..\DreamWorld_StressBot\bin\x64\Release\IO_Engine.pdb"
 )
 
+if exist ".\Export_LIB\Release\IO_Engine.lib" (
+    if not exist "..\..\SimpleUDPEcho\lib\x64\Release" (
+        mkdir "..\..\SimpleUDPEcho\lib\x64\Release"
+    )
+    copy ".\Export_LIB\Release\IO_Engine.lib" "..\..\SimpleUDPEcho\lib\x64\Release\IO_Engine.lib"
+    
+    if not exist "..\..\SimpleUDPEcho\bin\x64\Release" (
+        mkdir "..\..\SimpleUDPEcho\bin\x64\Release"
+    )
+    copy ".\Export_LIB\Release\IO_Engine.pdb" "..\..\SimpleUDPEcho\bin\x64\Release\IO_Engine.pdb"
+)
+
 echo [End Deploy IO_Engine LIB]
 
 :: Header 파일 배포
@@ -98,6 +124,10 @@ xcopy ".\public" "..\..\DreamWorld_Server\include\IO_Engine\" /E /Y
 rmdir /s /q "..\..\DreamWorld_StressBot\include\IO_Engine\"
 mkdir "..\..\DreamWorld_StressBot\include\IO_Engine\"
 xcopy ".\public" "..\..\DreamWorld_StressBot\include\IO_Engine\" /E /Y
+
+rmdir /s /q "..\..\SimpleUDPEcho\include\IO_Engine\"
+mkdir "..\..\SimpleUDPEcho\include\IO_Engine\"
+xcopy ".\public" "..\..\SimpleUDPEcho\include\IO_Engine\" /E /Y
 
 echo [End Deploy IO_Engine Header File]
 

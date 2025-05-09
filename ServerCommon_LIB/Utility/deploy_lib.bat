@@ -67,6 +67,21 @@ if not exist ..\..\DreamWorld_StressBot\bin\x64\Release (
 	mkdir ..\..\DreamWorld_StressBot\bin\x64\Release
 )
 
+if not exist ..\..\SimpleUDPEcho\lib\x64\Debug (
+	mkdir ..\..\SimpleUDPEcho\lib\x64\Debug
+)
+
+if not exist ..\..\SimpleUDPEcho\lib\x64\Release (
+	mkdir ..\..\SimpleUDPEcho\lib\x64\Release
+)
+
+if not exist ..\..\SimpleUDPEcho\bin\x64\Debug (
+	mkdir ..\..\SimpleUDPEcho\bin\x64\Debug
+)
+
+if not exist ..\..\SimpleUDPEcho\bin\x64\Release (
+	mkdir ..\..\SimpleUDPEcho\bin\x64\Release
+)
 
 copy .\Export_LIB\Debug\Utility.lib ..\..\SimpleEcho\lib\Debug\UtilityD.lib
 copy .\Export_LIB\Debug\Utility.pdb ..\..\SimpleEcho\bin\x64\Debug\Utility.pdb
@@ -82,6 +97,11 @@ copy .\Export_LIB\Debug\Utility.lib ..\..\DreamWorld_StressBot\lib\x64\Debug\Uti
 copy .\Export_LIB\Debug\Utility.pdb ..\..\DreamWorld_StressBot\bin\x64\Debug\Utility.pdb
 copy .\Export_LIB\Release\Utility.lib ..\..\DreamWorld_StressBot\lib\x64\Release\Utility.lib
 copy .\Export_LIB\Release\Utility.pdb ..\..\DreamWorld_StressBot\bin\x64\Release\Utility.pdb
+
+copy .\Export_LIB\Debug\Utility.lib ..\..\SimpleUDPEcho\lib\x64\Debug\UtilityD.lib
+copy .\Export_LIB\Debug\Utility.pdb ..\..\SimpleUDPEcho\bin\x64\Debug\Utility.pdb
+copy .\Export_LIB\Release\Utility.lib ..\..\SimpleUDPEcho\lib\x64\Release\Utility.lib
+copy .\Export_LIB\Release\Utility.pdb ..\..\SimpleUDPEcho\bin\x64\Release\Utility.pdb
 
 echo [End Deploy Utility LIB]
 
@@ -109,13 +129,17 @@ rmdir /s /q "..\..\DreamWorld_Server\include\Utility"
 mkdir ..\..\DreamWorld_Server\include\Utility
 xcopy ".\public" "..\..\DreamWorld_Server\include\Utility\" /E /Y
 
-::DreamWorld Server 헤더 배포
+::DreamWorld Stress 헤더 배포
 rmdir /s /q "..\..\DreamWorld_StressBot\include\Utility"
 mkdir ..\..\DreamWorld_StressBot\include\Utility
 xcopy ".\public" "..\..\DreamWorld_StressBot\include\Utility\" /E /Y
 echo [End Deploy Utility Header File]
 
-
+::SimpleUDPEcho 헤더 배포
+rmdir /s /q "..\..\SimpleUDPEcho\include\Utility"
+mkdir ..\..\SimpleUDPEcho\include\Utility
+xcopy ".\public" "..\..\SimpleUDPEcho\include\Utility\" /E /Y
+echo [End Deploy Utility Header File]
 
 echo [Deployed Data To Export]
 :: 배포했던 Export 정보 저장
