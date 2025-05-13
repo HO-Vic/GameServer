@@ -7,8 +7,8 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) {
-  size_t remainSize = ioSize + m_remainLen;
+int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize) {
+  uint32_t remainSize = ioSize + m_remainLen;
   BYTE* bufferPosition = m_buffer;
 
   while (remainSize > sizeof(PacketHeader::size)) {

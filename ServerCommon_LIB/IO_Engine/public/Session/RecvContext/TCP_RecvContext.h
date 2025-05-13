@@ -13,10 +13,10 @@ class TCP_RecvContext {
   TCP_RecvContext(SOCKET sock, RecvHandler&& recvHandler)
       : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(recvHandler) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
-    m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
+    m_wsaBuf.len = m_remainLen;
   }
 
-  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize);
+  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize);
 
   int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob);
 
@@ -25,6 +25,6 @@ class TCP_RecvContext {
   RecvHandler m_recvHandler;
   WSABUF m_wsaBuf;
   BYTE m_buffer[MAX_RECV_BUF_SIZE];
-  size_t m_remainLen;
+  uint32_t m_remainLen;
 };
 }  // namespace sh::IO_Engine

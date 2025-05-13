@@ -51,30 +51,32 @@ void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
 void TCP_ISession::Disconnect() {
 }
 
-void TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
   static constexpr bool DESIRE_DISCONNECT = true;
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE && thWorkerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
     ThWorkerJobPool::GetInstance().Release(thWorkerJob);
-    return;
+    return true;
   }
   if (0 != errorCode) {  // 0이 아니면 에러 발생
     m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
     RaiseIOError(thWorkerJob);
-    return;
+    return true;
   }
 
   bool expectedDisconn = false;
+  bool returnVal = false;
   switch (thWorkerJob->GetType()) {
     case Utility::WORKER_TYPE::RECV: {
       if (0 == ioByte) {
         RaiseIOError(thWorkerJob);
-        return;
+        return returnVal;
       }
       auto ioError = m_recvContext.RecvComplete(thWorkerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
         RaiseIOError(thWorkerJob);
       }
       IO_MetricSlot::GetInstance().RecordRecv(ioByte);
+      returnVal = true;
     } break;
     case Utility::WORKER_TYPE::SEND: {
       auto ioError = m_sendContext.SendComplete(thWorkerJob, ioByte);  // thWorker외부 정리
@@ -82,6 +84,7 @@ void TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte
         RaiseIOError(thWorkerJob);
       }
       IO_MetricSlot::GetInstance().RecordSend(ioByte);
+      returnVal = true;
     } break;
     case Utility::WORKER_TYPE::DISCONN: {
       if (m_isDisconnnected.compare_exchange_strong(expectedDisconn, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
@@ -90,12 +93,15 @@ void TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
       ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+      returnVal = true;
     } break;
     case Utility::WORKER_TYPE::FORCE_DISCONN: {
       RaiseIOError(thWorkerJob);
+      returnVal = true;
     } break;
     default: {
     } break;
   }
+  return returnVal;
 }
 }  // namespace sh::IO_Engine

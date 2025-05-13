@@ -172,7 +172,7 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
   return true;
 }
 
-void AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
   STATE tryState = STATE::TRY_CONNECT;
   if (0 != errorCode) {
     if (m_connectingState.compare_exchange_strong(tryState, STATE::TIMEOUT)) {  // 타임 아웃 상태로 변경하는데, 성공했다면
@@ -191,6 +191,7 @@ void AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioB
   }
   m_workerJob = nullptr;
   ThWorkerJobPool::GetInstance().Release(workerJob);
+  return true;
 }
 
 std::function<void()> AsyncConnectEvent::GetTimeOutFunc() {
