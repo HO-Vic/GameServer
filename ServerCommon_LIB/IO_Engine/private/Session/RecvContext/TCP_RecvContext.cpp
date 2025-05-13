@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include <Session/RecvContext/TCP_RecvContext.h>
-#include <Session/ISession.h>
+#include <Session/TCP_ISession.h>
 #include <Utility/Thread/IWorkerItem.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
@@ -18,7 +18,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t 
       break;
     }
     // 완성된 패킷
-    m_recvHandler(std::static_pointer_cast<ISession>(thWorkerJob->GetWorkerItem()), currentPacket->size, bufferPosition);
+    m_recvHandler(std::static_pointer_cast<TCP_ISession>(thWorkerJob->GetWorkerItem()), currentPacket->size, bufferPosition);
     // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
     remainSize -= currentPacket->size;
     bufferPosition = bufferPosition + currentPacket->size;

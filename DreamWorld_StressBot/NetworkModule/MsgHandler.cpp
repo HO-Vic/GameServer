@@ -17,7 +17,7 @@ void NetworkModule::InitMsgDispatcher() {
   m_msgDispatcher.AddMsgHandler(static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY), std::bind(NetworkModule::OnStressTestDelay, _1, _2));
 }
 
-void NetworkModule::OnLoginSuccess(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnLoginSuccess(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   auto activeCnt = NetworkModule::GetInstance().g_ActiveUserCnt++;
   std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
@@ -32,7 +32,7 @@ void NetworkModule::OnLoginSuccess(sh::IO_Engine::ISessionPtr session, BYTE* pac
           }));
 }
 
-void NetworkModule::OnIntoInGame(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnIntoInGame(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   const DreamWorld::SERVER_PACKET::IntoGamePacket* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::IntoGamePacket*>(packetHeader);
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
@@ -48,7 +48,7 @@ void NetworkModule::OnIntoInGame(sh::IO_Engine::ISessionPtr session, BYTE* packe
           }));
 }
 
-void NetworkModule::OnGameState_Stage(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnGameState_Stage(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   const DreamWorld::SERVER_PACKET::GameState_STAGE* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::GameState_STAGE*>(packetHeader);
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   for (int i = 0; i < 4; ++i) {
@@ -60,7 +60,7 @@ void NetworkModule::OnGameState_Stage(sh::IO_Engine::ISessionPtr session, BYTE* 
   // 위치  좌표 W는 여기서하고 렌더링 쓰레드에서 따로 R하지만, 그정도는 감수(위치 움직이는거만 보기 위함)
 }
 
-void NetworkModule::OnGameState_Boss(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnGameState_Boss(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   const DreamWorld::SERVER_PACKET::GameState_BOSS* recvPacket = reinterpret_cast<const DreamWorld::SERVER_PACKET::GameState_BOSS*>(packetHeader);
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   for (int i = 0; i < 4; ++i) {
@@ -71,7 +71,7 @@ void NetworkModule::OnGameState_Boss(sh::IO_Engine::ISessionPtr session, BYTE* p
   }
 }
 
-void NetworkModule::OnGameEnd(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnGameEnd(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   std::weak_ptr<Session> weakSession = std::static_pointer_cast<Session>(session);
   sessionPtr->InsertJob(
@@ -85,7 +85,7 @@ void NetworkModule::OnGameEnd(sh::IO_Engine::ISessionPtr session, BYTE* packetHe
           }));
 }
 
-void NetworkModule::OnStressTestDelay(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader) {
+void NetworkModule::OnStressTestDelay(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader) {
   auto sessionPtr = std::static_pointer_cast<Session>(session);
   sessionPtr->OnDelayResponse();
 }

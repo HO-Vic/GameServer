@@ -7,3 +7,4 @@
 #pragma comment(lib, "IO_Engine.lib")
 #pragma comment(lib, "spdlog.lib")
 #endif  // _DEBUG
+#pragma comment(lib, "ws2_32.lib")

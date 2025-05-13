@@ -37,7 +37,7 @@ void RoomMsgDispatcher::Init() {
 #pragma endregion
 }
 
-void RoomMsgDispatcher::OnKeyDown(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnKeyDown(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::MovePacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::MovePacket*>(message);
 
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
@@ -53,7 +53,7 @@ void RoomMsgDispatcher::OnKeyDown(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* m
   roomRef->Broadcast(reinterpret_cast<DreamWorld::PacketHeader*>(&sendPacket), userSession);
 }
 
-void RoomMsgDispatcher::OnKeyUp(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnKeyUp(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::MovePacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::MovePacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -69,7 +69,7 @@ void RoomMsgDispatcher::OnKeyUp(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* mes
   roomRef->Broadcast(reinterpret_cast<DreamWorld::PacketHeader*>(&sendPacket), userSession);
 }
 
-void RoomMsgDispatcher::OnStopMove(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnStopMove(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::StopPacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::StopPacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -84,7 +84,7 @@ void RoomMsgDispatcher::OnStopMove(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* 
   roomRef->Broadcast(&sendPacket, userSession);
 }
 
-void RoomMsgDispatcher::OnRotate(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnRotate(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::RotatePacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::RotatePacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -97,7 +97,7 @@ void RoomMsgDispatcher::OnRotate(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* me
   roomRef->Broadcast(&sendPacket, userSession);
 }
 
-void RoomMsgDispatcher::OnExecuteSkill_Q(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecuteSkill_Q(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -108,7 +108,7 @@ void RoomMsgDispatcher::OnExecuteSkill_Q(sh::IO_Engine::ISessionPtr sessionPtr, 
   possessObject->RecvSkill(CharacterObject::SKILL_TYPE::SKILL_TYPE_Q);
 }
 
-void RoomMsgDispatcher::OnExecuteSkill_Q_Float3(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecuteSkill_Q_Float3(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -119,7 +119,7 @@ void RoomMsgDispatcher::OnExecuteSkill_Q_Float3(sh::IO_Engine::ISessionPtr sessi
   possessObject->RecvSkill(CharacterObject::SKILL_TYPE::SKILL_TYPE_Q, recvPacket->floatData);
 }
 
-void RoomMsgDispatcher::OnExecuteSkill_E(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecuteSkill_E(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -129,7 +129,7 @@ void RoomMsgDispatcher::OnExecuteSkill_E(sh::IO_Engine::ISessionPtr sessionPtr, 
   possessObject->RecvSkill(CharacterObject::SKILL_TYPE::SKILL_TYPE_E);
 }
 
-void RoomMsgDispatcher::OnExecuteSkill_E_Float3(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecuteSkill_E_Float3(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -140,7 +140,7 @@ void RoomMsgDispatcher::OnExecuteSkill_E_Float3(sh::IO_Engine::ISessionPtr sessi
   possessObject->RecvSkill(CharacterObject::SKILL_TYPE::SKILL_TYPE_E, recvPacket->floatData);
 }
 
-void RoomMsgDispatcher::OnInputQ(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnInputQ(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -150,7 +150,7 @@ void RoomMsgDispatcher::OnInputQ(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* me
   possessObject->RecvSkillInput(CharacterObject::SKILL_TYPE::SKILL_TYPE_Q);
 }
 
-void RoomMsgDispatcher::OnInputE(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnInputE(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -160,7 +160,7 @@ void RoomMsgDispatcher::OnInputE(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* me
   possessObject->RecvSkillInput(CharacterObject::SKILL_TYPE::SKILL_TYPE_E);
 }
 
-void RoomMsgDispatcher::OnMouseInput(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnMouseInput(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::MouseInputPacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::MouseInputPacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -174,7 +174,7 @@ void RoomMsgDispatcher::OnMouseInput(sh::IO_Engine::ISessionPtr sessionPtr, BYTE
   roomRef->Broadcast(&sendPacket, userSession);
 }
 
-void RoomMsgDispatcher::OnExecutePowerAttack(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecutePowerAttack(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::PlayerPowerAttackPacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::PlayerPowerAttackPacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -185,7 +185,7 @@ void RoomMsgDispatcher::OnExecutePowerAttack(sh::IO_Engine::ISessionPtr sessionP
   possessObject->RecvAttackCommon(recvPacket->direction, recvPacket->power);
 }
 
-void RoomMsgDispatcher::OnExecuteCommonAttack(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnExecuteCommonAttack(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   const DreamWorld::CLIENT_PACKET::PlayerCommonAttackPacket* recvPacket = reinterpret_cast<const DreamWorld::CLIENT_PACKET::PlayerCommonAttackPacket*>(message);
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
@@ -196,7 +196,7 @@ void RoomMsgDispatcher::OnExecuteCommonAttack(sh::IO_Engine::ISessionPtr session
   possessObject->RecvAttackCommon(recvPacket->direction);
 }
 
-void RoomMsgDispatcher::OnStageChangeBoss(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnStageChangeBoss(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -208,7 +208,7 @@ void RoomMsgDispatcher::OnStageChangeBoss(sh::IO_Engine::ISessionPtr sessionPtr,
   }));
 }
 
-void RoomMsgDispatcher::OnForceGameEnd(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnForceGameEnd(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -220,7 +220,7 @@ void RoomMsgDispatcher::OnForceGameEnd(sh::IO_Engine::ISessionPtr sessionPtr, BY
   }));
 }
 
-void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto userSession = std::static_pointer_cast<DreamWorld::Session>(sessionPtr);
   auto possessObject = userSession->GetPossessCharacter();
   auto roomRef = userSession->GetRoom();
@@ -231,7 +231,7 @@ void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::ISessionPtr sessionPtr, BYTE*
   //  m_playerState.store(PLAYER_STATE::LOBBY);
 }
 
-void RoomMsgDispatcher::OnTimeSyncReq(sh::IO_Engine::ISessionPtr sessionPtr, BYTE* message) {
+void RoomMsgDispatcher::OnTimeSyncReq(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   DreamWorld::SERVER_PACKET::TimeSyncPacket sendPacket{};
   sessionPtr->DoSend(&sendPacket, sendPacket.size);
 }

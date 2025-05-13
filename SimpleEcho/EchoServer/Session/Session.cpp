@@ -4,7 +4,7 @@
 
 namespace sh::EchoServer {
 Session::Session()
-    : ISession() {
+    : TCP_ISession() {
 }
 Session::~Session() {
 }

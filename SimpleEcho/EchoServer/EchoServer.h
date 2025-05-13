@@ -6,7 +6,7 @@
 #include <IO_Engine/CommonDefine.h>
 
 namespace sh::EchoServer {
-class ISession;
+class TCP_ISession;
 class Server {
  public:
   Server();
@@ -19,7 +19,7 @@ class Server {
 
  private:
   void AcceptHandle(SOCKET sock);
-  static void RecvHandle(IO_Engine::ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
+  static void RecvHandle(IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
 
   IO_Engine::IO_Core m_ioCore;
   IO_Engine::Listener m_listener;

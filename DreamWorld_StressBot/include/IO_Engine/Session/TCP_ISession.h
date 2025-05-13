@@ -3,25 +3,25 @@
 #include <memory>
 #include "Utility/Thread/IWorkerItem.h"
 #include "../CommonDefine.h"
+#include "SendContext/TCP_SendContext.h"
+#include "RecvContext/TCP_RecvContext.h"
 
 namespace sh::IO_Engine {
-enum SESSION_STATE : BYTE {
+enum TCP_Session_STATE : BYTE {
   NON_ERR = 0x0,
   SEND_ERR = 0x1,
   RECV_ERR = 0x2,
   DISCONNECT_STATE = 0x3,
 };
-class ISendContext;
-class IRecvContext;
 
-class ISession
+class TCP_ISession
     : public Utility::IWorkerItem {
  public:
-  ISession();
+  TCP_ISession();
 
-  ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
+  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
 
-  virtual ~ISession();
+  virtual ~TCP_ISession();
 
   void DoSend(const void* data, const size_t len);
 
@@ -44,11 +44,11 @@ class ISession
   void Disconnect();
 
  private:
-  std::unique_ptr<ISendContext> m_sendContext;
-  std::unique_ptr<IRecvContext> m_recvContext;
+  TCP_SendContext m_sendContext;
+  TCP_RecvContext m_recvContext;
   HANDLE m_iocpHandle;
   SOCKET m_sock;
-  std::atomic<SESSION_STATE> m_state;
+  std::atomic<TCP_Session_STATE> m_state;
   std::atomic_bool m_isDisconnnected;
 };
 }  // namespace sh::IO_Engine

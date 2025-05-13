@@ -46,8 +46,8 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
   if (m_sendQueue.empty()) {
     m_isSendAble = true;
     // 보낼게 없다면 overlappedEx 반납
-    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<ISession >::strong ref 1->0
-    // ~ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
+    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_ISession >::strong ref 1->0
+    // ~TCP_ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
     // lock scope 외부에서 해제
     ThWorkerJobPool::GetInstance().Release(thWorkerJob);
     return 0;

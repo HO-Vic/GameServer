@@ -102,7 +102,7 @@ void NetworkModule::OnConnectFail(int errorCode) {
   // WRITE_LOG(logLevel::debug, "{}({}) > Connect Fail!! [WSAErrorCode:{}]", __FUNCTION__, __LINE__, errorCode);
 }
 
-void NetworkModule::RecvHandle(sh::IO_Engine::ISessionPtr sessionPtr, size_t, BYTE* bufferPosition) {
+void NetworkModule::RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t, BYTE* bufferPosition) {
   auto packetHeader = reinterpret_cast<DreamWorld::PacketHeader*>(bufferPosition);
   MsgHandler handler = nullptr;
   if (!m_msgDispatcher.GetHandler(packetHeader->type, handler)) {  // 없으면 에러 처리하지 않음, 스트레스 테스트에서 처리하지 않는게 많음

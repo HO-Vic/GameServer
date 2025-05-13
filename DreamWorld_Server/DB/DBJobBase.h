@@ -8,9 +8,9 @@ class ThWorkerJob;
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class ISession;
-using ISessionPtr = std::shared_ptr<ISession>;
-using ISessionWeakPtr = std::weak_ptr<ISession>;
+class TCP_ISession;
+using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
+using TCP_ISessionWeakPtr = std::weak_ptr<TCP_ISession>;
 }  // namespace sh::IO_Engine
 
 namespace DreamWorld {
@@ -37,7 +37,7 @@ class UserDBJobBase
  public:
   UserDBJobBase() = default;
 
-  UserDBJobBase(sh::IO_Engine::ISessionPtr session)
+  UserDBJobBase(sh::IO_Engine::TCP_ISessionPtr session)
       : m_session(session) {
   }
 
@@ -45,7 +45,7 @@ class UserDBJobBase
   virtual void ExecuteFail() override;  // 실패했다면, 클라로 DB실패 메시지 보내기
 
  protected:
-  sh::IO_Engine::ISessionWeakPtr m_session;
+  sh::IO_Engine::TCP_ISessionWeakPtr m_session;
 };
 
 using DBJobPtr = std::shared_ptr<DBJobBase>;

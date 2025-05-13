@@ -3,7 +3,7 @@
 #include <functional>
 #include <string>
 #include <spdlog/common.h>
-#include <IO_Engine/Session/ISession.h>
+#include <IO_Engine/Session/TCP_ISession.h>
 #include <IO_Engine/IO_Metric/IO_Metric.h>
 #include "../Network/Session/SessionMananger.h"
 #include "../Network/Session/Session.h"
@@ -147,7 +147,7 @@ void Server::AcceptHandle(SOCKET sock) {
   SessionMananger::GetInstance().OnAccept(sock, sh::IO_Engine::TCP, std::bind(&Server::RecvHandle, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), m_ioCore.GetHandle());
 }
 
-void Server::RecvHandle(sh::IO_Engine::ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
+void Server::RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
   auto packetHeader = reinterpret_cast<PacketHeader*>(bufferPosition);
   MsgHandler handler = nullptr;
   if (!m_dispatcher.GetHandler(packetHeader->type, handler)) {

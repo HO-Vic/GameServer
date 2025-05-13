@@ -1,15 +1,15 @@
 #pragma once
 #include <IO_Engine/CommonDefine.h>
-#include <IO_Engine/Session/ISession.h>
+#include <IO_Engine/Session/TCP_ISession.h>
 
 namespace sh::EchoServer {
 class Session final
-    : public IO_Engine::ISession {
+    : public IO_Engine::TCP_ISession {
  public:
   Session();
 
   Session(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, uint32_t uniqueNo)
-      : ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
+      : TCP_ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
   }
 
   virtual ~Session() override;

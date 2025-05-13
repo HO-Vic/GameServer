@@ -1,17 +1,30 @@
 #pragma once
 #include <cstdint>
-#include <Session/RecvContext/IRecvContext.h>
+
+namespace sh ::Utility {
+class ThWorkerJob;
+}  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class TCP_RecvContext
-    : public IRecvContext {
+class TCP_RecvContext {
  public:
+  TCP_RecvContext() = default;
+
   TCP_RecvContext(SOCKET sock, RecvHandler&& recvHandler)
-      : IRecvContext(sock, std::move(recvHandler)) {
+      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(recvHandler) {
+    m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
+    m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
   }
 
-  virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) override;
+  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize);
 
-  virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) override;
+  int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob);
+
+ private:
+  SOCKET m_socket;
+  RecvHandler m_recvHandler;
+  WSABUF m_wsaBuf;
+  BYTE m_buffer[MAX_RECV_BUF_SIZE];
+  size_t m_remainLen;
 };
 }  // namespace sh::IO_Engine

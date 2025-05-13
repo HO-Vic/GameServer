@@ -19,14 +19,8 @@
     <Filter Include="Buffer\SendBuffer">
       <UniqueIdentifier>{b9d100a5-f831-4e1d-97f4-e4883a798dc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Session\SendContext\SendContextImpl">
-      <UniqueIdentifier>{ed1e5a9c-0ded-4359-9c0d-858894645c1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CommonDefine">
       <UniqueIdentifier>{41a0cc0d-95dd-409c-b938-06c78ac13870}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Session\RecvContext\RecvContextImpl">
-      <UniqueIdentifier>{cadb90d1-b31f-4e3b-9984-dacc3a273cfe}</UniqueIdentifier>
     </Filter>
     <Filter Include="IO_Core">
       <UniqueIdentifier>{50cc62db-db6f-458b-babb-33088eb82492}</UniqueIdentifier>
@@ -43,11 +37,17 @@
     <Filter Include="IO_Core\Connector">
       <UniqueIdentifier>{4457b665-85da-4dba-ba62-d8105d90f33c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Session\UDP">
+      <UniqueIdentifier>{3811a943-6284-4bf8-9ef9-48aa56d00a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\SendContext\SendContext">
+      <UniqueIdentifier>{ed1e5a9c-0ded-4359-9c0d-858894645c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\RecvContext\RecvContext">
+      <UniqueIdentifier>{cadb90d1-b31f-4e3b-9984-dacc3a273cfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="private\Session\ISession.cpp">
-      <Filter>Session</Filter>
-    </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp">
       <Filter>Buffer\SendBuffer</Filter>
     </ClCompile>
@@ -73,22 +73,31 @@
       <Filter>IO_Core\Connector</Filter>
     </ClCompile>
     <ClCompile Include="private\Session\RecvContext\TCP_RecvContext.cpp">
-      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+      <Filter>Session\RecvContext\RecvContext</Filter>
     </ClCompile>
     <ClCompile Include="private\Session\RecvContext\UDP_RecvContext.cpp">
-      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+      <Filter>Session\RecvContext\RecvContext</Filter>
     </ClCompile>
     <ClCompile Include="private\Session\SendContext\TCP_SendContext.cpp">
-      <Filter>Session\SendContext\SendContextImpl</Filter>
+      <Filter>Session\SendContext\SendContext</Filter>
     </ClCompile>
     <ClCompile Include="private\Session\SendContext\UDP_SendContext.cpp">
-      <Filter>Session\SendContext\SendContextImpl</Filter>
+      <Filter>Session\SendContext\SendContext</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\UDP\UDP_Sender.cpp">
+      <Filter>Session\UDP</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\UDP\UDP_Receiver.cpp">
+      <Filter>Session\UDP</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\TCP_ISession.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\UDP_ISession.cpp">
+      <Filter>Session</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="public\Session\ISession.h">
-      <Filter>Session</Filter>
-    </ClInclude>
     <ClInclude Include="public\Buffer\SendBuffer.h">
       <Filter>Buffer\SendBuffer</Filter>
     </ClInclude>
@@ -126,22 +135,34 @@
       <Filter>IO_Core\Connector</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\RecvContext\IRecvContext.h">
-      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+      <Filter>Session\RecvContext\RecvContext</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\RecvContext\TCP_RecvContext.h">
-      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+      <Filter>Session\RecvContext\RecvContext</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\RecvContext\UDP_RecvContext.h">
-      <Filter>Session\RecvContext\RecvContextImpl</Filter>
+      <Filter>Session\RecvContext\RecvContext</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\SendContext\TCP_SendContext.h">
-      <Filter>Session\SendContext\SendContextImpl</Filter>
+      <Filter>Session\SendContext\SendContext</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\SendContext\UDP_SendContext.h">
-      <Filter>Session\SendContext\SendContextImpl</Filter>
+      <Filter>Session\SendContext\SendContext</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\SendContext\ISendContext.h">
-      <Filter>Session\SendContext\SendContextImpl</Filter>
+      <Filter>Session\SendContext\SendContext</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\UDP\UDP_Sender.h">
+      <Filter>Session\UDP</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\UDP\UDP_Receiver.h">
+      <Filter>Session\UDP</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\TCP_ISession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\UDP_ISession.h">
+      <Filter>Session</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

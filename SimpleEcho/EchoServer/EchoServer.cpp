@@ -40,7 +40,7 @@ void Server::AcceptHandle(SOCKET sock) {
   SessionManager::GetInstance().OnAccept(sock, IO_Engine::IO_TYPE::TCP, RecvHandle, m_ioCore.GetHandle());
 }
 
-void Server::RecvHandle(IO_Engine::ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
+void Server::RecvHandle(IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
   WRITE_LOG(spdlog::level::info, "{}({}) > Recv Packet", __FUNCTION__, __LINE__);
   PacketHeader* packet = reinterpret_cast<PacketHeader*>(bufferPosition);
   //  Recv된 데이터 행동 정의

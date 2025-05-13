@@ -1,13 +1,13 @@
 #pragma once
 #include <cstdint>
-#include "IO_Engine/Session/ISession.h"
+#include "IO_Engine/Session/TCP_ISession.h"
 #include "../DreamWorldDefine.h"
 
 namespace DreamWorld {
 class RoomBase;
 class CharacterObject;
 class Session final
-    : public sh::IO_Engine::ISession {
+    : public sh::IO_Engine::TCP_ISession {
  public:
   Session();
 

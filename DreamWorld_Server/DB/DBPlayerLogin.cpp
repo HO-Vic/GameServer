@@ -5,14 +5,14 @@
 #include <sqlext.h>
 #include <sqltypes.h>
 #include "../DreamWorldDefine.h"
-#include <IO_Engine/Session/ISession.h>
+#include <IO_Engine/Session/TCP_ISession.h>
 #include "../LogManager/LogManager.h"
 #include "DBConnection.h"
 #include "DBConnectionManager.h"
 #include "../Server/MsgProtocol.h"
 
 namespace DreamWorld {
-DreamWorld::DBPlayerLogin::DBPlayerLogin(sh::IO_Engine::ISessionPtr session, const char* loginId, const char* pw)
+DreamWorld::DBPlayerLogin::DBPlayerLogin(sh::IO_Engine::TCP_ISessionPtr session, const char* loginId, const char* pw)
     : UserDBJobBase(session) {
   m_id = ConvertStringToWideString(loginId);
   m_pw = ConvertStringToWideString(pw);

@@ -1,72 +1,64 @@
 #include <pch.h>
-#include <Session/ISession.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
+#include <Session/TCP_ISession.h>
 #include <Session/SendContext/TCP_SendContext.h>
 #include <Session/RecvContext/TCP_RecvContext.h>
-#include <Session/SendContext/UDP_SendContext.h>
-#include <Session/RecvContext/UDP_RecvContext.h>
 
 namespace sh::IO_Engine {
-ISession::ISession()
-    : m_sendContext(nullptr), m_recvContext(nullptr), m_isDisconnnected(false), m_iocpHandle(NULL), m_sock(NULL) {
+TCP_ISession::TCP_ISession()
+    : m_isDisconnnected(false), m_iocpHandle(NULL), m_sock(NULL) {
 }
-ISession::ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
-    : m_sendContext(nullptr), m_recvContext(nullptr), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock) {
-  if (IO_TYPE::TCP == ioType) {
-    m_sendContext = std::make_unique<TCP_SendContext>(sock);
-    m_recvContext = std::make_unique<TCP_RecvContext>(sock, std::move(recvHandler));
-  } else {
-    //
-  }
+TCP_ISession::TCP_ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
+    : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock) {
 }
 
-ISession::~ISession() {
+TCP_ISession::~TCP_ISession() {
   closesocket(m_sock);
 }
 
-void ISession::DoSend(const void* data, const size_t len) {
-  auto ioError = m_sendContext->DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
+void TCP_ISession::DoSend(const void* data, const size_t len) {
+  auto ioError = m_sendContext.DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
   if (0 != ioError) {
     RaiseIOError();
   }
 }
 
-void ISession::StartRecv() {
+void TCP_ISession::StartRecv() {
   auto thWorker = ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::RECV);
-  auto ioError = m_recvContext->DoRecv(thWorker);  // 외부 정리
+  auto ioError = m_recvContext.DoRecv(thWorker);  // 외부 정리
   if (0 != ioError) {
     RaiseIOError(thWorker);
   }
 }
 
-bool ISession::IsDisconnected() const {
+bool TCP_ISession::IsDisconnected() const {
   return m_isDisconnnected;
 }
 
-void ISession::RaiseIOError() {
-  m_state.store(SESSION_STATE::DISCONNECT_STATE);
+void TCP_ISession::RaiseIOError() {
+  m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::DISCONN));
 }
 
-void ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
-  m_state.store(SESSION_STATE::DISCONNECT_STATE);
+void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
+  m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
   thWorker->SetType(sh::Utility::WORKER_TYPE::DISCONN);
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, thWorker);
 }
 
-void ISession::Disconnect() {
+void TCP_ISession::Disconnect() {
 }
 
-void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
+void TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
   static constexpr bool DESIRE_DISCONNECT = true;
-  if (m_state == SESSION_STATE::DISCONNECT_STATE && thWorkerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE && thWorkerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
     ThWorkerJobPool::GetInstance().Release(thWorkerJob);
     return;
   }
   if (0 != errorCode) {  // 0이 아니면 에러 발생
-    m_state.store(SESSION_STATE::DISCONNECT_STATE);
+    m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
     RaiseIOError(thWorkerJob);
     return;
   }
@@ -78,14 +70,14 @@ void ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, co
         RaiseIOError(thWorkerJob);
         return;
       }
-      auto ioError = m_recvContext->RecvComplete(thWorkerJob, ioByte);  // thWorker외부 정리
+      auto ioError = m_recvContext.RecvComplete(thWorkerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
         RaiseIOError(thWorkerJob);
       }
       IO_MetricSlot::GetInstance().RecordRecv(ioByte);
     } break;
     case Utility::WORKER_TYPE::SEND: {
-      auto ioError = m_sendContext->SendComplete(thWorkerJob, ioByte);  // thWorker외부 정리
+      auto ioError = m_sendContext.SendComplete(thWorkerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
         RaiseIOError(thWorkerJob);
       }

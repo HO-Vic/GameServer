@@ -13,7 +13,7 @@ Session::Session()
 }
 
 Session::Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, uint32_t uniqueNo)
-    : sh::IO_Engine::ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
+    : sh::IO_Engine::TCP_ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
 }
 
 Session::~Session() {

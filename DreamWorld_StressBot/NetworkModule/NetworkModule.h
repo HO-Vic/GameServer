@@ -9,8 +9,8 @@
 #include "../MsgDispatcher/MsgDispatcher.h"
 
 namespace sh::IO_Engine {
-class ISession;
-using ISessionPtr = std::shared_ptr<ISession>;
+class TCP_ISession;
+using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
 }  // namespace sh::IO_Engine
 
 namespace Stress {
@@ -36,21 +36,21 @@ class NetworkModule final
 
   void OnConnectFail(int errorCode);
 
-  void RecvHandle(sh::IO_Engine::ISessionPtr, size_t, BYTE*);
+  void RecvHandle(sh::IO_Engine::TCP_ISessionPtr, size_t, BYTE*);
 
   // void Disconnect();
  private:
-  void OnLoginSuccess(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  void OnLoginSuccess(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
-  static void OnIntoInGame(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  static void OnIntoInGame(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
-  static void OnGameState_Stage(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  static void OnGameState_Stage(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
-  static void OnGameState_Boss(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  static void OnGameState_Boss(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
-  static void OnGameEnd(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  static void OnGameEnd(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
-  static void OnStressTestDelay(sh::IO_Engine::ISessionPtr session, BYTE* packetHeader);
+  static void OnStressTestDelay(sh::IO_Engine::TCP_ISessionPtr session, BYTE* packetHeader);
 
  private:
   sh::IO_Engine::IO_Core m_ioCore;

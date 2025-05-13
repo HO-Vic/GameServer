@@ -1,20 +1,25 @@
 #pragma once
 #include <cstdint>
-#include "./ISendContext.h"
+
+namespace sh {
+namespace Utility {
+class ThWorkerJob;
+class IWorkerItem;
+using WorkerPtr = std::shared_ptr<IWorkerItem>;
+}
+}  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class UDP_SendContext final
-    : public ISendContext {
+class UDP_SendContext final {
  public:
-  UDP_SendContext(SOCKET sock)
-      : ISendContext(sock) {
+  UDP_SendContext() {
   }
 
-  virtual int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) override;
+  int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len);
 
-  virtual int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) override;
+  int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte);
 
  private:
-  virtual int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob) override;
+  int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob);
 };
 }  // namespace sh::IO_Engine

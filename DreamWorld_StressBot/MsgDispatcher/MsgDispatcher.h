@@ -5,12 +5,12 @@
 #include <memory>
 
 namespace sh::IO_Engine {
-class ISession;
-using ISessionPtr = std::shared_ptr<ISession>;
+class TCP_ISession;
+using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
 }  // namespace sh::IO_Engine
 
 namespace Stress {
-using MsgHandler = std::function<void(sh::IO_Engine::ISessionPtr, BYTE*)>;
+using MsgHandler = std::function<void(sh::IO_Engine::TCP_ISessionPtr, BYTE*)>;
 class MsgDispatcher {
  public:
   bool AddMsgHandler(const uint8_t msgId, MsgHandler handler);

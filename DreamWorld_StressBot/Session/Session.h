@@ -3,7 +3,7 @@
 #include <winsock.h>
 #include <unordered_map>
 #include <chrono>
-#include <IO_Engine/Session/ISession.h>
+#include <IO_Engine/Session/TCP_ISession.h>
 #include <IO_Engine/CommonDefine.h>
 #include <Utility/Job/JobQueue/JobQ_MT/DoubleJobQ_MT.h>
 #include "../../DreamWorld_Server/DreamWorldDefine.h"
@@ -23,7 +23,7 @@ class StressFSMBase;
 using FSMPtr = std::shared_ptr<StressFSMBase>;
 
 class Session final
-    : public sh::IO_Engine::ISession,
+    : public sh::IO_Engine::TCP_ISession,
       public sh::Utility::DoubleJobQ_MT {
  public:
   enum class SESSION_STATE : char {

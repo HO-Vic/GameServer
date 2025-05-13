@@ -26,13 +26,13 @@ struct PacketHeader {
 };
 #pragma pack(pop)
 
-constexpr static uint32_t MAX_RECV_BUF_SIZE = 1024;
+constexpr static uint32_t MAX_RECV_BUF_SIZE = 1400;
 #pragma endregion
 
 #pragma region FUNC_DEFINE
-class ISession;
-using ISessionPtr = std::shared_ptr<ISession>;
-using RecvHandler = std::function<void(ISessionPtr, size_t, BYTE*)>;
+class TCP_ISession;
+using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
+using RecvHandler = std::function<void(TCP_ISessionPtr, size_t, BYTE*)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;
