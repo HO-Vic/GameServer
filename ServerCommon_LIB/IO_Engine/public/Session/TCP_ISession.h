@@ -19,7 +19,7 @@ class TCP_ISession
  public:
   TCP_ISession();
 
-  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
+  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
 
   virtual ~TCP_ISession();
 

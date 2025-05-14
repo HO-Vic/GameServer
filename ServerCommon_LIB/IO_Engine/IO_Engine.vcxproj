@@ -34,6 +34,7 @@
     <ClCompile Include="private\Session\TCP_ISession.cpp" />
     <ClCompile Include="private\Session\UDP\UDP_Receiver.cpp" />
     <ClCompile Include="private\Session\UDP\UDP_Sender.cpp" />
+    <ClCompile Include="private\Session\UDP_IAgent.cpp" />
     <ClCompile Include="private\Session\UDP_ISession.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +59,7 @@
     <ClInclude Include="public\Session\TCP_ISession.h" />
     <ClInclude Include="public\Session\UDP\UDP_Receiver.h" />
     <ClInclude Include="public\Session\UDP\UDP_Sender.h" />
+    <ClInclude Include="public\Session\UDP_IAgent.h" />
     <ClInclude Include="public\Session\UDP_ISession.h" />
   </ItemGroup>
   <ItemGroup>

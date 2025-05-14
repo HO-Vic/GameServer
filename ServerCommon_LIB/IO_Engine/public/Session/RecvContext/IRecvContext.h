@@ -11,8 +11,8 @@
 //namespace sh::IO_Engine {
 //class IRecvContext {
 // public:
-//  IRecvContext(SOCKET sock, RecvHandler&& recvHandler)
-//      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(recvHandler) {
+//  IRecvContext(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler)
+//      : m_socket(sock), m_buffer(""), m_remainLen(0), m_TCP_RecvHandler(TCP_RecvHandler) {
 //    m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
 //    m_wsaBuf.len = static_cast<uint32_t>(m_remainLen);
 //  }
@@ -25,7 +25,7 @@
 //
 // protected:
 //  SOCKET m_socket;
-//  RecvHandler m_recvHandler;
+//  TCP_RecvHandler m_TCP_RecvHandler;
 //  WSABUF m_wsaBuf;
 //  BYTE m_buffer[MAX_RECV_BUF_SIZE];
 //  size_t m_remainLen;

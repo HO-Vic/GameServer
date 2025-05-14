@@ -10,7 +10,7 @@ namespace sh::IO_Engine {
 TCP_ISession::TCP_ISession()
     : m_isDisconnnected(false), m_iocpHandle(NULL), m_sock(NULL) {
 }
-TCP_ISession::TCP_ISession(SOCKET sock, const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle)
+TCP_ISession::TCP_ISession(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle)
     : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock) {
 }
 
@@ -19,6 +19,10 @@ TCP_ISession::~TCP_ISession() {
 }
 
 void TCP_ISession::DoSend(const void* data, const size_t len) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+
   auto ioError = m_sendContext.DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
   if (0 != ioError) {
     RaiseIOError();

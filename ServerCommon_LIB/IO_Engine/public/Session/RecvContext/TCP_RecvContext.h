@@ -10,8 +10,8 @@ class TCP_RecvContext {
  public:
   TCP_RecvContext() = default;
 
-  TCP_RecvContext(SOCKET sock, RecvHandler&& recvHandler)
-      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(recvHandler) {
+  TCP_RecvContext(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler)
+      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(TCP_RecvHandler) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBuf.len = m_remainLen;
   }
@@ -22,7 +22,7 @@ class TCP_RecvContext {
 
  private:
   SOCKET m_socket;
-  RecvHandler m_recvHandler;
+  TCP_RecvHandler m_recvHandler;
   WSABUF m_wsaBuf;
   BYTE m_buffer[MAX_RECV_BUF_SIZE];
   uint32_t m_remainLen;
