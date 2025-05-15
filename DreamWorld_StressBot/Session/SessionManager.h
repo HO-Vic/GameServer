@@ -19,7 +19,7 @@ class SessionManager final
 
   void Init();
 
-  std::shared_ptr<Stress::Session> OnConnect(SOCKET sock, sh::IO_Engine::IO_TYPE, HANDLE ioHandle, sh::IO_Engine::RecvHandler recvHandler);
+  std::shared_ptr<Stress::Session> OnConnect(SOCKET sock, sh::IO_Engine::IO_TYPE, HANDLE ioHandle, sh::IO_Engine::TCP_RecvHandler TCP_RecvHandler);
 
   void OnDisconnect(std::shared_ptr<Stress::Session>& sessionPtr);
 

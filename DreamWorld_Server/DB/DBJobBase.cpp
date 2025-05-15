@@ -12,7 +12,7 @@
 using logLevel = spdlog::level::level_enum;
 
 namespace DreamWorld {
-void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
   auto connection = DBConnectionManager::GetInstance().GetConnection();
 
   SQLRETURN retCode;
@@ -31,7 +31,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
       SQLCancel(sqlStatement);                       /// 종료
       SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
       Clear(workerJob);
-      return;
+      return false;
     }
   }
 
@@ -52,7 +52,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
     SQLCancel(sqlStatement);                       /// 종료
     SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
     Clear(workerJob);
-    return;
+    return false;
   }
 #ifdef _DEBUG
   else if (SQL_SUCCESS_WITH_INFO == retCode) {
@@ -73,6 +73,7 @@ void DreamWorld::DBJobBase::Execute(sh::Utility::ThWorkerJob* workerJob, const D
   SQLCancel(sqlStatement);                       /// 종료
   SQLFreeHandle(SQL_HANDLE_STMT, sqlStatement);  // 리소스 해제
   Clear(workerJob);
+  return true;
 }
 void DBJobBase::Clear(sh::Utility::ThWorkerJob* workerJob) {
   MetricSlot::GetInstance().RecordDB();

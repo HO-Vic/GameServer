@@ -42,7 +42,7 @@ class TCP_SendContext final {
       : m_socket(sock), m_isSendAble(true) {
   }
 
-  int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len);
+  int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const uint32_t len);
 
   int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte);
 

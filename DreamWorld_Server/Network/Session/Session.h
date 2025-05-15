@@ -11,7 +11,7 @@ class Session final
  public:
   Session();
 
-  Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, uint32_t uniqueNo);
+  Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler TCP_RecvHandler, HANDLE iocpHandle, uint32_t uniqueNo);
 
   ~Session();
 

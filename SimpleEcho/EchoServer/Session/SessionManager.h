@@ -19,7 +19,7 @@ class SessionManager
 
   void Init(const uint32_t initSize);
 
-  void OnAccept(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::RecvHandler recvHandle, HANDLE iocpHandle);
+  void OnAccept(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::TCP_RecvHandler recvHandle, HANDLE iocpHandle);
 
   void OnDisconnect(uint32_t uniqeNo);
 

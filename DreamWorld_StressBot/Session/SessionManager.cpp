@@ -12,9 +12,9 @@ void Stress::SessionManager::Init() {
   m_sessionPool.InitSize(4000);
 }
 
-std::shared_ptr<Stress::Session> SessionManager::OnConnect(SOCKET sock, sh::IO_Engine::IO_TYPE, HANDLE ioHandle, sh::IO_Engine::RecvHandler recvHandler) {
+std::shared_ptr<Stress::Session> SessionManager::OnConnect(SOCKET sock, sh::IO_Engine::IO_TYPE, HANDLE ioHandle, sh::IO_Engine::TCP_RecvHandler TCP_RecvHandler) {
   auto uniqueNo = GetUniqueNo();
-  auto sessionPtr = m_sessionPool.MakeShared(sock, sh::IO_Engine::IO_TYPE::TCP, recvHandler, ioHandle, uniqueNo);
+  auto sessionPtr = m_sessionPool.MakeShared(sock, sh::IO_Engine::IO_TYPE::TCP, TCP_RecvHandler, ioHandle, uniqueNo);
   if (nullptr == sessionPtr) {
     WRITE_LOG(logLevel::err, "{}({}) > Session Pool MakeShared Fail!!", __FUNCTION__, __LINE__);
     return nullptr;

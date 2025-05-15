@@ -33,7 +33,7 @@ class Session final
   };
   Session() = default;
 
-  Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, const uint32_t uniqueNo);
+  Session(SOCKET sock, const sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler TCP_RecvHandler, HANDLE iocpHandle, const uint32_t uniqueNo);
 
   ~Session() override;
 

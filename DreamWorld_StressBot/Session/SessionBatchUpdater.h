@@ -23,7 +23,7 @@ class SessionBatchUpdater
 
   void DiscardSession(SessionPtr session);
 
-  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
  private:
   void IntenalUpdate();

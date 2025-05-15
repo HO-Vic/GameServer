@@ -19,13 +19,13 @@ class TCP_ISession
  public:
   TCP_ISession();
 
-  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, RecvHandler recvHandler, HANDLE iocpHandle);
+  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
 
   virtual ~TCP_ISession();
 
-  void DoSend(const void* data, const size_t len);
+  void DoSend(const void* data, const uint32_t len);
 
-  virtual void Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte, const uint64_t errorCode) override;
 
   void StartRecv();
 

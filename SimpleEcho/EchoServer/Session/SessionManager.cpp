@@ -11,7 +11,7 @@ void SessionManager::Init(const uint32_t initSize) {
   m_sessionPool.InitSize(initSize);
 }
 
-void SessionManager::OnAccept(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::RecvHandler recvHandle, HANDLE iocpHandle) {
+void SessionManager::OnAccept(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::TCP_RecvHandler recvHandle, HANDLE iocpHandle) {
   auto sessionPtr = m_sessionPool.MakeShared(sock, ioType, recvHandle, iocpHandle, m_userSeqId++);
   CreateIoCompletionPort(reinterpret_cast<HANDLE>(sock), iocpHandle, reinterpret_cast<uint64_t>(sessionPtr.get()), 0);
   {

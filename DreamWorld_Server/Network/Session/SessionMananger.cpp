@@ -11,7 +11,7 @@ void SessionMananger::Init() {
   m_currentActiveUser = 0;
 }
 
-void SessionMananger::OnAccept(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandle, HANDLE iocpHandle) {
+void SessionMananger::OnAccept(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler recvHandle, HANDLE iocpHandle) {
   auto userRef = m_userPool.MakeShared(sock, ioType, std::move(recvHandle), iocpHandle, m_uniqueNo++);
   if (NULL == CreateIoCompletionPort(reinterpret_cast<HANDLE>(sock), iocpHandle, reinterpret_cast<uint64_t>(userRef.get()), 0)) {
     WRITE_LOG(logLevel::err, "{}({}) > Can not Regist sock To ioHandle!!", __FUNCTION__, __LINE__);

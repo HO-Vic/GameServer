@@ -23,10 +23,11 @@ void SessionBatchUpdater::DiscardSession(SessionPtr session) {
   m_sessions.erase(session->GetUniqueNo());
 }
 
-void SessionBatchUpdater::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool SessionBatchUpdater::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
   IntenalUpdate();
   sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
   ReserveNextUpdate();
+  return true;
 }
 
 void SessionBatchUpdater::IntenalUpdate() {

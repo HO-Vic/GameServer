@@ -19,7 +19,7 @@ class DBJobBase
  public:
   DBJobBase() = default;
 
-  virtual void Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
 
  protected:
   // 쿼리 결과 처리

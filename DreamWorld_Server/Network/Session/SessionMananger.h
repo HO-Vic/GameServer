@@ -10,7 +10,7 @@ class SessionMananger
  public:
   void Init();
 
-  void OnAccept(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::RecvHandler recvHandle, HANDLE iocpHandle);
+  void OnAccept(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler recvHandle, HANDLE iocpHandle);
 
   void OnDisconnect(uint32_t userNo);
 

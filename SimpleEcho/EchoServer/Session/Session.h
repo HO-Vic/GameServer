@@ -8,8 +8,8 @@ class Session final
  public:
   Session();
 
-  Session(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::RecvHandler recvHandler, HANDLE iocpHandle, uint32_t uniqueNo)
-      : TCP_ISession(sock, ioType, recvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
+  Session(SOCKET sock, IO_Engine::IO_TYPE ioType, IO_Engine::TCP_RecvHandler TCP_RecvHandler, HANDLE iocpHandle, uint32_t uniqueNo)
+      : TCP_ISession(sock, ioType, TCP_RecvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
   }
 
   virtual ~Session() override;
