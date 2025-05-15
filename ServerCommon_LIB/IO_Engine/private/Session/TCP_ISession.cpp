@@ -18,7 +18,7 @@ TCP_ISession::~TCP_ISession() {
   closesocket(m_sock);
 }
 
-void TCP_ISession::DoSend(const void* data, const size_t len) {
+void TCP_ISession::DoSend(const void* data, const uint32_t len) {
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
     return;
   }

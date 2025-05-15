@@ -7,7 +7,7 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) {
+int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, const uint32_t len) {
   // thWorker가 내부에서만 존재하니, 내부에서 해결
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);

@@ -163,7 +163,9 @@
       <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="public\Session\UDP_IAgent.h" />
-    <ClInclude Include="public\Session\UDP_ISession.h" />
+    <ClInclude Include="public\Session\UDP_ISession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

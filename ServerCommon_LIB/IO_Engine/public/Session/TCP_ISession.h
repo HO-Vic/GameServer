@@ -23,7 +23,7 @@ class TCP_ISession
 
   virtual ~TCP_ISession();
 
-  void DoSend(const void* data, const size_t len);
+  void DoSend(const void* data, const uint32_t len);
 
   virtual bool Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte, const uint64_t errorCode) override;
 
