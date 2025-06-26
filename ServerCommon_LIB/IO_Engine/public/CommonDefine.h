@@ -17,8 +17,8 @@ enum IO_TYPE : char {
 #pragma region PACKET
 #pragma pack(push, 1)
 struct PacketHeader {
-  PacketHeader() {
-  }
+  PacketHeader()
+      : size(0) {};
   PacketHeader(const uint16_t size)
       : size(size) {
   }

@@ -2,18 +2,27 @@
 #include <Session/UDP_IAgent.h>
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>
+#include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
 UDP_IAgent::UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port)
     : m_socket(sock), m_activeReceiverCnt(receiverNo), m_port(port) {
+#ifdef _DEBUG
+  sockaddr_in addrInfo{};
+  int addrLen = sizeof(sockaddr_in);
+  auto sockResult = getsockname(m_socket, reinterpret_cast<sockaddr*>(&addrInfo), &addrLen);
+  if (sockResult != 0) {
+    assert(sockResult != 0, "Invalid Socket");  // 바인드 안된 경우
+  } else {
+    if (ntohl(addrInfo.sin_addr.s_addr) == 0) {
+      assert(sockResult != 0, "Invalid Socket");  // 바인드 안된 경우
+    }
+  }
+#endif
 }
 
 UDP_IAgent::~UDP_IAgent() {
   ReleaseSocket(m_socket);
-}
-
-void UDP_IAgent::Destroy() {
-  // 여기서 recv 버퍼 남은거 flush
 }
 
 void UDP_IAgent::StopReq() {
@@ -22,17 +31,30 @@ void UDP_IAgent::StopReq() {
   CancelIoEx(reinterpret_cast<HANDLE>(m_socket), nullptr);
 }
 
-void UDP_IAgent::StartRecv() {
+bool UDP_IAgent::StartRecv() {
+  auto thisPtr = shared_from_this();
   auto cnt = m_activeReceiverCnt.load();
-  for (auto i = 0; i < cnt; ++i) {
-    // m_receiver.push_back();
+  for (unsigned int i = 0; i < cnt; ++i) {
+    m_receiver.push_back(std::make_shared<UDP_RecvContext>());
+    auto thWorkerPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(m_receiver.back(), Utility::WORKER_TYPE::RECV);
+    if (0 != m_receiver.back()->DoRecv(thWorkerPtr, thisPtr)) {
+      // 에러
+      if (i > 0) {
+        StopReq();
+      } else {
+        OnDestroy();
+      }
+      ThWorkerJobPool::GetInstance().Release(thWorkerPtr);
+      return false;
+    }
   }
+  return true;
 }
 
 void UDP_IAgent::DestroyFromReceiver() {
   m_activeReceiverCnt--;
   if (0 == m_activeReceiverCnt) {
-    Destroy();
+    OnDestroy();
   }
 }
 }  // namespace sh::IO_Engine

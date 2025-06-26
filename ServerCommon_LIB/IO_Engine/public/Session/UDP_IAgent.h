@@ -7,7 +7,8 @@
 
 namespace sh::IO_Engine {
 class UDP_RecvContext;
-class UDP_IAgent {  // 세션보다는 에이전트가 좀 더 어울림
+class UDP_IAgent
+    : public std::enable_shared_from_this<UDP_IAgent> {  // 세션보다는 에이전트가 좀 더 어울림
  public:
   enum class STATE : BYTE {
     ACTIVE,
@@ -17,7 +18,7 @@ class UDP_IAgent {  // 세션보다는 에이전트가 좀 더 어울림
  public:
   UDP_IAgent() = default;
 
-  UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port = 9000);
+  UDP_IAgent(SOCKET sock, uint32_t receiverNo, [[maybe_unused]] uint16_t port = 9000);
 
   virtual ~UDP_IAgent();
 
@@ -25,11 +26,11 @@ class UDP_IAgent {  // 세션보다는 에이전트가 좀 더 어울림
   virtual void ReleaseSocket(SOCKET socket) = 0;
 
   // 모든 UDP리시버가 종료됐을 때, 호출
-  void Destroy();
+  virtual void OnDestroy() = 0;
 
   void StopReq();
 
-  void StartRecv();
+  bool StartRecv();
 
   void DestroyFromReceiver();
 

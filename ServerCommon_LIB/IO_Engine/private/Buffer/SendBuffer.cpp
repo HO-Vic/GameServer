@@ -25,7 +25,7 @@ bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD 
   return retVal;
 }
 
-void UDP_SingleSendBuffer::DoSend(SOCKET sock, const SOCKADDR& toAddr) {
+uint32_t UDP_SingleSendBuffer::DoSend(SOCKET sock, const SOCKADDR& toAddr) {
   DWORD sendByte = 0;
   DWORD flag = 0;
   auto selfPtr = shared_from_this();
@@ -34,10 +34,11 @@ void UDP_SingleSendBuffer::DoSend(SOCKET sock, const SOCKADDR& toAddr) {
   if (0 != ioError) {
     ioError = WSAGetLastError();
     if (WSA_IO_PENDING == ioError) {
-      return;
+      return 0;
     }
   }
   // 실패했다면 객체 되돌리기
   ThWorkerJobPool::GetInstance().Release(workJobPtr);
+  return ioError;
 }
 }  // namespace sh::IO_Engine

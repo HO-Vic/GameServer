@@ -12,8 +12,8 @@ class UDP_RecvContext
  public:
   UDP_RecvContext() = default;
 
-  UDP_RecvContext(UDP_RecvHandler&& TCP_RecvHandler)
-      : m_buffer(""), m_recvHandler(TCP_RecvHandler) {
+  UDP_RecvContext(UDP_RecvHandler&& UDP_RecvHandler)
+      : m_buffer(""), m_recvHandler(UDP_RecvHandler) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBuf.len = MAX_RECV_BUF_SIZE;
   }

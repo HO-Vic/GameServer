@@ -4,8 +4,23 @@
 #include <Buffer/SendBufferPool.h>
 
 namespace sh::IO_Engine {
-void UDP_ISession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) const {
+uint32_t UDP_ISession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) const {
   auto sendBufferPtr = UDP_SingleSendBufferPool::GetInstance().MakeShared(data, len);
-  sendBufferPtr->DoSend(sock, m_toAddr);
+  return sendBufferPtr->DoSend(sock, m_toAddr);
+}
+
+void UDP_IBatchSession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) {
+  auto bufferPtr = SendBufferPool::GetInstance().MakeShared(data, len);
+  std::lock_guard<std::mutex> lg{m_bufferLock};
+  if (!m_buffers.back().CanInsert(len)) {
+    m_buffers.push_back(InternalBatchSendBuffer{});
+  }
+  m_buffers.back().m_buffers.push_back(bufferPtr);
+  m_buffers.back().m_totalLen += len;
+  // Sendable 확인 후 시도 및...
+}
+
+bool UDP_IBatchSession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+  return false;
 }
 }  // namespace sh::IO_Engine
