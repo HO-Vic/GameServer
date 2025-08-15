@@ -93,8 +93,10 @@
     <ClCompile Include="private\Session\TCP_ISession.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClCompile Include="private\Session\UDP_IAgent.cpp" />
     <ClCompile Include="private\Session\UDP_ISession.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Session\UDP_IAgent.cpp">
       <Filter>Session</Filter>
     </ClCompile>
   </ItemGroup>
@@ -162,8 +164,10 @@
     <ClInclude Include="public\Session\TCP_ISession.h">
       <Filter>Session</Filter>
     </ClInclude>
-    <ClInclude Include="public\Session\UDP_IAgent.h" />
     <ClInclude Include="public\Session\UDP_ISession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Session\UDP_IAgent.h">
       <Filter>Session</Filter>
     </ClInclude>
   </ItemGroup>

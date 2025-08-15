@@ -29,12 +29,15 @@ void Listener::Start(uint16_t inetType, int socketType, int protocolType) {
   SOCKADDR_IN sockAddr{};
   sockAddr.sin_family = inetType;
   sockAddr.sin_port = htons(m_port);
-  sockAddr.sin_addr.s_addr = m_ipAddr; 
+  sockAddr.sin_addr.s_addr = m_ipAddr;
 
   ::bind(m_listenSocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(SOCKADDR_IN));
   if (INVALID_SOCKET == m_listenSocket) {
     int getLastError = WSAGetLastError();
+
+#ifdef _DEBUG
     assert(INVALID_SOCKET != m_listenSocket);
+#endif  // _DEBUG
   }
   listen(m_listenSocket, SOMAXCONN);
 

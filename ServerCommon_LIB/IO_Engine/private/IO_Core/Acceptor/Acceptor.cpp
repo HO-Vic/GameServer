@@ -12,10 +12,14 @@ Acceptor::Acceptor()
 Acceptor::Acceptor(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo)
     : m_iocpHandle(iocpHandle), m_listenSocket(listenSocket), m_acceptCompleteHandle(std::move(acceptHandleFunc)), m_acceptNo(acceptNo) {
   if (nullptr == m_iocpHandle) {
-    assert(nullptr != m_iocpHandle);
+#ifdef _DEBUG
+    assert(nullptr != m_iocpHandle, "Invalid ioHandle");
+#endif  // _DEBUG
   }
   if (m_acceptNo < 1) {
-    assert("m_acceptNo less than 1");
+#ifdef _DEBUG
+    assert(m_acceptNo >= 1 && "m_acceptNo less than 1");
+#endif  // _DEBUG
   }
 }
 
@@ -26,10 +30,14 @@ void Acceptor::Init(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandle
   m_acceptNo = acceptNo;
 
   if (nullptr == m_iocpHandle) {
-    assert(nullptr != m_iocpHandle);
+#ifdef _DEBUG
+    assert(nullptr != m_iocpHandle && "Invalid IoHandle");
+#endif  // _DEBUG
   }
   if (m_acceptNo < 1) {
-    assert("m_acceptNo less than 1");
+#ifdef _DEBUG
+    assert(m_acceptNo >= 1 && "m_acceptNo less than 1");
+#endif  // _DEBUG
   }
 }
 

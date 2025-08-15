@@ -1,4 +1,7 @@
 #include "pch.h"
+#include <memory>
+#include <Windows.h>
+#include <ioapiset.h>
 #include <Session/UDP_IAgent.h>
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>
@@ -12,10 +15,10 @@ UDP_IAgent::UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port)
   int addrLen = sizeof(sockaddr_in);
   auto sockResult = getsockname(m_socket, reinterpret_cast<sockaddr*>(&addrInfo), &addrLen);
   if (sockResult != 0) {
-    assert(sockResult != 0, "Invalid Socket");  // 바인드 안된 경우
+    assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
   } else {
     if (ntohl(addrInfo.sin_addr.s_addr) == 0) {
-      assert(sockResult != 0, "Invalid Socket");  // 바인드 안된 경우
+      assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
     }
   }
 #endif
@@ -42,7 +45,7 @@ bool UDP_IAgent::StartRecv() {
       if (i > 0) {
         StopReq();
       } else {
-        OnDestroy();
+        OnDestroy();  // 아직 요청이 들어가지 않았기때문에 Destroy 호출
       }
       ThWorkerJobPool::GetInstance().Release(thWorkerPtr);
       return false;
@@ -53,7 +56,7 @@ bool UDP_IAgent::StartRecv() {
 
 void UDP_IAgent::DestroyFromReceiver() {
   m_activeReceiverCnt--;
-  if (0 == m_activeReceiverCnt) {
+  if (0 == m_activeReceiverCnt) {  // 더 이상 파괴할 recv 객체가 없다면 destroy
     OnDestroy();
   }
 }

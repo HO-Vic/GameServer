@@ -20,12 +20,12 @@ class UDP_RecvContext
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode);
 
-  void RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>& sessionPtr);
+  void RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>& agentPtr);
 
-  int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob, std::shared_ptr<UDP_IAgent>& sessionPtr);
+  int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob, std::shared_ptr<UDP_IAgent>& agentPtr);
 
  private:
-  std::weak_ptr<UDP_IAgent> m_sessionPtr;
+  std::weak_ptr<UDP_IAgent> m_agentPtr;
   UDP_RecvHandler m_recvHandler = nullptr;
   WSABUF m_wsaBuf;
   BYTE m_buffer[MAX_RECV_BUF_SIZE];

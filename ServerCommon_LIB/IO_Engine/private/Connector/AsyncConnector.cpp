@@ -71,7 +71,9 @@ AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint1
   if (result != 0) {
     char errorString[1024] = {0};
     sprintf_s(errorString, "%s(%d) > Failed to Get ConnectEx Functor [errorCode: %d]", __FUNCTION__, __LINE__, WSAGetLastError());
+#ifdef _DEBUG
     assert(false && errorString);
+#endif  // _DEBUG
   }
 }
 
@@ -93,13 +95,17 @@ void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t p
   if (result != 0) {
     char errorString[1024] = {0};
     sprintf_s(errorString, "%s(%d) > Failed to Get ConnectEx Functor [errorCode: %d]", __FUNCTION__, __LINE__, WSAGetLastError());
+#ifdef _DEBUG
     assert(false && errorString);
+#endif  // _DEBUG
   }
 }
 
 bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) {
   if (!m_isInit) {
+#ifdef _DEBUG
     assert(false && "Connector is not initialized");
+#endif  // _DEBUG
   }
   auto connectEvent = std::make_shared<AsyncConnectEvent>(std::move(successHandle), std::move(failHandle), ConnectEx, m_connectAddr);
   auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(connectEvent, Utility::WORKER_TYPE::CONNECT);

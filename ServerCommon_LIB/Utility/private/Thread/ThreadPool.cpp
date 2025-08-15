@@ -48,7 +48,9 @@ void ThreadPool::Init() {
   m_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, m_threadNo);
   if (nullptr == m_handle) {
     auto errorNo = GetLastError();
-    assert(nullptr != m_handle);
+#ifdef _DEBUG
+    assert(nullptr != m_handle && "Invalid Handle From CreateIOCompletionPort");
+#endif  // _DEBUG
   }
 }
 

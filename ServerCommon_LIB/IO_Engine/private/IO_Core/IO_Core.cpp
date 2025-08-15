@@ -9,7 +9,9 @@ IO_Core::IO_Core()
     : m_threadPool(1) {
   WSADATA wsaData{};
   if (WSAStartup(WINSOCK_VERSION, &wsaData) != 0) {
-    assert("WSAData init fail");
+#ifdef _DEBUG
+    assert(false && "WSAData init fail");
+#endif  // _DEBUG
   }
   IO_MetricSlot::GetInstance().Init();
 }
@@ -18,7 +20,9 @@ IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
     : m_threadPool(ioThreadNo) {
   WSADATA wsaData{};
   if (WSAStartup(WINSOCK_VERSION, &wsaData) != 0) {
-    assert("WSAData init fail");
+#ifdef _DEBUG
+    assert(false && "WSAData init fail");
+#endif  // _DEBUG
   }
   IO_MetricSlot::GetInstance().Init(metricUse);
 }

@@ -9,6 +9,7 @@ uint32_t UDP_ISession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) const
   return sendBufferPtr->DoSend(sock, m_toAddr);
 }
 
+#pragma region Deprecated
 void UDP_IBatchSession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) {
   auto bufferPtr = SendBufferPool::GetInstance().MakeShared(data, len);
   std::lock_guard<std::mutex> lg{m_bufferLock};
@@ -23,4 +24,5 @@ void UDP_IBatchSession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) {
 bool UDP_IBatchSession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
   return false;
 }
+#pragma endregion  // Deprecated
 }  // namespace sh::IO_Engine
