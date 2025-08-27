@@ -11,13 +11,53 @@ p to p 인데, disconn이랄게 없으니
 */
 
 namespace sh::IO_Engine {
-bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   if (workerJob->GetType() != Utility::WORKER_TYPE::RECV) {
     return false;
   }
+
+  if (0 != errorCode) {
+    switch (errorCode) {
+      case ERROR_OPERATION_ABORTED: {
+
+        break;
+      }
+      default:
+        break;
+    }
+    // ERROR_OPERATION_ABORTED // CancelIoEx()
+
+    /*
+    ECONNREFUSED :
+    ICMP Port Unreachable → 상대 포트가 닫혀 있음.
+
+    EMSGSIZE :
+    버퍼보다 큰 UDP 패킷이 들어온 경우.
+
+    EAGAIN / EWOULDBLOCK :
+    논블로킹 소켓에서 읽을 데이터 없음.
+
+    ENOBUFS :
+    커널 버퍼 부족 → 패킷 드롭됨.
+
+    ENETUNREACH :
+    네트워크 불가.
+
+    EADDRNOTAVAIL :
+    잘못된 주소 사용.
+    */
+
+    return false;  //
+  }
+
   auto agentPtr = m_agentPtr.lock();
-  if (0 != errorCode || agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
-    agentPtr->DestroyFromReceiver();
+  if (nullptr == agentPtr) {
+    ThWorkerJobPool::GetInstance().Release(workerJob);
+    return false;
+  }
+
+  if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
+    agentPtr->DestroyFromReceiver();                          // 현재 리시버 종료
     ThWorkerJobPool::GetInstance().Release(workerJob);
     return true;
   }
@@ -26,9 +66,10 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
 
   auto ioError = DoRecv(workerJob, agentPtr);
   if (0 != ioError) {
-    agentPtr->StopReq();
+    /*agentPtr->StopReq();
     agentPtr->DestroyFromReceiver();
-    ThWorkerJobPool::GetInstance().Release(workerJob);
+    ThWorkerJobPool::GetInstance().Release(workerJob);*/
+
   } else if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // WSARecvFrom() 호출 이후에 세션이 종료됐다면
     // IOCP로 해당 객체 Error 들어와서 14번줄에서 처리
     CancelIoEx(reinterpret_cast<HANDLE>(agentPtr->GetSocket()), workerJob);
@@ -50,10 +91,10 @@ void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>&
   };
 }
 
-int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* thWorkerJob, std::shared_ptr<UDP_IAgent>& agentPtr) {
+int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_IAgent>& agentPtr) {
   DWORD recvByte = 0;
   DWORD flag = 0;
-  auto ioError = WSARecvFrom(agentPtr->GetSocket(), &m_wsaBuf, 1, &recvByte, &flag, nullptr, 0, thWorkerJob, nullptr);
+  auto ioError = WSARecvFrom(agentPtr->GetSocket(), &m_wsaBuf, 1, &recvByte, &flag, nullptr, 0, workerJob, nullptr);
   if (0 != ioError) {
     ioError = WSAGetLastError();
     if (ioError == ERROR_IO_PENDING) {

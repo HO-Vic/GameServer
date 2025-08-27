@@ -6,11 +6,11 @@ int32_t UDP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   return 0;
 }
 
-int32_t UDP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) {
+int32_t UDP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) {
   return 0;
 }
 
-int32_t UDP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
+int32_t UDP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
   return 0;
 }
 }  // namespace sh::IO_Engine

@@ -7,7 +7,7 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize) {
+int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioSize) {
   uint32_t remainSize = ioSize + m_remainLen;
   BYTE* bufferPosition = m_buffer;
 
@@ -18,7 +18,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD i
       break;
     }
     // 완성된 패킷
-    m_recvHandler(std::static_pointer_cast<TCP_ISession>(thWorkerJob->GetWorkerItem()), currentPacket->size, bufferPosition);
+    m_recvHandler(std::static_pointer_cast<TCP_ISession>(workerJob->GetWorkerItem()), currentPacket->size, bufferPosition);
     // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
     remainSize -= currentPacket->size;
     bufferPosition = bufferPosition + currentPacket->size;
@@ -31,15 +31,15 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD i
     std::memcpy(m_buffer, bufferPosition, remainSize);
   }
 
-  return DoRecv(thWorkerJob);
+  return DoRecv(workerJob);
 }
 
-int32_t TCP_RecvContext::DoRecv(Utility::ThWorkerJob* thWorkerJob) {
+int32_t TCP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob) {
   // wsaBuf의 buf 위치를 바꿈
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;
   m_wsaBuf.len = static_cast<uint32_t>(MAX_RECV_BUF_SIZE - m_remainLen);
   DWORD flag = 0;
-  auto errorNo = WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  auto errorNo = WSARecv(m_socket, &m_wsaBuf, 1, nullptr, &flag, reinterpret_cast<LPOVERLAPPED>(workerJob), nullptr);
   if (0 != errorNo) {
     auto wsaErr = WSAGetLastError();
     if (WSA_IO_PENDING == wsaErr) {

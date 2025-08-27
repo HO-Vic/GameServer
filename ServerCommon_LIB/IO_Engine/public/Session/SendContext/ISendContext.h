@@ -20,10 +20,10 @@
 //
 //  virtual int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len) = 0;
 //
-//  virtual int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) = 0;
+//  virtual int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) = 0;
 //
 // protected:
-//  virtual int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob) = 0;
+//  virtual int32_t SendExecute(Utility::ThWorkerJob* workerJob) = 0;
 //
 // protected:
 //  SOCKET m_socket;

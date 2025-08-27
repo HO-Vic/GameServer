@@ -19,9 +19,9 @@
 //
 //  virtual ~IRecvContext() = default;
 //
-//  virtual int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize) = 0;
+//  virtual int32_t RecvComplete(Utility::ThWorkerJob* workerJob, size_t ioSize) = 0;
 //
-//  virtual int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob) = 0;
+//  virtual int32_t DoRecv(Utility::ThWorkerJob* workerJob) = 0;
 //
 // protected:
 //  SOCKET m_socket;

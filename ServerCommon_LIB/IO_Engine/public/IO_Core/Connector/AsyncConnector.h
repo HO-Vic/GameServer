@@ -99,9 +99,9 @@ class AsyncConnectEvent
  public:
   AsyncConnectEvent(ConnectCompleteHandler&& successHandle, ConnectFailHandler&& failHandle, LPFN_CONNECTEX connectEx, const SOCKADDR_IN connectAddr);
 
-  bool TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWorkerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector);
+  bool TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* workerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector);
 
-  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
  private:
   std::function<void()> GetTimeOutFunc();

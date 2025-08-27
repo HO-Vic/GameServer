@@ -108,8 +108,8 @@ bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFai
 #endif  // _DEBUG
   }
   auto connectEvent = std::make_shared<AsyncConnectEvent>(std::move(successHandle), std::move(failHandle), ConnectEx, m_connectAddr);
-  auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(connectEvent, Utility::WORKER_TYPE::CONNECT);
-  return connectEvent->TryConnect(m_ioHandle, thWorkerJob, m_inetType, m_socketType, m_protocolType, *this);
+  auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(connectEvent, Utility::WORKER_TYPE::CONNECT);
+  return connectEvent->TryConnect(m_ioHandle, workerJob, m_inetType, m_socketType, m_protocolType, *this);
 }
 
 void AsyncConnector::InsertTimerJob(std::function<void()>&& timeoutCaller) {
@@ -123,7 +123,7 @@ AsyncConnectEvent::AsyncConnectEvent(ConnectCompleteHandler&& successHandle, Con
     : m_successHandle(successHandle), m_failHandle(failHandle), m_socket(NULL), ConnectEx(connectEx), m_connectAddr(connectAddr), m_connectingState(STATE::TRY_CONNECT), m_tryCnt(0), m_workerJob(nullptr) {
 }
 
-bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWorkerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector) {
+bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* workerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector) {
   if (NULL == m_socket) {
     m_socket = WSASocketW(inetType, socketType, protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);
     if (m_socket == INVALID_SOCKET) {
@@ -147,19 +147,19 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
   m_connectingState = STATE::TRY_CONNECT;
   static constexpr size_t infoSize = sizeof(SOCKADDR_IN);
   if (m_tryCnt == 0) {
-    CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_socket), ioHandle, reinterpret_cast<ULONG_PTR>(thWorkerJob), 0);
+    CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_socket), ioHandle, reinterpret_cast<ULONG_PTR>(workerJob), 0);
   }
-  m_workerJob = thWorkerJob;
+  m_workerJob = workerJob;
   m_tryCnt++;
   DWORD sentByte = 0;
-  bool result = ConnectEx(m_socket, reinterpret_cast<sockaddr*>(&m_connectAddr), static_cast<int>(infoSize), nullptr, 0, &sentByte, thWorkerJob);
+  bool result = ConnectEx(m_socket, reinterpret_cast<sockaddr*>(&m_connectAddr), static_cast<int>(infoSize), nullptr, 0, &sentByte, workerJob);
   if (result) {
     setsockopt(m_socket, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0);
     m_successHandle(m_socket);
     m_socket = NULL;
     m_connectingState = STATE::CONNECTED;  // 성공했다면, ICCP에서 완료 처리가 오지 않음
     m_workerJob = nullptr;
-    ThWorkerJobPool::GetInstance().Release(thWorkerJob);  // 성공했다면, Release로 반환
+    ThWorkerJobPool::GetInstance().Release(workerJob);  // 성공했다면, Release로 반환
     return true;
   }
 
@@ -168,7 +168,7 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
     m_failHandle(errorCode);
     m_connectingState = STATE::TIMEOUT;
     m_workerJob = nullptr;
-    ThWorkerJobPool::GetInstance().Release(thWorkerJob);  // 성공했다면, Release로 반환
+    ThWorkerJobPool::GetInstance().Release(workerJob);  // 성공했다면, Release로 반환
     return false;
   }
 
@@ -178,7 +178,7 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWork
   return true;
 }
 
-bool AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   STATE tryState = STATE::TRY_CONNECT;
   if (0 != errorCode) {
     if (m_connectingState.compare_exchange_strong(tryState, STATE::TIMEOUT)) {  // 타임 아웃 상태로 변경하는데, 성공했다면

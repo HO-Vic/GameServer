@@ -23,15 +23,15 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
   if (isSendAbleThread) {
-    auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-    auto errorNo = SendExecute(thWorkerJob);
+    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
+    auto errorNo = SendExecute(workerJob);
     if (0 != errorNo) {
       auto ioError = WSAGetLastError();
       if (WSA_IO_PENDING == ioError) {
         errorNo = 0;
       } else {
         errorNo = ioError;
-        ThWorkerJobPool::GetInstance().Release(thWorkerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
+        ThWorkerJobPool::GetInstance().Release(workerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
       }
     }
     return errorNo;
@@ -39,7 +39,7 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   return 0;
 }
 
-int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte) {
+int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) {
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
   m_sendBuffer.clear();
@@ -49,11 +49,11 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
     // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_ISession >::strong ref 1->0
     // ~TCP_ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
     // lock scope 외부에서 해제
-    ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+    ThWorkerJobPool::GetInstance().Release(workerJob);
     return 0;
   }
 
-  auto errorNo = SendExecute(thWorkerJob);
+  auto errorNo = SendExecute(workerJob);
   if (0 != errorNo) {
     auto ioError = WSAGetLastError();
     if (WSA_IO_PENDING == ioError) {
@@ -65,7 +65,7 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* thWorkerJob, const s
   return errorNo;
 }
 
-int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
+int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
   // this thread context switched + other thread already sended queue!!
   // DoSend() sendQeuue.push() -> thread sleep ..th1
   // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
@@ -82,7 +82,7 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
 
   if (m_sendBuffer.empty()) {
     m_isSendAble = true;
-    ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+    ThWorkerJobPool::GetInstance().Release(workerJob);
     return 0;
   }
 
@@ -94,7 +94,7 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* thWorkerJob) {
             .len = static_cast<uint32_t>(sendBuffer->m_size),
             .buf = reinterpret_cast<char*>(sendBuffer->m_buffer)});
   }
-  return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(thWorkerJob), nullptr);
+  return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(workerJob), nullptr);
 }
 
 void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBuffer>&& buffer) {

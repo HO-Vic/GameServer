@@ -13,7 +13,7 @@ Acceptor::Acceptor(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler
     : m_iocpHandle(iocpHandle), m_listenSocket(listenSocket), m_acceptCompleteHandle(std::move(acceptHandleFunc)), m_acceptNo(acceptNo) {
   if (nullptr == m_iocpHandle) {
 #ifdef _DEBUG
-    assert(nullptr != m_iocpHandle, "Invalid ioHandle");
+    assert(nullptr != m_iocpHandle && "Invalid ioHandle");
 #endif  // _DEBUG
   }
   if (m_acceptNo < 1) {
@@ -54,8 +54,8 @@ void Acceptor::SetListenSocket(SOCKET listenSocket) {
 void Acceptor::Start(uint16_t inetType, int socketType, int protocolType) {
   for (uint8_t i = 0; i < m_acceptNo; ++i) {
     auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, m_acceptCompleteHandle, inetType, socketType, protocolType);
-    auto thWorkerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(acceptEvent), Utility::WORKER_TYPE::ACCEPT);
-    acceptEvent->Start(thWorkerJob);
+    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(acceptEvent), Utility::WORKER_TYPE::ACCEPT);
+    acceptEvent->Start(workerJob);
   }
 }
 }  // namespace sh::IO_Engine

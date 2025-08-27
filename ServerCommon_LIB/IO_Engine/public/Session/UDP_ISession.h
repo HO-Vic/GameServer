@@ -52,7 +52,7 @@ class [[deprecated("Exec에서 socket을 알 수 없어서 완료 후, 일괄 �
 
   void DoSend(SOCKET sock, const BYTE* data, uint32_t len);
 
-  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
  private:
   SOCKADDR m_toAddr;

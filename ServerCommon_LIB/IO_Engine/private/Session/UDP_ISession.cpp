@@ -21,7 +21,7 @@ void UDP_IBatchSession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) {
   // Sendable 확인 후 시도 및...
 }
 
-bool UDP_IBatchSession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool UDP_IBatchSession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   return false;
 }
 #pragma endregion  // Deprecated

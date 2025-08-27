@@ -13,7 +13,7 @@ UDP_SingleSendBuffer::UDP_SingleSendBuffer(const BYTE* data, const uint32_t len)
     : SendBuffer(data, len), m_wsaBuf(len, const_cast<char*>(reinterpret_cast<const char*>(data))) {
 }
 
-bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   bool retVal = true;
   if (workerJob->GetType() != Utility::WORKER_TYPE::SEND) {  // 해당 객체는 Send Completion을 제외하고는 올 수 없음
 #ifdef _DEBUG

@@ -55,37 +55,37 @@ void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
 void TCP_ISession::Disconnect() {
 }
 
-bool TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   static constexpr bool DESIRE_DISCONNECT = true;
-  if (m_state == TCP_Session_STATE::DISCONNECT_STATE && thWorkerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
-    ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE && workerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
+    ThWorkerJobPool::GetInstance().Release(workerJob);
     return true;
   }
   if (0 != errorCode) {  // 0이 아니면 에러 발생
     m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
-    RaiseIOError(thWorkerJob);
+    RaiseIOError(workerJob);
     return true;
   }
 
   bool expectedDisconn = false;
   bool returnVal = false;
-  switch (thWorkerJob->GetType()) {
+  switch (workerJob->GetType()) {
     case Utility::WORKER_TYPE::RECV: {
       if (0 == ioByte) {
-        RaiseIOError(thWorkerJob);
+        RaiseIOError(workerJob);
         return returnVal;
       }
-      auto ioError = m_recvContext.RecvComplete(thWorkerJob, ioByte);  // thWorker외부 정리
+      auto ioError = m_recvContext.RecvComplete(workerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
-        RaiseIOError(thWorkerJob);
+        RaiseIOError(workerJob);
       }
       IO_MetricSlot::GetInstance().RecordRecv(ioByte);
       returnVal = true;
     } break;
     case Utility::WORKER_TYPE::SEND: {
-      auto ioError = m_sendContext.SendComplete(thWorkerJob, ioByte);  // thWorker외부 정리
+      auto ioError = m_sendContext.SendComplete(workerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
-        RaiseIOError(thWorkerJob);
+        RaiseIOError(workerJob);
       }
       IO_MetricSlot::GetInstance().RecordSend(ioByte);
       returnVal = true;
@@ -96,11 +96,11 @@ bool TCP_ISession::Execute(Utility::ThWorkerJob* thWorkerJob, const DWORD ioByte
         IO_MetricSlot::GetInstance().RecordDisconn();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
-      ThWorkerJobPool::GetInstance().Release(thWorkerJob);
+      ThWorkerJobPool::GetInstance().Release(workerJob);
       returnVal = true;
     } break;
     case Utility::WORKER_TYPE::FORCE_DISCONN: {
-      RaiseIOError(thWorkerJob);
+      RaiseIOError(workerJob);
       returnVal = true;
     } break;
     default: {

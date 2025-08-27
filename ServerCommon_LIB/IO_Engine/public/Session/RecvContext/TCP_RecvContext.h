@@ -16,9 +16,9 @@ class TCP_RecvContext {
     m_wsaBuf.len = m_remainLen;
   }
 
-  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, DWORD ioSize);
+  int32_t RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioSize);
 
-  int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob);
+  int32_t DoRecv(Utility::ThWorkerJob* workerJob);
 
  private:
   SOCKET m_socket;

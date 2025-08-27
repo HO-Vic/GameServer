@@ -29,7 +29,7 @@ class UDP_SingleSendBuffer final
 
   UDP_SingleSendBuffer(const BYTE* data, const uint32_t len);
 
-  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
   uint32_t DoSend(SOCKET sock, const SOCKADDR& toAddr);
 
