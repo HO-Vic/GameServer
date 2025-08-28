@@ -1,7 +1,10 @@
 #include <pch.h>
+#include <ntstatus.h>
 #include <Buffer/SendBuffer.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
+#include <Session/UDP_IAgent.h>
+#include <Session/UDP_ISession.h>
 
 namespace sh::IO_Engine {
 SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
@@ -9,20 +12,38 @@ SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
   memcpy_s(m_buffer, MAX_SEND_BUFFER_SIZE, data, m_size);
 }
 
-UDP_SingleSendBuffer::UDP_SingleSendBuffer(const BYTE* data, const uint32_t len)
-    : SendBuffer(data, len), m_wsaBuf(len, const_cast<char*>(reinterpret_cast<const char*>(data))) {
+UDP_SingleSendBuffer::UDP_SingleSendBuffer(std::shared_ptr<UDP_IAgent>& agentPtr, std::shared_ptr<UDP_ISession>& sessionPtr, const BYTE* data, const uint32_t len)
+    : SendBuffer(data, len), m_wsaBuf(len, const_cast<char*>(reinterpret_cast<const char*>(data))), m_agentPtr(agentPtr), m_sessionPtr(sessionPtr), m_retransmitCnt(0) {
 }
 
 bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
-  bool retVal = true;
+  static constexpr uint32_t MAX_RETRASMIT = 5;  // 패킷 단위로 재전송 횟수 기록
+
   if (workerJob->GetType() != Utility::WORKER_TYPE::SEND) {  // 해당 객체는 Send Completion을 제외하고는 올 수 없음
 #ifdef _DEBUG
     assert(workerJob->GetType() != Utility::WORKER_TYPE::SEND);
 #endif  // _DEBUG
-    retVal = false;
+    return false;
   }
   ThWorkerJobPool::GetInstance().Release(workerJob);  // this 클래스는 refCnt=0이면 알아서 커스텀 딜리터로 감
-  return retVal;
+
+  if (errorCode == STATUS_PORT_UNREACHABLE || errorCode == STATUS_CONNECTION_RESET) {  // 재전송 시도
+    auto agentPtr = m_agentPtr.lock();
+    auto sessionPtr = m_sessionPtr.lock();
+    if (nullptr != agentPtr && nullptr != sessionPtr) {  // 둘 다 유효하면 재시도
+      if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {
+        return true;
+      }
+      if (m_retransmitCnt == MAX_RETRASMIT) {
+        // session Destroy?
+        return false;
+      }
+      m_retransmitCnt++;
+      DoSend(agentPtr->GetSocket(), sessionPtr->GetAddrInfo());
+    }
+  }
+
+  return true;
 }
 
 uint32_t UDP_SingleSendBuffer::DoSend(SOCKET sock, const SOCKADDR& toAddr) {

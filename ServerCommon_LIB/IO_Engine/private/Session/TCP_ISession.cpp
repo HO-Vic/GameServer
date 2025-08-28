@@ -5,6 +5,7 @@
 #include <Session/TCP_ISession.h>
 #include <Session/SendContext/TCP_SendContext.h>
 #include <Session/RecvContext/TCP_RecvContext.h>
+#include <ntstatus.h>
 
 namespace sh::IO_Engine {
 TCP_ISession::TCP_ISession()
@@ -61,7 +62,7 @@ bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, 
     ThWorkerJobPool::GetInstance().Release(workerJob);
     return true;
   }
-  if (0 != errorCode) {  // 0이 아니면 에러 발생
+  if (STATUS_SUCCESS != errorCode) {  // 0이 아니면 에러 발생
     m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
     RaiseIOError(workerJob);
     return true;

@@ -1,53 +1,15 @@
 #include "pch.h"
 #include <memory>
+#include <ntstatus.h>
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <Session/UDP_IAgent.h>
 
-/*
-IO Err 때문에, recv 중단은 좀 아닌거 같음;;
-p to p 인데, disconn이랄게 없으니
-*/
-
 namespace sh::IO_Engine {
 bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   if (workerJob->GetType() != Utility::WORKER_TYPE::RECV) {
     return false;
-  }
-
-  if (0 != errorCode) {
-    switch (errorCode) {
-      case ERROR_OPERATION_ABORTED: {
-
-        break;
-      }
-      default:
-        break;
-    }
-    // ERROR_OPERATION_ABORTED // CancelIoEx()
-
-    /*
-    ECONNREFUSED :
-    ICMP Port Unreachable → 상대 포트가 닫혀 있음.
-
-    EMSGSIZE :
-    버퍼보다 큰 UDP 패킷이 들어온 경우.
-
-    EAGAIN / EWOULDBLOCK :
-    논블로킹 소켓에서 읽을 데이터 없음.
-
-    ENOBUFS :
-    커널 버퍼 부족 → 패킷 드롭됨.
-
-    ENETUNREACH :
-    네트워크 불가.
-
-    EADDRNOTAVAIL :
-    잘못된 주소 사용.
-    */
-
-    return false;  //
   }
 
   auto agentPtr = m_agentPtr.lock();
@@ -56,24 +18,75 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
     return false;
   }
 
-  if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
-    agentPtr->DestroyFromReceiver();                          // 현재 리시버 종료
-    ThWorkerJobPool::GetInstance().Release(workerJob);
-    return true;
-  }
+  if (STATUS_SUCCESS != errorCode) {
+    switch (errorCode) {
+      case STATUS_CANCELLED: {            // CancelIoEx();//io작업 취소
+        agentPtr->DestroyFromReceiver();  // 현재 리시버를 종료
+        ThWorkerJobPool::GetInstance().Release(workerJob);
+        return true;
+        break;
+      }
 
-  RecvComplete(ioByte, agentPtr);
+      case STATUS_BUFFER_OVERFLOW:
+      case STATUS_INSUFFICIENT_RESOURCES: {  // 재시도, 밑에 else-if안타고 DoRecv할거기 때문에 따른 작업은 xx
+        break;
+      }
+
+      case STATUS_ACCESS_VIOLATION:
+      case STATUS_INVALID_HANDLE: {  // 소켓, 시스템 에러
+        agentPtr->DestroyFromReceiver();
+        ThWorkerJobPool::GetInstance().Release(workerJob);
+        return false;
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    return false;  //
+  } else {
+    if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
+      agentPtr->DestroyFromReceiver();                          // 현재 리시버 종료
+      ThWorkerJobPool::GetInstance().Release(workerJob);
+      return true;
+    }
+
+    RecvComplete(ioByte, agentPtr);  // 에러가 없는 경우만 수행
+  }
 
   auto ioError = DoRecv(workerJob, agentPtr);
-  if (0 != ioError) {
-    /*agentPtr->StopReq();
-    agentPtr->DestroyFromReceiver();
-    ThWorkerJobPool::GetInstance().Release(workerJob);*/
 
-  } else if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // WSARecvFrom() 호출 이후에 세션이 종료됐다면
-    // IOCP로 해당 객체 Error 들어와서 14번줄에서 처리
-    CancelIoEx(reinterpret_cast<HANDLE>(agentPtr->GetSocket()), workerJob);
+  if (0 != ioError) {
+#ifdef _DEBUG
+    /*
+    WSAENOTSOCK(10038) → 잘못된 소켓 핸들
+
+    WSAESHUTDOWN(10058) → 이미 shutdown 된 소켓
+
+    WSANOTINITIALISED(10093) → WSAStartup 문제(프로세스 전역 문제)
+
+    WSAENETDOWN(10050) → 네트워크 서브시스템 다운
+
+    WSAEFAULT (10014) → 버퍼 잘못 지정 (코드 버그)
+
+    WSAEINVAL (10022) → 파라미터 오류 (옵션 세팅 문제)
+
+    WSAEOPNOTSUPP (10045) → 소켓 타입이 잘못됨
+    */
+    assert(false && "ioError");
+#endif  // _DEBUG
+
+    agentPtr->StopReq();
+    agentPtr->DestroyFromReceiver();
+    ThWorkerJobPool::GetInstance().Release(workerJob);
+    return false;
   }
+
+  // else if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // WSARecvFrom() 호출 이후에 세션이 종료됐다면
+  //   // IOCP로 해당 객체 Error 들어와서 14번줄에서 처리
+  //   CancelIoEx(reinterpret_cast<HANDLE>(agentPtr->GetSocket()), workerJob);
+  // }
   return true;
 }
 
