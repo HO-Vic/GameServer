@@ -66,7 +66,10 @@ bool DBConnection::Connect(SQLHENV env, const std::string& DBName, const std::st
                          .line = __LINE__,
                          .logLevel = spdlog::level::critical},
                      SQL_HANDLE_DBC, m_hdbc);
+#ifdef _DEBUG
           assert(false && "Can Not Connect DB");
+#endif  // _DEBUG
+
           return false;
         }
       }
@@ -77,7 +80,9 @@ bool DBConnection::Connect(SQLHENV env, const std::string& DBName, const std::st
                      .line = __LINE__,
                      .logLevel = spdlog::level::critical},
                  SQL_HANDLE_DBC, m_hdbc);
+#ifdef _DEBUG
       assert(false && "Can Not Connect DB");
+#endif  // _DEBUG
       return false;
     }
   } else {
@@ -87,7 +92,9 @@ bool DBConnection::Connect(SQLHENV env, const std::string& DBName, const std::st
                    .line = __LINE__,
                    .logLevel = spdlog::level::critical},
                SQL_HANDLE_DBC, m_hdbc);
+#ifdef _DEBUG
     assert(false && "Can Not Connect DB");
+#endif  // _DEBUG
     return false;
   }
   return false;

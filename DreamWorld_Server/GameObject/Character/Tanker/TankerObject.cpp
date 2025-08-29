@@ -102,7 +102,7 @@ void TankerObject::RecvAttackCommon(const XMFLOAT3& attackDir, const int& power)
   }
 }
 
-void TankerObject::ExecuteHammerSkill(const XMFLOAT3& direction) {
+void TankerObject::ExecuteHammerSkill([[maybe_unused]] const XMFLOAT3& direction) {
   static constexpr float FIRST_CHECK_DISTANCE = 70.0f;
   static constexpr float HAMMER_SKILL_LENGTH = 55.0f;
   static constexpr float HAMMER_SKILL_VALID_EULER = 17.0f;
@@ -148,7 +148,7 @@ void TankerObject::ExecuteShield(const CommonDurationSkill_MILSEC::DURATION_TIME
   timerRef.InsertTimerEvent(std::static_pointer_cast<TIMER::EventBase>(removeEventEvent));*/
 }
 
-void TankerObject::ExecuteCommonAttack(const XMFLOAT3& attackDir) {
+void TankerObject::ExecuteCommonAttack([[maybe_unused]] const XMFLOAT3& attackDir) {
   static constexpr float FIRST_CHECK_DISTANCE = 55.0f;
   static constexpr float DEFAULT_SKILL_LENGTH = 35.0f;
   static constexpr float DAMAGE = 60.0f;

@@ -213,7 +213,7 @@ void Room::CommonStageGameState() {
   }
   for (auto& monster : m_smallMonsters) {
     gameStatePacket.smallMonster[monster->GetIdx()].isAlive = monster->IsAlive();
-    gameStatePacket.smallMonster[monster->GetIdx()].idx = monster->GetIdx();
+    gameStatePacket.smallMonster[monster->GetIdx()].idx = static_cast<char>(monster->GetIdx());
     gameStatePacket.smallMonster[monster->GetIdx()].hp = monster->GetHp();
     gameStatePacket.smallMonster[monster->GetIdx()].position = monster->GetPosition();
     gameStatePacket.smallMonster[monster->GetIdx()].time = monster->GetLastUpdateTime();

@@ -44,10 +44,10 @@ class TCP_SendContext final {
 
   int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const uint32_t len);
 
-  int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte);
+  int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
  private:
-  int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob);
+  int32_t SendExecute(Utility::ThWorkerJob* workerJob);
 
  private:
   std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함

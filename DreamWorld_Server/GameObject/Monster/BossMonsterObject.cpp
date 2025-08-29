@@ -309,7 +309,8 @@ void BossMonsterObject::ChangeBossState(const BossState::STATE& state) {
 const XMFLOAT3 BossMonsterObject::GetCommonNextPosition(const float& elapsedTime) {
   XMFLOAT3 lookVector = GetLookVector();
   XMFLOAT3 position = GetPosition();
-  float toDestnationDistance = Vector3::Length(Vector3::Subtract(position, m_currentDestinationPosition));
+  auto subRes = Vector3::Subtract(position, m_currentDestinationPosition);
+  float toDestnationDistance = Vector3::Length(subRes);
   if (toDestnationDistance > elapsedTime * m_moveSpeed) {
     toDestnationDistance = elapsedTime * m_moveSpeed;
   }
@@ -340,8 +341,8 @@ std::shared_ptr<CharacterObject> BossMonsterObject::FindAggroCharacter() {
 
 void BossMonsterObject::MoveUpdate() {
   float elapsedTime = GetElapsedLastUpdateTime();
-  const float CHANGE_NODE_DISTANCE = 60.0f * elapsedTime;
-  const float CHECK_ABLE_FIND_PATH_DISTANCE = 3.0f;
+  // const float CHANGE_NODE_DISTANCE = 60.0f * elapsedTime;
+  // const float CHECK_ABLE_FIND_PATH_DISTANCE = 3.0f;
 
   auto roomRef = std::static_pointer_cast<Room>(m_roomWeakRef.lock());
   if (nullptr == roomRef) {

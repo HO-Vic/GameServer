@@ -44,7 +44,9 @@ void DBConnectionManager::Init(const uint8_t dbConnectionNo, const std::string& 
                                    .line = __LINE__,
                                    .logLevel = spdlog::level::critical},
                                SQL_HANDLE_DBC, m_henv);
-      assert("Can Not Connect DB");
+#ifdef _DEBUG
+      assert(false && "Can Not Connect DB");
+#endif  // _DEBUG
     }
   } else {
     DBConnection::ErrorPrint(DBConnection::LogCallerInfo{
@@ -53,7 +55,9 @@ void DBConnectionManager::Init(const uint8_t dbConnectionNo, const std::string& 
                                  .line = __LINE__,
                                  .logLevel = spdlog::level::critical},
                              SQL_HANDLE_DBC, m_henv);
-    assert("Can Not Connect DB");
+#ifdef _DEBUG
+    assert(false && "Can Not Connect DB");
+#endif  // _DEBUG
   }
 
   bool allConnected = true;
@@ -64,7 +68,9 @@ void DBConnectionManager::Init(const uint8_t dbConnectionNo, const std::string& 
   }
   if (!allConnected) {
     WRITE_LOG(logLevel::critical, "{}({}) > Specific Connection Raised Error", __FUNCTION__, __LINE__);
+#ifdef _DEBUG
     assert(false && "Specific Connection Raised Error");
+#endif  // _DEBUG
   }
 }
 

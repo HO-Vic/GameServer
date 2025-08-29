@@ -321,14 +321,14 @@ struct IntoGamePacket : public PacketHeader {
 };
 
 struct MovePacket : public PacketHeader {
+  PacketTime time;
   ROLE role;
   DIRECTION direction;
-  PacketTime time;
   MovePacket(const char& type)
       : PacketHeader(type, sizeof(MovePacket)) {
   }
-  MovePacket(const ROLE& role, const DIRECTION& direction, const PacketTime& time, const char& type = static_cast<char>(TYPE::MOVE_KEY_DOWN))
-      : PacketHeader(type, sizeof(MovePacket)), role(role), direction(direction), time(time) {
+  MovePacket(const ROLE& role, const DIRECTION& direction, const PacketTime& paramTime, const char& type = static_cast<char>(TYPE::MOVE_KEY_DOWN))
+      : PacketHeader(type, sizeof(MovePacket)), role(role), direction(direction), time(paramTime) {
   }
 };
 
@@ -553,7 +553,7 @@ struct TestNavMeshRenderPacket : public PacketHeader {
   int idx[40];
   TestNavMeshRenderPacket(std::shared_ptr<std::list<int>> nodeIdx)
       : PacketHeader(static_cast<char>(TYPE::NAV_MESH_RENDER), sizeof(TestNavMeshRenderPacket)) {
-    nodeSize = nodeIdx->size();
+    nodeSize = static_cast<int>(nodeIdx->size());
     if (nodeSize > 40) {
       nodeSize = 40;
     }
