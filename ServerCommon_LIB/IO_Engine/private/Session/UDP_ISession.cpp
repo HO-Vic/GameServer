@@ -2,11 +2,16 @@
 #include <Session/UDP_ISession.h>
 #include <Buffer/SendBuffer.h>
 #include <Buffer/SendBufferPool.h>
+#include <Session/UDP_IAgent.h>
 
 namespace sh::IO_Engine {
-uint32_t UDP_ISession::DoSend(SOCKET sock, const BYTE* data, uint32_t len) const {
-  auto sendBufferPtr = UDP_SingleSendBufferPool::GetInstance().MakeShared(data, len);
-  return sendBufferPtr->DoSend(sock, m_toAddr);
+uint32_t UDP_ISession::DoSend(std::shared_ptr<UDP_IAgent>& agentPtr, const BYTE* data, uint32_t len) {
+  if (!m_isAlive) {
+    return 0;
+  }
+  auto selfPtr = shared_from_this();
+  auto sendBufferPtr = UDP_SingleSendBufferPool::GetInstance().MakeShared(agentPtr, selfPtr, data, len);
+  return sendBufferPtr->DoSend(agentPtr->GetSocket(), m_toAddr);
 }
 
 #pragma region Deprecated

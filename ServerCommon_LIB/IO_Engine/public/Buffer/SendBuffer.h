@@ -1,5 +1,4 @@
 #pragma once
-#include <minwindef.h>
 #include <cstdint>
 #include <memory>
 #include "Utility/Thread/IWorkerItem.h"

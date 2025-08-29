@@ -1,5 +1,8 @@
+#ifndef WIN32_NO_STATUS
+#include <ntstatus.h>  //이거 먼저 안하면 + WIN32_NO_STATUS안하면 메크로 중복 정의 경고
+#define WIN32_NO_STATUS
+#endif
 #include <pch.h>
-#include <ntstatus.h>
 #include <Buffer/SendBuffer.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
@@ -35,7 +38,7 @@ bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD 
         return true;
       }
       if (m_retransmitCnt == MAX_RETRASMIT) {
-        // session Destroy?
+        sessionPtr->Close();
         return false;
       }
       m_retransmitCnt++;
