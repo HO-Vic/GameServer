@@ -1,10 +1,10 @@
 #ifdef _DEBUG
-#pragma comment(lib, "UtilityD.lib")
-#pragma comment(lib, "IO_EngineD.lib")
-#pragma comment(lib, "spdlogd.lib")
+#pragma comment(lib, "Debug/UtilityD.lib")
+#pragma comment(lib, "Debug/IO_EngineD.lib")
+#pragma comment(lib, "Debug/spdlogd.lib")
 #else
-#pragma comment(lib, "Utility.lib")
-#pragma comment(lib, "IO_Engine.lib")
-#pragma comment(lib, "spdlog.lib")
+#pragma comment(lib, "Release/Utility.lib")
+#pragma comment(lib, "Release/IO_Engine.lib")
+#pragma comment(lib, "Release/spdlog.lib")
 #endif  // _DEBUG
 #pragma comment(lib, "ws2_32.lib")

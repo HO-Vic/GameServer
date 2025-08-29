@@ -17,8 +17,8 @@ enum IO_TYPE : char {
 #pragma region PACKET
 #pragma pack(push, 1)
 struct PacketHeader {
-  PacketHeader() {
-  }
+  PacketHeader()
+      : size(0) {};
   PacketHeader(const uint16_t size)
       : size(size) {
   }
@@ -31,8 +31,11 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 1400;
 
 #pragma region FUNC_DEFINE
 class TCP_ISession;
+class UDP_IAgent;
 using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
-using RecvHandler = std::function<void(TCP_ISessionPtr, size_t, BYTE*)>;
+using UDP_IAgentPtr = std::shared_ptr<UDP_IAgent>;
+using TCP_RecvHandler = std::function<void(TCP_ISessionPtr, size_t, BYTE*)>;
+using UDP_RecvHandler = std::function<void(UDP_IAgentPtr, size_t, BYTE*)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;

@@ -1,25 +1,32 @@
 #pragma once
 #include <cstdint>
-// #include <Session/RecvContext/IRecvContext.h>
-
+#include "Utility/Thread/IWorkerItem.h"
 namespace sh ::Utility {
 class ThWorkerJob;
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class UDP_RecvContext {
+class UDP_IAgent;
+class UDP_RecvContext
+    : public Utility::IWorkerItem {
  public:
-  UDP_RecvContext(SOCKET sock, RecvHandler&& recvHandler)
-      : m_buffer(""), m_recvHandler(recvHandler) {
+  UDP_RecvContext() = default;
+
+  UDP_RecvContext(UDP_RecvHandler&& UDP_RecvHandler)
+      : m_buffer(""), m_recvHandler(UDP_RecvHandler) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBuf.len = MAX_RECV_BUF_SIZE;
   }
-  int32_t RecvComplete(Utility::ThWorkerJob* thWorkerJob, size_t ioSize);
 
-  int32_t DoRecv(Utility::ThWorkerJob* thWorkerJob);
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode);
+
+  void RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>& agentPtr);
+
+  int32_t DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_IAgent>& agentPtr);
 
  private:
-  RecvHandler m_recvHandler;
+  std::weak_ptr<UDP_IAgent> m_agentPtr;
+  UDP_RecvHandler m_recvHandler = nullptr;
   WSABUF m_wsaBuf;
   BYTE m_buffer[MAX_RECV_BUF_SIZE];
 };

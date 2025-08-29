@@ -27,6 +27,7 @@
 
 #include <WinSock2.h>
 #include <MSWSock.h>
+#include <Windows.h>
 
 #include <cassert>
 

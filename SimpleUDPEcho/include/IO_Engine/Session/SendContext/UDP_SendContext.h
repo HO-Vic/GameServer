@@ -17,9 +17,9 @@ class UDP_SendContext final {
 
   int32_t DoSend(Utility::WorkerPtr session, const BYTE* data, const size_t len);
 
-  int32_t SendComplete(Utility::ThWorkerJob* thWorkerJob, const size_t ioByte);
+  int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
  private:
-  int32_t SendExecute(Utility::ThWorkerJob* thWorkerJob);
+  int32_t SendExecute(Utility::ThWorkerJob* workerJob);
 };
 }  // namespace sh::IO_Engine
