@@ -34,6 +34,6 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
   }
 
   m_combinedLog->set_level(level);
-  m_combinedLog->info("loggerStarted");
+  WRITE_LOG(level::info, "{}({}) > Logger Start", __FUNCTION__, __LINE__);
 }
 }  // namespace sh::UDP_Echo

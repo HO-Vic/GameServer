@@ -13,6 +13,18 @@
     <Filter Include="ServerConfig">
       <UniqueIdentifier>{06980d14-0fb4-4b70-941d-37e42213ecf1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{d651642d-de1e-4ebf-adea-f5c062002468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\UDP_Session">
+      <UniqueIdentifier>{2d339097-6056-463f-a88e-ae00b2b803f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session\UDP_Agent">
+      <UniqueIdentifier>{9338001e-3891-4a9e-9120-ef803712da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SessionManager">
+      <UniqueIdentifier>{d9852cb6-2213-43a5-b8c0-28a3d536c614}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -24,6 +36,15 @@
     </ClCompile>
     <ClCompile Include="ServerConfig\ServerConfig.cpp">
       <Filter>ServerConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\UDP_Session\UDP_Session.cpp">
+      <Filter>Session\UDP_Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Session\UDP_Agent\UDP_Agent.cpp">
+      <Filter>Session\UDP_Agent</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager\SessionManager.cpp">
+      <Filter>SessionManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,6 +59,18 @@
     </ClInclude>
     <ClInclude Include="ServerConfig\ServerConfig.h">
       <Filter>ServerConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="Session\UDP_Session\UDP_Session.h">
+      <Filter>Session\UDP_Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Session\UDP_Agent\UDP_Agent.h">
+      <Filter>Session\UDP_Agent</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager\SessionManager.h">
+      <Filter>SessionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\MsgProtocol.h">
+      <Filter>UDP_Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

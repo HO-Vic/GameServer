@@ -49,20 +49,20 @@ bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD 
   return true;
 }
 
-uint32_t UDP_SingleSendBuffer::DoSend(SOCKET sock, const SOCKADDR& toAddr) {
+uint32_t UDP_SingleSendBuffer::DoSend(SOCKET sock, sockaddr_in toAddr) {
   DWORD sendByte = 0;
   DWORD flag = 0;
   auto selfPtr = shared_from_this();
   auto workJobPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(selfPtr, Utility::WORKER_TYPE::SEND);
-  auto ioError = WSASendTo(sock, &m_wsaBuf, 1, &sendByte, flag, &toAddr, sizeof(toAddr), workJobPtr, nullptr);
+  auto ioError = WSASendTo(sock, &m_wsaBuf, 1, &sendByte, flag, reinterpret_cast<SOCKADDR*>(&toAddr), sizeof(toAddr), workJobPtr, nullptr);
   if (0 != ioError) {
     ioError = WSAGetLastError();
-    if (WSA_IO_PENDING == ioError) {
-      return 0;
+    if (WSA_IO_PENDING != ioError) {
+      // 실패했다면 객체 되돌리기
+      ThWorkerJobPool::GetInstance().Release(workJobPtr);
+      return ioError;
     }
   }
-  // 실패했다면 객체 되돌리기
-  ThWorkerJobPool::GetInstance().Release(workJobPtr);
-  return ioError;
+  return 0;
 }
 }  // namespace sh::IO_Engine

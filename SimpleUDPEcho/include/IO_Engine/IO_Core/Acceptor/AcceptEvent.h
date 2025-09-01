@@ -1,7 +1,6 @@
 #pragma once
 #include "Utility/Thread/IWorkerItem.h"
 #include <WinSock2.h>
-#include <ws2def.h>
 #include <cstdint>
 #include "../../CommonDefine.h"
 

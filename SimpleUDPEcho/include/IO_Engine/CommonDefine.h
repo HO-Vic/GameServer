@@ -1,6 +1,6 @@
+#include <WinSock2.h>
 #include <Windows.h>
 #include <functional>
-#include <WinSock2.h>
 #include <memory>
 
 namespace sh::IO_Engine {
@@ -19,8 +19,8 @@ enum IO_TYPE : char {
 struct PacketHeader {
   PacketHeader()
       : size(0) {};
-  PacketHeader(const uint16_t size)
-      : size(size) {
+  PacketHeader(const uint16_t parSize)
+      : size(parSize) {
   }
   uint16_t size;
 };
@@ -31,11 +31,13 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 1400;
 
 #pragma region FUNC_DEFINE
 class TCP_ISession;
+class UDP_ISession;
 class UDP_IAgent;
 using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
+using UDP_ISessionPtr = std::shared_ptr<UDP_ISession>;
 using UDP_IAgentPtr = std::shared_ptr<UDP_IAgent>;
 using TCP_RecvHandler = std::function<void(TCP_ISessionPtr, size_t, BYTE*)>;
-using UDP_RecvHandler = std::function<void(UDP_IAgentPtr, size_t, BYTE*)>;
+using UDP_RecvHandler = std::function<void(UDP_IAgentPtr, size_t, BYTE*, const sockaddr_in&)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;

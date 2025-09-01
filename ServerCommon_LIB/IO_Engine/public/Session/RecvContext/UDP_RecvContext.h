@@ -12,8 +12,8 @@ class UDP_RecvContext
  public:
   UDP_RecvContext() = default;
 
-  UDP_RecvContext(UDP_RecvHandler&& UDP_RecvHandler)
-      : m_buffer(""), m_recvHandler(UDP_RecvHandler) {
+  UDP_RecvContext(UDP_IAgentPtr& agentPtr, UDP_RecvHandler UDP_RecvHandler)
+      : m_agentPtr(agentPtr), m_buffer(""), m_recvHandler(std::move(UDP_RecvHandler)) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBuf.len = MAX_RECV_BUF_SIZE;
   }
@@ -27,7 +27,9 @@ class UDP_RecvContext
  private:
   std::weak_ptr<UDP_IAgent> m_agentPtr;
   UDP_RecvHandler m_recvHandler = nullptr;
-  WSABUF m_wsaBuf;
-  BYTE m_buffer[MAX_RECV_BUF_SIZE];
+  WSABUF m_wsaBuf{};
+  BYTE m_buffer[MAX_RECV_BUF_SIZE] = {0};
+  sockaddr_in m_recvAddr{};
+  int32_t m_recvAddrSize = sizeof(sockaddr_in);
 };
 }  // namespace sh::IO_Engine

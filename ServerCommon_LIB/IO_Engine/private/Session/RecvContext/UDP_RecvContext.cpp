@@ -61,24 +61,26 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
   auto ioError = DoRecv(workerJob, agentPtr);
 
   if (0 != ioError) {
+    if (WSAECONNRESET != ioError) {
 #ifdef _DEBUG
-    /*
-    WSAENOTSOCK(10038) → 잘못된 소켓 핸들
+      /*
+      WSAENOTSOCK(10038) → 잘못된 소켓 핸들
 
-    WSAESHUTDOWN(10058) → 이미 shutdown 된 소켓
+      WSAESHUTDOWN(10058) → 이미 shutdown 된 소켓
 
-    WSANOTINITIALISED(10093) → WSAStartup 문제(프로세스 전역 문제)
+      WSANOTINITIALISED(10093) → WSAStartup 문제(프로세스 전역 문제)
 
-    WSAENETDOWN(10050) → 네트워크 서브시스템 다운
+      WSAENETDOWN(10050) → 네트워크 서브시스템 다운
 
-    WSAEFAULT (10014) → 버퍼 잘못 지정 (코드 버그)
+      WSAEFAULT (10014) → 버퍼 잘못 지정 (코드 버그)
 
-    WSAEINVAL (10022) → 파라미터 오류 (옵션 세팅 문제)
+      WSAEINVAL (10022) → 파라미터 오류 (옵션 세팅 문제)
 
-    WSAEOPNOTSUPP (10045) → 소켓 타입이 잘못됨
-    */
-    assert(false && "ioError");
+      WSAEOPNOTSUPP (10045) → 소켓 타입이 잘못됨
+      */
+      assert(false && "ioError");
 #endif  // _DEBUG
+    }
 
     agentPtr->StopReq();
     agentPtr->DestroyFromReceiver();
@@ -101,7 +103,7 @@ void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>&
     if (ioSize < rawPacket->size) {
       break;
     }
-    m_recvHandler(agentPtr, rawPacket->size, currentPosition);
+    m_recvHandler(agentPtr, rawPacket->size, currentPosition, m_recvAddr);
     ioSize -= rawPacket->size;
     currentPosition = currentPosition += rawPacket->size;
   };
@@ -110,7 +112,8 @@ void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>&
 int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_IAgent>& agentPtr) {
   DWORD recvByte = 0;
   DWORD flag = 0;
-  auto ioError = WSARecvFrom(agentPtr->GetSocket(), &m_wsaBuf, 1, &recvByte, &flag, nullptr, 0, workerJob, nullptr);
+  
+  auto ioError = WSARecvFrom(agentPtr->GetSocket(), &m_wsaBuf, 1, &recvByte, &flag, reinterpret_cast<sockaddr*>(&m_recvAddr), &m_recvAddrSize, workerJob, nullptr);
   if (0 != ioError) {
     ioError = WSAGetLastError();
     if (ioError == ERROR_IO_PENDING) {

@@ -7,6 +7,7 @@
 #include <cstdint>
 
 namespace sh::UDP_Echo {
+using level = spdlog::level::level_enum;
 class LogManager : public Utility::SingletonBase<LogManager> {
  public:
   void StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode);

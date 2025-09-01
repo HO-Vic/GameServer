@@ -1,8 +1,8 @@
 #include "pch.h"
+#include <Session/UDP_IAgent.h>
 #include <memory>
 #include <Windows.h>
 #include <ioapiset.h>
-#include <Session/UDP_IAgent.h>
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
@@ -17,15 +17,18 @@ UDP_IAgent::UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port)
   if (sockResult != 0) {
     assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
   } else {
-    if (ntohl(addrInfo.sin_addr.s_addr) == 0) {
-      assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
-    }
+    // ANY_ADDR
+    //  if (ntohl(addrInfo.sin_addr.s_addr) == 0) {
+    //    assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
+    //  }
   }
 #endif
 }
 
 UDP_IAgent::~UDP_IAgent() {
-  ReleaseSocket(m_socket);
+  //  ReleaseSocket(m_socket); //pure virtual func
+  // ~derived() -> ~parent() 에서 derived의 vtable ptr -> parent vtable ptr로 변경
+  // pure virtual만 있고 구현체?가 없으니 호출을 할 수가 없음
 }
 
 void UDP_IAgent::StopReq() {
@@ -34,11 +37,11 @@ void UDP_IAgent::StopReq() {
   CancelIoEx(reinterpret_cast<HANDLE>(m_socket), nullptr);
 }
 
-bool UDP_IAgent::StartRecv() {
+bool UDP_IAgent::StartRecv(UDP_RecvHandler recvHandle) {
   auto thisPtr = shared_from_this();
   auto cnt = m_activeReceiverCnt.load();
   for (unsigned int i = 0; i < cnt; ++i) {
-    m_receiver.push_back(std::make_shared<UDP_RecvContext>());
+    m_receiver.push_back(std::make_shared<UDP_RecvContext>(thisPtr, recvHandle));
     auto thWorkerPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(m_receiver.back(), Utility::WORKER_TYPE::RECV);
     if (0 != m_receiver.back()->DoRecv(thWorkerPtr, thisPtr)) {
       // 에러
