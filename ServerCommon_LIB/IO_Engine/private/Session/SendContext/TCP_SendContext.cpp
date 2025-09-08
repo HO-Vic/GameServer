@@ -45,7 +45,7 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   m_sendBuffer.clear();
   if (m_sendQueue.empty()) {
     m_isSendAble = true;
-    // 보낼게 없다면 overlappedEx 반납
+    // **4/13 25ff04d커밋에서 옛날 잔재 주석** 보낼게 없다면 overlappedEx 반납
     // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_ISession >::strong ref 1->0
     // ~TCP_ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
     // lock scope 외부에서 해제
@@ -80,8 +80,8 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
     m_sendBuffer.push_back(std::move(currentBuf));
   }
 
-  if (m_sendBuffer.empty()) {
-    m_isSendAble = true;
+  if (m_sendBuffer.empty()) {  // 69번줄 설명의 콘텍스트 스위칭으로 인해서 97번줄 WSASend()에서 3번째 인자 0들어가서 오류 발생
+    m_isSendAble = true;       // 그래서 여기서 한 번 더 확인하는 절차 추가
     ThWorkerJobPool::GetInstance().Release(workerJob);
     return 0;
   }
