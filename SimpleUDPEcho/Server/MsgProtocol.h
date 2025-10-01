@@ -56,11 +56,13 @@ struct PingAns
 
 struct MsgPacket
     : public PacketHeader {
-  MsgPacket(const char* const msg, uint16_t msgLen)
-      : PacketHeader(msgLen + 4, TYPE::MSGPacket) {
-    memcpy_s(msgBuffer, 1024, msg, msgLen);
+  MsgPacket(uint16_t seqNo, const char* const msg, uint16_t msgLen)
+      : PacketHeader(3 + msgLen + 1 + 2, TYPE::MSGPacket), seq(seqNo) {  // uint16_t + char + msg len + buff[msglen] + uint16_t
+    memcpy_s(msgBuffer, 1023, msg, msgLen);
+    msgLen = std::min<uint16_t>(msgLen, 1023);
     msgBuffer[msgLen] = 0;
   }
+  uint16_t seq = 0;
   char msgBuffer[1024] = {0};
 };
 

@@ -46,8 +46,10 @@ class UDP_IAgent
 
  private:
   SOCKET m_socket = INVALID_SOCKET;
-  std::vector<std::shared_ptr<UDP_RecvContext>> m_receiver;
-  std::atomic<uint32_t> m_activeReceiverCnt = 0;  // 모든 Receiver갯수
+  // It allows multiple receive buffers to be specified making it applicable to the scatter/gather type of I/O.
+  // 이를 통해 여러 수신 버퍼를 지정하여 I/O의 분산/수집 형식에 적용할 수 있습니다.
+  std::vector<std::shared_ptr<UDP_RecvContext>> m_receiver;  // https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsarecvfrom
+  std::atomic<uint32_t> m_activeReceiverCnt = 0;             // 모든 Receiver갯수
   uint16_t m_port = 0;
   std::atomic<STATE> m_state = STATE::ACTIVE;
 };

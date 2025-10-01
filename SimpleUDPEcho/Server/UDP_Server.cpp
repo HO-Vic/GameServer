@@ -40,6 +40,8 @@ bool UDP_Server::Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolSize,
     assert(NULL != handle);
   }
 
+  // recv객체를 n(n>1)개로 두는 경우, UDP 특성뿐 아니라, 어플리케이션 레이어에서도 순서 바뀜 가능
+  // seq: 0 recv했지만, sleep -> seq: 1 recv 및 처리하면 seq 1이 우선 처리 됨. **주의**
   m_agent = std::make_shared<UDP_Agent>(sock, 2, 9000);
   WRITE_LOG(level::info, "{} ({}) > UDP sock Init", __FUNCTION__, __LINE__);
 
@@ -82,7 +84,7 @@ void UDP_Server::RecvHandler(IO_Engine::UDP_IAgentPtr agentPtr, [[maybe_unused]]
 
     case TYPE::MSGPacket: {
       const auto* const msgPtr = reinterpret_cast<MsgPacket*>(bufferPtr);
-      WRITE_LOG(level::info, "MSG recv: {}", msgPtr->msgBuffer);
+      WRITE_LOG(level::info, "MSG recv, seq: {}, msg: {}", msgPtr->seq, msgPtr->msgBuffer);
 
       auto sessionPtr = SessionManager::GetInstance().GetSession(hashKey);
       sessionPtr->DoSend(agentPtr, bufferPtr, msgPtr->size);  // 에코 서버니 그대로 보냄

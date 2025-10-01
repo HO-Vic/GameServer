@@ -22,12 +22,14 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
   std::string outputFileName(outputDir + fileName + currentTimeStrSteam.str() + ".txt");
 
   if (logMode.compare("Console") == 0) {
+    SetConsoleOutputCP(CP_UTF8);  // 콘솔 CP를 UTF-8로 변경
     auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({consoleLogger->sinks().front()}));
   } else if (logMode.compare("File") == 0) {
     auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front()}));
   } else if (logMode.compare("ConsoleFile") == 0) {
+    SetConsoleOutputCP(CP_UTF8);  // 콘솔 CP를 UTF-8로 변경
     auto txtLogger = spdlog::basic_logger_mt(logName, outputFileName);
     auto consoleLogger = spdlog::stdout_color_mt(logName + "_console");
     m_combinedLog = std::make_shared<spdlog::logger>(logName + "_combineLog", spdlog::sinks_init_list({txtLogger->sinks().front(), consoleLogger->sinks().front()}));

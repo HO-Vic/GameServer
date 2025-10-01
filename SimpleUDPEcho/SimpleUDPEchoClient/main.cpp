@@ -13,6 +13,8 @@
 using namespace std;
 
 int main() {
+  //std::wcout.imbue(std::locale("ko_KR.utf8"));
+  SetConsoleOutputCP(CP_UTF8);
   WSADATA wsaData{};
   if (0 != WSAStartup(WINSOCK_VERSION, &wsaData)) {
 #ifdef _DEBUG
@@ -83,7 +85,7 @@ int main() {
         // };
         case sh::UDP_Echo::TYPE::MSGPacket: {
           auto* msgPacket = reinterpret_cast<sh::UDP_Echo::MsgPacket*>(buffer);
-          cout << "msg Recv: " << msgPacket->msgBuffer << endl;
+          cout << "msg Recv, seq: " << msgPacket->seq << " msg: " << msgPacket->msgBuffer << endl;
           break;
         }
         default:
@@ -94,9 +96,14 @@ int main() {
   while (!startAble) {
   }
 
+  uint16_t seq = 0;
   for (auto& str : sendBuffers) {
-    sh::UDP_Echo::MsgPacket packet(str.c_str(), static_cast<uint16_t>(str.size()));
+    sh::UDP_Echo::MsgPacket packet(seq, str.c_str(), static_cast<uint16_t>(str.size()));
+    if (seq == 0) {
+      cout << "sample send 0: " << str << endl;
+    }
     sendto(sock, reinterpret_cast<char*>(&packet), packet.size, 0, reinterpret_cast<SOCKADDR*>(&server_addr), sizeof(SOCKADDR_IN));
+    seq++;
   }
 
   th.join();
