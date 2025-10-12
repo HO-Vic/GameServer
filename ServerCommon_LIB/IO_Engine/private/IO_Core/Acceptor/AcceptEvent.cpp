@@ -8,6 +8,10 @@ namespace sh::IO_Engine {
 void AcceptEvent::Start(Utility::ThWorkerJob* workerJob) {
   ZeroMemory(&m_connInfo, sizeof(m_connInfo));
   m_clientSocket = WSASocket(m_inetType, m_socketType, m_protocolType, 0, 0, WSA_FLAG_OVERLAPPED);
+  if (m_isNoDelay) {
+    int flag = 1;
+    setsockopt(m_clientSocket, m_protocolType, TCP_NODELAY, (char*)&flag, sizeof(flag));
+  }
   DWORD receiveByte = 0;
   bool isSuccess = AcceptEx(m_listenSocket, m_clientSocket, &m_connInfo, 0, sizeof(m_connInfo.localInfo), sizeof(m_connInfo.remoteInfo), &receiveByte, reinterpret_cast<LPOVERLAPPED>(workerJob));
 }

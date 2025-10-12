@@ -51,9 +51,9 @@ void Acceptor::SetListenSocket(SOCKET listenSocket) {
   m_listenSocket = listenSocket;
 }
 
-void Acceptor::Start(uint16_t inetType, int socketType, int protocolType) {
+void Acceptor::Start(uint16_t inetType, int socketType, int protocolType, bool isNoDelay) {
   for (uint8_t i = 0; i < m_acceptNo; ++i) {
-    auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, m_acceptCompleteHandle, inetType, socketType, protocolType);
+    auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, m_acceptCompleteHandle, inetType, socketType, protocolType, isNoDelay);
     auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(acceptEvent), Utility::WORKER_TYPE::ACCEPT);
     acceptEvent->Start(workerJob);
   }

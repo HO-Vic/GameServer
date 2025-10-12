@@ -25,10 +25,10 @@ class TCP_SendContext final {
 
     void InsertSendBuffer(std::shared_ptr<SendBuffer>&&);
 
-    std::queue<std::shared_ptr<SendBuffer>>& SwapAndLoad();
+    std::vector<std::shared_ptr<SendBuffer>>& SwapAndLoad();
 
    private:
-    std::queue<std::shared_ptr<SendBuffer>> m_sendQueues[2];
+    std::vector<std::shared_ptr<SendBuffer>> m_sendQueues[2];
     std::mutex m_lock;
     bool m_activeIdx;
   };
@@ -47,11 +47,13 @@ class TCP_SendContext final {
   int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
  private:
-  int32_t SendExecute(Utility::ThWorkerJob* workerJob);
+  // m_sendBuffer와 batchSendBuffers와 swap해야해서 참조형으로
+  int32_t SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBuffer>>& batchSendBuffers);
 
  private:
   std::vector<std::shared_ptr<SendBuffer>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함
-  tbb::concurrent_queue<std::shared_ptr<SendBuffer>> m_sendQueue;
+  InternalDoubleBufferQueue m_doubleQueue;
+  // tbb::concurrent_queue<std::shared_ptr<SendBuffer>> m_sendQueue;
   SOCKET m_socket;
   std::atomic_bool m_isSendAble;
 };

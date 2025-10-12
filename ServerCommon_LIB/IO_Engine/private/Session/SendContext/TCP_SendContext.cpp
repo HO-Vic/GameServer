@@ -11,7 +11,8 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   // thWorker가 내부에서만 존재하니, 내부에서 해결
   static constexpr bool SEND_DESIRE = false;
   auto sendData = SendBufferPool::GetInstance().MakeShared(data, len);
-  m_sendQueue.push(std::move(sendData));
+  m_doubleQueue.InsertSendBuffer(std::move(sendData));
+  // m_sendQueue.push(std::move(sendData));
 
   if (!m_isSendAble) {
     return 0;
@@ -24,7 +25,7 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, const BYTE* data, co
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
   if (isSendAbleThread) {
     auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-    auto errorNo = SendExecute(workerJob);
+    auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
     if (0 != errorNo) {
       auto ioError = WSAGetLastError();
       if (WSA_IO_PENDING == ioError) {
@@ -43,7 +44,8 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   // 여기서는 보낼게 없을 때만, sendAble을 변경하고
   // 보낼게 있다면 그대로 상태 유지
   m_sendBuffer.clear();
-  if (m_sendQueue.empty()) {
+  auto& batchSendBuffers = m_doubleQueue.SwapAndLoad();
+  if (batchSendBuffers.empty()) {
     m_isSendAble = true;
     // **4/13 25ff04d커밋에서 옛날 잔재 주석** 보낼게 없다면 overlappedEx 반납
     // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_ISession >::strong ref 1->0
@@ -53,7 +55,7 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
     return 0;
   }
 
-  auto errorNo = SendExecute(workerJob);
+  auto errorNo = SendExecute(workerJob, batchSendBuffers);
   if (0 != errorNo) {
     auto ioError = WSAGetLastError();
     if (WSA_IO_PENDING == ioError) {
@@ -65,12 +67,14 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   return errorNo;
 }
 
-int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
+int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBuffer>>& batchSendBuffers) {
   // this thread context switched + other thread already sended queue!!
   // DoSend() sendQeuue.push() -> thread sleep ..th1
   // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
   // th1 wake -> CAS -> send -> send Queue Empty -> m_isSendAble=true
-  auto queueSize = m_sendQueue.unsafe_size();
+
+  // lf-queue에 대한 코드 입니다.(지금은 안씀)
+  /*auto queueSize = m_sendQueue.unsafe_size();
   for (auto i = 0; i < queueSize; ++i) {
     std::shared_ptr<SendBuffer> currentBuf = nullptr;
     bool isSuccess = m_sendQueue.try_pop(currentBuf);
@@ -78,13 +82,17 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
       break;
     }
     m_sendBuffer.push_back(std::move(currentBuf));
-  }
+  }*/
 
-  if (m_sendBuffer.empty()) {  // 69번줄 설명의 콘텍스트 스위칭으로 인해서 97번줄 WSASend()에서 3번째 인자 0들어가서 오류 발생
-    m_isSendAble = true;       // 그래서 여기서 한 번 더 확인하는 절차 추가
+  // m_sendBuffer는 SendComplete에서 clear()
+  // m_sendBuffer는 빈 vector이고, batchSendBuffers는 전송 버퍼들이 있었지만, 교환하여
+  if (batchSendBuffers.empty()) {  // 69번줄 설명의 콘텍스트 스위칭으로 인해서 97번줄 WSASend()에서 3번째 인자 0들어가서 오류 발생
+    m_isSendAble = true;           // 그래서 여기서 한 번 더 확인하는 절차 추가
     ThWorkerJobPool::GetInstance().Release(workerJob);
     return 0;
   }
+
+  m_sendBuffer.swap(batchSendBuffers);
 
   std::vector<WSABUF> sendBuffers;
   sendBuffers.reserve(m_sendBuffer.size());
@@ -99,10 +107,10 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob) {
 
 void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBuffer>&& buffer) {
   std::lock_guard<std::mutex> lg{m_lock};
-  m_sendQueues[m_activeIdx].push(std::move(buffer));
+  m_sendQueues[m_activeIdx].push_back(std::move(buffer));
 }
 
-std::queue<std::shared_ptr<SendBuffer>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
+std::vector<std::shared_ptr<SendBuffer>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
   {
     std::lock_guard<std::mutex> lg{m_lock};
     m_activeIdx = !m_activeIdx;
