@@ -34,7 +34,7 @@ class UDP_SingleSendBuffer final
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
-  uint32_t DoSend(SOCKET sock, const SOCKADDR& toAddr);
+  uint32_t DoSend(SOCKET sock, sockaddr_in toAddr);
 
  private:
   WSABUF m_wsaBuf;

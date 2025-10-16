@@ -114,7 +114,7 @@ bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFai
 
 void AsyncConnector::InsertTimerJob(std::function<void()>&& timeoutCaller) {
   if (nullptr != m_intenalTimer) {
-    auto timerJob = std::make_unique<IntenalTimerJob>(ConnectorBase::clock::now() + m_timeOutThreshold, std::move(timeoutCaller));
+    auto timerJob = std::make_shared<IntenalTimerJob>(ConnectorBase::clock::now() + m_timeOutThreshold, std::move(timeoutCaller));
     m_intenalTimer->InsertTimerJob(std::move(timerJob));
   }
 }

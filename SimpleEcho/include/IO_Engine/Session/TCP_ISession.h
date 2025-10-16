@@ -25,7 +25,7 @@ class TCP_ISession
 
   void DoSend(const void* data, const uint32_t len);
 
-  virtual bool Execute(Utility::ThWorkerJob* thWorkerItem, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
   void StartRecv();
 

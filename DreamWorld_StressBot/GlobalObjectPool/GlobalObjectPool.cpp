@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "GlobalObjectPool.h"
 #include <Utility/Job/Job.h>
-#include <Utility/Timer/TimerJob.h>
+#include "../Timer/TimerJob.h"
 
-void Stress::InitGlobalObjectPool() {
-  Stress::GlobalObjectPool<sh::Utility::Job>::GetInstance().InitSize(1000);
-  Stress::GlobalObjectPool<sh::Utility::TimerJob>::GetInstance().InitSize(1000);
+namespace Stress {
+void InitGlobalObjectPool() {
+  GlobalObjectPool<sh::Utility::Job>::GetInstance().InitSize(1000);
+  GlobalObjectPool<TimerJob>::GetInstance().InitSize(1000);
 }
+}  // namespace Stress

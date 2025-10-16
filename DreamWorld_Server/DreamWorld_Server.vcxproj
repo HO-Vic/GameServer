@@ -190,6 +190,7 @@
     <ClCompile Include="GameObject\Monster\SmallMonsterObject.cpp" />
     <ClCompile Include="GameObject\Projectile\MeteoObject.cpp" />
     <ClCompile Include="GameObject\Projectile\ProjectileObject.cpp" />
+    <ClCompile Include="JobQ\LFJobQ.cpp" />
     <ClCompile Include="LogManager\LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapData\AstarNode\AstarNode.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="GameObject\Monster\SmallMonsterObject.h" />
     <ClInclude Include="GameObject\Projectile\MeteoObject.h" />
     <ClInclude Include="GameObject\Projectile\ProjectileObject.h" />
+    <ClInclude Include="JobQ\LFJobQ.h" />
     <ClInclude Include="LogManager\LogManager.h" />
     <ClInclude Include="MapData\AstarNode\AstarNode.h" />
     <ClInclude Include="MapData\MapCollision\MapCollision.h" />

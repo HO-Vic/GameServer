@@ -44,9 +44,6 @@
     <Filter Include="Thread">
       <UniqueIdentifier>{bca4bd16-89ba-42a0-8d2b-f090f4120b7a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Timer">
-      <UniqueIdentifier>{567f873e-7170-4552-81bb-fd1fbce674f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="BuildMsg">
       <UniqueIdentifier>{a4d4fb25-61be-475b-b069-7c48e68a7c8f}</UniqueIdentifier>
     </Filter>
@@ -63,9 +60,6 @@
     </ClCompile>
     <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp">
       <Filter>Job\JobQ\ST</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Job\JobQueue\JobQ_MT\LFJobQ_MT.cpp">
-      <Filter>Job\JobQ\MT</Filter>
     </ClCompile>
     <ClCompile Include="private\Pool\MemoryPool.cpp">
       <Filter>Pool\MemoryPool</Filter>
@@ -85,12 +79,6 @@
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
     </ClCompile>
-    <ClCompile Include="private\Timer\TimerJob.cpp">
-      <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="private\Timer\Timer.cpp">
-      <Filter>Timer</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Job\Job.h">
@@ -107,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h">
       <Filter>Job\JobQ\ST</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Job\JobQueue\JobQ_MT\LFJobQ_MT.h">
-      <Filter>Job\JobQ\MT</Filter>
     </ClInclude>
     <ClInclude Include="public\SpinLock\SpinLock.h">
       <Filter>SpinLock</Filter>
@@ -144,14 +129,5 @@
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h">
       <Filter>Job\JobQ\MT</Filter>
     </ClInclude>
-    <ClInclude Include="public\Timer\Timer.h">
-      <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="public\Timer\TimerJob.h">
-      <Filter>Timer</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

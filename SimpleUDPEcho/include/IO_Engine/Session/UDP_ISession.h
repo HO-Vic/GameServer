@@ -50,7 +50,7 @@ class UDP_ISession
   std::atomic_bool m_isAlive = true;
 };
 
-class [[deprecated("Exec에서 socket을 알 수 없어서 완료 후, 일괄 전송 안되는데, 나중에 다시 고민")]] UDP_IBatchSession
+class [[deprecated("Execute에서 socket을 알 수 없어서 완료 후, 일괄 전송 안되는데, 나중에 다시 고민")]] UDP_IBatchSession
     : public Utility::IWorkerItem {
   struct InternalBatchSendBuffer {
     std::vector<std::shared_ptr<SendBuffer>> m_buffers;

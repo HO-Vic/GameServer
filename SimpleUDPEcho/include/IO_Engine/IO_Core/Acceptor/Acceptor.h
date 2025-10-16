@@ -23,7 +23,7 @@ class Acceptor {
 
   void SetListenSocket(SOCKET listenSocket);
 
-  void Start(uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  void Start(uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP, bool isNoDelay = true);
 
  private:
   HANDLE m_iocpHandle;

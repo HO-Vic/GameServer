@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <functional>
-#include <tbb/tbb.h>
+#include <tbb/concurrent_priority_queue.h>
 #include <Utility/SingletonBase/Singleton.h>
 #include "TimerJob.h"
 

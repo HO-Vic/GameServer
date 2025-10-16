@@ -23,7 +23,7 @@ void SessionBatchUpdater::DiscardSession(SessionPtr session) {
   m_sessions.erase(session->GetUniqueNo());
 }
 
-bool SessionBatchUpdater::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) {
+bool SessionBatchUpdater::Execute(sh::Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   IntenalUpdate();
   sh::IO_Engine::ThWorkerJobPool::GetInstance().Release(workerJob);
   ReserveNextUpdate();
@@ -41,7 +41,7 @@ void SessionBatchUpdater::ReserveNextUpdate() {
   static constexpr sh::Utility::MS UPDATE_TICK = sh::Utility::MS(20);  // 초당 5번
   auto selfPtr = shared_from_this();
   SessionBatchUpdaters::GetInstance().GetTimer().InsertTimerEvent(std::move(
-      Stress::GlobalObjectPool<sh::Utility::TimerJob>::GetInstance().MakeUnique(sh::Utility::_chrono_clock::now() + UPDATE_TICK, [selfPtr]() {
+      Stress::GlobalObjectPool<TimerJob>::GetInstance().MakeUnique(sh::Utility::_chrono_clock::now() + UPDATE_TICK, [selfPtr]() {
         SessionBatchUpdaters::GetInstance().InsertUpdaterTimerJob(selfPtr);
       })));
 }

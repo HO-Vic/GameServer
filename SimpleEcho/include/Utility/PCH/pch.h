@@ -22,9 +22,6 @@
 #include <unordered_set>
 #include <vector>
 
-// lf 컨테이너
-#include <tbb/tbb.h>
-
 #include <atomic>
 
 #pragma comment(lib, "WS2_32.lib")

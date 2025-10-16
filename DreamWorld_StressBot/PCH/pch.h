@@ -3,6 +3,7 @@
 #include <WinSock2.h>
 #include <winsock.h>
 #include <Windows.h>
+#include <winternl.h>
 #include <WS2tcpip.h>
 #include <iostream>
 #include <thread>
@@ -18,9 +19,6 @@
 
 #include <string>
 #include <string_view>
-
-#include <tbb/concurrent_priority_queue.h>
-#include <tbb/concurrent_queue.h>
 
 #include <windows.h>  // Header File For Windows
 #include <math.h>     // Header File For Windows Math Library

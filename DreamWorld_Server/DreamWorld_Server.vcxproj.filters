@@ -76,6 +76,9 @@
     <Filter Include="Metric">
       <UniqueIdentifier>{bea4b763-1551-4aac-8b65-6a45c718c061}</UniqueIdentifier>
     </Filter>
+    <Filter Include="JobQ">
+      <UniqueIdentifier>{eb59c653-ed90-4ae9-b4fa-97771275c2a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PCH\stdafx.cpp">
@@ -214,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="Metric\Metric.cpp">
       <Filter>Metric</Filter>
+    </ClCompile>
+    <ClCompile Include="JobQ\LFJobQ.cpp">
+      <Filter>JobQ</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +362,9 @@
     </ClInclude>
     <ClInclude Include="Metric\Metric.h">
       <Filter>Metric</Filter>
+    </ClInclude>
+    <ClInclude Include="JobQ\LFJobQ.h">
+      <Filter>JobQ</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

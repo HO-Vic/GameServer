@@ -7,8 +7,9 @@
 #include <list>
 #include <shared_mutex>
 #include <Utility/Thread/IWorkerItem.h>
-#include <Utility/Job/JobQueue/JobQ_MT/LFJobQ_MT.h>
+#include "../JobQ/LFJobQ.h"
 #include <Utility/Job/JobQueue/JobQ_MT/DoubleJobQ_MT.h>
+#include <Utility/Job/JobQueue/JobQ_MT/JobQ_MT.h>
 #include "../DreamWorldDefine.h"
 
 namespace sh::Utility {
@@ -16,6 +17,10 @@ class ThWorkerJob;
 }
 
 namespace DreamWorld {
+using JobQ = sh::Utility::DoubleJobQ_MT;
+// using JobQ = sh::Utility::JobQ_MT;
+// using JobQ = LFJobQ;
+
 class SmallMonsterObject;
 class BossMonsterObject;
 class ProjectileObject;

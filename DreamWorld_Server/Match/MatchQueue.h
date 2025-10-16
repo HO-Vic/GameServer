@@ -1,6 +1,6 @@
 #pragma once
 #include "../PCH/stdafx.h"
-
+#include <concurrent_queue.h>
 namespace DreamWorld {
 class Session;
 class MatchQueue {
@@ -22,8 +22,8 @@ class MatchQueue {
   std::optional<std::shared_ptr<Session>> GetCancelUser();
 
  private:
-  tbb::concurrent_queue<std::weak_ptr<Session>> m_match;
-  tbb::concurrent_queue<std::weak_ptr<Session>> m_cancel;
+  Concurrency::concurrent_queue<std::weak_ptr<Session>> m_match;
+  Concurrency::concurrent_queue<std::weak_ptr<Session>> m_cancel;
 
   std::weak_ptr<Session> m_lastCancelUserWeakPtr;
 };

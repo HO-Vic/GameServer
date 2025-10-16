@@ -7,7 +7,7 @@
 #include <atomic>
 #include <memory>
 #include <functional>
-#include <tbb/concurrent_priority_queue.h>
+#include <concurrent_priority_queue.h>
 #include <Utility/Thread/IWorkerItem.h>
 #include <Utility/Job/Job.h>
 #include "../../CommonDefine.h"
@@ -41,7 +41,7 @@ class AsyncConnector
     Time m_wakeTime;
   };
 
-  using TimeOutJobPtr = std::unique_ptr<IntenalTimerJob>;
+  using TimeOutJobPtr = std::shared_ptr<IntenalTimerJob>;
   class IntenalTimer {
     friend class AsyncConnector;
     struct InternalTimerComp {
@@ -66,7 +66,7 @@ class AsyncConnector
     std::unique_ptr<std::jthread> m_timeOutThread;
     // Connector를 여러 쓰레드에서 접근할 가능성이 있을까??...?
     // std::priority_queue<TimeOutJobPtr, std::vector<TimeOutJobPtr>, InternalTimerComp> m_timerJob;
-    tbb::concurrent_priority_queue<TimeOutJobPtr, InternalTimerComp> m_timerJob;
+    Concurrency::concurrent_priority_queue<TimeOutJobPtr, InternalTimerComp> m_timerJob;
   };
 
  public:
@@ -99,9 +99,9 @@ class AsyncConnectEvent
  public:
   AsyncConnectEvent(ConnectCompleteHandler&& successHandle, ConnectFailHandler&& failHandle, LPFN_CONNECTEX connectEx, const SOCKADDR_IN connectAddr);
 
-  bool TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* thWorkerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector);
+  bool TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* workerJob, uint16_t inetType, int socketType, int protocolType, AsyncConnector& connector);
 
-  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const uint64_t errorCode) override;
+  virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
  private:
   std::function<void()> GetTimeOutFunc();

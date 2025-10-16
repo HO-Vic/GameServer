@@ -34,6 +34,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
   return DoRecv(workerJob);
 }
 
+// 링버퍼 쓸거면, wsaBuf를 2개 두고 하나는 tail부분으로 하고, 하나는 0~head까지로 하면 됨. << 유레카
 int32_t TCP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob) {
   // wsaBuf의 buf 위치를 바꿈
   m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer) + m_remainLen;

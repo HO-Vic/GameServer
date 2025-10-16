@@ -165,6 +165,8 @@
     <ClCompile Include="StressInGame\Character\CharacterObject.cpp" />
     <ClCompile Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.cpp" />
     <ClCompile Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.cpp" />
+    <ClCompile Include="Timer\Timer.cpp" />
+    <ClCompile Include="Timer\TimerJob.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DrawModule\DrawModule.h" />
@@ -182,6 +184,8 @@
     <ClInclude Include="StressInGame\Character\CharacterObject.h" />
     <ClInclude Include="StressInGame\CoolTimeEventCtrl\CoolAndDurationCtrl.h" />
     <ClInclude Include="StressInGame\CoolTimeEventCtrl\SkillTimeCtrl.h" />
+    <ClInclude Include="Timer\Timer.h" />
+    <ClInclude Include="Timer\TimerJob.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include <Windows.h>
+#include "../CommonDefine.h"
 
 namespace sh::IO_Engine {
 class UDP_RecvContext;
@@ -18,6 +18,7 @@ class UDP_IAgent
  public:
   UDP_IAgent() = default;
 
+  // 소켓이 iocp 핸들에 등록되어 있어야 함
   UDP_IAgent(SOCKET sock, uint32_t receiverNo, [[maybe_unused]] uint16_t port = 9000);
 
   virtual ~UDP_IAgent();
@@ -30,7 +31,7 @@ class UDP_IAgent
 
   void StopReq();
 
-  bool StartRecv();
+  bool StartRecv(UDP_RecvHandler recvHandle);
 
   void DestroyFromReceiver();
 
@@ -44,10 +45,12 @@ class UDP_IAgent
   }
 
  private:
-  SOCKET m_socket;
-  std::vector<std::shared_ptr<UDP_RecvContext>> m_receiver;
-  std::atomic<uint32_t> m_activeReceiverCnt = 0;  // 모든 Receiver갯수
-  uint16_t m_port;
+  SOCKET m_socket = INVALID_SOCKET;
+  // It allows multiple receive buffers to be specified making it applicable to the scatter/gather type of I/O.
+  // 이를 통해 여러 수신 버퍼를 지정하여 I/O의 분산/수집 형식에 적용할 수 있습니다.
+  std::vector<std::shared_ptr<UDP_RecvContext>> m_receiver;  // https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsarecvfrom
+  std::atomic<uint32_t> m_activeReceiverCnt = 0;             // 모든 Receiver갯수
+  uint16_t m_port = 0;
   std::atomic<STATE> m_state = STATE::ACTIVE;
 };
 }  // namespace sh::IO_Engine

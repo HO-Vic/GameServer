@@ -1,12 +1,12 @@
 #pragma once
 #include <list>
-#include <ws2def.h>
+#include <WinSock2.h>
 #include <mutex>
 #include <vector>
 #include <memory>
 #include <atomic>
 #include "Utility/Thread/IWorkerItem.h"
-#include "Buffer/SendBuffer.h"
+// #include "Buffer/SendBuffer.h"
 
 namespace sh::Utility {
 class ThWorkerJob;
@@ -17,16 +17,17 @@ namespace sh::IO_Engine {
 // UDP_IAgent의 소켓을 사용하여 Send
 // 하트비트를 둬서 관리 추가 해야할듯?
 class UDP_IAgent;
+class SendBuffer;
 class UDP_ISession
     : public std::enable_shared_from_this<UDP_ISession> {
  public:
   UDP_ISession() = default;
 
-  UDP_ISession(const SOCKADDR& toAddr)
+  UDP_ISession(const sockaddr_in& toAddr)
       : m_toAddr(toAddr), m_isAlive(true) {
   }
 
-  virtual ~UDP_ISession() = default;
+  // virtual ~UDP_ISession() = default;
 
   virtual void OnUDPSessionTimeout() = 0;  // 하트비트, 재전송 횟수 초과 시, 종료할 때 호출
 
@@ -40,16 +41,16 @@ class UDP_ISession
     return m_isAlive;
   }
 
-  const SOCKADDR& GetAddrInfo() const {
+  const sockaddr_in& GetAddrInfo() const {
     return m_toAddr;
   }
 
  private:
-  SOCKADDR m_toAddr;
+  sockaddr_in m_toAddr;
   std::atomic_bool m_isAlive = true;
 };
 
-class [[deprecated("Exec에서 socket을 알 수 없어서 완료 후, 일괄 전송 안되는데, 나중에 다시 고민")]] UDP_IBatchSession
+class [[deprecated("Execute에서 socket을 알 수 없어서 완료 후, 일괄 전송 안되는데, 나중에 다시 고민")]] UDP_IBatchSession
     : public Utility::IWorkerItem {
   struct InternalBatchSendBuffer {
     std::vector<std::shared_ptr<SendBuffer>> m_buffers;

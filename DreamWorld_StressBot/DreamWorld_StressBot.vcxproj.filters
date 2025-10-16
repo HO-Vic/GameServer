@@ -50,6 +50,12 @@
     <ClCompile Include="StressConfig\StressConfig.cpp">
       <Filter>StressConfig</Filter>
     </ClCompile>
+    <ClCompile Include="Timer\Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer\TimerJob.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="PCH">
@@ -81,6 +87,9 @@
     </Filter>
     <Filter Include="StressConfig">
       <UniqueIdentifier>{2faa14c3-b458-486e-8970-bea395b7eb0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{28bd5d6f-6b41-4b1f-aeff-e1064b81efce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +137,12 @@
     </ClInclude>
     <ClInclude Include="StressConfig\StressConfig.h">
       <Filter>StressConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer\Timer.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer\TimerJob.h">
+      <Filter>Timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

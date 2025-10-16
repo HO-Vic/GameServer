@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <atomic>
 #include <cstdint>
+#include <concurrent_queue.h>
 #include <Utility/SingletonBase/Singleton.h>
 #include <Utility/Pool/ObjectPool.h>
 #include "Room.h"
@@ -38,7 +39,7 @@ class RoomManager
   std::shared_ptr<NavMapData> m_bossMap;
   sh::Utility::ObjectPool<Room> m_roomPool;
   std::atomic<uint32_t> m_roomId;
-  tbb::concurrent_queue<uint32_t> m_freeRoomIds;
+  Concurrency::concurrent_queue<uint32_t> m_freeRoomIds;
 
   bool m_isAbleMakeRoom;
 

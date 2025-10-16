@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <string>
 namespace sh::Utility {
 // Thread Pool에서 일할 객체
 

@@ -13,7 +13,9 @@ using namespace std;
 int main() {
   WSADATA wsaData{};
   if (0 != WSAStartup(WINSOCK_VERSION, &wsaData)) {
-    assert("WSAData init fail");
+#ifdef _DEBUG
+    assert(false && "WSAData init fail");
+#endif  // _DEBUG
   }
 
   std::string serverAddr = "127.0.0.1";

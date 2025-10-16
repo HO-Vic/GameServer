@@ -1,7 +1,6 @@
 #pragma once
 #include "Utility/Thread/IWorkerItem.h"
 #include <WinSock2.h>
-#include <ws2def.h>
 #include <cstdint>
 #include "../../CommonDefine.h"
 
@@ -10,8 +9,8 @@ class ThWorkerJob;
 class AcceptEvent
     : public Utility::IWorkerItem {
  public:
-  AcceptEvent(SOCKET listenSocket, AcceptCompleteHandler acceptHandle, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP)
-      : m_listenSocket(listenSocket), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType) {
+  AcceptEvent(SOCKET listenSocket, AcceptCompleteHandler acceptHandle, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP, bool isNoDelay = true)
+      : m_listenSocket(listenSocket), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_inetType(inetType), m_socketType(socketType), m_protocolType(protocolType), m_isNoDelay(isNoDelay) {
     ZeroMemory(&m_connInfo, sizeof(ConnectInfo));
   }
 
@@ -27,5 +26,6 @@ class AcceptEvent
   int m_socketType;
   int m_protocolType;
   uint16_t m_inetType;
+  const bool m_isNoDelay;
 };
 }  // namespace sh::IO_Engine

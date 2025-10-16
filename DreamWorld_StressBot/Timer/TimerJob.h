@@ -1,18 +1,18 @@
 #pragma once
 #include <chrono>
-#include "../Job/Job.h"
+#include <Utility/Job/Job.h>
 
-namespace sh::Utility {
+namespace Stress {
 using MS = std::chrono::milliseconds;
 
 using _chrono_clock = std::chrono::steady_clock;
 
 class TimerJob
-    : public Job {
+    : public sh::Utility::Job {
  public:
   TimerJob() = default;
 
-  TimerJob(_chrono_clock::time_point wakeTime, Job::Caller&& func);
+  TimerJob(_chrono_clock::time_point wakeTime, sh::Utility::Job::Caller&& func);
 
   // priorityQueue에서 우선 순위 판단을 위한 operator
   constexpr bool operator<(const TimerJob& other) const {
@@ -31,4 +31,4 @@ class TimerJob
   _chrono_clock::time_point m_wakeupTime;
   int64_t m_restTime;
 };
-}  // namespace sh::Utility
+}  // namespace Stress

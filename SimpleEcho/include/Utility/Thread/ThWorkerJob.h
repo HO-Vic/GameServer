@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <string>
 namespace sh::Utility {
 // Thread Pool에서 일할 객체
 
@@ -36,7 +37,7 @@ class ThWorkerJob : public OVERLAPPED {
 
   ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
 
-  void operator()(const DWORD ioByte, const uint64_t errorCode);
+  void operator()(const DWORD ioByte, const DWORD errorCode);
 
   WORKER_TYPE GetType() const {
     return m_type;

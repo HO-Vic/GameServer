@@ -11,7 +11,9 @@ ServerConfig::ServerConfig()
 void ServerConfig::LoadXML(const char* configFile) {
   std::ifstream xmlFile(configFile);
   if (!xmlFile) {
-    assert("invalid xml file");
+#ifdef _DEBUG
+    assert(false && "invalid xml file");
+#endif  // _DEBUG
   }
 
   std::vector<char> xmlDatas;

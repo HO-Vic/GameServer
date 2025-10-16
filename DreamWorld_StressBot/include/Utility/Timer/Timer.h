@@ -3,7 +3,7 @@
 #include <memory>
 #include <functional>
 #include <stop_token>
-#include <tbb/concurrent_priority_queue.h>
+#include <concurrent_priority_queue.h>
 #include "../Thread/ThreadManager.h"
 #include "TimerJob.h"
 
@@ -15,7 +15,7 @@ class Timer {
     bool operator()(TimerJobPtr& l, TimerJobPtr& r) const;
   };
 
-  using TimerQueue = tbb::concurrent_priority_queue<TimerJobPtr, Timer::TimerQueueComp>;
+  using TimerQueue = Concurrency::concurrent_priority_queue<TimerJobPtr, Timer::TimerQueueComp>;
 
  public:
   Timer() = default;

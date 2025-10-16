@@ -1,7 +1,7 @@
 #include "pch.h"
-#include <Timer/TimerJob.h>
+#include "TimerJob.h"
 
-namespace sh::Utility {
+namespace Stress {
 TimerJob::TimerJob(_chrono_clock::time_point wakeTime, sh::Utility::Job::Caller&& func)
     : sh::Utility::Job(std::move(func)), m_wakeupTime(wakeTime), m_restTime(5) {
 }
@@ -22,4 +22,4 @@ const int64_t TimerJob::GetRestTime() const {
 const int64_t TimerJob::GetWakeTime() const {
   return std::chrono::duration_cast<std::chrono::milliseconds>(m_wakeupTime.time_since_epoch()).count();
 }
-}  // namespace sh::Utility
+}  // namespace Stress

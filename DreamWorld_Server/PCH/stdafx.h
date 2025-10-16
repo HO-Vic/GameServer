@@ -55,13 +55,7 @@
 
 #include <thread>
 #include <atomic>
-#include <tbb/concurrent_hash_map.h>
-#include <tbb/concurrent_unordered_map.h>
-#include <tbb/concurrent_priority_queue.h>
-#include <tbb/concurrent_queue.h>
-#include <tbb/parallel_for.h>
-#include <tbb/parallel_for_each.h>
-#include <tbb/tbb.h>
+
 #include<sqlext.h>
 
 #include<filesystem>

@@ -4,7 +4,7 @@
 #include <Utility/SingletonBase/Singleton.h>
 #include <Utility/Thread/ThreadPool.h>
 #include <Utility/Job/Job.h>
-#include <Utility/Timer/Timer.h>
+#include "../Timer/Timer.h"
 #include <Utility/Thread/IWorkerItem.h>
 
 namespace Stress {
@@ -26,7 +26,7 @@ class SessionBatchUpdaters
     m_threadPool.Start();
   }
 
-  sh::Utility::Timer& GetTimer() {
+  Timer& GetTimer() {
     return m_timer;
   }
 
@@ -34,7 +34,7 @@ class SessionBatchUpdaters
 
  private:
   sh::Utility::ThreadPool m_threadPool;
-  sh::Utility::Timer m_timer;
+  Timer m_timer;
   std::vector<std::shared_ptr<SessionBatchUpdater>> m_batchUpdaters;
 };
 }  // namespace Stress

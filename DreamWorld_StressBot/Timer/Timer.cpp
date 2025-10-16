@@ -1,12 +1,15 @@
 #include "pch.h"
-#include <Timer/Timer.h>
+#include "Timer.h"
 #include <queue>
 #include <vector>
-#include <Job/Job.h>
-#include <Timer/TimerJob.h>
+#include <memory>
+#include <Utility/Job/Job.h>
+#include "TimerJob.h"
+#include <concurrent_priority_queue.h>
 
-namespace sh::Utility {
-bool Timer::TimerQueueComp::operator()(TimerJobPtr& l, TimerJobPtr& r) const {
+namespace Stress {
+
+bool Timer::TimerQueueComp::operator()(TimerJobPtr &l, TimerJobPtr &r) const {
   return l->GetWakeTime() > r->GetWakeTime();
 }
 
@@ -24,18 +27,18 @@ void Timer::Start(const uint8_t threadNo) {
   }
 }
 
-void Timer::InsertTimerEvent(TimerJobPtr&& timer) {
+void Timer::InsertTimerEvent(TimerJobPtr &&timer) {
   m_timerQueues[timer.get()->GetWakeTime() % m_threadNo]->push(std::move(timer));
 }
 
 void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
   /*
-          얼마 남지 않은 타이머 이벤트에 대해서 임시 타이머 큐에 저장
-          concurrency_priority_queue에 다시 삽입하는거보다는 임시로 저장하고
-          곧 수행되기 때문에, 다음 수행 때 바로 실행에 가까움
-          top으로 우선순위 높은 객체 볼 수 있음.
+                                  얼마 남지 않은 타이머 이벤트에 대해서 임시 타이머 큐에 저장
+                                  concurrency_priority_queue에 다시 삽입하는거보다는 임시로 저장하고
+                                  곧 수행되기 때문에, 다음 수행 때 바로 실행에 가까움
+                                  top으로 우선순위 높은 객체 볼 수 있음.
   */
-  auto& TimerQueue = *m_timerQueues[thId];
+  auto &TimerQueue = *m_timerQueues[thId];
   std::priority_queue<TimerJobPtr, std::vector<TimerJobPtr>, Timer::TimerQueueComp> immediateTimer;
   // constexpr DreamWorld::MS PUSH_IMMEDIATE_TIMER_QUEUE_TIME = DreamWorld::MS(4);  // 어느정도 시간이 적당할지는 생각해야할듯...
   static constexpr int64_t PUSH_IMMEDIATE_TIMER_QUEUE_TIME = 15;  // 어느정도 시간이 적당할지는 생각해야할듯...
@@ -60,7 +63,7 @@ void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
       continue;
     }
     while (true) {
-      std::unique_ptr<TimerJob, std::function<void(TimerJob*)>> currentEvent = nullptr;
+      std::unique_ptr<TimerJob, std::function<void(TimerJob *)>> currentEvent = nullptr;
       bool isSuccess = TimerQueue.try_pop(currentEvent);
       if (!isSuccess) {  // 이벤트를 못 가져왔다면 다른 쓰레드에 양보
         // Sleep(1);
@@ -79,17 +82,18 @@ void Timer::TimerThreadFunc(std::stop_token stopToken, uint8_t thId) {
       } else {
         TimerQueue.push(std::move(currentEvent));  // 아니라면 concurrent에 삽입
       }
-      Sleep(1);
+      std::this_thread::yield();
+      // Sleep(1);
       break;
     }
   }
 }
 void Timer::TimerThreadFunc2(std::stop_token stopToken, uint8_t thId) {
   // constexpr DreamWorld::MS PUSH_IMMEDIATE_TIMER_QUEUE_TIME = DreamWorld::MS(4);  // 어느정도 시간이 적당할지는 생각해야할듯...
-  auto& TimerQueue = *m_timerQueues[thId];
+  auto &TimerQueue = *m_timerQueues[thId];
   static constexpr int64_t PUSH_IMMEDIATE_TIMER_QUEUE_TIME = 4;  // 어느정도 시간이 적당할지는 생각해야할듯...
   while (true) {
-    std::unique_ptr<TimerJob, std::function<void(TimerJob*)>> currentEvent = nullptr;
+    std::unique_ptr<TimerJob, std::function<void(TimerJob *)>> currentEvent = nullptr;
     bool isSuccess = TimerQueue.try_pop(currentEvent);
     if (!isSuccess) {  // 이벤트를 못 가져왔다면 다른 쓰레드에 양보
       // Sleep(1);
@@ -103,7 +107,8 @@ void Timer::TimerThreadFunc2(std::stop_token stopToken, uint8_t thId) {
     }
     // 아니라면 다시 삽입
     TimerQueue.push(std::move(currentEvent));  // 아니라면 concurrent에 삽입
-    Sleep(1);
+    std::this_thread::yield();
+    // Sleep(1);
   }
   while (true) {
     if (stopToken.stop_requested()) {
@@ -111,4 +116,4 @@ void Timer::TimerThreadFunc2(std::stop_token stopToken, uint8_t thId) {
     }
   }
 }
-}  // namespace sh::Utility
+}  // namespace Stress
