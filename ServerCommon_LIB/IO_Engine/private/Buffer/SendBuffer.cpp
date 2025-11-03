@@ -11,8 +11,11 @@
 
 namespace sh::IO_Engine {
 SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
-    : m_size(len) {
-  memcpy_s(m_buffer, MAX_SEND_BUFFER_SIZE, data, m_size);
+    : m_size(len + sizeof(PacketHeader)) {
+  PacketHeader packetSize{static_cast<uint16_t>(m_size)};
+  packetSize.Serialize();
+  memcpy_s(m_buffer, MAX_SEND_BUFFER_SIZE, &packetSize, sizeof(PacketHeader));
+  memcpy_s(m_buffer + sizeof(PacketHeader), static_cast<int64_t>(MAX_SEND_BUFFER_SIZE - sizeof(PacketHeader)), data, len);
 }
 
 UDP_SingleSendBuffer::UDP_SingleSendBuffer(std::shared_ptr<UDP_IAgent>& agentPtr, std::shared_ptr<UDP_ISession>& sessionPtr, const BYTE* data, const uint32_t len)

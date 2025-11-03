@@ -23,7 +23,10 @@ class TCP_ISession
 
   virtual ~TCP_ISession();
 
-  void DoSend(const void* data, const uint32_t len);
+  template <class T>
+  void DoSend(const T* data) {
+    InternalSend(reinterpret_cast<const char*>(data), sizeof(T));
+  }
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
@@ -35,6 +38,9 @@ class TCP_ISession
   void RaiseIOError();
 
   void RaiseIOError(sh::Utility::ThWorkerJob* thWorker);
+
+ private:
+  void InternalSend(const char* data, const uint32_t len);
 
  protected:
   // 위에 레이어에서 상속받아서 Disconnect 상황에서 해야하는 일 정의

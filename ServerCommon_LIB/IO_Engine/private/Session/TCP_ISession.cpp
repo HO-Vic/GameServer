@@ -22,20 +22,9 @@ TCP_ISession::~TCP_ISession() {
   closesocket(m_sock);
 }
 
-void TCP_ISession::DoSend(const void* data, const uint32_t len) {
-  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
-    return;
-  }
-
-  auto ioError = m_sendContext.DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
-  if (0 != ioError) {
-    RaiseIOError();
-  }
-}
-
 void TCP_ISession::StartRecv() {
   auto thWorker = ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::RECV);
-  auto ioError = m_recvContext.DoRecv(thWorker);  // 외부 정리
+  auto ioError = m_recvContext.StartRecv(thWorker);  // 외부 정리
   if (0 != ioError) {
     RaiseIOError(thWorker);
   }
@@ -54,6 +43,17 @@ void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
   m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
   thWorker->SetType(sh::Utility::WORKER_TYPE::DISCONN);
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, thWorker);
+}
+
+void TCP_ISession::InternalSend(const char* data, const uint32_t len) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+
+  auto ioError = m_sendContext.DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
+  if (0 != ioError) {
+    RaiseIOError();
+  }
 }
 
 void TCP_ISession::Disconnect() {

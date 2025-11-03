@@ -81,7 +81,7 @@ void Session::DelayCheck() {
     m_isSendAbleDelayCheck = false;
     DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY));
     m_lastCheckTime = nowTime;
-    DoSend(&sendPacket, sendPacket.size);
+    DoSend(&sendPacket);
   }
 }
 }  // namespace Stress

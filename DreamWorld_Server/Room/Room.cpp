@@ -82,7 +82,7 @@ void Room::StartGame() {
 
   for (auto& session : GetUserSession()) {
     sendPacket.role = session->GetIngameRole();
-    session->DoSend(&sendPacket, sendPacket.size);
+    session->DoSend(&sendPacket);
   };
   auto roomBasePtr = std::static_pointer_cast<RoomBase>(shared_from_this());
   Timer::GetInstance().InsertTimerEvent(

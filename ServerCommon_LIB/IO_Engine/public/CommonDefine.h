@@ -22,6 +22,22 @@ struct PacketHeader {
   PacketHeader(const uint16_t parSize)
       : size(parSize) {
   }
+  PacketHeader(const char* first, const char* second)
+      : size(0) {
+    size = static_cast<uint16_t>(static_cast<uint8_t>(*first)) << 8;
+    size = (size | static_cast<uint8_t>(*second));
+  }
+  PacketHeader(const BYTE* first, const BYTE* second)
+      : size(0) {
+    size = static_cast<uint16_t>(static_cast<uint8_t>(*first)) << 8;
+    size = (size | static_cast<uint8_t>(*second));
+  }
+  void Serialize() {
+    size = htons(size);
+  }
+  void Deserialize() {
+    size = ntohs(size);
+  }
   uint16_t size;
 };
 #pragma pack(pop)

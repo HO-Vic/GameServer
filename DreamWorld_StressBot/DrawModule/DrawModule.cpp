@@ -204,6 +204,9 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
       } break;
       case Stress::Session::SESSION_STATE::INGAME: {
         auto position = session->GetPosition();
+        if (Stress::Session::SESSION_STATE::INGAME != session->GetSessionState()) {
+          continue;
+        }
         if (abs(position.first) < 400 && abs(position.second) < 400) {
           bossCnt++;
           BossRender(position.first, position.second);

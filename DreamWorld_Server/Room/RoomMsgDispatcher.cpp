@@ -233,7 +233,7 @@ void RoomMsgDispatcher::OnGameEndOk(sh::IO_Engine::TCP_ISessionPtr sessionPtr, B
 
 void RoomMsgDispatcher::OnTimeSyncReq(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   DreamWorld::SERVER_PACKET::TimeSyncPacket sendPacket{};
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
 }
 
 }  // namespace DreamWorld

@@ -65,7 +65,7 @@ void DBPlayerLogin::PostExecute(SQLHSTMT hstmt) {
   }
   DreamWorld::SERVER_PACKET::LoginPacket loginPacket{};
   lstrcpyn(loginPacket.nickName, playerName, DB_NAME_SIZE);
-  sessionPtr->DoSend(&loginPacket, loginPacket.size);
+  sessionPtr->DoSend(&loginPacket);
   /*
           SQL_SUCCESS_WITH_INFO
           SQL_NEED_DATA - 아마 발생 안함

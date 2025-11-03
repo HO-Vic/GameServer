@@ -19,7 +19,7 @@ void Server::OnLogin(sh::IO_Engine::TCP_ISessionPtr session, BYTE* message) {
   std::string id = recvPacket->id;
   if (std::string::npos != id.find("module", 0)) {  // 테스트 모듈 테스트 계정은 DB에 없음
     DreamWorld::SERVER_PACKET::LoginPacket loginPacket{};
-    session->DoSend(&loginPacket, loginPacket.size);
+    session->DoSend(&loginPacket);
     std::static_pointer_cast<DreamWorld::Session>(session)->SetName(id.begin(), id.end());
     return;
   }
@@ -42,7 +42,7 @@ void Server::OnMatchReq(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message
 
 void Server::OnStressDelay(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message) {
   auto sendPacket = DreamWorld::SERVER_PACKET::NotifyPacket(static_cast<char>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY));
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
 }
 
 }  // namespace DreamWorld
