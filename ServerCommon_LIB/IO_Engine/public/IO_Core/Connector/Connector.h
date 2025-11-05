@@ -38,7 +38,7 @@ class SyncConnector
  public:
   SyncConnector() = default;
 
-  SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType);
+  SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
 
   virtual bool TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) override;
 };

@@ -55,7 +55,7 @@ AsyncConnector::AsyncConnector()
     : ConnectorBase(), m_ioHandle(NULL), m_intenalTimer(nullptr), m_timeOutThreshold(0), ConnectEx(nullptr) {
 }
 
-AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold)
+AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType)
     : ConnectorBase(ipAddr, port, inetType, socketType, protocolType), m_ioHandle(ioHandle), m_timeOutThreshold(timeOutThreshold), m_intenalTimer(nullptr) {
   // 타임 아웃이 없다면 ,타임 아웃 이벤트를 해줄 타이머를 만들지 않는다
   if (m_timeOutThreshold != MS(0)) {
@@ -77,7 +77,7 @@ AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint1
   }
 }
 
-void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold) {
+void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType) {
   ConnectorBase::Init(ipAddr, port, inetType, socketType, protocolType);
   m_ioHandle = ioHandle;
   m_timeOutThreshold = timeOutThreshold;
