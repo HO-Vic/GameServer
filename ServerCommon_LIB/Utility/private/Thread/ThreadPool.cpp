@@ -33,7 +33,7 @@ void ThreadPool::RunningThread(std::stop_token stopToken) {
       // Internal은 에러 코드
       // 64비트 자료형이지만, 실제로는 32비트만 사용
       // NTStatus에 대한 오류 코드임
-      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred, overlappedEntry[i].Internal);
+      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred, static_cast<DWORD>(overlappedEntry[i].Internal));
     }
     if (stopToken.stop_requested()) {
       return;
