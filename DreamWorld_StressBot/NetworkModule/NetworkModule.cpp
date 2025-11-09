@@ -23,7 +23,7 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t
   g_maxConnectUserCnt = 0;
   m_ioCore.Init(ioThreadNo);
   m_connectDelayTick = MS(1);
-  m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, AF_INET, SOCK_STREAM, IPPROTO_TCP, MS(0));
+  m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, MS(0), AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_lastTryConnTime = TIME::now();
   m_maxDelayThreshold = maxDelayThreshold;
   m_adjustConnectDelayThreadshold = adjustConnectDelayThreadshold;
@@ -62,7 +62,7 @@ void NetworkModule::Start() {
         }
         auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<sh::Utility::IWorkerItem>(delSessionPtr), sh::Utility::WORKER_TYPE::FORCE_DISCONN);
         PostQueuedCompletionStatus(m_ioCore.GetHandle(), 1, 0, static_cast<LPOVERLAPPED>(thWorkerJob));
-        adjustUserCnt = g_ActiveUserCnt * 0.8;
+        adjustUserCnt = static_cast<uint32_t>(g_ActiveUserCnt.load() * 0.8);
 
         if (incUser) {
           incUser = false;
