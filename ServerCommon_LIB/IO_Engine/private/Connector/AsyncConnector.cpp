@@ -179,6 +179,10 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* worker
 }
 
 bool AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
+#ifdef _DEBUG
+  assert(m_connectingState != STATE::CONNECTED);
+#endif  // _DEBUG
+
   STATE tryState = STATE::TRY_CONNECT;
   if (0 != errorCode) {
     if (m_connectingState.compare_exchange_strong(tryState, STATE::TIMEOUT)) {  // 타임 아웃 상태로 변경하는데, 성공했다면

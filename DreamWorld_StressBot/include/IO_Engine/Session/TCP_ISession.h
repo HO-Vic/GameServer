@@ -7,6 +7,8 @@
 #include "RecvContext/TCP_RecvContext.h"
 
 namespace sh::IO_Engine {
+class ISendBuffer;
+
 enum TCP_Session_STATE : BYTE {
   NON_ERR = 0x0,
   SEND_ERR = 0x1,
@@ -23,9 +25,27 @@ class TCP_ISession
 
   virtual ~TCP_ISession();
 
+  void DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
+
+  /*
+   개선?
+    1. sendBuffer를 어플리케이션에서 할당
+    2. 라이브러리로 sendBuffer를 보냄
+    3. sendBuffer 보내기
+     => protobuf처럼 직렬화를 어플리케이션에서 하고, DoSend(T)하면 복사 2번이니
+        ㄴ> 차라리 sendBuffer를 어플리케이션 레이어에서 복사, 그 버퍼를 라이브러리로
+  DoSend(T)
+    1. data ptr을 라이브러리로
+    2. 라이브러리에서 sendBuffer에 데이터 복사
+  */
+
+  // 외부에서 ptr에 데이터 정보 다 넣는 경우
+  // 외부에서 msg.Serialize(&sendBuffer);해야하는 경우에, 미리 할당하고 sendBuffer로 내릴 수 있게
+  void DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer);
+
   template <class T>
-  void DoSend(const T* data) {
-    InternalSend(reinterpret_cast<const char*>(data), sizeof(T));
+  void DoSend(const T* data) {  // dataPtr을 라이브러리 내부에서 복사하여 Send하는 경우 사용
+    InternalSend(reinterpret_cast<const BYTE*>(data), sizeof(T));
   }
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
@@ -40,7 +60,7 @@ class TCP_ISession
   void RaiseIOError(sh::Utility::ThWorkerJob* thWorker);
 
  private:
-  void InternalSend(const char* data, const uint32_t len);
+  void InternalSend(const BYTE* data, const uint32_t len);
 
  protected:
   // 위에 레이어에서 상속받아서 Disconnect 상황에서 해야하는 일 정의

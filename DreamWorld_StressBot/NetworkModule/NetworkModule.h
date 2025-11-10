@@ -8,6 +8,8 @@
 #include <IO_Engine/IO_Core/Connector/AsyncConnector.h>
 #include "../MsgDispatcher/MsgDispatcher.h"
 
+#include <unordered_set>
+
 namespace sh::IO_Engine {
 class TCP_ISession;
 using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;

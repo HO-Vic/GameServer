@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Session\Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="LogMgr\LogManager.cpp">
+      <Filter>LogMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkAgent\NetworkAgent.cpp">
+      <Filter>NetworkAgent</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Session">
+      <UniqueIdentifier>{8f44313e-7ee5-427e-bda0-803522bf8c10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCH">
+      <UniqueIdentifier>{e8727e2f-07b6-4412-adfa-38e44d03d3c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogMgr">
+      <UniqueIdentifier>{416e3bc5-7e38-4a0b-97e4-92ab22e197f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkAgent">
+      <UniqueIdentifier>{3329f33b-94d6-47ac-be04-dffef3072f34}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Session\Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="LogMgr\LogManager.h">
+      <Filter>LogMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkAgent\NetworkAgent.h">
+      <Filter>NetworkAgent</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

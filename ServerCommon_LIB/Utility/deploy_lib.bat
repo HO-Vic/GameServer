@@ -82,12 +82,12 @@ if not exist ..\..\SimpleUDPEcho\Client\bin\x64\Release (
 	mkdir ..\..\SimpleUDPEcho\Client\bin\x64\Release
 )
 
-if not exist ..\..\DreamWorld_Server\lib\Debug (
-	mkdir ..\..\DreamWorld_Server\lib\Debug
+if not exist ..\..\DreamWorld_Server\lib\x64\Debug (
+	mkdir ..\..\DreamWorld_Server\lib\x64\Debug
 )
 
-if not exist ..\..\DreamWorld_Server\lib\Release (
-	mkdir ..\..\DreamWorld_Server\lib\Release
+if not exist ..\..\DreamWorld_Server\lib\x64\Release (
+	mkdir ..\..\DreamWorld_Server\lib\x64\Release
 )
 
 if not exist ..\..\DreamWorld_Server\bin\x64\Debug (
@@ -147,11 +147,6 @@ copy .\Export_LIB\Release\Utility.pdb ..\..\SimpleUDPEcho\Client\bin\x64\Release
 echo [End Deploy Utility LIB]
 
 echo [Start Deploy Utility Header File]
-:: if not exist ..\ServerCore\include (
-:: 	mkdir ..\ServerCore\include\Utility
-:: )
-:: xcopy ".\public" "..\ServerCore\include\Utility\" /E /Y
-:: xcopy ".\include" "..\ServerCore\include\" /E /Y
 
 ::Io_Engine에 헤더 배포
 rmdir /s /q "..\IO_Engine\include\Utility"

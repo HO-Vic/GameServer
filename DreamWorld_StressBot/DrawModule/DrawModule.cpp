@@ -222,7 +222,7 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   }
   glEnd();
   glColor3f(1, 1, 0);
-  static constexpr float GLPOSX = -0.06;
+  static constexpr float GLPOSX = -0.06f;
   glRasterPos2f(GLPOSX, 0.05f);
   glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 

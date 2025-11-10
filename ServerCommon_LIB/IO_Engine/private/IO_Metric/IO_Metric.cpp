@@ -4,21 +4,21 @@
 #include <Buffer/SendBufferPool.h>
 
 namespace sh::IO_Engine {
-void IO_MetricSlot::Init(bool isUse) {
+void IO_Metric::Init(bool isUse) {
   m_isUse = isUse;
 }
 
-IO_Metric& IO_MetricSlot::SwapAndLoad() {
+IO_MetricSlot& IO_Metric::SwapAndLoad() {
+  if (!m_isUse) {
+    return m_metics[0];
+  }
+
   // Swap하기전에 오브젝트 풀 사용량 기록을 먼저
   auto taskIndex = m_index.load();
   {
-    m_metics[taskIndex].thWorkerJobTotal.store(ThWorkerJobPool::GetInstance().GetTotalCnt());
-    m_metics[taskIndex].thWorkerJobUsing.store(ThWorkerJobPool::GetInstance().GetUsingCnt());
-    m_metics[taskIndex].thWorkerJobAdd.store(ThWorkerJobPool::GetInstance().GetAddedCnt());
+    ThWorkerJobPool::GetInstance().RecordMetric(m_metics[taskIndex]);
 
-    m_metics[taskIndex].sendBufferTotal.store(SendBufferPool::GetInstance().GetTotalCnt());
-    m_metics[taskIndex].sendBufferUsing.store(SendBufferPool::GetInstance().GetUsingCnt());
-    m_metics[taskIndex].sendBufferAdd.store(SendBufferPool::GetInstance().GetAddedCnt());
+    SendBufferAllocator::GetInstance().RecordMertric(m_metics[taskIndex]);
   }
   auto otherIndex = (taskIndex + 1) % 2;
   m_metics[otherIndex].Reset();
@@ -27,7 +27,7 @@ IO_Metric& IO_MetricSlot::SwapAndLoad() {
   return m_metics[taskIndex];
 }
 
-void IO_MetricSlot::RecordSend(const DWORD ioByte) {
+void IO_Metric::RecordSend(const DWORD ioByte) {
   if (!m_isUse) {
     return;
   }
@@ -38,7 +38,7 @@ void IO_MetricSlot::RecordSend(const DWORD ioByte) {
   m_metics[taskIndex].sendByte.fetch_add(ioByte);
 }
 
-void IO_MetricSlot::RecordRecv(const DWORD ioByte) {
+void IO_Metric::RecordRecv(const DWORD ioByte) {
   if (!m_isUse) {
     return;
   }
@@ -49,7 +49,16 @@ void IO_MetricSlot::RecordRecv(const DWORD ioByte) {
   m_metics[taskIndex].recvByte.fetch_add(ioByte);
 }
 
-void IO_MetricSlot::RecordDisconn() {
+void IO_Metric::RecordDynamicSendBuffer() {
+  if (!m_isUse) {
+    return;
+  }
+  auto taskIndex = m_index.load();
+
+  m_metics[taskIndex].dynamicSendBufferUsing.fetch_add(1);
+}
+
+void IO_Metric::RecordDisconn() {
   if (!m_isUse) {
     return;
   }

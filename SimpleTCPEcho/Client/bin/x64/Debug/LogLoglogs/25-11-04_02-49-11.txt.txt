@@ -1,0 +1,8 @@
+[2025-11-04 02:49:11.557] [EchoTcpClient_combineLog] [info] loggerStarted
+[2025-11-04 02:49:20.064] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:22.105] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:24.151] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:26.195] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:28.245] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:30.292] [EchoTcpClient_combineLog] [debug] SimpleTCP::NetworkAgent::OnConnFail(48)> Connect Fail, ErrorCode: 10061
+[2025-11-04 02:49:30.293] [EchoTcpClient_combineLog] [warning] conn Fail

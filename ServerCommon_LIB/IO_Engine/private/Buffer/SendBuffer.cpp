@@ -10,6 +10,33 @@
 #include <Session/UDP_ISession.h>
 
 namespace sh::IO_Engine {
+BYTE* ISendBuffer::GetWritePtr(uint32_t len) {
+#ifdef _DEBUG
+  auto writeableSize = static_cast<int64_t>(cap - writeSize);
+  assert(writeableSize >= len);
+#endif  // _DEBUG
+
+  auto packetHeader = reinterpret_cast<PacketHeader*>(data);
+  writeSize += len;
+  packetHeader->size = writeSize;
+  packetHeader->Serialize();
+  return data + (writeSize - len);  // 미리 writeSize+=len 했으니, 현재 write해야되는 위치는 wrtieSize-len
+}
+
+void ISendBuffer::Write(const BYTE* srcPtr, uint32_t len) {
+  auto writeableSize = static_cast<int64_t>(cap - writeSize);
+#ifdef _DEBUG
+  assert(data != nullptr);
+  assert(writeableSize >= len);
+#endif  // _DEBUG
+
+  memcpy_s(data + writeSize, writeableSize, srcPtr, len);
+  writeSize += len;
+  auto packetHeader = reinterpret_cast<PacketHeader*>(data);
+  packetHeader->size = writeSize;
+  packetHeader->Serialize();
+}
+
 SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
     : m_size(len + sizeof(PacketHeader)) {
   PacketHeader packetSize{static_cast<uint16_t>(m_size)};

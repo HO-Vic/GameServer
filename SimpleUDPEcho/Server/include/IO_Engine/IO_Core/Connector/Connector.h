@@ -1,6 +1,6 @@
 #pragma once
 #include <WinSock2.h>
-#include <chrono>
+
 #include "../../CommonDefine.h"
 
 namespace sh::Utility {
@@ -17,9 +17,9 @@ class ConnectorBase {
  public:
   ConnectorBase();
 
-  ConnectorBase(const std::string& ipAddr, uint16_t port, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  ConnectorBase(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType);
 
-  void Init(const std::string& ipAddr, uint16_t port, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  void Init(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType);
 
   //
   virtual bool TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) = 0;
@@ -38,7 +38,7 @@ class SyncConnector
  public:
   SyncConnector() = default;
 
-  SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType);
 
   virtual bool TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) override;
 };

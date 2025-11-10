@@ -257,6 +257,13 @@ class RawObjectPool {
       }
       ptr = new T(std::forward<Args>(args)...);
     } else {
+#ifdef _DEBUG
+      {
+        std::lock_guard<std::mutex> lg(m_usingLock);
+        auto cnt = m_usingSet.count(ptr);
+        assert(0 == cnt);
+      }
+#endif  // _DEBUG
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
 #ifdef _DEBUG
@@ -274,16 +281,18 @@ class RawObjectPool {
 
   void Release(T* ptr) {
     std::destroy_at(ptr);
+#ifdef _DEBUG
+    {
+      std::lock_guard<std::mutex> lg(m_usingLock);
+      /*auto cnt = m_usingSet.count(ptr);
+      assert(1 == cnt);*/
+      m_usingSet.erase(ptr);
+    }
+#endif  // _DEBUG
     {
       std::lock_guard<std::mutex> lg(m_lock);
       m_pools.push(ptr);
     }
-#ifdef _DEBUG
-    {
-      std::lock_guard<std::mutex> lg(m_usingLock);
-      m_usingSet.erase(ptr);
-    }
-#endif  // _DEBUG
 
     if (m_useMetric) {
       m_usingCnt--;

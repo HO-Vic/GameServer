@@ -56,8 +56,8 @@ void Server::Start() {
     {  // IO_Metric
       auto loggingDiff = _chrono::duration_cast<_chrono::seconds>(nowTime - prevMetricLoggingTime);
       if (loggingDiff > ServerConfig::GetInstance().meticLoggingTickSec) {
-        if (sh::IO_Engine::IO_MetricSlot::GetInstance().IsUse()) {
-          auto& ioMetric = sh::IO_Engine::IO_MetricSlot::GetInstance().SwapAndLoad();
+        if (sh::IO_Engine::IO_Metric::GetInstance().IsUse()) {
+          auto& ioMetric = sh::IO_Engine::IO_Metric::GetInstance().SwapAndLoad();
           auto sendCompletion = ioMetric.sendCompletion.load();
           auto sendByte = ioMetric.sendByte.load();
           auto recvCompletion = ioMetric.recvCompletion.load();
@@ -66,14 +66,16 @@ void Server::Start() {
           auto thWorkerTotal = ioMetric.thWorkerJobTotal.load();
           auto thWorkerAdded = ioMetric.thWorkerJobAdd.load();
           auto thWorkerUsing = ioMetric.thWorkerJobUsing.load();
-          auto SendBufferTotal = ioMetric.sendBufferTotal.load();
+          /*auto SendBufferTotal = ioMetric.sendBufferTotal.load();
           auto SendBufferAdded = ioMetric.sendBufferAdd.load();
-          auto SendBufferUsing = ioMetric.sendBufferUsing.load();
+          auto SendBufferUsing = ioMetric.sendBufferUsing.load();*/
 
           WRITE_LOG(logLevel::info, "{}({}) > IO Metric [sendCompletion:{}] [sendByte:{}] [recvCompletion:{}] [recvByte:{}] [disconn:{}]", __FUNCTION__, __LINE__,
                     sendCompletion, sendByte, recvCompletion, recvByte, disconn);
-          WRITE_LOG(logLevel::info, "{}({}) > IO Pool [thWorkerJobTotal:{}] [thWorkerJobAdd:{}] [thWorkerJobUsing:{}] [sendBufferTotal:{}] [sendBufferAdd:{}] [sendBufferUsing:{}]", __FUNCTION__, __LINE__,
-                    thWorkerTotal, thWorkerAdded, thWorkerUsing, SendBufferTotal, SendBufferAdded, SendBufferUsing);
+          WRITE_LOG(logLevel::info, "{}({}) > IO Pool [thWorkerJobTotal:{}] [thWorkerJobAdd:{}] [thWorkerJobUsing:{}]", __FUNCTION__, __LINE__,
+                    thWorkerTotal, thWorkerAdded, thWorkerUsing);
+          //[sendBufferTotal:{}] [sendBufferAdd:{}] [sendBufferUsing:{}]
+          //, SendBufferTotal, SendBufferAdded, SendBufferUsing
         }
         if (MetricSlot::GetInstance().IsUse()) {
           auto& gameMetric = MetricSlot::GetInstance().SwapAndLoad();

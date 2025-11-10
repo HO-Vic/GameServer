@@ -72,9 +72,9 @@ class AsyncConnector
  public:
   AsyncConnector();
 
-  AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold);
 
-  void Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  void Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, uint16_t inetType, int socketType, int protocolType, const MS timeOutThreshold);
 
   virtual bool TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) override;
 

@@ -308,7 +308,7 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode_TestForClient(const XMFLOAT3& start
     return std::list<XMFLOAT3>{};
   }
 
-  closeList.try_emplace(startMesh, startMesh, 0, 0);
+  closeList.try_emplace(startMesh, startMesh, 0.0f, 0.0f);
 
   auto currentFindMesh = startMesh;
   while (true) {

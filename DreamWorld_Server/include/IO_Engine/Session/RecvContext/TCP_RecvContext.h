@@ -8,15 +8,27 @@ class ThWorkerJob;
 namespace sh::IO_Engine {
 class TCP_RecvContext {
  public:
-  TCP_RecvContext() = default;
-
-  TCP_RecvContext(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler)
-      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(TCP_RecvHandler), m_head(0) {
+  TCP_RecvContext()
+      : m_socket(NULL), m_buffer(""), m_remainLen(0), m_recvHandler(nullptr), m_head(0) {
     m_wsaBufs[0].buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBufs[0].len = m_remainLen;
     m_wsaBufs[1].buf = reinterpret_cast<char*>(m_buffer + MAX_RECV_BUF_SIZE);
     m_wsaBufs[1].len = 0;
   }
+
+  TCP_RecvContext(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler)
+      : m_socket(sock), m_buffer(""), m_remainLen(0), m_recvHandler(std::move(TCP_RecvHandler)), m_head(0) {
+    m_wsaBufs[0].buf = reinterpret_cast<char*>(m_buffer);
+    m_wsaBufs[0].len = m_remainLen;
+    m_wsaBufs[1].buf = reinterpret_cast<char*>(m_buffer + MAX_RECV_BUF_SIZE);
+    m_wsaBufs[1].len = 0;
+  }
+
+  void DefferedSet(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler) {
+    m_socket = sock;
+    m_recvHandler = std::move(TCP_RecvHandler);
+  }
+
   //[w][][][][][]...[\w] => 0~1399까지 버퍼 w + 1400~ 0바이트 recv인데
   // 1400~ << 이거는 invalid인데 괜찮은지 테스트, 차라리 nullptr이 나려나 생각
 
