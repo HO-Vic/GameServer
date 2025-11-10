@@ -1,8 +1,18 @@
 #include "pch.h"
 #include "NetworkAgent.h"
-#include "../LogMgr/LogManager.h"
-#include "../Session/Session.h"
+#include <cassert>
+#include <chrono>
+#include <cstdint>
+#include <string>
+#include <functional>
+#include <memory>
+#include <WinSock2.h>
+#include <type_traits>
 #include <IO_Engine/Session/TCP_ISession.h>
+#include "../Session/Session.h"
+#include "../LogMgr/LogManager.h"
+#include "../Packet/Packet.h"
+#include "MsgDispatcher.h"
 
 namespace SimpleTCP {
 NetworkAgent::NetworkAgent(const uint8_t ioThreadNo, const std::string& ipAddr, const uint16_t portAddr)
@@ -10,6 +20,12 @@ NetworkAgent::NetworkAgent(const uint8_t ioThreadNo, const std::string& ipAddr, 
 }
 
 void NetworkAgent::Init() {
+  m_core.Init();
+  MsgInit();
+}
+
+void NetworkAgent::Start() {
+  m_core.Start();
 }
 
 std::shared_ptr<Session> NetworkAgent::Connect(const ms timeOut) {
@@ -34,14 +50,37 @@ std::shared_ptr<Session> NetworkAgent::Connect(const ms timeOut) {
   return returnSession;
 }
 
-void NetworkAgent::OnRecv(sh::IO_Engine::TCP_ISessionPtr session, uint64_t packetSize, BYTE* packetPtr) {
+void NetworkAgent::OnRecv(SessionPtr session, uint64_t packetSize, BYTE* packetPtr) {
+  auto packetHeader = reinterpret_cast<PacketHeader*>(packetPtr);
+  MsgHandle msgHandle = nullptr;
+  if (!m_dispatcher.GetHandle(packetHeader->type, msgHandle)) {  // 타입에 맞는 패킷을 못찾으면, 수행ㄴㄴ
+    WRITE_LOG(spdlog::level::info, "{}({}) > Unknown packet", __FUNCTION__, __LINE__);
+    return;
+  }
+#ifdef _DEBUG
+  assert(nullptr != msgHandle);
+#endif  // _DEBUG
+  msgHandle(session, packetPtr);
+  // msgHandle(session, packetHeader);
+}
+
+void NetworkAgent::OnSimpleMsg(SessionPtr sessionPtr, BYTE* packetHeader) {
+  auto msgPacket = reinterpret_cast<SimpleMsgPacket*>(packetHeader);
+  SimpleMsg simpleMsg{};
+  simpleMsg.Deserialize(msgPacket);
+  WRITE_LOG(LogLevel::info, "RecvComplete [Payload:{}], MSG: {}", simpleMsg.GetPayloadMsg().size(), simpleMsg.GetPayloadMsg().c_str());
 }
 
 void NetworkAgent::OnConnSuccess(SOCKET sock) {
   using namespace std::placeholders;
   WRITE_LOG(LogLevel::debug, "{}({})> Connect Success", __FUNCTION__, __LINE__);
   m_isConnSuccess = true;
-  m_connSession->DefferedSet(sock, std::bind(NetworkAgent::OnRecv, _1, _2, _3), m_core.GetHandle());
+  auto h = CreateIoCompletionPort(reinterpret_cast<HANDLE>(sock), m_core.GetHandle(), sock, 0);
+#ifdef _DEBUG
+  assert(h != NULL);
+#endif  // _DEBUG
+  m_connSession->DefferedSet(sock, std::bind(&NetworkAgent::OnRecv, this, _1, _2, _3), m_core.GetHandle());
+  m_connSession->StartRecv();
 }
 
 void NetworkAgent::OnConnFail(int errorCode) {

@@ -1,7 +1,9 @@
-#include <pch.h>
+#include "pch.h"
 #include "EchoServer.h"
 #include <IO_Engine/IO_Core/Acceptor/Acceptor.h>
 #include <IO_Engine/CommonDefine.h>
+#include <IO_Engine/Buffer/SendBuffer.h>
+#include <IO_Engine/Buffer/SendBufferPool.h>
 #include "Session/SessionManager.h"
 #include "Packet.h"
 #include "../LogManager/LogManager.h"
@@ -16,11 +18,24 @@ Server::Server(const uint32_t ip, const uint16_t port, const uint8_t ioThreadNo)
 }
 
 void Server::Init() {
+  InitMsg();
   SessionManager::GetInstance().Init(100);
   m_ioCore.Init();
   m_listener.SetHandle(m_ioCore.GetHandle());
   m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) { Server::AcceptHandle(sock); }, 1);
   WRITE_LOG(spdlog::level::info, "{}({}) > init success", __FUNCTION__, __LINE__);
+}
+
+void Server::OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader) {
+  auto msgPacket = reinterpret_cast<SimpleMsgPacket*>(packetHeader);
+  SimpleMsg simpleMsg{};
+  simpleMsg.Deserialize(msgPacket);
+  auto packetSize = simpleMsg.GetSerializeSize();
+  auto sendBuffer = sh::IO_Engine::SendBufferAllocator::GetInstance().GetShared(packetSize);
+  auto writePtr = sendBuffer->GetWritePtr(packetSize);
+  simpleMsg.Serialize(writePtr, packetSize);
+  WRITE_LOG(LogLevel::info, "RecvComplete, [PayloadSize: {}] MSG: {}", simpleMsg.GetPayloadMsg().size(), simpleMsg.GetPayloadMsg().c_str());
+  sessionPtr->DoSend(std::move(sendBuffer));
 }
 
 void Server::Start() {
@@ -36,24 +51,19 @@ void Server::Start() {
 
 void Server::AcceptHandle(SOCKET sock) {
   // Accept 이후의 행동을 정의
+  using namespace std::placeholders;
   WRITE_LOG(spdlog::level::info, "{}({}) > On Accept Player", __FUNCTION__, __LINE__);
-  SessionManager::GetInstance().OnAccept(sock, sh::IO_Engine::IO_TYPE::TCP, RecvHandle, m_ioCore.GetHandle());
+  SessionManager::GetInstance().OnAccept(sock, sh::IO_Engine::IO_TYPE::TCP, std::bind(&Server::RecvHandle, this, _1, _2, _3), m_ioCore.GetHandle());
 }
 
 void Server::RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
-  WRITE_LOG(spdlog::level::info, "{}({}) > Recv Packet", __FUNCTION__, __LINE__);
-  PacketHeader* packet = reinterpret_cast<PacketHeader*>(bufferPosition);
-  //  Recv된 데이터 행동 정의
-  switch (packet->type) {
-    case PACKET_TYPE::SIMPLE_MSG: {
-      SimpleMsgPacket* decodedPacket = reinterpret_cast<SimpleMsgPacket*>(bufferPosition);
-      WRITE_LOG(spdlog::level::info, "{}({}) > Send Packet", __FUNCTION__, __LINE__);
-      sessionPtr->DoSend(decodedPacket);
-    } break;
-    default: {
-      WRITE_LOG(spdlog::level::info, "{}({}) > Unknown packet", __FUNCTION__, __LINE__);
-    } break;
+  MsgHandle msgHandle = nullptr;
+  auto packetHeader = reinterpret_cast<PacketHeader*>(bufferPosition);
+  if (!m_dispatcher.GetHandle(packetHeader->type, msgHandle)) {
+    WRITE_LOG(spdlog::level::info, "{}({}) > Unknown packet", __FUNCTION__, __LINE__);
+    return;
   }
+  msgHandle(sessionPtr, bufferPosition);
 }
 
 }  // namespace SimpleTCP

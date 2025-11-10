@@ -14,19 +14,19 @@ void SendBufferAllocator::Init(uint32_t initSize) {
 }
 
 std::shared_ptr<ISendBuffer> SendBufferAllocator::GetShared(uint32_t len) {
-  if (len <= BUFFER_SIZE[0]) {
+  if (len+2 <= BUFFER_SIZE[0]) {
     return smallPool.MakeShared();
   }
-  if (len <= BUFFER_SIZE[1]) {
+  if (len + 2 <= BUFFER_SIZE[1]) {
     return mediumPool.MakeShared();
   }
-  if (len <= BUFFER_SIZE[2]) {
+  if (len + 2 <= BUFFER_SIZE[2]) {
     return largePool.MakeShared();
   }
-  if (len <= BUFFER_SIZE[3]) {
+  if (len + 2 <= BUFFER_SIZE[3]) {
     return xLargePool.MakeShared();
   }
-  return std::make_shared<DynamicSendBuffer>(len);
+  return std::make_shared<DynamicSendBuffer>(len + 2);
 }
 
 void SendBufferAllocator::RecordMertric(IO_MetricSlot& metricSlot) {

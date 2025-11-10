@@ -4,6 +4,7 @@
 #include <IO_Engine/IO_Core/Listener/Listener.h>
 #include <IO_Engine/IO_Core/Acceptor/Acceptor.h>
 #include <IO_Engine/CommonDefine.h>
+#include "MsgDispatcher.h"
 
 namespace SimpleTCP {
 class TCP_ISession;
@@ -17,12 +18,18 @@ class Server {
 
   void Init();
 
+  static void OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader);
+
  private:
+  void InitMsg();
+
   void AcceptHandle(SOCKET sock);
-  static void RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
+
+  void RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
 
   sh::IO_Engine::IO_Core m_ioCore;
   sh::IO_Engine::Listener m_listener;
   sh::IO_Engine::Acceptor m_acceptor;
+  MsgDispatcher m_dispatcher;
 };
 }  // namespace SimpleTCP

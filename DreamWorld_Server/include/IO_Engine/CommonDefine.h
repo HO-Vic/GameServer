@@ -42,7 +42,7 @@ struct PacketHeader {
 };
 #pragma pack(pop)
 
-constexpr static uint32_t MAX_RECV_BUF_SIZE = 1400;
+constexpr static uint32_t MAX_RECV_BUF_SIZE = 2000;
 #pragma endregion
 
 #pragma region FUNC_DEFINE

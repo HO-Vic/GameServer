@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <string>
+#include <span>
 
 #include <WinSock2.h>
 #include <MSWSock.h>

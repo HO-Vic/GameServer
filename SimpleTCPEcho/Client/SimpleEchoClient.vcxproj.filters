@@ -14,6 +14,15 @@
     <ClCompile Include="NetworkAgent\NetworkAgent.cpp">
       <Filter>NetworkAgent</Filter>
     </ClCompile>
+    <ClCompile Include="NetworkAgent\MsgDispatcher.cpp">
+      <Filter>NetworkAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkAgent\MsgHandleInit.cpp">
+      <Filter>NetworkAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\Packet.cpp">
+      <Filter>NetworkAgent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Session">
@@ -40,6 +49,12 @@
       <Filter>LogMgr</Filter>
     </ClInclude>
     <ClInclude Include="NetworkAgent\NetworkAgent.h">
+      <Filter>NetworkAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkAgent\MsgDispatcher.h">
+      <Filter>NetworkAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Packet.h">
       <Filter>NetworkAgent</Filter>
     </ClInclude>
   </ItemGroup>

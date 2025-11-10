@@ -1,5 +1,4 @@
 #pragma once
-#include <pch.h>
 #include <Utility/SingletonBase/Singleton.h>
 #include <spdlog/common.h>
 #include <spdlog/logger.h>
@@ -12,6 +11,7 @@
 // log
 
 namespace SimpleTCP {
+using LogLevel = spdlog::level::level_enum;
 class LogManager : public sh::Utility::SingletonBase<LogManager> {
  public:
   void StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode);

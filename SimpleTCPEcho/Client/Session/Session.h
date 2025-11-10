@@ -13,6 +13,6 @@ class Session
 
   void OnDisconnect() override;
 
- private:
+  // private:
 };
 }  // namespace SimpleTCP

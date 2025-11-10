@@ -59,13 +59,20 @@ void TCP_ISession::InternalSend(const BYTE* data, const uint32_t len) {
   }
   auto sendData = SendBufferAllocator::GetInstance().GetShared(len);
   sendData->Write(data, len);
-  auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendData));  // 실패시 Thworker는 내부 정리
-  if (0 != ioError) {
-    RaiseIOError();
-  }
+  DoSend(std::move(sendData));
 }
 
 void TCP_ISession::Disconnect() {
+}
+
+void TCP_ISession::DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+  auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendBuffer));  // 실패시 Thworker는 내부 정리
+  if (0 != ioError) {
+    RaiseIOError();
+  }
 }
 
 bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {

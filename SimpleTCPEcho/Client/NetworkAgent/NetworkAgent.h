@@ -2,11 +2,7 @@
 #include <chrono>
 #include <IO_Engine/IO_Core/Connector/Connector.h>
 #include <IO_Engine/IO_Core/IO_Core.h>
-
-namespace sh::IO_Engine {
-class TCP_ISession;
-using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
-}  // namespace sh::IO_Engine
+#include "MsgDispatcher.h"
 
 namespace SimpleTCP {
 using ms = std::chrono::milliseconds;
@@ -20,9 +16,15 @@ class NetworkAgent final {
 
   void Init();
 
+  void Start();
+
+  void MsgInit();
+
   std::shared_ptr<Session> Connect(const ms timeOut);
 
-  static void OnRecv(sh::IO_Engine::TCP_ISessionPtr session, uint64_t packetSize, BYTE* packetPtr);
+  void OnRecv(SessionPtr session, uint64_t packetSize, BYTE* packetPtr);  // 얘 위치가 여기가 맞을까?
+
+  static void OnSimpleMsg(SessionPtr sessionPtr, BYTE* packetHeader);
 
  private:
   void OnConnSuccess(SOCKET sock);
@@ -33,6 +35,7 @@ class NetworkAgent final {
   sh::IO_Engine::IO_Core m_core;
   sh::IO_Engine::SyncConnector m_connector;
   std::shared_ptr<Session> m_connSession;
+  MsgDispatcher m_dispatcher;
   bool m_isConnSuccess = false;
 };
 

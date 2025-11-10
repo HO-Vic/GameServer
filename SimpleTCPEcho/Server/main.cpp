@@ -1,4 +1,4 @@
-#include <pch.h>
+#include "pch.h"
 #include "EchoServer/EchoServer.h"
 #include "ServerConfig/ServerConfig.h"
 #include "LogManager/LogManager.h"
@@ -10,7 +10,7 @@ int main() {
 
   START_LOGGER("GameServer", "Log/", "GameServer", static_cast<spdlog::level::level_enum>(config.GetLogLevel()), config.GetLogMode());
 
-  SimpleTCP::Server echoServer(config.GetIp(), config.GetPort(), config.GetThreadNo());
+  SimpleTCP::Server echoServer(config.GetIp(), config.GetPort(), static_cast<uint8_t>(config.GetThreadNo()));
 
   echoServer.Init();
 

@@ -19,6 +19,9 @@
     <Filter Include="LogMgr">
       <UniqueIdentifier>{6e07694e-de9a-4d08-9bfc-17fc67723d23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EchoServer\MsgDispatcher">
+      <UniqueIdentifier>{e4ddb667-6ea0-40c6-a54d-1e94ce8838ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EchoServer\EchoServer.cpp">
@@ -37,13 +40,22 @@
     <ClCompile Include="ServerConfig\ServerConfig.cpp">
       <Filter>ServerConfig</Filter>
     </ClCompile>
+    <ClCompile Include="EchoServer\MsgDispatcher.cpp">
+      <Filter>EchoServer\MsgDispatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="EchoServer\MsgInit.cpp">
+      <Filter>EchoServer</Filter>
+    </ClCompile>
+    <ClCompile Include="EchoServer\Packet.cpp">
+      <Filter>EchoServer\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h">
       <Filter>EchoServer</Filter>
-    </ClInclude>
-    <ClInclude Include="PCH\PCH.h">
-      <Filter>PCH</Filter>
     </ClInclude>
     <ClInclude Include="EchoServer\Session\SessionManager.h">
       <Filter>EchoServer\Session</Filter>
@@ -59,6 +71,12 @@
     </ClInclude>
     <ClInclude Include="ServerConfig\ServerConfig.h">
       <Filter>ServerConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="EchoServer\MsgDispatcher.h">
+      <Filter>EchoServer\MsgDispatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

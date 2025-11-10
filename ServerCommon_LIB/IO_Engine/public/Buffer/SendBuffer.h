@@ -1,10 +1,12 @@
 #pragma once
+#include <cassert>
 #include <cstdint>
 #include <memory>
-#include <vector>
+#include <Windows.h>
+#include <Winsock2.h>
+#include <ws2def.h>
 #include "Utility/Thread/IWorkerItem.h"
-#include "Utility/Pool/ObjectPool.h"
-#include "Utility/SingletonBase/Singleton.h"
+#include "../CommonDefine.h"
 
 namespace sh::Utility {
 class ThWorkerJob;
@@ -47,9 +49,16 @@ class ISendBuffer {
 
   void Write(const BYTE* srcPtr, uint32_t len);
 
+  uint32_t GetWriteAbleSize() const {
+#ifdef _DEBUG
+    assert(writeSize > cap);
+#endif  // _DEBUG
+    return cap - writeSize;
+  }
+
  protected:
   BYTE* data = nullptr;  // 상속 받은 객체가 반환할거기때문에, 절대로 해제xx
-  uint32_t writeSize = 0;
+  uint32_t writeSize = HEADER_SIZE;
   uint32_t cap = 0;
 };
 

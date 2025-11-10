@@ -119,7 +119,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -146,19 +146,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EchoServer\EchoServer.cpp" />
+    <ClCompile Include="EchoServer\MsgDispatcher.cpp" />
+    <ClCompile Include="EchoServer\MsgInit.cpp" />
+    <ClCompile Include="EchoServer\Packet.cpp" />
     <ClCompile Include="EchoServer\Session\Session.cpp" />
     <ClCompile Include="EchoServer\Session\SessionManager.cpp" />
     <ClCompile Include="LogManager\LogManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PCH\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="ServerConfig\ServerConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EchoServer\EchoServer.h" />
+    <ClInclude Include="EchoServer\MsgDispatcher.h" />
     <ClInclude Include="EchoServer\Packet.h" />
     <ClInclude Include="EchoServer\Session\Session.h" />
     <ClInclude Include="EchoServer\Session\SessionManager.h" />
     <ClInclude Include="LogManager\LogManager.h" />
-    <ClInclude Include="PCH\PCH.h" />
+    <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="ServerConfig\ServerConfig.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
