@@ -38,6 +38,25 @@ void Server::OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packet
   sessionPtr->DoSend(std::move(sendBuffer));
 }
 
+void Server::OnParsedMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader) {
+  auto msgPacket = reinterpret_cast<ParseMsgPacket*>(packetHeader);
+  ParsedMsg parsedMsg{};
+  parsedMsg.Deserialize(msgPacket);
+  auto& payload = parsedMsg.GetPayload();
+  uint32_t msgSize = 0;
+  for (const auto& data : payload) {
+    WRITE_LOG(LogLevel::info, "RecvComplete Parsed MSG: {}", data);
+    msgSize += static_cast<uint32_t>(data.size());
+  }
+  WRITE_LOG(LogLevel::info, "RecvComplete [Payload:{}]", msgSize);
+
+  auto packetSize = parsedMsg.GetSerializeSize();
+  auto sendBuffer = sh::IO_Engine::SendBufferAllocator::GetInstance().GetShared(packetSize);
+  auto writePtr = sendBuffer->GetWritePtr(packetSize);
+  parsedMsg.Serialize(writePtr, packetSize);
+  sessionPtr->DoSend(std::move(sendBuffer));
+}
+
 void Server::Start() {
   m_ioCore.Start();
   m_listener.Start();

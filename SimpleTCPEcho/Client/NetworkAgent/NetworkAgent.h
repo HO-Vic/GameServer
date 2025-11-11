@@ -26,6 +26,8 @@ class NetworkAgent final {
 
   static void OnSimpleMsg(SessionPtr sessionPtr, BYTE* packetHeader);
 
+  static void OnParsedMsg(SessionPtr sessionPtr, BYTE* packetHeader);
+
  private:
   void OnConnSuccess(SOCKET sock);
 

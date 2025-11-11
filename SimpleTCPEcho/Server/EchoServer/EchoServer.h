@@ -20,6 +20,8 @@ class Server {
 
   static void OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader);
 
+  static void OnParsedMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader);
+
  private:
   void InitMsg();
 

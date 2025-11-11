@@ -1,4 +1,5 @@
 #include "PCH.h"
+#include "PCH.h"
 #include "Packet.h"
 #include <cassert>
 
@@ -81,4 +82,72 @@ void SimpleMsg::Deserialize(SimpleMsgPacket* msgPacket) {
   serializeSize = static_cast<uint32_t>(msg.size() + sizeof(SimpleMsgPacket));
 }
 
+PK_ParsedMsg::PK_ParsedMsg(uint16_t msgLen, bool isHost /*= true*/)
+    : msgSize(msgLen), isHostByte(isHost) {
+}
+
+void PK_ParsedMsg::Serialize() {
+  msgSize = htons(msgSize);
+}
+
+void PK_ParsedMsg::Deserilaize() {
+  msgSize = ntohs(msgSize);
+}
+
+ParseMsgPacket::ParseMsgPacket(uint32_t msgCnt, bool isHost /*= true*/)
+    : PacketHeader(PACKET_TYPE::PARSED_MSG), parsedMsgCnt(msgCnt), isHostByte(isHost) {
+}
+
+void ParseMsgPacket::Serialize() {
+  parsedMsgCnt = htonl(parsedMsgCnt);
+}
+
+void ParseMsgPacket::Deserilaize() {
+  parsedMsgCnt = ntohl(parsedMsgCnt);
+}
+
+void ParsedMsg::Serialize(BYTE* writePtr, const uint32_t writeAbleSize) const {
+#ifdef _DEBUG
+  if (GetSerializeSize() <= writeAbleSize) {
+    assert(GetSerializeSize() <= writeAbleSize);
+  }
+#endif  // _DEBUG
+  uint32_t writeSize = 0;
+
+  //// 내부 메세지 갯수에 대한
+  ParseMsgPacket pk{static_cast<uint32_t>(msgs.size())};
+  pk.Serialize();
+  memcpy_s(writePtr + writeSize, static_cast<int64_t>(writeAbleSize - writeSize), &pk, sizeof(ParseMsgPacket));
+  writeSize += sizeof(ParseMsgPacket);
+
+  for (const auto& msg : msgs) {
+    // 현재 매세지의 길이
+    PK_ParsedMsg pk_parsed{static_cast<uint16_t>(msg.size())};
+    pk_parsed.Serialize();
+    memcpy_s(writePtr + writeSize, static_cast<int64_t>(writeAbleSize - writeSize), &pk_parsed, sizeof(PK_ParsedMsg));
+    writeSize += sizeof(PK_ParsedMsg);
+
+    // 실제 메세지 내용
+    memcpy_s(writePtr + writeSize, static_cast<int64_t>(writeAbleSize - writeSize), msg.c_str(), msg.size());
+    writeSize += static_cast<uint32_t>(msg.size());
+  }
+}
+
+void ParsedMsg::Deserialize(ParseMsgPacket* parsedMsgPkt) {
+  parsedMsgPkt->Deserilaize();
+  auto msgCnt = parsedMsgPkt->parsedMsgCnt;
+  msgs.resize(msgCnt);
+  char* readPosition = reinterpret_cast<char*>(parsedMsgPkt) + sizeof(ParseMsgPacket);
+  for (uint32_t i = 0; i < msgCnt; ++i) {
+    auto parsedMsgPtr = reinterpret_cast<PK_ParsedMsg*>(readPosition);
+    parsedMsgPtr->Serialize();
+    auto msgSize = parsedMsgPtr->msgSize;
+    readPosition = readPosition + sizeof(PK_ParsedMsg);
+    msgs[i].resize(msgSize);
+    memcpy_s(msgs[i].data(), msgSize, readPosition, msgSize);
+    readPosition += msgSize;
+    //
+    serializeSize += msgSize + sizeof(PK_ParsedMsg);
+  }
+}
 }  // namespace SimpleTCP

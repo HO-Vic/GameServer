@@ -71,6 +71,19 @@ void NetworkAgent::OnSimpleMsg(SessionPtr sessionPtr, BYTE* packetHeader) {
   WRITE_LOG(LogLevel::info, "RecvComplete [Payload:{}], MSG: {}", simpleMsg.GetPayloadMsg().size(), simpleMsg.GetPayloadMsg().c_str());
 }
 
+void NetworkAgent::OnParsedMsg(SessionPtr sessionPtr, BYTE* packetHeader) {
+  auto msgPacket = reinterpret_cast<ParseMsgPacket*>(packetHeader);
+  ParsedMsg parsedMsg{};
+  parsedMsg.Deserialize(msgPacket);
+  auto& payload = parsedMsg.GetPayload();
+  uint32_t msgSize = 0;
+  for (const auto& data : payload) {
+    WRITE_LOG(LogLevel::info, "RecvComplete Parsed MSG: {}", data);
+    msgSize += static_cast<uint32_t>(data.size());
+  }
+  WRITE_LOG(LogLevel::info, "RecvComplete [Payload:{}]", msgSize);
+}
+
 void NetworkAgent::OnConnSuccess(SOCKET sock) {
   using namespace std::placeholders;
   WRITE_LOG(LogLevel::debug, "{}({})> Connect Success", __FUNCTION__, __LINE__);
