@@ -37,7 +37,7 @@ void CharacterObject::Update() {
       return;
     }
     DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::STAGE_CHANGE_BOSS));
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
     m_isChangeBoss = true;
   }
 
@@ -47,7 +47,7 @@ void CharacterObject::Update() {
       return;
     }
     DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::TEST_GAME_END));
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
     m_isGameEnd = true;
   }
 
@@ -65,7 +65,7 @@ void CharacterObject::Move() {
   int randRotate = rotate(dre);
   if (randRotate) {
     DreamWorld::CLIENT_PACKET::RotatePacket sendPacket(ROTATE_AXIS::Y, 1.0f, static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::ROTATE));
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
     // SendRotatePacket();
   }
   auto moveCoolTime = m_coolTimeCtrl->GetSkillCoolInfo(MOVE);
@@ -76,7 +76,7 @@ void CharacterObject::Move() {
   DIRECTION randDIr = GetRandomDirection();
   if (DIRECTION::IDLE == randDIr) {
     DreamWorld::CLIENT_PACKET::StopPacket sendPacket{};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
     // SendStopPacket();
     return;
   }
@@ -84,11 +84,11 @@ void CharacterObject::Move() {
   int keyDown = keyDownRandom(dre);
   if (1 == keyDown) {
     DreamWorld::CLIENT_PACKET::MovePacket sendPacket(randDIr, static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::MOVE_KEY_DOWN));
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
     return;
   }
   DreamWorld::CLIENT_PACKET::MovePacket sendPacket(randDIr, static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::MOVE_KEY_UP));
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
   // SendMovePacket(randDIr, keyDown);
 }
 
@@ -131,11 +131,11 @@ void WarriorObject::SendAttackPacket() {
   if (attackCoolTime->IsAbleExecute()) {
     // attack: look, power => PlayerPowerAttackPacket
     DreamWorld::CLIENT_PACKET::PlayerPowerAttackPacket sendPacket{DirectX::XMFLOAT3(0, 0, 1), 0};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime->IsAbleExecute()) {
     // skill: look => float Data Skill Packet
     DreamWorld::CLIENT_PACKET::FloatDataSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_FLOAT3_EXECUTE_Q), DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   }
 }
 
@@ -158,15 +158,15 @@ void TankerObject::SendAttackPacket() {
   if (attackCoolTime->IsAbleExecute()) {
     // attack look => PlayerCommonAttackPacket
     DreamWorld::CLIENT_PACKET::PlayerCommonAttackPacket sendPacket{DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // skillQ: notify -> CommonSkillPacket
     DreamWorld::CLIENT_PACKET::CommonSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_EXECUTE_Q)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // Skill E: look -> FloatDataSkillPacket
     DreamWorld::CLIENT_PACKET::FloatDataSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_FLOAT3_EXECUTE_E), DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   }
 }
 
@@ -189,15 +189,15 @@ void MageObject::SendAttackPacket() {
   if (attackCoolTime->IsAbleExecute()) {
     // attack look => PlayerCommonAttackPacket
     DreamWorld::CLIENT_PACKET::PlayerCommonAttackPacket sendPacket{DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // skill Q: notify => CommonSkillPacket
     DreamWorld::CLIENT_PACKET::CommonSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_EXECUTE_Q)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // skill e: position => FloatDataSkillPacket
     DreamWorld::CLIENT_PACKET::FloatDataSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_FLOAT3_EXECUTE_E), DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   }
 }
 
@@ -220,15 +220,15 @@ void ArcherObject::SendAttackPacket() {
   if (attackCoolTime->IsAbleExecute()) {
     // attack: SendPowerAttackExecute
     DreamWorld::CLIENT_PACKET::PlayerPowerAttackPacket sendPacket{DirectX::XMFLOAT3(0, 0, 1), 1};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // skillQ: look -> FloatDataSkillPacket
     DreamWorld::CLIENT_PACKET::FloatDataSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_FLOAT3_EXECUTE_Q), DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   } else if (skillCoolTime_Q->IsAbleExecute()) {
     // Skill E: position -> FloatDataSkillPacket
     DreamWorld::CLIENT_PACKET::FloatDataSkillPacket sendPacket{static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::SKILL_FLOAT3_EXECUTE_E), DirectX::XMFLOAT3(0, 0, 1)};
-    sessionPtr->DoSend(&sendPacket, sendPacket.size);
+    sessionPtr->DoSend(&sendPacket);
   }
 }
 }  // namespace Stress

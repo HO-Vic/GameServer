@@ -11,6 +11,7 @@
 #include <Utility/Job/JobQueue/JobQ_MT/DoubleJobQ_MT.h>
 #include <Utility/Job/JobQueue/JobQ_MT/JobQ_MT.h>
 #include "../DreamWorldDefine.h"
+#include "../Network/Session/Session.h"
 
 namespace sh::Utility {
 class ThWorkerJob;
@@ -45,12 +46,47 @@ class RoomBase
 
   void DiscardPlayer(std::shared_ptr<Session> player);
 
-  void Broadcast(PacketHeader*, std::shared_ptr<Session> ignore = nullptr);
+  template <class T>
+  void Broadcast(const T* packet, std::shared_ptr<Session> ignore = nullptr) {
+    std::shared_lock<std::shared_mutex> lg{m_userLock};
+    for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+      if (sessionPtr != ignore) {
+        sessionPtr->DoSend(packet);
+      }
+    }
+  }
 
-  // 비추천 함수
-  void Broadcast(PacketHeader*, std::vector<std::shared_ptr<Session>> ignorePlayers);
+  template <class T>
+  void Broadcast(const T* packet, std::vector<std::shared_ptr<Session>> ignorePlayers) {
+    std::shared_lock<std::shared_mutex> lg{m_userLock};
+    if (m_Sessions.empty()) {
+      return;
+    }
 
-  void Broadcast(PacketHeader*, const std::unordered_set<uint32_t>& ignoreUniqueNos);
+    for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+      if (!ignorePlayers.empty()) {
+        auto ignorePlayerIter = std::find_if(ignorePlayers.begin(), ignorePlayers.end(), [uniqueNo](const std::shared_ptr<Session>& ignorePlayer) {
+          return uniqueNo == ignorePlayer->GetUniqueNo();
+        });
+        if (ignorePlayerIter != ignorePlayers.end()) {
+          std::swap(*ignorePlayerIter, ignorePlayers.back());
+          ignorePlayers.pop_back();
+          continue;
+        }
+      }
+      sessionPtr->DoSend(packet);
+    }
+  }
+
+  template <class T>
+  void Broadcast(const T* packet, const std::unordered_set<uint32_t>& ignoreUniqueNos) {
+    std::shared_lock<std::shared_mutex> lg{m_userLock};
+    for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
+      if (!ignoreUniqueNos.contains(uniqueNo)) {
+        sessionPtr->DoSend(packet);
+      }
+    }
+  }
 
   virtual std::vector<std::shared_ptr<GameObject>> GetLiveObjects();
 

@@ -9,6 +9,7 @@
 #include <Session/TCP_ISession.h>
 #include <Session/SendContext/TCP_SendContext.h>
 #include <Session/RecvContext/TCP_RecvContext.h>
+#include <Buffer/SendBufferPool.h>
 
 namespace sh::IO_Engine {
 TCP_ISession::TCP_ISession()
@@ -22,20 +23,16 @@ TCP_ISession::~TCP_ISession() {
   closesocket(m_sock);
 }
 
-void TCP_ISession::DoSend(const void* data, const uint32_t len) {
-  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
-    return;
-  }
-
-  auto ioError = m_sendContext.DoSend(shared_from_this(), reinterpret_cast<const BYTE*>(data), len);  // 실패시 Thworker는 내부 정리
-  if (0 != ioError) {
-    RaiseIOError();
-  }
+void TCP_ISession::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
+  m_sendContext.DeferredSet(sock);
+  m_recvContext.DefferedSet(sock, std::move(recvHandler));
+  m_iocpHandle = iocpHandle;
+  m_sock = sock;
 }
 
 void TCP_ISession::StartRecv() {
   auto thWorker = ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::RECV);
-  auto ioError = m_recvContext.DoRecv(thWorker);  // 외부 정리
+  auto ioError = m_recvContext.StartRecv(thWorker);  // 외부 정리
   if (0 != ioError) {
     RaiseIOError(thWorker);
   }
@@ -56,7 +53,26 @@ void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, thWorker);
 }
 
+void TCP_ISession::InternalSend(const BYTE* data, const uint32_t len) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+  auto sendData = SendBufferAllocator::GetInstance().GetShared(len);
+  sendData->Write(data, len);
+  DoSend(std::move(sendData));
+}
+
 void TCP_ISession::Disconnect() {
+}
+
+void TCP_ISession::DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+  auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendBuffer));  // 실패시 Thworker는 내부 정리
+  if (0 != ioError) {
+    RaiseIOError();
+  }
 }
 
 bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
@@ -84,7 +100,7 @@ bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, 
       if (0 != ioError) {
         RaiseIOError(workerJob);
       }
-      IO_MetricSlot::GetInstance().RecordRecv(ioByte);
+      IO_Metric::GetInstance().RecordRecv(ioByte);
       returnVal = true;
     } break;
     case Utility::WORKER_TYPE::SEND: {
@@ -92,13 +108,13 @@ bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, 
       if (0 != ioError) {
         RaiseIOError(workerJob);
       }
-      IO_MetricSlot::GetInstance().RecordSend(ioByte);
+      IO_Metric::GetInstance().RecordSend(ioByte);
       returnVal = true;
     } break;
     case Utility::WORKER_TYPE::DISCONN: {
       if (m_isDisconnnected.compare_exchange_strong(expectedDisconn, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
         OnDisconnect();
-        IO_MetricSlot::GetInstance().RecordDisconn();
+        IO_Metric::GetInstance().RecordDisconn();
       }
       // 어쨌든 오버랩 객체 회수 + 초기화 진행
       ThWorkerJobPool::GetInstance().Release(workerJob);

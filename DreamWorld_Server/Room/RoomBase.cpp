@@ -47,45 +47,6 @@ void RoomBase::DiscardPlayer(std::shared_ptr<Session> player) {
   m_Sessions.erase(player->GetUniqueNo());
 }
 
-void RoomBase::Broadcast(PacketHeader* sendPacket, std::shared_ptr<Session> ignore /*= nullptr*/) {
-  std::shared_lock<std::shared_mutex> lg{m_userLock};
-  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
-    if (sessionPtr != ignore) {
-      sessionPtr->DoSend(sendPacket, sendPacket->size);
-    }
-  }
-}
-
-void RoomBase::Broadcast(PacketHeader* sendPacket, std::vector<std::shared_ptr<Session>> ignorePlayers) {
-  std::shared_lock<std::shared_mutex> lg{m_userLock};
-  if (m_Sessions.empty()) {
-    return;
-  }
-
-  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
-    if (!ignorePlayers.empty()) {
-      auto ignorePlayerIter = std::find_if(ignorePlayers.begin(), ignorePlayers.end(), [uniqueNo](const std::shared_ptr<Session>& ignorePlayer) {
-        return uniqueNo == ignorePlayer->GetUniqueNo();
-      });
-      if (ignorePlayerIter != ignorePlayers.end()) {
-        std::swap(*ignorePlayerIter, ignorePlayers.back());
-        ignorePlayers.pop_back();
-        continue;
-      }
-    }
-    sessionPtr->DoSend(sendPacket, sendPacket->size);
-  }
-}
-
-void RoomBase::Broadcast(PacketHeader* sendPacket, const std::unordered_set<uint32_t>& ignoreUniqueNos) {
-  std::shared_lock<std::shared_mutex> lg{m_userLock};
-  for (auto& [uniqueNo, sessionPtr] : m_Sessions) {
-    if (!ignoreUniqueNos.contains(uniqueNo)) {
-      sessionPtr->DoSend(sendPacket, sendPacket->size);
-    }
-  }
-}
-
 std::vector<std::shared_ptr<GameObject>> RoomBase::GetLiveObjects() {
   return m_gameObjects;
 }

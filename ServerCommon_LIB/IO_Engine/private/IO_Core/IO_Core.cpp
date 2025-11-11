@@ -13,7 +13,7 @@ IO_Core::IO_Core()
     assert(false && "WSAData init fail");
 #endif  // _DEBUG
   }
-  IO_MetricSlot::GetInstance().Init();
+  IO_Metric::GetInstance().Init();
 }
 
 IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
@@ -24,17 +24,21 @@ IO_Core::IO_Core(const uint8_t ioThreadNo, const bool metricUse /*= false*/)
     assert(false && "WSAData init fail");
 #endif  // _DEBUG
   }
-  IO_MetricSlot::GetInstance().Init(metricUse);
+  IO_Metric::GetInstance().Init(metricUse);
 }
 
 void IO_Core::Init() {
   m_threadPool.Init();
+  ThWorkerJobPool::GetInstance().Init(1500);
+  SendBufferPool::GetInstance().Init(1500);
+  SendBufferAllocator::GetInstance().Init(1500);
 }
 
 void IO_Core::Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolSize /*= 1500*/, const uint32_t sendBufferPoolSize /*= 1500*/) {
   m_threadPool.Init(ioThreadNo);
   ThWorkerJobPool::GetInstance().Init(thWorkerPoolSize);
-  SendBufferPool::GetInstance().InitSize(sendBufferPoolSize);
+  SendBufferPool::GetInstance().Init(sendBufferPoolSize);
+  SendBufferAllocator::GetInstance().Init(sendBufferPoolSize);
 }
 
 void IO_Core::Start() {

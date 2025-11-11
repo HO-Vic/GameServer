@@ -1,19 +1,26 @@
 #include "pch.h"
+#include <cassert>
+#include <functional>
 #include "Thread/ThreadPool.h"
-#include <assert.h>
 #include "Thread/ThWorkerJob.h"
 #include "BuildMsg/BuildMsg.h"
 
 namespace sh::Utility {
 ThreadPool::ThreadPool()
-    : m_threadManager(1), m_threadNo(1), m_handle(nullptr) {
+    : m_threadNo(1), m_handle(nullptr) {
 }
 
 ThreadPool::ThreadPool(const uint8_t threadNo)
-    : m_threadManager(threadNo), m_threadNo(threadNo), m_handle(nullptr) {
+    : m_threadNo(threadNo), m_handle(nullptr) {
 }
 
-void ThreadPool::RunningThread(std::stop_token stopToken) {
+ThreadPool::~ThreadPool() {
+  for (auto& th : m_threads) {
+    th.join();
+  }
+}
+
+void ThreadPool::RunningThread() const {
   static constexpr uint16_t MAX_COMPLETION_CNT = 32;
   OVERLAPPED_ENTRY overlappedEntry[MAX_COMPLETION_CNT];
 
@@ -25,18 +32,15 @@ void ThreadPool::RunningThread(std::stop_token stopToken) {
     for (uint8_t i = 0; i < getOverlappedCnt; ++i) {
       auto& workerJob = *(reinterpret_cast<ThWorkerJob*>(overlappedEntry[i].lpOverlapped));
 
-      if (WORKER_TYPE::TERMINATE == workerJob.GetType()) {
+      /*if (WORKER_TYPE::TERMINATE == workerJob.GetType()) {
         m_threadManager.ForceStop();
         return;
-      }
+      }*/
 
       // Internal은 에러 코드
       // 64비트 자료형이지만, 실제로는 32비트만 사용
       // NTStatus에 대한 오류 코드임
-      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred, overlappedEntry[i].Internal);
-    }
-    if (stopToken.stop_requested()) {
-      return;
+      workerJob(overlappedEntry[i].dwNumberOfBytesTransferred, static_cast<DWORD>(overlappedEntry[i].Internal));
     }
   }
 }
@@ -58,9 +62,7 @@ void ThreadPool::Init() {
 
 void ThreadPool::Start() {
   for (auto i = 0; i != m_threadNo; ++i) {
-    m_threadManager.InsertThread([this](std::stop_token stopToken) {
-      this->RunningThread(stopToken);
-    });
+    m_threads.emplace_back(std::bind(&ThreadPool::RunningThread, this));
   }
 }
 }  // namespace sh::Utility

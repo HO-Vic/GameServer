@@ -54,8 +54,8 @@ bool SyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFail
 
   static constexpr size_t infoSize = sizeof(SOCKADDR_IN);
   DWORD sentByte = 0;
-  bool result = connect(connSocket, reinterpret_cast<sockaddr*>(&m_connectAddr), static_cast<int>(infoSize));
-  if (result) {
+  int result = connect(connSocket, reinterpret_cast<sockaddr*>(&m_connectAddr), static_cast<int>(infoSize));
+  if (0 == result) {
     successHandle(connSocket);
     connSocket = NULL;
     return true;

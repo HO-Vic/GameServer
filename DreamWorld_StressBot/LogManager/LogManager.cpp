@@ -12,12 +12,11 @@ void LogManager::StartLogger(const std::string& logName, const std::string& outp
 
   auto now = std::chrono::system_clock::now();
   auto time_point = std::chrono::system_clock::to_time_t(now);
-  // std::tm parts{};
-  // localtime_s(&parts, &time_point);
-  struct std::tm* parts = std::localtime(&time_point);
+  struct std::tm parts{};
+  localtime_s(&parts, &time_point);
 
   std::stringstream currentTimeStrSteam;
-  currentTimeStrSteam << std::put_time(parts, "logs/%y-%m-%d_%H-%M-%S.txt");
+  currentTimeStrSteam << std::put_time(&parts, "logs/%y-%m-%d_%H-%M-%S.txt");
   std::string timeStr = currentTimeStrSteam.str();
 
   std::string outputFileName(outputDir + fileName + currentTimeStrSteam.str());

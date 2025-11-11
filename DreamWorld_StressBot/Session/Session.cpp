@@ -62,7 +62,7 @@ void Session::OnDelayResponse() {
   auto nowTime = chrono_clock::now();
   // 현재 시간과 보낸 시간의 차이를 계산
   auto durationTime = _chrono::duration_cast<std::chrono::milliseconds>(nowTime - m_lastCheckTime);
-  long long currentDelayTime = durationTime.count();  // currentDelay
+  uint64_t currentDelayTime = durationTime.count();  // currentDelay
 
   if (NetworkModule::GetInstance().g_maxDelayTime < currentDelayTime) {
     NetworkModule::GetInstance().g_maxDelayTime = currentDelayTime;
@@ -81,7 +81,7 @@ void Session::DelayCheck() {
     m_isSendAbleDelayCheck = false;
     DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY));
     m_lastCheckTime = nowTime;
-    DoSend(&sendPacket, sendPacket.size);
+    DoSend(&sendPacket);
   }
 }
 }  // namespace Stress

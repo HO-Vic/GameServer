@@ -15,7 +15,7 @@ void LoginState::EnterState() {
   DreamWorld::CLIENT_PACKET::LoginPacket sendPacket{};
   sprintf_s(sendPacket.id, "tt_%ld", sessionPtr->GetUniqueNo());
   sprintf_s(sendPacket.pw, "tt_%ld", sessionPtr->GetUniqueNo());
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
 }
 
 void LoginState::UpdateState() {
@@ -34,7 +34,7 @@ void MatchState::EnterState() {
   std::uniform_int_distribution randRole(0, 3);*/
   auto r = static_cast<ROLE>(std::pow(2, sessionPtr->GetUniqueNo() % 4));
   DreamWorld::CLIENT_PACKET::MatchPacket sendPacket{r};
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
 }
 
 void MatchState::UpdateState() {
@@ -81,7 +81,7 @@ void InGameState::ExitState() {
     return;
   }
   DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<unsigned char>(DreamWorld::CLIENT_PACKET::TYPE::GAME_END_OK));
-  sessionPtr->DoSend(&sendPacket, sendPacket.size);
+  sessionPtr->DoSend(&sendPacket);
   sessionPtr->SetRole(ROLE::NONE_SELECT);
   sessionPtr->SetPosition(-12341251.0f, -2351235.0f);
 }

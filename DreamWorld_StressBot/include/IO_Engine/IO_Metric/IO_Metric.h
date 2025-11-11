@@ -4,7 +4,7 @@
 #include <Utility/SingletonBase/Singleton.h>
 
 namespace sh::IO_Engine {
-struct IO_Metric {
+struct IO_MetricSlot {
   std::atomic_uint64_t sendCompletion = 0;
   std::atomic_uint64_t recvCompletion = 0;
 
@@ -17,9 +17,23 @@ struct IO_Metric {
   std::atomic_uint64_t thWorkerJobUsing = 0;
   std::atomic_uint64_t thWorkerJobAdd = 0;
 
-  std::atomic_uint64_t sendBufferTotal = 0;
-  std::atomic_uint64_t sendBufferUsing = 0;
-  std::atomic_uint64_t sendBufferAdd = 0;
+  std::atomic_uint64_t smallSendBufferTotal = 0;
+  std::atomic_uint64_t smallSendBufferUsing = 0;
+  std::atomic_uint64_t smallSendBufferAdd = 0;
+
+  std::atomic_uint64_t mediumSendBufferTotal = 0;
+  std::atomic_uint64_t mediumSendBufferUsing = 0;
+  std::atomic_uint64_t mediumSendBufferAdd = 0;
+
+  std::atomic_uint64_t largeSendBufferTotal = 0;
+  std::atomic_uint64_t largeSendBufferUsing = 0;
+  std::atomic_uint64_t largeSendBufferAdd = 0;
+
+  std::atomic_uint64_t xLargeSendBufferTotal = 0;
+  std::atomic_uint64_t xLargeSendBufferUsing = 0;
+  std::atomic_uint64_t xLargeSendBufferAdd = 0;
+
+  std::atomic_uint64_t dynamicSendBufferUsing = 0;
 
   std::atomic_uint32_t totalReq = 0;
 
@@ -33,8 +47,8 @@ struct IO_Metric {
   }
 };
 
-class IO_MetricSlot final
-    : public sh::Utility::SingletonBase<IO_MetricSlot> {
+class IO_Metric final
+    : public sh::Utility::SingletonBase<IO_Metric> {
  public:
   void Init(bool isUse = false);
 
@@ -42,16 +56,18 @@ class IO_MetricSlot final
     return m_isUse;
   }
 
-  IO_Metric& SwapAndLoad();
+  IO_MetricSlot& SwapAndLoad();
 
   void RecordSend(const DWORD ioByte);
 
   void RecordRecv(const DWORD ioByte);
 
+  void RecordDynamicSendBuffer();
+
   void RecordDisconn();
 
  private:
-  IO_Metric m_metics[2];
+  IO_MetricSlot m_metics[2];
   std::atomic_uint8_t m_index = 0;
   bool m_isUse = false;
 };

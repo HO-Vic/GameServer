@@ -99,6 +99,9 @@
     <ClCompile Include="private\Session\UDP_IAgent.cpp">
       <Filter>Session</Filter>
     </ClCompile>
+    <ClCompile Include="private\Buffer\SendBufferPool.cpp">
+      <Filter>Buffer\SendBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Buffer\SendBuffer.h">

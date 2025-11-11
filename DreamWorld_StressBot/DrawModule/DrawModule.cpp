@@ -204,6 +204,9 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
       } break;
       case Stress::Session::SESSION_STATE::INGAME: {
         auto position = session->GetPosition();
+        if (Stress::Session::SESSION_STATE::INGAME != session->GetSessionState()) {
+          continue;
+        }
         if (abs(position.first) < 400 && abs(position.second) < 400) {
           bossCnt++;
           BossRender(position.first, position.second);
@@ -219,7 +222,7 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   }
   glEnd();
   glColor3f(1, 1, 0);
-  static constexpr float GLPOSX = -0.06;
+  static constexpr float GLPOSX = -0.06f;
   glRasterPos2f(GLPOSX, 0.05f);
   glPrint("STAGE USER [%lu]", stageCnt);  // Print GL Text To The Screen
 

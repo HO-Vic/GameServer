@@ -10,15 +10,14 @@ constexpr short NAME_SIZE = 20;
 using PacketTime = std::chrono::high_resolution_clock::time_point;
 
 #pragma pack(push, 1)
-struct PacketHeader
-    : public sh::IO_Engine::PacketHeader {
+struct PacketHeader {
   unsigned char type;
   PacketHeader(unsigned char type)
-      : sh::IO_Engine::PacketHeader(sizeof(DreamWorld::PacketHeader)), type(type) {
+      : type(type) {
   }
 
   PacketHeader(unsigned char type, const uint16_t size)
-      : sh::IO_Engine::PacketHeader(size), type(type) {
+      : type(type) {
   }
 };
 
@@ -297,7 +296,7 @@ using NotifyPacket = PacketHeader;
 
 struct LoginPacket : public PacketHeader {
   wchar_t nickName[NAME_SIZE];
-  LoginPacket(const char& type = static_cast<char>(TYPE::LOGIN_SUCCESS))
+  LoginPacket(const char type = static_cast<char>(TYPE::LOGIN_SUCCESS))
       : PacketHeader(type, sizeof(LoginPacket)) {
   }
 };
@@ -312,10 +311,10 @@ struct InitMonsterData {
 struct IntoGamePacket : public PacketHeader {
   ROLE role;
   InitMonsterData monsterData[15];
-  IntoGamePacket(const char& type = static_cast<char>(TYPE::INTO_GAME))
+  IntoGamePacket(const char type = static_cast<char>(TYPE::INTO_GAME))
       : PacketHeader(type, sizeof(IntoGamePacket)) {
   }
-  IntoGamePacket(const ROLE& role, const char& type = static_cast<char>(TYPE::INTO_GAME))
+  IntoGamePacket(const ROLE role, const char type = static_cast<char>(TYPE::INTO_GAME))
       : PacketHeader(type, sizeof(IntoGamePacket)), role(role) {
   }
 };
@@ -324,10 +323,10 @@ struct MovePacket : public PacketHeader {
   PacketTime time;
   ROLE role;
   DIRECTION direction;
-  MovePacket(const char& type)
+  MovePacket(const char type)
       : PacketHeader(type, sizeof(MovePacket)) {
   }
-  MovePacket(const ROLE& role, const DIRECTION& direction, const PacketTime& paramTime, const char& type = static_cast<char>(TYPE::MOVE_KEY_DOWN))
+  MovePacket(const ROLE role, const DIRECTION direction, const PacketTime paramTime, const char type = static_cast<char>(TYPE::MOVE_KEY_DOWN))
       : PacketHeader(type, sizeof(MovePacket)), role(role), direction(direction), time(paramTime) {
   }
 };
@@ -336,10 +335,10 @@ struct RotatePacket : public PacketHeader {
   ROLE role;
   ROTATE_AXIS axis;
   float angle;
-  RotatePacket(const char& type = static_cast<char>(TYPE::ROTATE))
+  RotatePacket(const char type = static_cast<char>(TYPE::ROTATE))
       : PacketHeader(type, sizeof(RotatePacket)) {
   }
-  RotatePacket(const ROLE& role, const ROTATE_AXIS& axis, const float& angle, const char& type = static_cast<char>(TYPE::ROTATE))
+  RotatePacket(const ROLE role, const ROTATE_AXIS axis, const float angle, const char type = static_cast<char>(TYPE::ROTATE))
       : PacketHeader(type, sizeof(RotatePacket)), role(role), angle(angle), axis(axis) {
   }
 };
@@ -347,10 +346,10 @@ struct RotatePacket : public PacketHeader {
 struct StopPacket : public PacketHeader {
   ROLE role;
   PacketTime time;
-  StopPacket(const char& type = static_cast<char>(TYPE::STOP))
+  StopPacket(const char type = static_cast<char>(TYPE::STOP))
       : PacketHeader(type, sizeof(StopPacket)) {
   }
-  StopPacket(const ROLE& role, const PacketTime& time, const char& type = static_cast<char>(TYPE::STOP))
+  StopPacket(const ROLE role, const PacketTime time, const char type = static_cast<char>(TYPE::STOP))
       : PacketHeader(type, sizeof(StopPacket)), role(role), time(time) {
   }
 };
@@ -359,14 +358,14 @@ struct MouseInputPacket : public PacketHeader {
   ROLE role;
   bool leftClickedButton;
   bool rightClickedButton;
-  MouseInputPacket(const ROLE& role, const bool& left, const bool& right, const char& type = static_cast<char>(TYPE::MOUSE_INPUT))
+  MouseInputPacket(const ROLE role, const bool left, const bool right, const char type = static_cast<char>(TYPE::MOUSE_INPUT))
       : PacketHeader(type, sizeof(MouseInputPacket)), role(role), leftClickedButton(left), rightClickedButton(right) {
   }
 };
 
 struct SmallMonsterBase : public PacketHeader {
   int id;
-  SmallMonsterBase(const int& id, const char& type, const unsigned short& size = sizeof(SmallMonsterBase))
+  SmallMonsterBase(const int id, const char type, const unsigned short size = sizeof(SmallMonsterBase))
       : PacketHeader(type, size), id(id) {
   }
 };
@@ -375,19 +374,19 @@ using SmallMonsterPacket = SmallMonsterBase;
 
 struct SmallMonsterDamagedPacket : public SmallMonsterPacket {
   float restHp;
-  SmallMonsterDamagedPacket(const int& id, const float& hp, const char& type = static_cast<char>(TYPE::SMALL_MONSTER_DAMAGED))
+  SmallMonsterDamagedPacket(const int id, const float hp, const char type = static_cast<char>(TYPE::SMALL_MONSTER_DAMAGED))
       : SmallMonsterPacket(id, type, sizeof(SmallMonsterDamagedPacket)), restHp(hp) {
   }
 };
 
 struct SmallMonsterAttackPacket : public SmallMonsterPacket {
-  SmallMonsterAttackPacket(const int& id, const char& type = static_cast<char>(TYPE::SMALL_MONSTER_ATTACK))
+  SmallMonsterAttackPacket(const int id, const char type = static_cast<char>(TYPE::SMALL_MONSTER_ATTACK))
       : SmallMonsterPacket(id, type, sizeof(SmallMonsterAttackPacket)) {
   }
 };
 struct SmallMonsterDestinationPacket : public SmallMonsterPacket {
   DirectX::XMFLOAT3 destinationPosition;
-  SmallMonsterDestinationPacket(const int& id, const DirectX::XMFLOAT3& destinationPosition, const char& type = static_cast<char>(TYPE::SMALL_MONSTER_SET_DESTINATION))
+  SmallMonsterDestinationPacket(const int id, const DirectX::XMFLOAT3& destinationPosition, const char type = static_cast<char>(TYPE::SMALL_MONSTER_SET_DESTINATION))
       : SmallMonsterPacket(id, type, sizeof(SmallMonsterDestinationPacket)), destinationPosition(destinationPosition) {
   }
 };
@@ -396,7 +395,7 @@ struct PlayerDamagedPacket : public PacketHeader {
   float restHp;
   float restShield;
   ROLE role;
-  PlayerDamagedPacket(const ROLE& role, const float& restHp, const float& restShield)
+  PlayerDamagedPacket(const ROLE role, const float restHp, const float restShield)
       : PacketHeader(static_cast<char>(TYPE::PLAYER_DAMAGED), sizeof(PlayerDamagedPacket)),
         restHp(restHp),
         restShield(restShield),
@@ -406,7 +405,7 @@ struct PlayerDamagedPacket : public PacketHeader {
 
 struct PlayerDiePacket : public PacketHeader {
   ROLE role;
-  PlayerDiePacket(const ROLE& role)
+  PlayerDiePacket(const ROLE role)
       : PacketHeader(static_cast<char>(TYPE::PLAYER_DIE), sizeof(PlayerDiePacket)),
         role(role) {
   }
@@ -440,7 +439,7 @@ using BossState = LiveObjectState;
 
 struct GameState_Base : public PacketHeader {
   PlayerState userState[4];
-  GameState_Base(const char& type, const short& size)
+  GameState_Base(const char type, const short size)
       : PacketHeader(type, size) {
   }
 };
@@ -462,14 +461,14 @@ struct GameState_STAGE : public GameState_Base {
 struct NotifyPlayerAnimationPacket : public PacketHeader {  // 전체 플레이어들에게 알려서 애니메이션 재생
   ROLE role;
   std::chrono::high_resolution_clock::time_point time;
-  NotifyPlayerAnimationPacket(const char& type, const ROLE& role, const std::chrono::high_resolution_clock::time_point& time)
+  NotifyPlayerAnimationPacket(const char type, const ROLE role, const std::chrono::high_resolution_clock::time_point time)
       : PacketHeader(type, sizeof(NotifyPlayerAnimationPacket)), role(role), time(time) {
   }
 };
 
 struct ShootingObject : public PacketHeader {
   DirectX::XMFLOAT3 direction;
-  ShootingObject(const char& type, const DirectX::XMFLOAT3& direction)
+  ShootingObject(const char type, const DirectX::XMFLOAT3& direction)
       : PacketHeader(type, sizeof(ShootingObject)), direction(direction) {
   }
 };
@@ -515,7 +514,7 @@ struct BossOnSameNodePacket : public PacketHeader {
 
 struct BossRotatePacket : public PacketHeader {
   float angle;
-  BossRotatePacket(const float& angle)
+  BossRotatePacket(const float angle)
       : PacketHeader(static_cast<char>(TYPE::BOSS_ROTATE), sizeof(BossRotatePacket)), angle(angle) {
   }
 };
@@ -526,17 +525,17 @@ struct BossAttackMeteorPacket : public PacketHeader {
 
 struct BossAttackPacket : public PacketHeader {
   BOSS_ATTACK attackType;
-  BossAttackPacket(const BOSS_ATTACK& attackType)
+  BossAttackPacket(const BOSS_ATTACK attackType)
       : PacketHeader(static_cast<char>(TYPE::BOSS_ATTACK), sizeof(BossAttackPacket)), attackType(attackType) {
   }
-  BossAttackPacket(const char& type, const short& size, const BOSS_ATTACK& attackType)
+  BossAttackPacket(const char type, const short size, const BOSS_ATTACK attackType)
       : PacketHeader(type, size), attackType(attackType) {
   }
 };
 
 struct BossDirectionAttackPacket : public BossAttackPacket {
   DirectX::XMFLOAT3 attackVector;
-  BossDirectionAttackPacket(const BOSS_ATTACK& attackType, const DirectX::XMFLOAT3& attackVector)
+  BossDirectionAttackPacket(const BOSS_ATTACK attackType, const DirectX::XMFLOAT3& attackVector)
       : BossAttackPacket(static_cast<char>(TYPE::BOSS_DIRECTION_ATTACK), sizeof(BossDirectionAttackPacket), attackType), attackVector(attackVector) {
   }
 };

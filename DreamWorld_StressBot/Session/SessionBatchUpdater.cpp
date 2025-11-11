@@ -6,13 +6,13 @@
 #include <basetsd.h>
 #include <cstdint>
 #include <memory>
-#include <Utility/Timer/TimerJob.h>
 #include <Utility/Pool/ObjectPool.h>
 #include <IO_Engine/IO_Core/ThWorkerJobPool.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include "SessionBatchUpdaters.h"
 #include "../GlobalObjectPool/GlobalObjectPool.h"
 #include "../Session/Session.h"
+#include "../Timer/TimerJob.h"
 
 namespace Stress {
 void SessionBatchUpdater::InsertSession(SessionPtr session) {
@@ -38,10 +38,10 @@ void SessionBatchUpdater::IntenalUpdate() {
 }
 
 void SessionBatchUpdater::ReserveNextUpdate() {
-  static constexpr sh::Utility::MS UPDATE_TICK = sh::Utility::MS(20);  // 초당 5번
+  static constexpr Stress::MS UPDATE_TICK = Stress::MS(20);  // 초당 5번
   auto selfPtr = shared_from_this();
   SessionBatchUpdaters::GetInstance().GetTimer().InsertTimerEvent(std::move(
-      Stress::GlobalObjectPool<TimerJob>::GetInstance().MakeUnique(sh::Utility::_chrono_clock::now() + UPDATE_TICK, [selfPtr]() {
+      Stress::GlobalObjectPool<TimerJob>::GetInstance().MakeUnique(Stress::_chrono_clock::now() + UPDATE_TICK, [selfPtr]() {
         SessionBatchUpdaters::GetInstance().InsertUpdaterTimerJob(selfPtr);
       })));
 }
