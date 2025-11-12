@@ -5,8 +5,8 @@
 #include "../MsgDispatcher/MsgDispatcher.h"
 
 namespace sh::IO_Engine {
-class TCP_ISession;
-using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
+class TCP_SessionBase;
+using TCP_SessionBasePtr = std::shared_ptr<TCP_SessionBase>;
 }  // namespace sh::IO_Engine
 
 namespace DreamWorld {
@@ -21,13 +21,13 @@ class Server {
  private:
   void AcceptHandle(SOCKET sock);
 
-  void RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
+  void RecvHandle(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
 
-  static void OnLogin(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message);
+  static void OnLogin(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* message);
 
-  static void OnMatchReq(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message);
+  static void OnMatchReq(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* message);
 
-  static void OnStressDelay(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* message);
+  static void OnStressDelay(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* message);
 
  private:
   sh::IO_Engine::IO_Core m_ioCore;

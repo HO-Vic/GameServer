@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <Session/UDP_IAgent.h>
+#include <Session/UDP_AgentBase.h>
 #include <memory>
 #include <Windows.h>
 #include <ioapiset.h>
@@ -8,7 +8,7 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-UDP_IAgent::UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port)
+UDP_AgentBase::UDP_AgentBase(SOCKET sock, uint32_t receiverNo, uint16_t port)
     : m_socket(sock), m_activeReceiverCnt(receiverNo), m_port(port) {
 #ifdef _DEBUG
   sockaddr_in addrInfo{};
@@ -25,19 +25,19 @@ UDP_IAgent::UDP_IAgent(SOCKET sock, uint32_t receiverNo, uint16_t port)
 #endif
 }
 
-UDP_IAgent::~UDP_IAgent() {
+UDP_AgentBase::~UDP_AgentBase() {
   //  ReleaseSocket(m_socket); //pure virtual func
   // ~derived() -> ~parent() 에서 derived의 vtable ptr -> parent vtable ptr로 변경
   // pure virtual만 있고 구현체?가 없으니 호출을 할 수가 없음
 }
 
-void UDP_IAgent::StopReq() {
+void UDP_AgentBase::StopReq() {
   // 해당 socket에 대해서 모든 이벤트 종료
   m_state = STATE::INACTIVE;
   CancelIoEx(reinterpret_cast<HANDLE>(m_socket), nullptr);
 }
 
-bool UDP_IAgent::StartRecv(UDP_RecvHandler recvHandle) {
+bool UDP_AgentBase::StartRecv(UDP_RecvHandler recvHandle) {
   auto thisPtr = shared_from_this();
   auto cnt = m_activeReceiverCnt.load();
   for (unsigned int i = 0; i < cnt; ++i) {
@@ -57,7 +57,7 @@ bool UDP_IAgent::StartRecv(UDP_RecvHandler recvHandle) {
   return true;
 }
 
-void UDP_IAgent::DestroyFromReceiver() {
+void UDP_AgentBase::DestroyFromReceiver() {
   m_activeReceiverCnt--;
   if (0 == m_activeReceiverCnt) {  // 더 이상 파괴할 recv 객체가 없다면 destroy
     OnDestroy();

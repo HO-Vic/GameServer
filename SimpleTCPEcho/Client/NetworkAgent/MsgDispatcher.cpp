@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "MsgDispatcher.h"
 #include "../LogMgr/LogManager.h"
-#include <IO_Engine/Session/TCP_ISession.h>
+#include <IO_Engine/Session/TCP_SessionBase.h>
 
 namespace SimpleTCP {
 void MsgDispatcher::AddMsgHandle(PACKET_TYPE type, MsgHandle msgHandle) {

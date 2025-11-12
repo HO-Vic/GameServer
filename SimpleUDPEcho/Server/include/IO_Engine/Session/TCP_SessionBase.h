@@ -7,7 +7,7 @@
 #include "RecvContext/TCP_RecvContext.h"
 
 namespace sh::IO_Engine {
-class ISendBuffer;
+class SendBufferBase;
 
 enum TCP_Session_STATE : BYTE {
   NON_ERR = 0x0,
@@ -16,14 +16,14 @@ enum TCP_Session_STATE : BYTE {
   DISCONNECT_STATE = 0x3,
 };
 
-class TCP_ISession
+class TCP_SessionBase
     : public Utility::IWorkerItem {
  public:
-  TCP_ISession();
+  TCP_SessionBase();
 
-  TCP_ISession(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
+  TCP_SessionBase(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
 
-  virtual ~TCP_ISession();
+  virtual ~TCP_SessionBase();
 
   void DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
 
@@ -41,7 +41,7 @@ class TCP_ISession
 
   // 외부에서 ptr에 데이터 정보 다 넣는 경우
   // 외부에서 msg.Serialize(&sendBuffer);해야하는 경우에, 미리 할당하고 sendBuffer로 내릴 수 있게
-  void DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer);
+  void DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer);
 
   template <class T>
   void DoSend(const T* data) {  // dataPtr을 라이브러리 내부에서 복사하여 Send하는 경우 사용

@@ -8,7 +8,7 @@
 #include <memory>
 #include <WinSock2.h>
 #include <type_traits>
-#include <IO_Engine/Session/TCP_ISession.h>
+#include <IO_Engine/Session/TCP_SessionBase.h>
 #include "../Session/Session.h"
 #include "../LogMgr/LogManager.h"
 #include "../Packet/Packet.h"

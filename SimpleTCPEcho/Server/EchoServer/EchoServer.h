@@ -7,7 +7,7 @@
 #include "MsgDispatcher.h"
 
 namespace SimpleTCP {
-class TCP_ISession;
+class TCP_SessionBase;
 class Server {
  public:
   Server();
@@ -18,16 +18,16 @@ class Server {
 
   void Init();
 
-  static void OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader);
+  static void OnSimpleMsg(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* packetHeader);
 
-  static void OnParsedMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader);
+  static void OnParsedMsg(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* packetHeader);
 
  private:
   void InitMsg();
 
   void AcceptHandle(SOCKET sock);
 
-  void RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
+  void RecvHandle(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, size_t ioByte, BYTE* bufferPosition);
 
   sh::IO_Engine::IO_Core m_ioCore;
   sh::IO_Engine::Listener m_listener;

@@ -6,13 +6,13 @@ class ThWorkerJob;
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class UDP_IAgent;
+class UDP_AgentBase;
 class UDP_RecvContext
     : public Utility::IWorkerItem {
  public:
   UDP_RecvContext() = default;
 
-  UDP_RecvContext(UDP_IAgentPtr& agentPtr, UDP_RecvHandler UDP_RecvHandler)
+  UDP_RecvContext(UDP_AgentBasePtr& agentPtr, UDP_RecvHandler UDP_RecvHandler)
       : m_agentPtr(agentPtr), m_buffer(""), m_recvHandler(std::move(UDP_RecvHandler)) {
     m_wsaBuf.buf = reinterpret_cast<char*>(m_buffer);
     m_wsaBuf.len = MAX_RECV_BUF_SIZE;
@@ -20,12 +20,12 @@ class UDP_RecvContext
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode);
 
-  void RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>& agentPtr);
+  void RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_AgentBase>& agentPtr);
 
-  int32_t DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_IAgent>& agentPtr);
+  int32_t DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_AgentBase>& agentPtr);
 
  private:
-  std::weak_ptr<UDP_IAgent> m_agentPtr;
+  std::weak_ptr<UDP_AgentBase> m_agentPtr;
   UDP_RecvHandler m_recvHandler = nullptr;
   WSABUF m_wsaBuf{};
   BYTE m_buffer[MAX_RECV_BUF_SIZE] = {0};

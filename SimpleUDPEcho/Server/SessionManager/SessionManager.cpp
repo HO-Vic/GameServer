@@ -6,7 +6,7 @@ namespace sh::UDP_Echo {
 void SessionManager::Init() {
 }
 
-IO_Engine::UDP_ISessionPtr SessionManager::InsertSession(uint64_t hashKey, const sockaddr_in& toAddr) {
+IO_Engine::UDP_SessionBasePtr SessionManager::InsertSession(uint64_t hashKey, const sockaddr_in& toAddr) {
   std::lock_guard<std::mutex> lg{m_lock};
   if (m_sessions.count(hashKey)) {
     return nullptr;
@@ -22,7 +22,7 @@ void SessionManager::EraseSession(uint64_t uniqueNo) {
   m_sessions.erase(uniqueNo);
 }
 
-IO_Engine::UDP_ISessionPtr SessionManager::GetSession(uint64_t hashKey) {
+IO_Engine::UDP_SessionBasePtr SessionManager::GetSession(uint64_t hashKey) {
   std::lock_guard<std::mutex> lg{m_lock};
   auto fIter = m_sessions.find(hashKey);
   if (fIter == m_sessions.end()) {

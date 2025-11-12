@@ -4,7 +4,7 @@
 
 namespace SimpleTCP {
 Session::Session()
-    : TCP_ISession() {
+    : TCP_SessionBase() {
 }
 Session::~Session() {
 }

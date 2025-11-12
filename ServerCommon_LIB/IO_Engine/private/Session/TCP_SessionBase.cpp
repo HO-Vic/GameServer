@@ -6,31 +6,31 @@
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
-#include <Session/TCP_ISession.h>
+#include <Session/TCP_SessionBase.h>
 #include <Session/SendContext/TCP_SendContext.h>
 #include <Session/RecvContext/TCP_RecvContext.h>
 #include <Buffer/SendBufferPool.h>
 
 namespace sh::IO_Engine {
-TCP_ISession::TCP_ISession()
+TCP_SessionBase::TCP_SessionBase()
     : m_isDisconnnected(false), m_iocpHandle(NULL), m_sock(NULL) {
 }
-TCP_ISession::TCP_ISession(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle)
+TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle)
     : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock) {
 }
 
-TCP_ISession::~TCP_ISession() {
+TCP_SessionBase::~TCP_SessionBase() {
   closesocket(m_sock);
 }
 
-void TCP_ISession::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
+void TCP_SessionBase::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
   m_sendContext.DeferredSet(sock);
   m_recvContext.DefferedSet(sock, std::move(recvHandler));
   m_iocpHandle = iocpHandle;
   m_sock = sock;
 }
 
-void TCP_ISession::StartRecv() {
+void TCP_SessionBase::StartRecv() {
   auto thWorker = ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::RECV);
   auto ioError = m_recvContext.StartRecv(thWorker);  // 외부 정리
   if (0 != ioError) {
@@ -38,22 +38,22 @@ void TCP_ISession::StartRecv() {
   }
 }
 
-bool TCP_ISession::IsDisconnected() const {
+bool TCP_SessionBase::IsDisconnected() const {
   return m_isDisconnnected;
 }
 
-void TCP_ISession::RaiseIOError() {
+void TCP_SessionBase::RaiseIOError() {
   m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, ThWorkerJobPool::GetInstance().GetObjectPtr(shared_from_this(), sh::Utility::WORKER_TYPE::DISCONN));
 }
 
-void TCP_ISession::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
+void TCP_SessionBase::RaiseIOError(sh::Utility::ThWorkerJob* thWorker) {
   m_state.store(TCP_Session_STATE::DISCONNECT_STATE);
   thWorker->SetType(sh::Utility::WORKER_TYPE::DISCONN);
   PostQueuedCompletionStatus(m_iocpHandle, 1, 0, thWorker);
 }
 
-void TCP_ISession::InternalSend(const BYTE* data, const uint32_t len) {
+void TCP_SessionBase::InternalSend(const BYTE* data, const uint32_t len) {
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
     return;
   }
@@ -62,10 +62,10 @@ void TCP_ISession::InternalSend(const BYTE* data, const uint32_t len) {
   DoSend(std::move(sendData));
 }
 
-void TCP_ISession::Disconnect() {
+void TCP_SessionBase::Disconnect() {
 }
 
-void TCP_ISession::DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer) {
+void TCP_SessionBase::DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer) {
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
     return;
   }
@@ -75,7 +75,7 @@ void TCP_ISession::DoSend(std::shared_ptr<ISendBuffer>&& sendBuffer) {
   }
 }
 
-bool TCP_ISession::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
+bool TCP_SessionBase::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   static constexpr bool DESIRE_DISCONNECT = true;
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE && workerJob->GetType() != sh::Utility::WORKER_TYPE::DISCONN) {
     ThWorkerJobPool::GetInstance().Release(workerJob);

@@ -46,14 +46,14 @@ constexpr static uint32_t MAX_RECV_BUF_SIZE = 2000;
 #pragma endregion
 
 #pragma region FUNC_DEFINE
-class TCP_ISession;
-class UDP_ISession;
-class UDP_IAgent;
-using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
-using UDP_ISessionPtr = std::shared_ptr<UDP_ISession>;
-using UDP_IAgentPtr = std::shared_ptr<UDP_IAgent>;
-using TCP_RecvHandler = std::function<void(TCP_ISessionPtr, size_t, BYTE*)>;
-using UDP_RecvHandler = std::function<void(UDP_IAgentPtr, size_t, BYTE*, const sockaddr_in&)>;
+class TCP_SessionBase;
+class UDP_SessionBase;
+class UDP_AgentBase;
+using TCP_SessionBasePtr = std::shared_ptr<TCP_SessionBase>;
+using UDP_SessionBasePtr = std::shared_ptr<UDP_SessionBase>;
+using UDP_AgentBasePtr = std::shared_ptr<UDP_AgentBase>;
+using TCP_RecvHandler = std::function<void(TCP_SessionBasePtr, size_t, BYTE*)>;
+using UDP_RecvHandler = std::function<void(UDP_AgentBasePtr, size_t, BYTE*, const sockaddr_in&)>;
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;

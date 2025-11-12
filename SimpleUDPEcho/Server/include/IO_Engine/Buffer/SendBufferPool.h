@@ -22,7 +22,7 @@ class SendBufferAllocator
  public:
   void Init(uint32_t initSize);
 
-  std::shared_ptr<ISendBuffer> GetShared(uint32_t len);
+  std::shared_ptr<SendBufferBase> GetShared(uint32_t len);
 
   void RecordMertric(IO_MetricSlot& metricSlot);
 

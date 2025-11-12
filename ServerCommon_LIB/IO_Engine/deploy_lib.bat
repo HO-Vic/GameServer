@@ -1,20 +1,18 @@
 echo [Start Deploy IO_Engine LIB]
-echo Copy To IO_Engine From IO_Engine
+:: echo Copy To IO_Engine From IO_Engine
 ::  if not exist ..\ServerCore\lib\Debug (
 ::  	mkdir ..\ServerCore\lib\Debug
 ::  )
 :: copy .\Export_LIB\Debug\IO_Engine.lib ..\ServerCore\lib\Debug\IO_EngineD.lib
 
-:: IO_Engine lib 배포
-if not exist ..\IO_Engine\lib\Debug (
-	mkdir ..\IO_Engine\lib\Debug
+if not exist .\Export_LIB\Debug (
+ 	mkdir .\Export_LIB\Debug
 )
 copy .\Export_LIB\Debug\IO_Engine.lib ..\IO_Engine\lib\Debug\IO_EngineD.lib
 
-if not exist ..\IO_Engine\lib\Release (
-	mkdir ..\IO_Engine\lib\Release
+if not exist .\Export_LIB\Release (
+ 	mkdir .\Export_LIB\Release
 )
-
 copy .\Export_LIB\Release\IO_Engine.lib ..\IO_Engine\lib\Release\IO_Engine.lib
 
 :: SimpleTCPEcho
@@ -185,11 +183,11 @@ if not exist .\Export\include\IO_Engine (
 	mkdir .\Export\include\IO_Engine
 )
 if not exist .\Export\lib\Debug (
-	mkdir .\Export\Debug
+	mkdir .\Export\lib\Debug
 )
 
 if not exist .\Export\lib\Release (
-	mkdir .\Export\Release
+	mkdir .\Export\lib\Release
 )
 
 xcopy ".\public" ".\Export\include\IO_Engine" /E /Y

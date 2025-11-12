@@ -1,9 +1,9 @@
 #pragma once
-#include <IO_Engine/Session/UDP_IAgent.h>
+#include <IO_Engine/Session/UDP_AgentBase.h>
 namespace sh::UDP_Echo {
 
 class UDP_Agent
-    : public IO_Engine::UDP_IAgent {
+    : public IO_Engine::UDP_AgentBase {
  public:
   UDP_Agent() = default;
 

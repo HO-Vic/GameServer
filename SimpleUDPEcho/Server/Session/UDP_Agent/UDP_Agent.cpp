@@ -3,7 +3,7 @@
 
 namespace sh::UDP_Echo {
 UDP_Agent::UDP_Agent(SOCKET sock, uint32_t receiverNo, uint16_t port)
-    : IO_Engine::UDP_IAgent(sock, receiverNo, port) {
+    : IO_Engine::UDP_AgentBase(sock, receiverNo, port) {
 }
 
 UDP_Agent::~UDP_Agent() {

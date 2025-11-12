@@ -1,9 +1,9 @@
 #pragma once
-#include <IO_Engine/Session/TCP_ISession.h>
+#include <IO_Engine/Session/TCP_SessionBase.h>
 
 namespace SimpleTCP {
 class Session
-    : public sh::IO_Engine::TCP_ISession {
+    : public sh::IO_Engine::TCP_SessionBase {
  public:
   Session() = default;
 

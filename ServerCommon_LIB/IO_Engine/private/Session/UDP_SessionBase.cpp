@@ -1,11 +1,11 @@
 #include "pch.h"
-#include <Session/UDP_ISession.h>
+#include <Session/UDP_SessionBase.h>
 #include <Buffer/SendBuffer.h>
 #include <Buffer/SendBufferPool.h>
-#include <Session/UDP_IAgent.h>
+#include <Session/UDP_AgentBase.h>
 
 namespace sh::IO_Engine {
-uint32_t UDP_ISession::DoSend(std::shared_ptr<UDP_IAgent>& agentPtr, const BYTE* data, uint32_t len) {
+uint32_t UDP_SessionBase::DoSend(std::shared_ptr<UDP_AgentBase>& agentPtr, const BYTE* data, uint32_t len) {
   if (!m_isAlive) {
     return 0;
   }

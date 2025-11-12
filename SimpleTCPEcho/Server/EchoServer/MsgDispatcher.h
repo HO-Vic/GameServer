@@ -5,11 +5,11 @@
 #include "Packet.h"
 
 namespace sh::IO_Engine {
-class TCP_ISession;
+class TCP_SessionBase;
 }  // namespace sh::IO_Engine
 
 namespace SimpleTCP {
-using SessionPtr = std::shared_ptr<sh::IO_Engine::TCP_ISession>;
+using SessionPtr = std::shared_ptr<sh::IO_Engine::TCP_SessionBase>;
 using MsgHandle = std::function<void(SessionPtr, BYTE*)>;
 
 class MsgDispatcher {

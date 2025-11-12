@@ -14,7 +14,7 @@ namespace SimpleTCP {
 using LogLevel = spdlog::level::level_enum;
 class LogManager : public sh::Utility::SingletonBase<LogManager> {
  public:
-  void StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode);
+  void StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const LogLevel level, const std::string& logMode);
 
   template <typename... Args>
   void WriteLog(const spdlog::level::level_enum logLevel, const spdlog::format_string_t<Args...> logData, Args... args) {

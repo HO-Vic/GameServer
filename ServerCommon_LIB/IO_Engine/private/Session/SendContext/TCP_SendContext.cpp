@@ -7,7 +7,7 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<ISendBuffer>&& buffer) {
+int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer) {
   static constexpr bool SEND_DESIRE = false;
   if (!m_isSendAble) {
     return 0;
@@ -44,8 +44,8 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   if (batchSendBuffers.empty()) {
     m_isSendAble = true;
     // **4/13 25ff04d커밋에서 옛날 잔재 주석** 보낼게 없다면 overlappedEx 반납
-    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_ISession >::strong ref 1->0
-    // ~TCP_ISession() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
+    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_SessionBase >::strong ref 1->0
+    // ~TCP_SessionBase() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
     // lock scope 외부에서 해제
     ThWorkerJobPool::GetInstance().Release(workerJob);
     return 0;
@@ -63,7 +63,7 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   return errorNo;
 }
 
-int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<ISendBuffer>>& batchSendBuffers) {
+int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batchSendBuffers) {
   // this thread context switched + other thread already sended queue!!
   // DoSend() sendQeuue.push() -> thread sleep ..th1
   // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
@@ -98,12 +98,12 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vecto
   return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(workerJob), nullptr);
 }
 
-void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<ISendBuffer>&& buffer) {
+void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBufferBase>&& buffer) {
   std::lock_guard<std::mutex> lg{m_lock};
   m_sendQueues[m_activeIdx].push_back(std::move(buffer));
 }
 
-std::vector<std::shared_ptr<ISendBuffer>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
+std::vector<std::shared_ptr<SendBufferBase>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
   {
     std::lock_guard<std::mutex> lg{m_lock};
     m_activeIdx = !m_activeIdx;

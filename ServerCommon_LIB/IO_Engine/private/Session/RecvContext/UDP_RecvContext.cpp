@@ -7,7 +7,7 @@
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
-#include <Session/UDP_IAgent.h>
+#include <Session/UDP_AgentBase.h>
 
 namespace sh::IO_Engine {
 bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
@@ -49,7 +49,7 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
 
     return false;  //
   } else {
-    if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
+    if (agentPtr->GetState() == UDP_AgentBase::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
       agentPtr->DestroyFromReceiver();                          // 현재 리시버 종료
       ThWorkerJobPool::GetInstance().Release(workerJob);
       return true;
@@ -88,14 +88,14 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
     return false;
   }
 
-  // else if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {  // WSARecvFrom() 호출 이후에 세션이 종료됐다면
+  // else if (agentPtr->GetState() == UDP_AgentBase::STATE::INACTIVE) {  // WSARecvFrom() 호출 이후에 세션이 종료됐다면
   //   // IOCP로 해당 객체 Error 들어와서 14번줄에서 처리
   //   CancelIoEx(reinterpret_cast<HANDLE>(agentPtr->GetSocket()), workerJob);
   // }
   return true;
 }
 
-void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>& agentPtr) {
+void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_AgentBase>& agentPtr) {
   // UDP 패킷인데, 패킷 여러개가 뭉쳐서 올 수 있음(어플리케이션에서 WSABUF 여러개 묶는 경우), 보통은 1개씩만
   auto currentPosition = m_buffer;
   while (ioSize > 0) {
@@ -109,7 +109,7 @@ void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_IAgent>&
   };
 }
 
-int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_IAgent>& agentPtr) {
+int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_AgentBase>& agentPtr) {
   DWORD recvByte = 0;
   DWORD flag = 0;
   

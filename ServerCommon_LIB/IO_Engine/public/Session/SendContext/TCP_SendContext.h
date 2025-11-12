@@ -14,7 +14,7 @@ using WorkerPtr = std::shared_ptr<IWorkerItem>;
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
-class ISendBuffer;
+class SendBufferBase;
 class OverlappedEx;
 class TCP_SendContext final {
   class InternalDoubleBufferQueue {
@@ -23,12 +23,12 @@ class TCP_SendContext final {
         : m_activeIdx(false) {
     }
 
-    void InsertSendBuffer(std::shared_ptr<ISendBuffer>&&);
+    void InsertSendBuffer(std::shared_ptr<SendBufferBase>&&);
 
-    std::vector<std::shared_ptr<ISendBuffer>>& SwapAndLoad();
+    std::vector<std::shared_ptr<SendBufferBase>>& SwapAndLoad();
 
    private:
-    std::vector<std::shared_ptr<ISendBuffer>> m_sendQueues[2];
+    std::vector<std::shared_ptr<SendBufferBase>> m_sendQueues[2];
     std::mutex m_lock;
     bool m_activeIdx;
   };
@@ -46,16 +46,16 @@ class TCP_SendContext final {
     m_socket = sock;
   }
 
-  int32_t DoSend(Utility::WorkerPtr session, std::shared_ptr<ISendBuffer>&& buffer);
+  int32_t DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer);
 
   int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
  private:
   // m_sendBuffer와 batchSendBuffers와 swap해야해서 참조형으로
-  int32_t SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<ISendBuffer>>& batchSendBuffers);
+  int32_t SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batchSendBuffers);
 
  private:
-  std::vector<std::shared_ptr<ISendBuffer>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함
+  std::vector<std::shared_ptr<SendBufferBase>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함
   InternalDoubleBufferQueue m_doubleQueue;
   // Concurrency::concurrent_queue<std::shared_ptr<SendBuffer>> m_sendQueue;
   SOCKET m_socket;

@@ -7,8 +7,8 @@
 
 namespace sh::IO_Engine {
 class UDP_RecvContext;
-class UDP_IAgent
-    : public std::enable_shared_from_this<UDP_IAgent> {  // 세션보다는 에이전트가 좀 더 어울림
+class UDP_AgentBase
+    : public std::enable_shared_from_this<UDP_AgentBase> {  // 세션보다는 에이전트가 좀 더 어울림
  public:
   enum class STATE : BYTE {
     ACTIVE,
@@ -16,12 +16,12 @@ class UDP_IAgent
   };
 
  public:
-  UDP_IAgent() = default;
+  UDP_AgentBase() = default;
 
   // 소켓이 iocp 핸들에 등록되어 있어야 함
-  UDP_IAgent(SOCKET sock, uint32_t receiverNo, [[maybe_unused]] uint16_t port = 9000);
+  UDP_AgentBase(SOCKET sock, uint32_t receiverNo, [[maybe_unused]] uint16_t port = 9000);
 
-  virtual ~UDP_IAgent();
+  virtual ~UDP_AgentBase();
 
   // 외부로 받은 소켓을 어떻게 정리할지
   virtual void ReleaseSocket(SOCKET socket) = 0;

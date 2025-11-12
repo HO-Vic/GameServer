@@ -90,13 +90,13 @@
     <ClCompile Include="private\Session\UDP\UDP_Receiver.cpp">
       <Filter>Session\UDP</Filter>
     </ClCompile>
-    <ClCompile Include="private\Session\TCP_ISession.cpp">
+    <ClCompile Include="private\Session\TCP_SessionBase.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClCompile Include="private\Session\UDP_ISession.cpp">
+    <ClCompile Include="private\Session\UDP_SessionBase.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClCompile Include="private\Session\UDP_IAgent.cpp">
+    <ClCompile Include="private\Session\UDP_AgentBase.cpp">
       <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="private\Buffer\SendBufferPool.cpp">
@@ -164,13 +164,13 @@
     <ClInclude Include="public\Session\UDP\UDP_Receiver.h">
       <Filter>Session\UDP</Filter>
     </ClInclude>
-    <ClInclude Include="public\Session\TCP_ISession.h">
+    <ClInclude Include="public\Session\TCP_SessionBase.h">
       <Filter>Session</Filter>
     </ClInclude>
-    <ClInclude Include="public\Session\UDP_ISession.h">
+    <ClInclude Include="public\Session\UDP_SessionBase.h">
       <Filter>Session</Filter>
     </ClInclude>
-    <ClInclude Include="public\Session\UDP_IAgent.h">
+    <ClInclude Include="public\Session\UDP_AgentBase.h">
       <Filter>Session</Filter>
     </ClInclude>
   </ItemGroup>

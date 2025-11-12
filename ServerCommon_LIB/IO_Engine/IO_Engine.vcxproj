@@ -32,11 +32,11 @@
     <ClCompile Include="private\Session\RecvContext\UDP_RecvContext.cpp" />
     <ClCompile Include="private\Session\SendContext\TCP_SendContext.cpp" />
     <ClCompile Include="private\Session\SendContext\UDP_SendContext.cpp" />
-    <ClCompile Include="private\Session\TCP_ISession.cpp" />
+    <ClCompile Include="private\Session\TCP_SessionBase.cpp" />
     <ClCompile Include="private\Session\UDP\UDP_Receiver.cpp" />
     <ClCompile Include="private\Session\UDP\UDP_Sender.cpp" />
-    <ClCompile Include="private\Session\UDP_IAgent.cpp" />
-    <ClCompile Include="private\Session\UDP_ISession.cpp" />
+    <ClCompile Include="private\Session\UDP_AgentBase.cpp" />
+    <ClCompile Include="private\Session\UDP_SessionBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Buffer\SendBuffer.h" />
@@ -57,11 +57,11 @@
     <ClInclude Include="public\Session\SendContext\ISendContext.h" />
     <ClInclude Include="public\Session\SendContext\TCP_SendContext.h" />
     <ClInclude Include="public\Session\SendContext\UDP_SendContext.h" />
-    <ClInclude Include="public\Session\TCP_ISession.h" />
+    <ClInclude Include="public\Session\TCP_SessionBase.h" />
     <ClInclude Include="public\Session\UDP\UDP_Receiver.h" />
     <ClInclude Include="public\Session\UDP\UDP_Sender.h" />
-    <ClInclude Include="public\Session\UDP_IAgent.h" />
-    <ClInclude Include="public\Session\UDP_ISession.h" />
+    <ClInclude Include="public\Session\UDP_AgentBase.h" />
+    <ClInclude Include="public\Session\UDP_SessionBase.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -6,11 +6,11 @@
 #include <Buffer/SendBuffer.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
-#include <Session/UDP_IAgent.h>
-#include <Session/UDP_ISession.h>
+#include <Session/UDP_AgentBase.h>
+#include <Session/UDP_SessionBase.h>
 
 namespace sh::IO_Engine {
-BYTE* ISendBuffer::GetWritePtr(uint32_t len) {
+BYTE* SendBufferBase::GetWritePtr(uint32_t len) {
 #ifdef _DEBUG
   auto writeableSize = static_cast<int64_t>(cap - writeSize);
   assert(writeableSize >= len);
@@ -23,7 +23,7 @@ BYTE* ISendBuffer::GetWritePtr(uint32_t len) {
   return data + (writeSize - len);  // 미리 writeSize+=len 했으니, 현재 write해야되는 위치는 wrtieSize-len
 }
 
-void ISendBuffer::Write(const BYTE* srcPtr, uint32_t len) {
+void SendBufferBase::Write(const BYTE* srcPtr, uint32_t len) {
   auto writeableSize = static_cast<int64_t>(cap - writeSize);
 #ifdef _DEBUG
   assert(data != nullptr);
@@ -45,7 +45,7 @@ SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
   memcpy_s(m_buffer + sizeof(PacketHeader), static_cast<int64_t>(MAX_SEND_BUFFER_SIZE - sizeof(PacketHeader)), data, len);
 }
 
-UDP_SingleSendBuffer::UDP_SingleSendBuffer(std::shared_ptr<UDP_IAgent>& agentPtr, std::shared_ptr<UDP_ISession>& sessionPtr, const BYTE* data, const uint32_t len)
+UDP_SingleSendBuffer::UDP_SingleSendBuffer(std::shared_ptr<UDP_AgentBase>& agentPtr, std::shared_ptr<UDP_SessionBase>& sessionPtr, const BYTE* data, const uint32_t len)
     : SendBuffer(data, len), m_wsaBuf(len, const_cast<char*>(reinterpret_cast<const char*>(data))), m_agentPtr(agentPtr), m_sessionPtr(sessionPtr), m_retransmitCnt(0) {
 }
 
@@ -64,7 +64,7 @@ bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD 
     auto agentPtr = m_agentPtr.lock();
     auto sessionPtr = m_sessionPtr.lock();
     if (nullptr != agentPtr && nullptr != sessionPtr) {  // 둘 다 유효하면 재시도
-      if (agentPtr->GetState() == UDP_IAgent::STATE::INACTIVE) {
+      if (agentPtr->GetState() == UDP_AgentBase::STATE::INACTIVE) {
         return true;
       }
       if (m_retransmitCnt == MAX_RETRASMIT) {

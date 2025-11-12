@@ -193,11 +193,11 @@ if not exist .\Export\include\Utility (
 	mkdir .\Export\include\Utility
 )
 if not exist .\Export\lib\Debug (
-	mkdir .\Export\Debug
+	mkdir .\Export\lib\Debug
 )
 
 if not exist .\Export\lib\Release (
-	mkdir .\Export\Release
+	mkdir .\Export\lib\Release
 )
 
 xcopy ".\public" ".\Export\include\Utility" /E /Y

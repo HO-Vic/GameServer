@@ -3,7 +3,7 @@
 
 namespace SimpleTCP {
 
-void LogManager::StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const spdlog::level::level_enum level, const std::string& logMode) {
+void LogManager::StartLogger(const std::string& logName, const std::string& outputDir, const std::string& fileName, const LogLevel level, const std::string& logMode) {
   m_warningCnt = 0;
   m_errCnt = 0;
 

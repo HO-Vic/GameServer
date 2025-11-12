@@ -14,24 +14,24 @@ class ThWorkerJob;
 
 namespace sh::IO_Engine {
 // UDP는 1:n 통신이 가능하기 때문에, Session당 소켓 x
-// UDP_IAgent의 소켓을 사용하여 Send
+// UDP_AgentBase의 소켓을 사용하여 Send
 // 하트비트를 둬서 관리 추가 해야할듯?
-class UDP_IAgent;
+class UDP_AgentBase;
 class SendBuffer;
-class UDP_ISession
-    : public std::enable_shared_from_this<UDP_ISession> {
+class UDP_SessionBase
+    : public std::enable_shared_from_this<UDP_SessionBase> {
  public:
-  UDP_ISession() = default;
+  UDP_SessionBase() = default;
 
-  UDP_ISession(const sockaddr_in& toAddr)
+  UDP_SessionBase(const sockaddr_in& toAddr)
       : m_toAddr(toAddr), m_isAlive(true) {
   }
 
-  // virtual ~UDP_ISession() = default;
+  // virtual ~UDP_SessionBase() = default;
 
   virtual void OnUDPSessionTimeout() = 0;  // 하트비트, 재전송 횟수 초과 시, 종료할 때 호출
 
-  uint32_t DoSend(std::shared_ptr<UDP_IAgent>& agentPtr, const BYTE* data, uint32_t len);
+  uint32_t DoSend(std::shared_ptr<UDP_AgentBase>& agentPtr, const BYTE* data, uint32_t len);
 
   void Close() {
     m_isAlive = false;

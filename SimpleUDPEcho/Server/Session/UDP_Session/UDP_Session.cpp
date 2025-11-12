@@ -3,7 +3,7 @@
 
 namespace sh::UDP_Echo {
 UDP_Session::UDP_Session(const sockaddr_in& toAddr)
-    : IO_Engine::UDP_ISession(toAddr), m_lastPingTime(Time::now()) {
+    : IO_Engine::UDP_SessionBase(toAddr), m_lastPingTime(Time::now()) {
 }
 
 void UDP_Session::OnUDPSessionTimeout() {

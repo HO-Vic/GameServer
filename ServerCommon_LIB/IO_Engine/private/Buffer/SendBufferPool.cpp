@@ -13,7 +13,7 @@ void SendBufferAllocator::Init(uint32_t initSize) {
   xLargePool.InitSize(initSize);
 }
 
-std::shared_ptr<ISendBuffer> SendBufferAllocator::GetShared(uint32_t len) {
+std::shared_ptr<SendBufferBase> SendBufferAllocator::GetShared(uint32_t len) {
   if (len+2 <= BUFFER_SIZE[0]) {
     return smallPool.MakeShared();
   }

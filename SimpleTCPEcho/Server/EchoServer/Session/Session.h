@@ -1,15 +1,15 @@
 #pragma once
 #include <IO_Engine/CommonDefine.h>
-#include <IO_Engine/Session/TCP_ISession.h>
+#include <IO_Engine/Session/TCP_SessionBase.h>
 
 namespace SimpleTCP {
 class Session final
-    : public sh::IO_Engine::TCP_ISession {
+    : public sh::IO_Engine::TCP_SessionBase {
  public:
   Session();
 
   Session(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler TCP_RecvHandler, HANDLE iocpHandle, uint32_t uniqueNo)
-      : TCP_ISession(sock, ioType, TCP_RecvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
+      : TCP_SessionBase(sock, ioType, TCP_RecvHandler, iocpHandle), m_uniqueNo(uniqueNo) {
   }
 
   virtual ~Session() override;

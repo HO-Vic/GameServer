@@ -3,8 +3,8 @@
 #include "DBJobBase.h"
 
 namespace sh::IO_Engine {
-class TCP_ISession;
-using TCP_ISessionPtr = std::shared_ptr<TCP_ISession>;
+class TCP_SessionBase;
+using TCP_SessionBasePtr = std::shared_ptr<TCP_SessionBase>;
 }  // namespace sh::IO_Engine
 
 namespace DreamWorld {
@@ -14,7 +14,7 @@ class DBPlayerLogin final
  public:
   DBPlayerLogin() = default;
 
-  DBPlayerLogin(sh::IO_Engine::TCP_ISessionPtr session, const char* loginId, const char* pw);
+  DBPlayerLogin(sh::IO_Engine::TCP_SessionBasePtr session, const char* loginId, const char* pw);
 
  private:
   void PostExecute(SQLHSTMT hstmt) override;

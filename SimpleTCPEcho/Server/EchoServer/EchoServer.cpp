@@ -26,7 +26,7 @@ void Server::Init() {
   WRITE_LOG(spdlog::level::info, "{}({}) > init success", __FUNCTION__, __LINE__);
 }
 
-void Server::OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader) {
+void Server::OnSimpleMsg(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* packetHeader) {
   auto msgPacket = reinterpret_cast<SimpleMsgPacket*>(packetHeader);
   SimpleMsg simpleMsg{};
   simpleMsg.Deserialize(msgPacket);
@@ -38,7 +38,7 @@ void Server::OnSimpleMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packet
   sessionPtr->DoSend(std::move(sendBuffer));
 }
 
-void Server::OnParsedMsg(sh::IO_Engine::TCP_ISessionPtr sessionPtr, BYTE* packetHeader) {
+void Server::OnParsedMsg(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, BYTE* packetHeader) {
   auto msgPacket = reinterpret_cast<ParseMsgPacket*>(packetHeader);
   ParsedMsg parsedMsg{};
   parsedMsg.Deserialize(msgPacket);
@@ -75,7 +75,7 @@ void Server::AcceptHandle(SOCKET sock) {
   SessionManager::GetInstance().OnAccept(sock, sh::IO_Engine::IO_TYPE::TCP, std::bind(&Server::RecvHandle, this, _1, _2, _3), m_ioCore.GetHandle());
 }
 
-void Server::RecvHandle(sh::IO_Engine::TCP_ISessionPtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
+void Server::RecvHandle(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, size_t ioByte, BYTE* bufferPosition) {
   MsgHandle msgHandle = nullptr;
   auto packetHeader = reinterpret_cast<PacketHeader*>(bufferPosition);
   if (!m_dispatcher.GetHandle(packetHeader->type, msgHandle)) {

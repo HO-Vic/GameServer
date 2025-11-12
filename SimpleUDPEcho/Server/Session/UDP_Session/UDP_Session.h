@@ -1,5 +1,5 @@
 #pragma once
-#include <IO_Engine/Session/UDP_ISession.h>
+#include <IO_Engine/Session/UDP_SessionBase.h>
 #include <chrono>
 
 namespace sh::UDP_Echo {
@@ -9,7 +9,7 @@ using ms = std::chrono::milliseconds;
 using sec = std::chrono::seconds;
 
 class UDP_Session
-    : public IO_Engine::UDP_ISession {
+    : public IO_Engine::UDP_SessionBase {
  public:
   UDP_Session() = default;
 
