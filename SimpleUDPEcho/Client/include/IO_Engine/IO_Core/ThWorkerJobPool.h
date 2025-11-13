@@ -8,14 +8,21 @@ class ThWorkerJobPool
     : public Utility::SingletonBase<ThWorkerJobPool>,
       public Utility::RawObjectPool<sh::Utility::ThWorkerJob> {
  public:
-  void Init(const uint32_t initSize) {
-    InitSize(initSize);
+  void Init(const uint32_t initSize, const bool useMetric = false) {
+    InitSize(initSize, useMetric);
+    m_useMetric = useMetric;
   }
 
   void RecordMetric(IO_MetricSlot& metricSlot) {
+    if (!m_useMetric) {
+      return;
+    }
     metricSlot.thWorkerJobTotal.store(GetTotalCnt());
     metricSlot.thWorkerJobUsing.store(GetUsingCnt());
     metricSlot.thWorkerJobAdd.store(GetAddedCnt());
   }
+
+ private:
+  bool m_useMetric = false;
 };
 }  // namespace sh::IO_Engine

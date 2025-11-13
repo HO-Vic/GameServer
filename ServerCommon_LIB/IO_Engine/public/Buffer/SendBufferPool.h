@@ -12,7 +12,7 @@ class SendBufferPool
   SendBufferPool() {
   }
 
-  void Init(uint32_t initSize);
+  void Init(uint32_t initSize, const bool useMetric = false);
 };
 
 class SendBufferAllocator
@@ -20,7 +20,7 @@ class SendBufferAllocator
   static constexpr uint32_t BUFFER_SIZE[] = {128, 256, 512, 1024};
 
  public:
-  void Init(uint32_t initSize);
+  void Init(uint32_t initSize, const bool useMetric = false);
 
   std::shared_ptr<SendBufferBase> GetShared(uint32_t len);
 
@@ -31,6 +31,7 @@ class SendBufferAllocator
   Utility::ObjectPool<TCP_SendBuffer<BUFFER_SIZE[1]>> mediumPool;
   Utility::ObjectPool<TCP_SendBuffer<BUFFER_SIZE[2]>> largePool;
   Utility::ObjectPool<TCP_SendBuffer<BUFFER_SIZE[3]>> xLargePool;
+  bool m_useMetric = false;
 };
 
 class UDP_SingleSendBufferPool
