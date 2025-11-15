@@ -17,10 +17,20 @@ void AcceptEvent::Start(Utility::ThWorkerJob* workerJob) {
 }
 
 bool AcceptEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
+  if (0 != errorCode) {  // 에러인 경우, 다시 accept
+    Start(workerJob);
+    return true;
+  }
   // Accept후처리
-  auto connectedSocket = m_clientSocket;
-  Start(workerJob);
 
+  // accept된 소켓 복사
+  auto connectedSocket = m_clientSocket;
+  // 새 소켓 할당 + 비동기 accept
+  Start(workerJob);
+  // accept된 소켓 후처리
+  if (m_registToIocp) {  // iocp에 바로 등록해야하는 경우
+    CreateIoCompletionPort(reinterpret_cast<HANDLE>(connectedSocket), m_iocpHandle, uniqueNo.fetch_add(1, std::memory_order::relaxed), 0);
+  }
   // m_clientSocket에 새 소켓 할당, AcceptEx() 호출 이후에 connectedSocket을 후처리 해야함
   m_acceptCompleteHandle(connectedSocket);
   return true;

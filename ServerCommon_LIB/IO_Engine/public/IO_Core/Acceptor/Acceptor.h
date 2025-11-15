@@ -15,21 +15,16 @@ class Acceptor {
  public:
   Acceptor();
 
-  Acceptor(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
+  Acceptor(AcceptCompleteHandler acceptHandleFunc, const bool registToIocp = true, const uint8_t acceptNo = 1);
 
-  void Init(HANDLE iocpHandle, SOCKET listenSocket, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
+  void Init(AcceptCompleteHandler acceptHandleFunc, const bool registToIocp = true, const uint8_t acceptNo = 1);
 
-  void Init(HANDLE iocpHandle, AcceptCompleteHandler acceptHandleFunc, const uint8_t acceptNo = 1);
-
-  void SetListenSocket(SOCKET listenSocket);
-
-  void Start(uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP, bool isNoDelay = true);
+  void Start(SOCKET listenSocket, HANDLE iocpHandle, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP, bool isNoDelay = true);
 
  private:
-  HANDLE m_iocpHandle;
-  SOCKET m_listenSocket;
   // std::vector<std::shared_ptr<AcceptEvent>> m_acceptEvents;
   AcceptCompleteHandler m_acceptCompleteHandle;
   uint8_t m_acceptNo;
+  bool m_registToIocp = true;  // accept된 소켓에 대해서 바로 iocp에 등록할지에 대한
 };
 }  // namespace sh::IO_Engine
