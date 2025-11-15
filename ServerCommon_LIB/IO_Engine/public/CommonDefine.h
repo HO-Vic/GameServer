@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <functional>
 #include <memory>
+#include <cstdint>
 
 namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
@@ -54,6 +55,8 @@ using UDP_SessionBasePtr = std::shared_ptr<UDP_SessionBase>;
 using UDP_AgentBasePtr = std::shared_ptr<UDP_AgentBase>;
 using TCP_RecvHandler = std::function<void(TCP_SessionBasePtr, size_t, BYTE*)>;
 using UDP_RecvHandler = std::function<void(UDP_AgentBasePtr, size_t, BYTE*, const sockaddr_in&)>;
+
+// completion key를 필요로 하는경우, acceptComplete에서 iocp에 등록해야합니다
 using AcceptCompleteHandler = std::function<void(SOCKET)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;
@@ -68,6 +71,18 @@ struct ConnectInfo {
     ZeroMemory(remoteInfo, sizeof(SOCKADDR) + 16);
   }
 };
+
+struct SocketConfig {
+  int32_t inetType = AF_INET;
+  int32_t socketType = SOCK_STREAM;
+  int32_t protocolType = IPPROTO_TCP;
+};
+
+struct AddrConfig {
+  uint16_t port{};
+  std::string ip = "0.0.0.0";
+};
+
 #endif  // !IO_ENGINE_DEFINE
 
 }  // namespace sh::IO_Engine

@@ -1,8 +1,8 @@
+#include "pch.h"
 #ifndef WIN32_NO_STATUS
 #include <ntstatus.h>
 #define WIN32_NO_STATUS
 #endif
-#include "pch.h"
 #include <memory>
 #include <Session/RecvContext/UDP_RecvContext.h>
 #include <Utility/Thread/ThWorkerJob.h>

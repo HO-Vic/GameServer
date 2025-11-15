@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -161,13 +161,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="public\BuildMsg\BuildMsg.h" />
     <ClInclude Include="public\Job\Job.h" />
     <ClInclude Include="public\Job\JobQueue\JobQBase.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h" />
-    <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Pool\MemoryPool.h" />
     <ClInclude Include="public\Pool\ObjectPool.h" />
     <ClInclude Include="public\SingletonBase\Singleton.h" />
@@ -179,6 +179,10 @@
     <ClInclude Include="public\TimeCalculator\TimeCalculator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PCH\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="private\Job\Job.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp" />
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />

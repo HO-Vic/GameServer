@@ -28,9 +28,6 @@
     <Filter Include="IO_Core\Acceptor">
       <UniqueIdentifier>{88a8b297-6176-41f6-950f-6826c6875374}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO_Core\Listener">
-      <UniqueIdentifier>{6aecfe52-c1d2-41c6-a8af-4a7d9c8ff8cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Metric">
       <UniqueIdentifier>{ef5c2e48-5484-41a7-8055-3c3b4a498117}</UniqueIdentifier>
     </Filter>
@@ -59,9 +56,6 @@
     </ClCompile>
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp">
       <Filter>IO_Core\Acceptor</Filter>
-    </ClCompile>
-    <ClCompile Include="private\IO_Core\Listener\Listener.cpp">
-      <Filter>IO_Core\Listener</Filter>
     </ClCompile>
     <ClCompile Include="private\IO_Metric\IO_Metric.cpp">
       <Filter>Metric</Filter>
@@ -102,6 +96,9 @@
     <ClCompile Include="private\Buffer\SendBufferPool.cpp">
       <Filter>Buffer\SendBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Buffer\SendBuffer.h">
@@ -121,12 +118,6 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\Acceptor\AcceptEvent.h">
       <Filter>IO_Core\Acceptor</Filter>
-    </ClInclude>
-    <ClInclude Include="public\IO_Core\Listener\Listener.h">
-      <Filter>IO_Core\Listener</Filter>
-    </ClInclude>
-    <ClInclude Include="public\PCH\pch.h">
-      <Filter>PCH</Filter>
     </ClInclude>
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h">
       <Filter>IO_Core</Filter>
@@ -172,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="public\Session\UDP_AgentBase.h">
       <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

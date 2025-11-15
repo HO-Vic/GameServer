@@ -4,6 +4,7 @@
 // 그러나 여기에 나열된 파일은 빌드 간 업데이트되는 경우 모두 다시 컴파일됩니다.
 // 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.
 
+
 #ifndef PCH_H
 #define PCH_H
 #include <memory>
@@ -25,9 +26,15 @@
 #include <stop_token>
 #include <mutex>
 
+#ifndef WIN32_NO_STATUS
+#include <ntstatus.h>
+#define WIN32_NO_STATUS
+#endif
+
 #include <WinSock2.h>
 #include <MSWSock.h>
 #include <Windows.h>
+
 
 #include <cassert>
 

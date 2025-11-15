@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PCH\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="private\Buffer\SendBuffer.cpp" />
     <ClCompile Include="private\Buffer\SendBufferPool.cpp" />
     <ClCompile Include="private\Connector\AsyncConnector.cpp" />
@@ -26,7 +30,6 @@
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
-    <ClCompile Include="private\IO_Core\Listener\Listener.cpp" />
     <ClCompile Include="private\IO_Metric\IO_Metric.cpp" />
     <ClCompile Include="private\Session\RecvContext\TCP_RecvContext.cpp" />
     <ClCompile Include="private\Session\RecvContext\UDP_RecvContext.cpp" />
@@ -39,6 +42,7 @@
     <ClCompile Include="private\Session\UDP_SessionBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="public\Buffer\SendBuffer.h" />
     <ClInclude Include="public\Buffer\SendBufferPool.h" />
     <ClInclude Include="public\CommonDefine.h" />
@@ -47,10 +51,8 @@
     <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h" />
     <ClInclude Include="public\IO_Core\Connector\Connector.h" />
     <ClInclude Include="public\IO_Core\IO_Core.h" />
-    <ClInclude Include="public\IO_Core\Listener\Listener.h" />
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h" />
     <ClInclude Include="public\IO_Metric\IO_Metric.h" />
-    <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContext.h" />
     <ClInclude Include="public\Session\RecvContext\TCP_RecvContext.h" />
     <ClInclude Include="public\Session\RecvContext\UDP_RecvContext.h" />
@@ -165,7 +167,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -187,7 +189,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
