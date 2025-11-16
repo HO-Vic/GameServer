@@ -3,15 +3,27 @@
 #include <functional>
 #include <memory>
 #include <cstdint>
+#include <utility>
 
 namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
 #define IO_ENGINE_DEFINE
 #pragma region TYPE
-enum IO_TYPE : char {
+enum class IO_TYPE : char {
   TCP = 1,
   UDP = 2,
 };
+
+enum class ErrorType : char {
+  None = 0,
+  WIN32_ERR = 1,           // GetLastError()
+  WINSOCK_ERR = 2,         // WsaGetLastError()
+  IO_CORE_NOT_INIT = 3,    // IO_Core non Init
+  FailedDisconnectEx = 4,  // DisconnectEx load fail - WSAGetLastError()
+};
+
+// <ErrorType, detail error Code>
+using ErrorResult = std::pair<ErrorType, int>;
 
 #pragma endregion
 
@@ -71,6 +83,7 @@ struct ConnectInfo {
     ZeroMemory(remoteInfo, sizeof(SOCKADDR) + 16);
   }
 };
+#pragma region Config
 
 struct SocketConfig {
   int32_t inetType = AF_INET;
@@ -82,6 +95,7 @@ struct AddrConfig {
   uint16_t port{};
   std::string ip = "0.0.0.0";
 };
+#pragma endregion
 
 #endif  // !IO_ENGINE_DEFINE
 

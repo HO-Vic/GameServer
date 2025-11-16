@@ -20,7 +20,7 @@ void Acceptor::Init(AcceptCompleteHandler acceptHandleFunc, const uint8_t accept
   m_acceptNo = acceptNo;
 }
 
-int Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay, bool m_registToIocp) {
+ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay, bool m_registToIocp) {
   SocketAddress addrInfo{};
   addrInfo.base.sa_family = sockCfg.inetType;
   addrInfo.v4.sin_port = htons(acceptCfg.port);  // union이어서 v6랑 같은 메모리 위치
@@ -29,36 +29,47 @@ int Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const Socket
   if (sockCfg.inetType == AF_INET) {
     auto result = inet_pton(sockCfg.inetType, acceptCfg.ip.c_str(), &addrInfo.v4.sin_addr);  // 성공하면 1을 반환
     if (result != 1) {
-      return WSAGetLastError();
+      return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
     }
     addrSize = sizeof(sockaddr_in);
   } else if (sockCfg.inetType == AF_INET6) {
     auto result = inet_pton(sockCfg.inetType, acceptCfg.ip.c_str(), &addrInfo.v6.sin6_addr);  // 성공하면 1을 반환
     if (result != 1) {
-      return WSAGetLastError();
+      return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
     }
     addrSize = sizeof(sockaddr_in6);
   }
 
   m_listenSocket = WSASocket(sockCfg.inetType, sockCfg.socketType, sockCfg.protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
   if (m_listenSocket == INVALID_SOCKET) {
-    return WSAGetLastError();
+    return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
+  }
+
+  // DisconnectEx 가져오기
+  DWORD dwBytes = 0;
+  GUID guid = WSAID_DISCONNECTEX;
+  if (WSAIoctl(m_listenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
+               &guid, sizeof(guid),
+               &DisconnectEx, sizeof(DisconnectEx),
+               &dwBytes, NULL, NULL) == SOCKET_ERROR) {
+    closesocket(m_listenSocket);
+    return {ErrorType::FailedDisconnectEx, WSAGetLastError()};
   }
 
   auto result = ::bind(m_listenSocket, &addrInfo.base, static_cast<int>(addrSize));
   if (result != 0) {  // 성공하면 1을 반환
-    return WSAGetLastError();
+    return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
   }
 
   result = listen(m_listenSocket, SOMAXCONN);
 
   if (result != 0) {
-    return WSAGetLastError();
+    return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
   }
 
   auto registResult = CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_listenSocket), iocpHandle, static_cast<ULONG_PTR>(m_listenSocket), 0);
   if (registResult == NULL) {
-    return INT32_MAX;
+    return {ErrorType::WIN32_ERR, GetLastError()};
   }
 
   for (auto i = 0; i < m_acceptNo; ++i) {
@@ -67,6 +78,6 @@ int Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const Socket
     acceptEvent->Start(workerJob);
   }
 
-  return 0;
+  return {ErrorType::None, 0};
 }
 }  // namespace sh::IO_Engine

@@ -19,12 +19,16 @@ class AcceptEvent
 
   virtual bool Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) override;
 
+  void InsertRecycleSocket(SOCKET sock);
+
  private:
   HANDLE m_iocpHandle = NULL;  // accept된 소켓에 대한 등록
   SOCKET m_clientSocket = NULL;
   SOCKET m_listenSocket = NULL;  // 다시 acceptEx호출을 위한
   ConnectInfo m_connInfo{};
   AcceptCompleteHandler m_acceptCompleteHandle = nullptr;
+  std::mutex m_lock;
+  std::queue<SOCKET> m_socketPool;
   SocketConfig m_sockCfg{};
   const bool m_isNoDelay = true;
   const bool m_registToIocp = true;

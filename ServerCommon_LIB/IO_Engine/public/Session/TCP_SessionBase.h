@@ -8,7 +8,7 @@
 
 namespace sh::IO_Engine {
 class SendBufferBase;
-
+class AcceptEvent;
 enum TCP_Session_STATE : BYTE {
   NON_ERR = 0x0,
   SEND_ERR = 0x1,
@@ -19,9 +19,9 @@ enum TCP_Session_STATE : BYTE {
 class TCP_SessionBase
     : public Utility::IWorkerItem {
  public:
-  TCP_SessionBase();
+  TCP_SessionBase() = default;
 
-  TCP_SessionBase(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
+  TCP_SessionBase(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent> acceptEvent = nullptr);
 
   virtual ~TCP_SessionBase();
 
@@ -67,14 +67,12 @@ class TCP_SessionBase
   virtual void OnDisconnect() = 0;
 
  private:
-  void Disconnect();
-
- private:
-  TCP_SendContext m_sendContext;
-  TCP_RecvContext m_recvContext;
-  HANDLE m_iocpHandle;
-  SOCKET m_sock;
-  std::atomic<TCP_Session_STATE> m_state;
-  std::atomic_bool m_isDisconnnected;
+  TCP_SendContext m_sendContext{};
+  TCP_RecvContext m_recvContext{};
+  HANDLE m_iocpHandle = NULL;
+  SOCKET m_sock = NULL;
+  std::shared_ptr<AcceptEvent> m_acceptEvent = nullptr;
+  std::atomic<TCP_Session_STATE> m_state = NON_ERR;
+  std::atomic_bool m_isDisconnnected = false;
 };
 }  // namespace sh::IO_Engine

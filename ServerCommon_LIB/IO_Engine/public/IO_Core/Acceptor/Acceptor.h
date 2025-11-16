@@ -28,12 +28,15 @@ class Acceptor {
   void Init(AcceptCompleteHandler acceptCompleteHandle, const uint8_t acceptNo = 1);
 
   // m_registToIocp: accept된 소켓에 대해서 바로 iocp에 등록할지에 대한
-  int Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay = true, bool m_registToIocp = true);
+  ErrorResult Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay = true, bool m_registToIocp = true);
 
  private:
   SOCKET m_listenSocket = NULL;
   AcceptCompleteHandler m_acceptCompleteHandle = nullptr;
   std::vector<std::shared_ptr<AcceptEvent>> m_acceptEvents;
   uint8_t m_acceptNo = 1;
+
+ public:
+  inline static LPFN_DISCONNECTEX DisconnectEx = nullptr;  // DisconnectEx 함수 - WSAIoctl로 가져와야 함
 };
 }  // namespace sh::IO_Engine

@@ -7,7 +7,19 @@
 namespace sh::IO_Engine {
 void AcceptEvent::Start(Utility::ThWorkerJob* workerJob) {
   ZeroMemory(&m_connInfo, sizeof(m_connInfo));
-  m_clientSocket = WSASocket(m_sockCfg.inetType, m_sockCfg.socketType, m_sockCfg.protocolType, 0, 0, WSA_FLAG_OVERLAPPED);
+  m_clientSocket = NULL;
+  {  // 소켓 풀에 있는 소켓 가져오기
+    std::lock_guard<std::mutex> lg{m_lock};
+    if (!m_socketPool.empty()) {
+      m_clientSocket = m_socketPool.front();
+      m_socketPool.pop();
+    }
+  }
+
+  if (NULL == m_clientSocket) {
+    m_clientSocket = WSASocket(m_sockCfg.inetType, m_sockCfg.socketType, m_sockCfg.protocolType, 0, 0, WSA_FLAG_OVERLAPPED);
+  }
+
   if (m_isNoDelay) {
     int flag = 1;
     setsockopt(m_clientSocket, m_sockCfg.protocolType, TCP_NODELAY, (char*)&flag, sizeof(flag));
@@ -34,5 +46,9 @@ bool AcceptEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, c
   // m_clientSocket에 새 소켓 할당, AcceptEx() 호출 이후에 connectedSocket을 후처리 해야함
   m_acceptCompleteHandle(connectedSocket);
   return true;
+}
+void AcceptEvent::InsertRecycleSocket(SOCKET sock) {
+  std::lock_guard<std::mutex> lg{m_lock};
+  m_socketPool.push(sock);
 }
 }  // namespace sh::IO_Engine

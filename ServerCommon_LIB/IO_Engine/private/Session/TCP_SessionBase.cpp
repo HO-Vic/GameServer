@@ -1,8 +1,8 @@
+#include <pch.h>
 #ifndef WIN32_NO_STATUS
 #include <ntstatus.h>
 #define WIN32_NO_STATUS
 #endif
-#include <pch.h>
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
@@ -10,17 +10,24 @@
 #include <Session/SendContext/TCP_SendContext.h>
 #include <Session/RecvContext/TCP_RecvContext.h>
 #include <Buffer/SendBufferPool.h>
+#include <IO_Core/Acceptor/Acceptor.h>
+#include <IO_Core/SocketResetEvent/SocketResetEvent.h>
+#include <IO_Core/SocketResetEvent/SocketResetEventPool.h>
+#include <Utility/SingletonBase/Singleton.h>
 
 namespace sh::IO_Engine {
-TCP_SessionBase::TCP_SessionBase()
-    : m_isDisconnnected(false), m_iocpHandle(NULL), m_sock(NULL) {
-}
-TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle)
-    : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock) {
+TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent> acceptEvent /*= nullptr*/)
+    : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock), m_acceptEvent(acceptEvent) {
 }
 
 TCP_SessionBase::~TCP_SessionBase() {
-  closesocket(m_sock);
+  if (nullptr == m_acceptEvent) {
+    closesocket(m_sock);
+  }
+  // TCP_SessionBase는 shared_ptr이니까, 소멸자 호출되는건, 소유자가 한 쓰레드
+  auto thWorkerJobPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(SocketResetEventPool::GetInstance().MakeShared(std::move(m_acceptEvent), m_sock), sh::Utility::WORKER_TYPE::SOCKET_RECYCLE);
+  Acceptor::DisconnectEx(m_sock, thWorkerJobPtr, TF_REUSE_SOCKET, 0);  // 소켓이 가진 iocp Handle로
+  m_sock = NULL;
 }
 
 void TCP_SessionBase::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
@@ -60,9 +67,6 @@ void TCP_SessionBase::InternalSend(const BYTE* data, const uint32_t len) {
   auto sendData = SendBufferAllocator::GetInstance().GetShared(len);
   sendData->Write(data, len);
   DoSend(std::move(sendData));
-}
-
-void TCP_SessionBase::Disconnect() {
 }
 
 void TCP_SessionBase::DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer) {

@@ -30,6 +30,8 @@
     <ClCompile Include="private\IO_Core\Acceptor\AcceptEvent.cpp" />
     <ClCompile Include="private\IO_Core\Acceptor\Acceptor.cpp" />
     <ClCompile Include="private\IO_Core\IO_Core.cpp" />
+    <ClCompile Include="private\IO_Core\SocketResetEvent\SocketResetEvent.cpp" />
+    <ClCompile Include="private\IO_Core\SocketResetEvent\SocketResetEventPool.cpp" />
     <ClCompile Include="private\IO_Metric\IO_Metric.cpp" />
     <ClCompile Include="private\Session\RecvContext\TCP_RecvContext.cpp" />
     <ClCompile Include="private\Session\RecvContext\UDP_RecvContext.cpp" />
@@ -51,6 +53,8 @@
     <ClInclude Include="public\IO_Core\Connector\AsyncConnector.h" />
     <ClInclude Include="public\IO_Core\Connector\Connector.h" />
     <ClInclude Include="public\IO_Core\IO_Core.h" />
+    <ClInclude Include="public\IO_Core\SocketResetEvent\SocketResetEvent.h" />
+    <ClInclude Include="public\IO_Core\SocketResetEvent\SocketResetEventPool.h" />
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h" />
     <ClInclude Include="public\IO_Metric\IO_Metric.h" />
     <ClInclude Include="public\Session\RecvContext\IRecvContext.h" />

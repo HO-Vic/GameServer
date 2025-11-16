@@ -43,6 +43,9 @@
     <Filter Include="Session\RecvContext\RecvContext">
       <UniqueIdentifier>{cadb90d1-b31f-4e3b-9984-dacc3a273cfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO_Core\SocketResetEvent">
+      <UniqueIdentifier>{74d6cd03-270e-4425-ac64-04489dee4647}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\Buffer\SendBuffer.cpp">
@@ -98,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="PCH\pch.cpp">
       <Filter>PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\SocketResetEvent\SocketResetEvent.cpp">
+      <Filter>IO_Core\SocketResetEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="private\IO_Core\SocketResetEvent\SocketResetEventPool.cpp">
+      <Filter>IO_Core\SocketResetEvent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +175,12 @@
     </ClInclude>
     <ClInclude Include="PCH\pch.h">
       <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\SocketResetEvent\SocketResetEvent.h">
+      <Filter>IO_Core\SocketResetEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="public\IO_Core\SocketResetEvent\SocketResetEventPool.h">
+      <Filter>IO_Core\SocketResetEvent</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

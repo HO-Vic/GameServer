@@ -12,12 +12,13 @@ enum WORKER_TYPE : uint8_t {
   SEND = 1,
   RECV = 2,
   ACCEPT = 3,
-  DISCONN = 4,        // IO 작업
-  WORK = 5,           // DB, 게임 틱 업데이트 용
-  CONNECT = 6,        // 클라이언트 비동기 연결
-  TERMINATE = 7,      // 쓰레드 풀 종료
-  FORCE_DISCONN = 8,  // 동접 모듈용 클라이언트 강제 연결 해제
-  DESTROY = 9,        // UDP_Session 파괴용
+  DISCONN = 4,          // IO 작업
+  WORK = 5,             // DB, 게임 틱 업데이트 용
+  CONNECT = 6,          // 클라이언트 비동기 연결
+  TERMINATE = 7,        // 쓰레드 풀 종료
+  FORCE_DISCONN = 8,    // 동접 모듈용 클라이언트 강제 연결 해제
+  DESTROY = 9,          // UDP_Session 파괴용
+  SOCKET_RECYCLE = 10,  // 소켓 재사용
 };
 class IWorkerItem;
 using WokerPtr = std::shared_ptr<IWorkerItem>;
