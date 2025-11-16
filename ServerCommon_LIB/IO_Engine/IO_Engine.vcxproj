@@ -122,14 +122,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(projectdir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(projectdir)lib\$(Configuration);$(LibraryPath)</LibraryPath>
     <IncludePath>$(ProjectDir)public\PCH;$(ProjectDir)public;$(ProjectDir)include;$(ProjectDir)PCH;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)Export_LIB\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Export_LIB\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)PCH;$(ProjectDir)include;$(ProjectDir)public;$(ProjectDir)public/PCH;$(IncludePath)</IncludePath>
-    <LibraryPath>$(projectdir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(projectdir)lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
