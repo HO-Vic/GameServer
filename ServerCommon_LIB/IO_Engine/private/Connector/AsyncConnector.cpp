@@ -180,7 +180,7 @@ bool AsyncConnectEvent::TryConnect(HANDLE ioHandle, Utility::ThWorkerJob* worker
 
 bool AsyncConnectEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
 #ifdef _DEBUG
-  assert(m_connectingState != STATE::CONNECTED);
+  assert(m_connectingState != STATE::CONNECTED && "Worker Type can own CONNECTED");
 #endif  // _DEBUG
 
   STATE tryState = STATE::TRY_CONNECT;

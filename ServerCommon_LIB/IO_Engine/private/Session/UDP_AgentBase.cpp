@@ -17,7 +17,7 @@ UDP_AgentBase::UDP_AgentBase(SOCKET sock, uint32_t receiverNo, uint16_t port)
   if (sockResult != 0) {
     assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
   } else {
-    // ANY_ADDR
+    //
     //  if (ntohl(addrInfo.sin_addr.s_addr) == 0) {
     //    assert(sockResult != 0 && "Invalid Socket");  // 바인드 안된 경우
     //  }

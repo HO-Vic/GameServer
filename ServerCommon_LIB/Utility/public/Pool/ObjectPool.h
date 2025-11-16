@@ -60,7 +60,7 @@ class ObjectPool {
   template <typename... Args>
   std::shared_ptr<T> MakeShared(Args&&... args) {
 #ifdef _DEBUG
-    assert(true == m_init);
+    assert(true == m_init && "Not inited");
 #endif  // _DEBUG
 
     T* ptr = nullptr;
@@ -101,7 +101,7 @@ class ObjectPool {
   template <typename... Args>
   std::unique_ptr<T, std::function<void(T*)>> MakeUnique(Args&&... args) {
 #ifdef _DEBUG
-    assert(true == m_init);
+    assert(true == m_init && "Not inited");
 #endif  // _DEBUG
     T* ptr = nullptr;
     bool isPool = false;
@@ -238,7 +238,7 @@ class RawObjectPool {
   template <typename... Args>
   T* GetObjectPtr(Args&&... args) {
 #ifdef _DEBUG
-    assert(true == m_init);
+    assert(true == m_init && "Not inited");
 #endif  // _DEBUG
 
     T* ptr = nullptr;
@@ -261,7 +261,7 @@ class RawObjectPool {
       {
         std::lock_guard<std::mutex> lg(m_usingLock);
         auto cnt = m_usingSet.count(ptr);
-        assert(0 == cnt);
+        assert(0 == cnt && "Current allocated objectPtr already used");
       }
 #endif  // _DEBUG
       std::construct_at<T>(ptr, std::forward<Args>(args)...);

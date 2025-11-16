@@ -50,7 +50,7 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
     return false;  //
   } else {
     if (agentPtr->GetState() == UDP_AgentBase::STATE::INACTIVE) {  // 세션이 비활성화 상태라면
-      agentPtr->DestroyFromReceiver();                          // 현재 리시버 종료
+      agentPtr->DestroyFromReceiver();                             // 현재 리시버 종료
       ThWorkerJobPool::GetInstance().Release(workerJob);
       return true;
     }
@@ -78,7 +78,6 @@ bool UDP_RecvContext::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
 
       WSAEOPNOTSUPP (10045) → 소켓 타입이 잘못됨
       */
-      assert(false && "ioError");
 #endif  // _DEBUG
     }
 
@@ -112,7 +111,7 @@ void UDP_RecvContext::RecvComplete(uint32_t ioSize, std::shared_ptr<UDP_AgentBas
 int32_t UDP_RecvContext::DoRecv(Utility::ThWorkerJob* workerJob, std::shared_ptr<UDP_AgentBase>& agentPtr) {
   DWORD recvByte = 0;
   DWORD flag = 0;
-  
+
   auto ioError = WSARecvFrom(agentPtr->GetSocket(), &m_wsaBuf, 1, &recvByte, &flag, reinterpret_cast<sockaddr*>(&m_recvAddr), &m_recvAddrSize, workerJob, nullptr);
   if (0 != ioError) {
     ioError = WSAGetLastError();

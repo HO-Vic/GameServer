@@ -10,10 +10,6 @@ ThreadPool::ThreadPool()
     : m_threadNo(1), m_handle(nullptr) {
 }
 
-ThreadPool::ThreadPool(const uint8_t threadNo)
-    : m_threadNo(threadNo), m_handle(nullptr) {
-}
-
 ThreadPool::~ThreadPool() {
   for (auto& th : m_threads) {
     th.join();
@@ -45,19 +41,14 @@ void ThreadPool::RunningThread() const {
   }
 }
 
-void ThreadPool::Init(const uint8_t threadNo) {
+int ThreadPool::Init(const uint8_t threadNo /*= 1*/) {
   m_threadNo = threadNo;
-  Init();
-}
-
-void ThreadPool::Init() {
   m_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, m_threadNo);
   if (nullptr == m_handle) {
     auto errorNo = GetLastError();
-#ifdef _DEBUG
-    assert(nullptr != m_handle && "Invalid Handle From CreateIOCompletionPort");
-#endif  // _DEBUG
+    return static_cast<int>(errorNo);
   }
+  return 0;
 }
 
 void ThreadPool::Start() {

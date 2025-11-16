@@ -51,7 +51,7 @@ class SendBufferBase {
 
   uint32_t GetWriteAbleSize() const {
 #ifdef _DEBUG
-    assert(writeSize > cap);
+    assert(writeSize <= cap && "capacity less than writeSize");
 #endif  // _DEBUG
     return cap - writeSize;
   }

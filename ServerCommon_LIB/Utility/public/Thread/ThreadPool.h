@@ -9,8 +9,6 @@ class ThreadPool {
  public:
   ThreadPool();
 
-  ThreadPool(const uint8_t threadNo);
-
   ~ThreadPool();
 
   HANDLE GetHandle() const {
@@ -19,9 +17,8 @@ class ThreadPool {
 
   void RunningThread() const;
 
-  void Init(const uint8_t threadNo);
-
-  void Init();
+  //if CreateIocp() raised Error then return LastError(), else success then return ERROR_SUCCESS(0)
+  int Init(const uint8_t threadNo = 1);
 
   void Start();
 

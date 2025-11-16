@@ -41,9 +41,9 @@ int Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const Socket
   }
 
   m_listenSocket = WSASocket(sockCfg.inetType, sockCfg.socketType, sockCfg.protocolType, NULL, 0, WSA_FLAG_OVERLAPPED);
-#ifdef _DEBUG
-  assert(m_listenSocket != INVALID_SOCKET);
-#endif  // _DEBUG
+  if (m_listenSocket == INVALID_SOCKET) {
+    return WSAGetLastError();
+  }
 
   auto result = ::bind(m_listenSocket, &addrInfo.base, static_cast<int>(addrSize));
   if (result != 0) {  // 성공하면 1을 반환

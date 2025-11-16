@@ -38,7 +38,10 @@ SyncConnector::SyncConnector(const std::string& ipAddr, uint16_t port, uint16_t 
 
 bool SyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) {
   if (!m_isInit) {
+#ifdef _DEBUG
     assert(false && "Connector is not initialized");
+#endif  // _DEBUG
+    return false;
   }
 
   SOCKET connSocket = WSASocketW(m_inetType, m_socketType, m_protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);

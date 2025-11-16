@@ -13,7 +13,7 @@ namespace sh::IO_Engine {
 BYTE* SendBufferBase::GetWritePtr(uint32_t len) {
 #ifdef _DEBUG
   auto writeableSize = static_cast<int64_t>(cap - writeSize);
-  assert(writeableSize >= len);
+  assert(writeableSize >= len && "Can't write, writeAbleSize less than len");
 #endif  // _DEBUG
 
   auto packetHeader = reinterpret_cast<PacketHeader*>(data);
@@ -26,8 +26,7 @@ BYTE* SendBufferBase::GetWritePtr(uint32_t len) {
 void SendBufferBase::Write(const BYTE* srcPtr, uint32_t len) {
   auto writeableSize = static_cast<int64_t>(cap - writeSize);
 #ifdef _DEBUG
-  assert(data != nullptr);
-  assert(writeableSize >= len);
+  assert(writeableSize >= len && "Can't write, writeAbleSize less than len");
 #endif  // _DEBUG
 
   memcpy_s(data + writeSize, writeableSize, srcPtr, len);
@@ -52,10 +51,11 @@ UDP_SingleSendBuffer::UDP_SingleSendBuffer(std::shared_ptr<UDP_AgentBase>& agent
 bool UDP_SingleSendBuffer::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) {
   static constexpr uint32_t MAX_RETRASMIT = 5;  // 패킷 단위로 재전송 횟수 기록
 
-  if (workerJob->GetType() != Utility::WORKER_TYPE::SEND) {  // 해당 객체는 Send Completion을 제외하고는 올 수 없음
 #ifdef _DEBUG
-    assert(workerJob->GetType() != Utility::WORKER_TYPE::SEND);
+  assert(workerJob->GetType() == Utility::WORKER_TYPE::SEND && "Worker Type can own Only Send");
 #endif  // _DEBUG
+
+  if (workerJob->GetType() != Utility::WORKER_TYPE::SEND) {  // 해당 객체는 Send Completion을 제외하고는 올 수 없음
     return false;
   }
   ThWorkerJobPool::GetInstance().Release(workerJob);  // this 클래스는 refCnt=0이면 알아서 커스텀 딜리터로 감
