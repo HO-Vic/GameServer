@@ -68,8 +68,11 @@ using UDP_AgentBasePtr = std::shared_ptr<UDP_AgentBase>;
 using TCP_RecvHandler = std::function<void(TCP_SessionBasePtr, size_t, BYTE*)>;
 using UDP_RecvHandler = std::function<void(UDP_AgentBasePtr, size_t, BYTE*, const sockaddr_in&)>;
 
+class AcceptEvent;
+using AcceptEventPtr = std::shared_ptr<AcceptEvent>;
+
 // completion key를 필요로 하는경우, acceptComplete에서 iocp에 등록해야합니다
-using AcceptCompleteHandler = std::function<void(SOCKET)>;
+using AcceptCompleteHandler = std::function<void(SOCKET, AcceptEventPtr&&)>;
 
 using ConnectCompleteHandler = std::function<void(SOCKET)>;
 using ConnectFailHandler = std::function<void(int)>;

@@ -44,7 +44,7 @@ bool AcceptEvent::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByte, c
     CreateIoCompletionPort(reinterpret_cast<HANDLE>(connectedSocket), m_iocpHandle, uniqueNo.fetch_add(1, std::memory_order::relaxed), 0);
   }
   // m_clientSocket에 새 소켓 할당, AcceptEx() 호출 이후에 connectedSocket을 후처리 해야함
-  m_acceptCompleteHandle(connectedSocket);
+  m_acceptCompleteHandle(connectedSocket, static_pointer_cast<AcceptEvent>(shared_from_this()));
   return true;
 }
 void AcceptEvent::InsertRecycleSocket(SOCKET sock) {

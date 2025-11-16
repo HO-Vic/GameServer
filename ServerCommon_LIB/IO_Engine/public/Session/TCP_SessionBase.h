@@ -21,7 +21,7 @@ class TCP_SessionBase
  public:
   TCP_SessionBase() = default;
 
-  TCP_SessionBase(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent> acceptEvent = nullptr);
+  TCP_SessionBase(SOCKET sock, [[maybe_unused]] const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent>&& acceptEvent = nullptr);
 
   virtual ~TCP_SessionBase();
 

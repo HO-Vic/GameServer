@@ -16,8 +16,8 @@
 #include <Utility/SingletonBase/Singleton.h>
 
 namespace sh::IO_Engine {
-TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent> acceptEvent /*= nullptr*/)
-    : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock), m_acceptEvent(acceptEvent) {
+TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHandler recvHandler, HANDLE iocpHandle, std::shared_ptr<AcceptEvent>&& acceptEvent /*= nullptr*/)
+    : m_sendContext(sock), m_recvContext(sock, std::move(recvHandler)), m_isDisconnnected(false), m_iocpHandle(iocpHandle), m_sock(sock), m_acceptEvent(std::move(acceptEvent)) {
 }
 
 TCP_SessionBase::~TCP_SessionBase() {
