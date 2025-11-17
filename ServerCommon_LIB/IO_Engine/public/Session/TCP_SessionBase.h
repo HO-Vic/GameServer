@@ -66,11 +66,13 @@ class TCP_SessionBase
   // 위에 레이어에서 상속받아서 Disconnect 상황에서 해야하는 일 정의
   virtual void OnDisconnect() = 0;
 
+ protected:
+  HANDLE m_iocpHandle = NULL;
+
  private:
+  SOCKET m_sock = NULL;
   TCP_SendContext m_sendContext{};
   TCP_RecvContext m_recvContext{};
-  HANDLE m_iocpHandle = NULL;
-  SOCKET m_sock = NULL;
   std::shared_ptr<AcceptEvent> m_acceptEvent = nullptr;
   std::atomic<TCP_Session_STATE> m_state = NON_ERR;
   std::atomic_bool m_isDisconnnected = false;
