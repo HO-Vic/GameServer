@@ -5,6 +5,14 @@
 #include <Utility/Thread/ThWorkerJob.h>
 
 namespace sh::IO_Engine {
+AcceptEvent::AcceptEvent(SOCKET listenSocket, HANDLE iocpHandle, AcceptCompleteHandler acceptHandle, const SocketConfig& sockCfg, bool isNoDelay, const bool registToIocp, uint32_t initSockSize)
+    : m_listenSocket(listenSocket), m_iocpHandle(iocpHandle), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_sockCfg(sockCfg), m_isNoDelay(isNoDelay), m_registToIocp(registToIocp) {
+  ZeroMemory(&m_connInfo, sizeof(ConnectInfo));
+  for (uint32_t i = 0; i < initSockSize; ++i) {
+    m_socketPool.push(WSASocket(m_sockCfg.inetType, m_sockCfg.socketType, m_sockCfg.protocolType, 0, 0, WSA_FLAG_OVERLAPPED));
+  }
+}
+
 void AcceptEvent::Start(Utility::ThWorkerJob* workerJob) {
   ZeroMemory(&m_connInfo, sizeof(m_connInfo));
   m_clientSocket = NULL;

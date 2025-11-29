@@ -10,10 +10,7 @@ class ThWorkerJob;
 class AcceptEvent
     : public Utility::IWorkerItem {
  public:
-  AcceptEvent(SOCKET listenSocket, HANDLE iocpHandle, AcceptCompleteHandler acceptHandle, const SocketConfig& sockCfg, bool isNoDelay = true, const bool registToIocp = true)
-      : m_listenSocket(listenSocket), m_iocpHandle(iocpHandle), m_clientSocket(NULL), m_acceptCompleteHandle(std::move(acceptHandle)), m_sockCfg(sockCfg), m_isNoDelay(isNoDelay), m_registToIocp(registToIocp) {
-    ZeroMemory(&m_connInfo, sizeof(ConnectInfo));
-  }
+  AcceptEvent(SOCKET listenSocket, HANDLE iocpHandle, AcceptCompleteHandler acceptHandle, const SocketConfig& sockCfg, bool isNoDelay = true, const bool registToIocp = true, uint32_t initSockSize = 1000);
 
   void Start(Utility::ThWorkerJob* workerJob);
 
