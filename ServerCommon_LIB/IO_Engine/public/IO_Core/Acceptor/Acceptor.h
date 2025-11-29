@@ -29,7 +29,7 @@ class Acceptor {
   void Init(AcceptCompleteHandler acceptCompleteHandle, const uint8_t acceptNo = 1);
 
   // m_registToIocp: accept된 소켓에 대해서 바로 iocp에 등록할지에 대한
-  ErrorResult Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay = true, bool m_registToIocp = true);
+  ErrorResult Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay = true, bool registToIocp = true);
 
  private:
   SOCKET m_listenSocket = NULL;

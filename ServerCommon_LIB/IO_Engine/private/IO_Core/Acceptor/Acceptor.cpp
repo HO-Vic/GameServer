@@ -20,7 +20,7 @@ void Acceptor::Init(AcceptCompleteHandler acceptHandleFunc, const uint8_t accept
   m_acceptNo = acceptNo;
 }
 
-ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay, bool m_registToIocp) {
+ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, const SocketConfig& sockCfg, bool isNoDelay, bool registToIocp) {
   SocketAddress addrInfo{};
   addrInfo.base.sa_family = sockCfg.inetType;
   addrInfo.v4.sin_port = htons(acceptCfg.port);  // union이어서 v6랑 같은 메모리 위치
@@ -73,7 +73,7 @@ ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, cons
   }
 
   for (auto i = 0; i < m_acceptNo; ++i) {
-    auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, iocpHandle, m_acceptCompleteHandle, sockCfg, isNoDelay, m_registToIocp);
+    auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, iocpHandle, m_acceptCompleteHandle, sockCfg, isNoDelay, registToIocp);
     auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(acceptEvent), Utility::WORKER_TYPE::ACCEPT);
     acceptEvent->Start(workerJob);
   }

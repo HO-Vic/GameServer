@@ -3,6 +3,8 @@
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
 #include <Buffer/SendBufferPool.h>
+#include <IO_Core/SocketResetEvent/SocketResetEvent.h>
+#include <IO_Core/SocketResetEvent/SocketResetEventPool.h>
 
 namespace sh::IO_Engine {
 IO_Core::IO_Core()
@@ -29,6 +31,7 @@ ErrorResult IO_Core::Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolS
   ThWorkerJobPool::GetInstance().Init(thWorkerPoolSize, metricUse);
   SendBufferPool::GetInstance().Init(sendBufferPoolSize, metricUse);
   SendBufferAllocator::GetInstance().Init(sendBufferPoolSize, metricUse);
+  SocketResetEventPool::GetInstance().Init(1500, metricUse);
   m_isInit = true;
   return {ErrorType::None, 0};
 }
