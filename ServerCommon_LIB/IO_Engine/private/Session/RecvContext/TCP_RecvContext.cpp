@@ -44,9 +44,10 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
       // mergeBuffer에 패킷에 해당하는 만큼 복사하여 처리
 
       // memcpy(mergeBuffer, &m_buffer[head], 1);
-      memcpy(mergeBuffer, m_buffer + 1, static_cast<uint64_t>(currentPacket.size - sizeof(PacketHeader)));
+      auto packetSize = static_cast<uint64_t>(currentPacket.size - sizeof(PacketHeader));
+      memcpy(mergeBuffer, m_buffer + 1, packetSize);
 
-      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), currentPacket.size, mergeBuffer);
+      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), packetSize, mergeBuffer);
 #ifdef _DEBUG
       auto prevHead = head;
 #endif  // _DEBUG
@@ -91,7 +92,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
       memcpy(mergeBuffer, &m_buffer[head] + 2, frontSize - 2);  // 버퍼포지션~마지막 버퍼 크기만큼
       memcpy(mergeBuffer + frontSize - 2, &m_buffer[0], backSize);
 
-      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), currentPacket->size, mergeBuffer);
+      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), static_cast<uint64_t>(frontSize + backSize), mergeBuffer);
 #ifdef _DEBUG
       auto prevHead = head;
 #endif  // _DEBUG
@@ -106,7 +107,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
     }
 
     //  완성된 패킷이 선형적으로 있어서, m_buffer의 포인터인 bufferPosition으로 패킷 처리
-    m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), currentPacket->size, (&m_buffer[head + 2]));
+    m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), static_cast<uint64_t>(currentPacket->size - 2), (&m_buffer[head + 2]));
     // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
 #ifdef _DEBUG
     auto prevHead = head;

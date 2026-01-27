@@ -22,12 +22,18 @@ TCP_SessionBase::TCP_SessionBase(SOCKET sock, const IO_TYPE ioType, TCP_RecvHand
 
 TCP_SessionBase::~TCP_SessionBase() {
   if (nullptr == m_acceptEvent) {
-    closesocket(m_sock);
+    if (m_sock != NULL) {
+      closesocket(m_sock);
+    }
+    m_sock = NULL;
+    return;
   }
   // TCP_SessionBase는 shared_ptr이니까, 소멸자 호출되는건, 소유자가 한 쓰레드
-  auto thWorkerJobPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(SocketResetEventPool::GetInstance().MakeShared(std::move(m_acceptEvent), m_sock), sh::Utility::WORKER_TYPE::SOCKET_RECYCLE);
-  Acceptor::DisconnectEx(m_sock, thWorkerJobPtr, TF_REUSE_SOCKET, 0);  // 소켓이 가진 iocp Handle로
-  m_sock = NULL;
+  if (m_sock != NULL) {  // ObjectPool 소멸자에서 sock이 NULL이면 DisconnEx에서 문제 발생
+    auto thWorkerJobPtr = ThWorkerJobPool::GetInstance().GetObjectPtr(SocketResetEventPool::GetInstance().MakeShared(std::move(m_acceptEvent), m_sock), sh::Utility::WORKER_TYPE::SOCKET_RECYCLE);
+    Acceptor::DisconnectEx(m_sock, thWorkerJobPtr, TF_REUSE_SOCKET, 0);  // 소켓이 가진 iocp Handle로
+    m_sock = NULL;
+  }
 }
 
 void TCP_SessionBase::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
