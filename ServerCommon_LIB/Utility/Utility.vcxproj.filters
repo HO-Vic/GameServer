@@ -11,9 +11,6 @@
     <Filter Include="Singleton">
       <UniqueIdentifier>{c21fb9d7-5b61-4497-946b-ef5b22838616}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SpinLock">
-      <UniqueIdentifier>{20721e6d-0ef8-4c7f-992d-dc256250d452}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{cb8ea67f-d586-4702-aff6-f1e39ae7ece7}</UniqueIdentifier>
     </Filter>
@@ -98,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h">
       <Filter>Job\JobQ\ST</Filter>
-    </ClInclude>
-    <ClInclude Include="public\SpinLock\SpinLock.h">
-      <Filter>SpinLock</Filter>
     </ClInclude>
     <ClInclude Include="public\SingletonBase\Singleton.h">
       <Filter>Singleton</Filter>

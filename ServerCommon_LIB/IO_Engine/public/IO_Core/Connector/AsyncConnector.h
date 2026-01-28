@@ -42,7 +42,7 @@ class AsyncConnector
   };
 
   using TimeOutJobPtr = std::shared_ptr<IntenalTimerJob>;
-  class IntenalTimer {
+  class InternalTimer {
     friend class AsyncConnector;
     struct InternalTimerComp {
       bool operator()(const TimeOutJobPtr& left, const TimeOutJobPtr& right) {
@@ -51,9 +51,9 @@ class AsyncConnector
     };
 
    public:
-    IntenalTimer();
+    InternalTimer();
 
-    ~IntenalTimer();
+    ~InternalTimer();
 
     void Start();
 
@@ -72,9 +72,9 @@ class AsyncConnector
  public:
   AsyncConnector();
 
-  AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  // AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
 
-  void Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
+  bool Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType = AF_INET, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP);
 
   virtual bool TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) override;
 
@@ -82,7 +82,7 @@ class AsyncConnector
 
  private:
   HANDLE m_ioHandle;
-  std::unique_ptr<IntenalTimer> m_intenalTimer;
+  std::unique_ptr<InternalTimer> m_intenalTimer;
   MS m_timeOutThreshold;
 
   LPFN_CONNECTEX ConnectEx;  // 최초 1회 호출

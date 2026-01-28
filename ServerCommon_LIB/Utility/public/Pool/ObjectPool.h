@@ -64,13 +64,11 @@ class ObjectPool {
 #endif  // _DEBUG
 
     T* ptr = nullptr;
-    bool isPool = false;
     {
       std::lock_guard<std::mutex> lg(m_lock);
       if (!m_pools.empty()) {
         ptr = m_pools.top();
         m_pools.pop();
-        isPool = true;
       }
     }
 
@@ -81,6 +79,7 @@ class ObjectPool {
       }
       ptr = new T(std::forward<Args>(args)...);
     } else {
+      //*ptr = T(std::forward<Args>(args)...);
       std::construct_at<T>(ptr, std::forward<Args>(args)...);
     }
 #ifdef _DEBUG
@@ -95,7 +94,10 @@ class ObjectPool {
     // return std::shared_ptr<T>(ptr, std::move([this](T* ptr) {
     //                             this->Release(ptr);
     //                           }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
-    return std::shared_ptr<T>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
+    // return std::shared_ptr<T>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
+    return std::shared_ptr<T>(ptr, [this](T* ptr) {
+      Release(ptr);
+    });
   }
 
   template <typename... Args>
@@ -104,13 +106,11 @@ class ObjectPool {
     assert(true == m_init && "Not inited");
 #endif  // _DEBUG
     T* ptr = nullptr;
-    bool isPool = false;
     {
       std::lock_guard<std::mutex> lg(m_lock);
       if (!m_pools.empty()) {
         ptr = m_pools.top();
         m_pools.pop();
-        isPool = false;
       }
     }
 
@@ -135,7 +135,10 @@ class ObjectPool {
     // return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::move([this](T* ptr) {
     //                                                      this->Release(ptr);
     //                                                    }));  // return std::make_shared<T>(ptr, Release);//make_shared는 deleter 지정 불가
-    return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
+    return std::unique_ptr<T, std::function<void(T*)>>(ptr, [this](T* ptr) {
+      Release(ptr);
+    });
+    // return std::unique_ptr<T, std::function<void(T*)>>(ptr, std::bind(&ObjectPool<T>::Release, this, std::placeholders::_1));
   }
 
   uint64_t GetTotalCnt() const {

@@ -3,6 +3,7 @@
 #include <atomic>
 #include <Utility/SingletonBase/Singleton.h>
 
+// 모니터링 용도
 namespace sh::IO_Engine {
 struct IO_MetricSlot {
   std::atomic_uint64_t sendCompletion = 0;
@@ -56,7 +57,7 @@ class IO_Metric final
     return m_isUse;
   }
 
-  IO_MetricSlot& SwapAndLoad();
+  IO_MetricSlot& SwapAndLoad();  // swap하여 현재까지 기록된 정보를 모니터링(정확한 기록을 저장하는 걸 보장xx)
 
   void RecordSend(const DWORD ioByte);
 

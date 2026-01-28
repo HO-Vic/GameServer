@@ -8,24 +8,25 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-AsyncConnector::IntenalTimer::IntenalTimer()
+AsyncConnector::InternalTimer::InternalTimer()
     : m_timeOutThread(nullptr) {
 }
 
-AsyncConnector::IntenalTimer::~IntenalTimer() {
+AsyncConnector::InternalTimer::~InternalTimer() {
   if (nullptr != m_timeOutThread) {
     m_timeOutThread->request_stop();
     m_timeOutThread->join();
   }
 }
 
-void AsyncConnector::IntenalTimer::Start() {
+void AsyncConnector::InternalTimer::Start() {
   m_timeOutThread = std::make_unique<std::jthread>([this](std::stop_token stopToken) {
     TimeOutFunc(stopToken);
   });
 }
 
-void AsyncConnector::IntenalTimer::TimeOutFunc(std::stop_token stopToken) {
+BUILD_MESSAGE(__FILE__, __LINE__, "condition variable 써서 busy wait 방지 해야함");
+void AsyncConnector::InternalTimer::TimeOutFunc(std::stop_token stopToken) {
   while (true) {
     if (stopToken.stop_requested()) {
       return;
@@ -47,7 +48,7 @@ void AsyncConnector::IntenalTimer::TimeOutFunc(std::stop_token stopToken) {
   }
 }
 
-void AsyncConnector::IntenalTimer::InsertTimerJob(TimeOutJobPtr&& jobPtr) {
+void AsyncConnector::InternalTimer::InsertTimerJob(TimeOutJobPtr&& jobPtr) {
   m_timerJob.push(std::move(jobPtr));
 }
 
@@ -55,35 +56,35 @@ AsyncConnector::AsyncConnector()
     : ConnectorBase(), m_ioHandle(NULL), m_intenalTimer(nullptr), m_timeOutThreshold(0), ConnectEx(nullptr) {
 }
 
-AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType)
-    : ConnectorBase(ipAddr, port, inetType, socketType, protocolType), m_ioHandle(ioHandle), m_timeOutThreshold(timeOutThreshold), m_intenalTimer(nullptr) {
-  // 타임 아웃이 없다면 ,타임 아웃 이벤트를 해줄 타이머를 만들지 않는다
-  if (m_timeOutThreshold != MS(0)) {
-    m_intenalTimer = std::make_unique<IntenalTimer>();
-    m_intenalTimer->Start();
-  }
-  // ConnectEx 함수 포인터 획득을 위한 소켓으로 획득했다면 close
-  SOCKET immediateSocket = WSASocketW(inetType, socketType, protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);
-  GUID guid = WSAID_CONNECTEX;
-  DWORD bytesReturned = 0;
-  auto result = WSAIoctl(immediateSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &ConnectEx, sizeof(ConnectEx), &bytesReturned, nullptr, nullptr);
-  closesocket(immediateSocket);
-  if (result != 0) {
-    char errorString[1024] = {0};
-    sprintf_s(errorString, "%s(%d) > Failed to Get ConnectEx Functor [errorCode: %d]", __FUNCTION__, __LINE__, WSAGetLastError());
-#ifdef _DEBUG
-    assert(false && errorString);
-#endif  // _DEBUG
-  }
-}
+// AsyncConnector::AsyncConnector(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType)
+//     : ConnectorBase(ipAddr, port, inetType, socketType, protocolType), m_ioHandle(ioHandle), m_timeOutThreshold(timeOutThreshold), m_intenalTimer(nullptr) {
+//   // 타임 아웃이 없다면 ,타임 아웃 이벤트를 해줄 타이머를 만들지 않는다
+//   if (m_timeOutThreshold != MS(0)) {
+//     m_intenalTimer = std::make_unique<IntenalTimer>();
+//     m_intenalTimer->Start();
+//   }
+//   // ConnectEx 함수 포인터 획득을 위한 소켓으로 획득했다면 close
+//   SOCKET immediateSocket = WSASocketW(inetType, socketType, protocolType, NULL, NULL, WSA_FLAG_OVERLAPPED);
+//   GUID guid = WSAID_CONNECTEX;
+//   DWORD bytesReturned = 0;
+//   auto result = WSAIoctl(immediateSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &ConnectEx, sizeof(ConnectEx), &bytesReturned, nullptr, nullptr);
+//   closesocket(immediateSocket);
+//   if (result != 0) {
+//     char errorString[1024] = {0};
+//     sprintf_s(errorString, "%s(%d) > Failed to Get ConnectEx Functor [errorCode: %d]", __FUNCTION__, __LINE__, WSAGetLastError());
+// #ifdef _DEBUG
+//     assert(false && errorString);
+// #endif  // _DEBUG
+//   }
+// }
 
-void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType) {
+bool AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t port, const MS timeOutThreshold, uint16_t inetType, int socketType, int protocolType) {
   ConnectorBase::Init(ipAddr, port, inetType, socketType, protocolType);
   m_ioHandle = ioHandle;
   m_timeOutThreshold = timeOutThreshold;
 
   if (m_timeOutThreshold != MS(0)) {
-    m_intenalTimer = std::make_unique<IntenalTimer>();
+    m_intenalTimer = std::make_unique<InternalTimer>();
     m_intenalTimer->Start();
   }
   // ConnectEx 함수 포인터 획득을 위한 소켓으로 획득했다면 close
@@ -98,7 +99,9 @@ void AsyncConnector::Init(HANDLE ioHandle, const std::string& ipAddr, uint16_t p
 #ifdef _DEBUG
     assert(false && errorString);
 #endif  // _DEBUG
+    return false;
   }
+  return true;
 }
 
 bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFailHandler failHandle) {
@@ -106,7 +109,9 @@ bool AsyncConnector::TryConnect(ConnectCompleteHandler successHandle, ConnectFai
 #ifdef _DEBUG
     assert(false && "Connector is not initialized");
 #endif  // _DEBUG
+    return false;
   }
+
   auto connectEvent = std::make_shared<AsyncConnectEvent>(std::move(successHandle), std::move(failHandle), ConnectEx, m_connectAddr);
   auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(connectEvent, Utility::WORKER_TYPE::CONNECT);
   return connectEvent->TryConnect(m_ioHandle, workerJob, m_inetType, m_socketType, m_protocolType, *this);

@@ -47,13 +47,13 @@ class SendBufferBase {
 
   BYTE* GetWritePtr(uint32_t len);
 
-  void Write(const BYTE* srcPtr, uint32_t len);
+  bool Write(const BYTE* srcPtr, uint32_t len);
 
-  uint32_t GetWriteAbleSize() const {
+  inline int64_t GetWriteAbleSize() const {
 #ifdef _DEBUG
     assert(writeSize <= cap && "capacity less than writeSize");
 #endif  // _DEBUG
-    return cap - writeSize;
+    return static_cast<int64_t>(cap - writeSize);
   }
 
  protected:

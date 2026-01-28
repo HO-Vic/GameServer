@@ -2,6 +2,7 @@
 #include <SingletonBase/Singleton.h>
 #include <stack>
 #include <mutex>
+#include <vector>
 
 namespace sh::Utility {
 class MemoryPool  // 메모리 헤더 집합
@@ -54,7 +55,7 @@ class MemoryPoolTable : public SingletonBase<MemoryPoolTable> {
   template <typename T, typename... Args>
   T* Get(Args... args) {
     if (sizeof(T) > MAX_MEM_POOL_SIZE) {
-      return new T(std::forward(args...));
+      return new T(std::forward<Args>(args)...);
     }
     MemoryPool& pool = *m_memoryPoolTable[sizeof(T) - 1];
     auto allocedMem = pool.Get(sizeof(T));

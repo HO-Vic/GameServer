@@ -24,7 +24,7 @@ class TCP_RecvContext {
     m_wsaBufs[1].len = 0;
   }
 
-  void DefferedSet(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler) {
+  void DeferredSet(SOCKET sock, TCP_RecvHandler&& TCP_RecvHandler) {
     m_socket = sock;
     m_recvHandler = std::move(TCP_RecvHandler);
   }

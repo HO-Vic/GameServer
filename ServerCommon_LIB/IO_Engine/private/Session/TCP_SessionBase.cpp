@@ -36,11 +36,13 @@ TCP_SessionBase::~TCP_SessionBase() {
   }
 }
 
-void TCP_SessionBase::DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
+void TCP_SessionBase::DeferredSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle) {
   m_sendContext.DeferredSet(sock);
-  m_recvContext.DefferedSet(sock, std::move(recvHandler));
+  m_recvContext.DeferredSet(sock, std::move(recvHandler));
   m_iocpHandle = iocpHandle;
   m_sock = sock;
+  m_isDisconnnected = false;
+  m_state = NON_ERR;
 }
 
 void TCP_SessionBase::StartRecv() {
@@ -76,9 +78,6 @@ void TCP_SessionBase::InternalSend(const BYTE* data, const uint32_t len) {
 }
 
 void TCP_SessionBase::DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer) {
-  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
-    return;
-  }
   auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendBuffer));  // 실패시 Thworker는 내부 정리
   if (0 != ioError) {
     RaiseIOError();

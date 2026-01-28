@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <utility>
 
-namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
 #define IO_ENGINE_DEFINE
+namespace sh::IO_Engine {
 #pragma region TYPE
 enum class IO_TYPE : char {
   TCP = 1,
@@ -16,10 +16,11 @@ enum class IO_TYPE : char {
 
 enum class ErrorType : char {
   None = 0,
-  WIN32_ERR = 1,           // GetLastError()
-  WINSOCK_ERR = 2,         // WsaGetLastError()
-  IO_CORE_NOT_INIT = 3,    // IO_Core non Init
-  FailedDisconnectEx = 4,  // DisconnectEx load fail - WSAGetLastError()
+  WIN32_ERR = 1,             // GetLastError()
+  WINSOCK_ERR = 2,           // WsaGetLastError()
+  IO_CORE_NOT_INIT = 3,      // IO_Core non Init
+  FailedDisconnectEx = 4,    // DisconnectEx load fail - WSAGetLastError()
+  IO_CORE_ALREADY_INIT = 5,  // IO_Core Already Init
 };
 
 // <ErrorType, detail error Code>
@@ -35,6 +36,7 @@ struct PacketHeader {
   PacketHeader(const uint16_t parSize)
       : size(parSize) {
   }
+  // 링버퍼에서 서로 다른 위치의 packetSize를 해결하기 위해
   PacketHeader(const char* first, const char* second)
       : size(0) {
     size = static_cast<uint16_t>(static_cast<uint8_t>(*first)) << 8;
@@ -100,6 +102,5 @@ struct AddrConfig {
 };
 #pragma endregion
 
-#endif  // !IO_ENGINE_DEFINE
-
 }  // namespace sh::IO_Engine
+#endif  // !IO_ENGINE_DEFINE

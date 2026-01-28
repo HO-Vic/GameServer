@@ -9,5 +9,5 @@ class IWorkerItem : public std::enable_shared_from_this<IWorkerItem> {
   virtual bool Execute(ThWorkerJob* workerJob, const DWORD ioByte, const DWORD errorCode) = 0;
 };
 
-using WokerPtr = std::shared_ptr<IWorkerItem>;
+using WorkerPtr = std::shared_ptr<IWorkerItem>;
 }  // namespace sh::Utility

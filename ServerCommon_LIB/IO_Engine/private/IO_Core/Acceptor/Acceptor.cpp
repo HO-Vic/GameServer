@@ -57,7 +57,7 @@ ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, cons
   }
 
   auto result = ::bind(m_listenSocket, &addrInfo.base, static_cast<int>(addrSize));
-  if (result != 0) {  // 성공하면 1을 반환
+  if (result != 0) {  // 성공하면 0을 반환
     return {ErrorType::WINSOCK_ERR, WSAGetLastError()};
   }
 
@@ -73,9 +73,9 @@ ErrorResult Acceptor::Start(HANDLE iocpHandle, const AddrConfig& acceptCfg, cons
   }
 
   for (auto i = 0; i < m_acceptNo; ++i) {
-    auto acceptEvent = std::make_shared<AcceptEvent>(m_listenSocket, iocpHandle, m_acceptCompleteHandle, sockCfg, isNoDelay, registToIocp);
-    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(acceptEvent), Utility::WORKER_TYPE::ACCEPT);
-    acceptEvent->Start(workerJob);
+    m_acceptEvents.push_back(std::make_shared<AcceptEvent>(m_listenSocket, iocpHandle, m_acceptCompleteHandle, sockCfg, isNoDelay, registToIocp));
+    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<Utility::IWorkerItem>(m_acceptEvents.back()), Utility::WORKER_TYPE::ACCEPT);
+    m_acceptEvents.back()->Start(workerJob);
   }
 
   return {ErrorType::None, 0};

@@ -13,7 +13,7 @@ IO_Core::IO_Core()
 
 ErrorResult IO_Core::Init(const uint8_t ioThreadNo, const uint32_t thWorkerPoolSize /*= 1500*/, const uint32_t sendBufferPoolSize /*= 1500*/, const bool metricUse /* = false*/) {
   if (m_isInit) {
-    return {ErrorType::IO_CORE_NOT_INIT, -1};
+    return {ErrorType::IO_CORE_ALREADY_INIT, -1};
   }
 
   WSADATA wsaData{};

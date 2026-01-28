@@ -18,12 +18,15 @@ ThreadPool::~ThreadPool() {
 
 void ThreadPool::RunningThread() const {
   static constexpr uint16_t MAX_COMPLETION_CNT = 32;
+  DWORD TIME_OUT = 500;  // m_isRunning을 감지하여 shut down을 위해서
+
   OVERLAPPED_ENTRY overlappedEntry[MAX_COMPLETION_CNT];
-
-  while (true) {
+  while (m_isRunning) {
     uint32_t getOverlappedCnt = 0;
-    bool isSuccess = GetQueuedCompletionStatusEx(m_handle, overlappedEntry, MAX_COMPLETION_CNT, reinterpret_cast<PULONG>(&getOverlappedCnt), INFINITE, false);
-
+    bool isSuccess = GetQueuedCompletionStatusEx(m_handle, overlappedEntry, MAX_COMPLETION_CNT, reinterpret_cast<PULONG>(&getOverlappedCnt), TIME_OUT, false);
+    if (!isSuccess) {
+      continue;  // 타임 아웃으로 수행된 경우
+    }
     // execute overlapped
     for (uint8_t i = 0; i < getOverlappedCnt; ++i) {
       auto& workerJob = *(reinterpret_cast<ThWorkerJob*>(overlappedEntry[i].lpOverlapped));
@@ -53,7 +56,13 @@ int ThreadPool::Init(const uint8_t threadNo /*= 1*/) {
 
 void ThreadPool::Start() {
   for (auto i = 0; i != m_threadNo; ++i) {
-    m_threads.emplace_back(std::bind(&ThreadPool::RunningThread, this));
+    // m_threads.emplace_back(std::bind(&ThreadPool::RunningThread, this));
+    m_threads.emplace_back([this]() {
+      RunningThread();
+    });
   }
+}
+void ThreadPool::Stop() {
+  m_isRunning = false;
 }
 }  // namespace sh::Utility

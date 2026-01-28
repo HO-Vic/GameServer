@@ -25,7 +25,7 @@ class TCP_SessionBase
 
   virtual ~TCP_SessionBase();
 
-  void DefferedSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
+  void DeferredSet(SOCKET sock, TCP_RecvHandler recvHandler, HANDLE iocpHandle);
 
   /*
    개선?

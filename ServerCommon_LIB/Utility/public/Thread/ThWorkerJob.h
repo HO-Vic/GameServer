@@ -19,9 +19,10 @@ enum WORKER_TYPE : uint8_t {
   FORCE_DISCONN = 8,    // 동접 모듈용 클라이언트 강제 연결 해제
   DESTROY = 9,          // UDP_Session 파괴용
   SOCKET_RECYCLE = 10,  // 소켓 재사용
+  RETRY_ACCEPT = 11,    // Accept에서 소켓 할당 실패한 경우
 };
 class IWorkerItem;
-using WokerPtr = std::shared_ptr<IWorkerItem>;
+using WorkerPtr = std::shared_ptr<IWorkerItem>;
 class ThWorkerJob : public OVERLAPPED {
   struct DebugCaller {
     std::string caller;
@@ -34,9 +35,9 @@ class ThWorkerJob : public OVERLAPPED {
 
   ~ThWorkerJob();
 
-  ThWorkerJob(const WokerPtr& workItem, WORKER_TYPE type);
+  ThWorkerJob(const WorkerPtr& workItem, WORKER_TYPE type);
 
-  ThWorkerJob(WokerPtr&& workItem, WORKER_TYPE type);
+  ThWorkerJob(WorkerPtr&& workItem, WORKER_TYPE type);
 
   void operator()(const DWORD ioByte, const DWORD errorCode);
 
@@ -49,7 +50,7 @@ class ThWorkerJob : public OVERLAPPED {
     ZeroMemory(this, sizeof(OVERLAPPED));
   }
 
-  WokerPtr GetWorkerItem() const {
+  WorkerPtr GetWorkerItem() const {
     return m_workItem;
   }
 

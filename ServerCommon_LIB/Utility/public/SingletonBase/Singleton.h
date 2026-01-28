@@ -12,7 +12,7 @@ class SingletonBase {
 
  public:
   static T& GetInstance() {
-    // thread-safe??
+    // c++11, thread-safe
     static T instance;
     return instance;
   }

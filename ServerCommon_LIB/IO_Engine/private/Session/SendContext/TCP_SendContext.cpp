@@ -8,16 +8,16 @@
 
 namespace sh::IO_Engine {
 int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer) {
-  static constexpr bool SEND_DESIRE = false;
+  m_doubleQueue.InsertSendBuffer(std::move(buffer));
   if (!m_isSendAble) {
     return 0;
   }
-  m_doubleQueue.InsertSendBuffer(std::move(buffer));
 
   bool expectedValue = true;
   // Send가 다중 쓰레드에서 호출되더라도, 하나의 Send 시도 쓰레드만 Send
-  // 1. 16번 라인에서 true였지만, 이미 false가 될 수 도 있고
+  // 1. 12번 라인에서 true였지만, 이미 false가 될 수 도 있고
   // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
+  constexpr bool SEND_DESIRE = false;
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
   if (isSendAbleThread) {
     auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);

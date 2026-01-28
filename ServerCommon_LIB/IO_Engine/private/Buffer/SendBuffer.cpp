@@ -11,11 +11,14 @@
 
 namespace sh::IO_Engine {
 BYTE* SendBufferBase::GetWritePtr(uint32_t len) {
+  auto writeableSize = GetWriteAbleSize();
 #ifdef _DEBUG
-  auto writeableSize = static_cast<int64_t>(cap - writeSize);
   assert(writeableSize >= len && "Can't write, writeAbleSize less than len");
 #endif  // _DEBUG
 
+  if (writeableSize < len) {  // 쓰기 공간이 부족한 경우
+    return nullptr;
+  }
   auto packetHeader = reinterpret_cast<PacketHeader*>(data);
   writeSize += len;
   packetHeader->size = writeSize;
@@ -23,17 +26,20 @@ BYTE* SendBufferBase::GetWritePtr(uint32_t len) {
   return data + (writeSize - len);  // 미리 writeSize+=len 했으니, 현재 write해야되는 위치는 wrtieSize-len
 }
 
-void SendBufferBase::Write(const BYTE* srcPtr, uint32_t len) {
-  auto writeableSize = static_cast<int64_t>(cap - writeSize);
+bool SendBufferBase::Write(const BYTE* srcPtr, uint32_t len) {
+  auto writeableSize = GetWriteAbleSize();
 #ifdef _DEBUG
   assert(writeableSize >= len && "Can't write, writeAbleSize less than len");
-#endif  // _DEBUG
-
+#endif                        // _DEBUG
+  if (writeableSize < len) {  // 쓰기 공간이 부족한 경우
+    return false;
+  }
   memcpy_s(data + writeSize, writeableSize, srcPtr, len);
   writeSize += len;
   auto packetHeader = reinterpret_cast<PacketHeader*>(data);
   packetHeader->size = writeSize;
   packetHeader->Serialize();
+  return true;
 }
 
 SendBuffer::SendBuffer(const BYTE* data, const uint32_t len)
