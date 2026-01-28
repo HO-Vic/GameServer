@@ -92,7 +92,7 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
       memcpy(mergeBuffer, &m_buffer[head] + 2, frontSize - 2);  // 버퍼포지션~마지막 버퍼 크기만큼
       memcpy(mergeBuffer + frontSize - 2, &m_buffer[0], backSize);
 
-      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), static_cast<uint64_t>(frontSize + backSize), mergeBuffer);
+      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), static_cast<uint64_t>(frontSize + backSize - 2), mergeBuffer);
 #ifdef _DEBUG
       auto prevHead = head;
 #endif  // _DEBUG
