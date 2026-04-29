@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="PCH">
       <UniqueIdentifier>{31cd749b-f7be-4bab-ba55-0e4d66a359e8}</UniqueIdentifier>
     </Filter>
@@ -14,14 +10,8 @@
     <Filter Include="SpinLock">
       <UniqueIdentifier>{20721e6d-0ef8-4c7f-992d-dc256250d452}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts">
-      <UniqueIdentifier>{cb8ea67f-d586-4702-aff6-f1e39ae7ece7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Job">
       <UniqueIdentifier>{f1c439d5-f119-4c87-8114-583eea297082}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TimeCalculator">
-      <UniqueIdentifier>{dd08a848-6af2-416a-92cf-5d5a62e2c9ad}</UniqueIdentifier>
     </Filter>
     <Filter Include="Job\JobQ">
       <UniqueIdentifier>{a09a0e0b-f14e-4ab9-a49b-586fa1f7bc14}</UniqueIdentifier>
@@ -52,9 +42,6 @@
     <ClCompile Include="private\Job\Job.cpp">
       <Filter>Job</Filter>
     </ClCompile>
-    <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp">
-      <Filter>TimeCalculator</Filter>
-    </ClCompile>
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
     </ClCompile>
@@ -79,13 +66,13 @@
     <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp">
       <Filter>Job\JobQ\MT</Filter>
     </ClCompile>
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Job\Job.h">
       <Filter>Job</Filter>
-    </ClInclude>
-    <ClInclude Include="public\TimeCalculator\TimeCalculator.h">
-      <Filter>TimeCalculator</Filter>
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQBase.h">
       <Filter>Job\JobQ</Filter>
@@ -111,9 +98,6 @@
     <ClInclude Include="public\Pool\ObjectPool.h">
       <Filter>Pool\ObjectPool</Filter>
     </ClInclude>
-    <ClInclude Include="public\PCH\pch.h">
-      <Filter>PCH</Filter>
-    </ClInclude>
     <ClInclude Include="public\Thread\ThreadManager.h">
       <Filter>Thread</Filter>
     </ClInclude>
@@ -128,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h">
       <Filter>Job\JobQ\MT</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

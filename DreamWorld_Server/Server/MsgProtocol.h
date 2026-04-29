@@ -70,8 +70,26 @@ enum class TYPE : unsigned char {
 };
 
 // TYPE으로 유추되는 패킷
+
+struct PacketHeader : public DreamWorld::PacketHeader {
+  PacketHeader(unsigned char type)
+      : DreamWorld::PacketHeader(type) {
+  }
+
+  PacketHeader(unsigned char type, const uint16_t size)
+      : DreamWorld::PacketHeader(type) {
+  }
+  // char dummy[32'222];  // 32kb => l1캐시 이상의 크기로 잡고
+};
+
 using NotifyPacket = PacketHeader;
 
+// struct DelayTestPacket final : public PacketHeader {
+//   DelayTestPacket()
+//       : PacketHeader(static_cast<unsigned char>(TYPE::STRESS_TEST_DELAY), sizeof(DelayTestPacket)) {
+//   }
+//   char dummy[500];
+// };
 struct ReConnectPacket : public PacketHeader {
   wchar_t nickName[NAME_SIZE];
   ReConnectPacket(const std::wstring& name, const char& type = static_cast<char>(TYPE::RECONN))
@@ -568,5 +586,5 @@ struct TestNavMeshRenderPacket : public PacketHeader {
 };
 
 }  // namespace SERVER_PACKET
-}  // namespace DreamWorld
 #pragma pack(pop)
+}  // namespace DreamWorld

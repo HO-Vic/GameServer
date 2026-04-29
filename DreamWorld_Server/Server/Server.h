@@ -18,6 +18,10 @@ class Server {
 
   void Start();
 
+  HANDLE GetHandle() const {
+    return m_ioCore.GetHandle();
+  }
+
  private:
   void AcceptHandle(SOCKET sock);
 

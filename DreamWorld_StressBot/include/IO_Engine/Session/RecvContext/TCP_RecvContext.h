@@ -57,14 +57,22 @@ class TCP_RecvContext {
   struct DebugInfo {
     uint32_t ioSize = 0;
     uint32_t processedSize;
+    uint32_t remain = 0;
     uint32_t startHead;
     uint32_t endHead;
+    uint32_t recvHead1 = 0;
+    uint32_t recvSize1 = 0;
+    uint32_t recvHead2 = 0;
+    uint32_t recvSize2 = 0;
     DebugInfo() = default;
     DebugInfo(uint32_t io)
-        : ioSize(io), processedSize(0), startHead(0), endHead(0) {
+        : ioSize(io), processedSize(0), startHead(0), endHead(0), recvHead1(0), recvSize1(0), recvHead2(0), recvSize2(0) {
     }
-    DebugInfo(uint32_t p, uint32_t s, uint32_t e)
-        : ioSize(0), processedSize(p), startHead(s), endHead(e) {
+    DebugInfo(uint32_t p, uint32_t s, uint32_t e, uint32_t r)
+        : ioSize(0), processedSize(p), startHead(s), endHead(e), recvHead1(0), recvSize1(0), recvHead2(0), recvSize2(0), remain(r) {
+    }
+    DebugInfo(bool temp, uint32_t h1, uint32_t s1, uint32_t h2, uint32_t s2)
+        : ioSize(0), processedSize(0), startHead(0), endHead(0), recvHead1(h1), recvSize1(s1), recvHead2(h2), recvSize2(s2) {
     }
   };
   std::vector<DebugInfo> debugLogger;
@@ -75,5 +83,20 @@ class TCP_RecvContext {
   BYTE m_buffer[MAX_RECV_BUF_SIZE];
   uint32_t m_head = 0;       // 읽기 시작 위치
   uint32_t m_remainLen = 0;  // 남은 이전 버퍼 정보
+
+  uint64_t m_maxRecvByteIdx = 0;  // recvComplete는 어차피 하나의 쓰레드에서만 발생
+
+
+  // static constexpr uint32_t m_maxRecvByte[] = {128, 16, 321, 128, 70, 32, 442, 16, 222, 512, 8, 32, 765, 1024, 8, 32, 222, 256, 115, 600, 800, 596, 483, MAX_RECV_BUF_SIZE};
+
+  static constexpr uint32_t m_maxRecvByte[] = {128, 16, 321, 128, 70, 32, 442, 16, 222, 512, 8, 32, 765, 1024, 8, 32, 222, 256, 115, 600, 800, 596, 483, 1500};
+  // static constexpr uint32_t m_maxRecvByte[] = {24576, 4096, 512, 10240, 4096, 2048, 1024, 14336, 512, 7168, 16384, 256, 1024, 24576, 32768, 256, 1024, 7168, 8192, 3584, 19200, 512, 25600, 19072, 15488, 1024, 65536};
+
+  /*static constexpr uint32_t m_maxRecvByte[] = {
+      32768, 16384, 30720, 49152, 17408, 28672,
+      48000, 16384, 31744, 32768, 20480, 16384, 45056, 18000, 32768, 49152, 16384, 26624,
+      32768, 16384, 30720, 48000, 17000, 55536};*/
+
+  // static constexpr uint32_t m_maxRecvByte[] = {128, 16, 8, 128, 16, 32, 13, 16, 222, 512, 8, 32, 128, 1024, 8, 32, 64, 256, 115, 600, 800, 8, 56, MAX_RECV_BUF_SIZE};
 };
 }  // namespace sh::IO_Engine

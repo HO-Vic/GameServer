@@ -102,6 +102,9 @@
     <ClCompile Include="private\Buffer\SendBufferPool.cpp">
       <Filter>Buffer\SendBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="PCH\pch.cpp">
+      <Filter>PCH</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\Buffer\SendBuffer.h">
@@ -124,9 +127,6 @@
     </ClInclude>
     <ClInclude Include="public\IO_Core\Listener\Listener.h">
       <Filter>IO_Core\Listener</Filter>
-    </ClInclude>
-    <ClInclude Include="public\PCH\pch.h">
-      <Filter>PCH</Filter>
     </ClInclude>
     <ClInclude Include="public\IO_Core\ThWorkerJobPool.h">
       <Filter>IO_Core</Filter>
@@ -172,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="public\Session\UDP_AgentBase.h">
       <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="PCH\pch.h">
+      <Filter>PCH</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

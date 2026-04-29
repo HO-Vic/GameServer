@@ -8,11 +8,11 @@
 
 namespace sh::IO_Engine {
 int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer) {
+  m_doubleQueue.InsertSendBuffer(std::move(buffer));
   static constexpr bool SEND_DESIRE = false;
   if (!m_isSendAble) {
     return 0;
   }
-  m_doubleQueue.InsertSendBuffer(std::move(buffer));
 
   bool expectedValue = true;
   // Send가 다중 쓰레드에서 호출되더라도, 하나의 Send 시도 쓰레드만 Send
@@ -89,13 +89,12 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vecto
   }
 
   m_sendBuffer.swap(batchSendBuffers);
-
-  std::vector<WSABUF> sendBuffers;
-  sendBuffers.reserve(m_sendBuffer.size());
+  m_wsaBuffers.clear();
+  m_wsaBuffers.reserve(m_sendBuffer.size());
   for (const auto& sendBuffer : m_sendBuffer) {
-    sendBuffers.push_back(sendBuffer->GetWSABuffer());
+    m_wsaBuffers.push_back(sendBuffer->GetWSABuffer());
   }
-  return WSASend(m_socket, sendBuffers.data(), static_cast<DWORD>(sendBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(workerJob), nullptr);
+  return WSASend(m_socket, m_wsaBuffers.data(), static_cast<DWORD>(m_wsaBuffers.size()), nullptr, 0, reinterpret_cast<LPOVERLAPPED>(workerJob), nullptr);
 }
 
 void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBufferBase>&& buffer) {

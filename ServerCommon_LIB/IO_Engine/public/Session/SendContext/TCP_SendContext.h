@@ -57,6 +57,7 @@ class TCP_SendContext final {
  private:
   std::vector<std::shared_ptr<SendBufferBase>> m_sendBuffer;  // Send Completion이 올 때까지는 데이터가 있어야 함
   InternalDoubleBufferQueue m_doubleQueue;
+  std::vector<WSABUF> m_wsaBuffers;
   // Concurrency::concurrent_queue<std::shared_ptr<SendBuffer>> m_sendQueue;
   SOCKET m_socket;
   std::atomic_bool m_isSendAble;

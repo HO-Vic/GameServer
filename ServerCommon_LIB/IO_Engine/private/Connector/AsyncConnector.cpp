@@ -1,9 +1,6 @@
 #include "pch.h"
 #include <IO_Core/Connector/AsyncConnector.h>
 #include <thread>
-#include <MSWSock.h>
-#include <WinSock2.h>
-#include <Windows.h>
 #include <memory>
 #include <IO_Core/ThWorkerJobPool.h>
 

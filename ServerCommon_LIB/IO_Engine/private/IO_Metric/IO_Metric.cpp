@@ -67,4 +67,42 @@ void IO_Metric::RecordDisconn() {
   m_metics[taskIndex].totalReq.fetch_add(1);
   m_metics[taskIndex].disconn.fetch_add(1);
 }
+
+void IO_Metric::RecordRecvElapsed(uint64_t time) {
+  if (!m_isUse) {
+    return;
+  }
+  auto taskIndex = m_index.load();
+  m_metics[taskIndex].recvElasedCnt++;
+  m_metics[taskIndex].recvElapsed += time;
+}
+
+void IO_Metric::RecordMergeElapsed(uint64_t time) {
+  if (!m_isUse) {
+    return;
+  }
+  auto taskIndex = m_index.load();
+  m_metics[taskIndex].MergeElapsed += time;
+}
+
+void IO_Metric::RecordRecvMerge(uint64_t mergeByte) {
+  if (!m_isUse) {
+    return;
+  }
+  auto taskIndex = m_index.load();
+  m_metics[taskIndex].recvMergeCnt++;
+  m_metics[taskIndex].recvMergeSize += mergeByte;
+}
+
+RecvTimeRaii::~RecvTimeRaii() {
+  using namespace std::chrono;
+  auto nowTime = std::chrono::steady_clock::now();
+  IO_Metric::GetInstance().RecordRecvElapsed(duration_cast<microseconds>(nowTime - startTime).count());
+}
+
+MergeTimeRaii::~MergeTimeRaii() {
+  using namespace std::chrono;
+  auto nowTime = std::chrono::steady_clock::now();
+  IO_Metric::GetInstance().RecordMergeElapsed(duration_cast<microseconds>(nowTime - startTime).count());
+}
 }  // namespace sh::IO_Engine

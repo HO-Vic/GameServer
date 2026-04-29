@@ -22,7 +22,7 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t
   g_ActiveUserCnt = 0;
   g_maxConnectUserCnt = 0;
   m_ioCore.Init(ioThreadNo);
-  m_connectDelayTick = MS(1);
+  m_connectDelayTick = MS(3);
   m_connector.Init(m_ioCore.GetHandle(), ipAddr, port, MS(0), AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_lastTryConnTime = TIME::now();
   m_maxDelayThreshold = maxDelayThreshold;
@@ -31,6 +31,7 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t
 
 void NetworkModule::Start() {
   m_ioCore.Start();
+  Stress::SessionBatchUpdaters::GetInstance().Start();
   WRITE_LOG(logLevel::info, "{}({}) > Startr Network Module!!", __FUNCTION__, __LINE__);
   static constexpr MS DEC_USER_TICK = MS(10);
   bool incUser = true;
@@ -60,6 +61,8 @@ void NetworkModule::Start() {
         if (nullptr == delSessionPtr) {
           continue;
         }
+        auto uid = delSessionPtr->GetUniqueNo();
+        //WRITE_LOG(logLevel::info, "{}({})> Force Disconn [uid:{}]", __FUNCTION__, __LINE__, uid);
         auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(std::static_pointer_cast<sh::Utility::IWorkerItem>(delSessionPtr), sh::Utility::WORKER_TYPE::FORCE_DISCONN);
         PostQueuedCompletionStatus(m_ioCore.GetHandle(), 1, 0, static_cast<LPOVERLAPPED>(thWorkerJob));
         adjustUserCnt = static_cast<uint32_t>(g_ActiveUserCnt.load() * 0.8);
@@ -73,7 +76,7 @@ void NetworkModule::Start() {
       // 딜레이 평균이 충분히 크다면, connect Tick을 늘리자
       if (!isAdjustConnDelay && g_avgDelay >= m_adjustConnectDelayThreadshold) {
         isAdjustConnDelay = true;
-        m_connectDelayTick = MS(10);
+        m_connectDelayTick = MS(15);
         WRITE_LOG(logLevel::info, "{}({}) Adjust Conn Tick!! [Avg Tick:{}]", __FUNCTION__, __LINE__, g_avgDelay.load());
       }
     }
@@ -102,10 +105,21 @@ void NetworkModule::OnConnectFail(int errorCode) {
   // WRITE_LOG(logLevel::debug, "{}({}) > Connect Fail!! [WSAErrorCode:{}]", __FUNCTION__, __LINE__, errorCode);
 }
 
-void NetworkModule::RecvHandle(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, size_t, BYTE* bufferPosition) {
+void NetworkModule::RecvHandle(sh::IO_Engine::TCP_SessionBasePtr sessionPtr, size_t n, BYTE* bufferPosition) {
+  //WRITE_LOG(logLevel::info, "{}({})> Recv Size {}", __FUNCTION__, __LINE__, n);
+  //if (n == 0) {
+  //  WRITE_LOG(logLevel::info, "{}({})> Recv Size {}", __FUNCTION__, __LINE__, n);
+  //  return;
+  //}
   auto packetHeader = reinterpret_cast<DreamWorld::PacketHeader*>(bufferPosition);
   MsgHandler handler = nullptr;
   if (!m_msgDispatcher.GetHandler(packetHeader->type, handler)) {  // 없으면 에러 처리하지 않음, 스트레스 테스트에서 처리하지 않는게 많음
+#ifdef _DEBUG
+    if (packetHeader->type > static_cast<uint8_t>(DreamWorld::SERVER_PACKET::TYPE::STRESS_TEST_DELAY)) {
+      return;
+    }
+#endif  // _DEBUG
+
     return;
   }
   handler(sessionPtr, bufferPosition);

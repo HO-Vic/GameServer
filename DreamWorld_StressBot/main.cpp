@@ -15,12 +15,10 @@ int main() {
   Stress::SessionBatchUpdaters::GetInstance().Init(config.batchUpdaterThreadNo, config.batchUpdaterCnt, config.timerThreadNo);
   auto& netModule = Stress::NetworkModule::GetInstance();
   netModule.Init(config.ip, config.port, config.ioThreadNo, config.decUserMaxDelayMs, config.adjustConnDelayMs);
-  Sleep(500);
-  Stress::SessionBatchUpdaters::GetInstance().Start();
+  
   std::thread thread([&config, &netModule]() {
     netModule.Start();
   });
-
   WinMain(0, 0, 0, 0);
   thread.join();
 }

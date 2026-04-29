@@ -12,6 +12,7 @@ void AcceptEvent::Start(Utility::ThWorkerJob* workerJob) {
     int flag = 1;
     setsockopt(m_clientSocket, m_protocolType, TCP_NODELAY, (char*)&flag, sizeof(flag));
   }
+
   DWORD receiveByte = 0;
   bool isSuccess = AcceptEx(m_listenSocket, m_clientSocket, &m_connInfo, 0, sizeof(m_connInfo.localInfo), sizeof(m_connInfo.remoteInfo), &receiveByte, reinterpret_cast<LPOVERLAPPED>(workerJob));
 }

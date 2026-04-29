@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -161,13 +161,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="PCH\pch.h" />
     <ClInclude Include="public\BuildMsg\BuildMsg.h" />
     <ClInclude Include="public\Job\Job.h" />
     <ClInclude Include="public\Job\JobQueue\JobQBase.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_MT\JobQ_MT.h" />
     <ClInclude Include="public\Job\JobQueue\JobQ_ST\JobQ_ST.h" />
-    <ClInclude Include="public\PCH\pch.h" />
     <ClInclude Include="public\Pool\MemoryPool.h" />
     <ClInclude Include="public\Pool\ObjectPool.h" />
     <ClInclude Include="public\SingletonBase\Singleton.h" />
@@ -176,19 +176,38 @@
     <ClInclude Include="public\Thread\ThreadManager.h" />
     <ClInclude Include="public\Thread\ThreadPool.h" />
     <ClInclude Include="public\Thread\ThWorkerJob.h" />
-    <ClInclude Include="public\TimeCalculator\TimeCalculator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="private\Job\Job.cpp" />
-    <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp" />
-    <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp" />
-    <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp" />
-    <ClCompile Include="private\Pool\MemoryPool.cpp" />
-    <ClCompile Include="private\Thread\IWorkerItem.cpp" />
-    <ClCompile Include="private\Thread\ThreadManager.cpp" />
-    <ClCompile Include="private\Thread\ThreadPool.cpp" />
-    <ClCompile Include="private\Thread\ThWorkerJob.cpp" />
-    <ClCompile Include="private\TimeCalculator\TimeCalculator.cpp" />
+    <ClCompile Include="PCH\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Job\Job.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\DoubleJobQ_MT.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_MT\JobQ_MT.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Job\JobQueue\JobQ_ST\JobQ_ST.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Pool\MemoryPool.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Thread\IWorkerItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThreadManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThreadPool.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Thread\ThWorkerJob.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

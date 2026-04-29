@@ -1,8 +1,4 @@
-#ifndef WIN32_NO_STATUS
-#include <ntstatus.h>
-#define WIN32_NO_STATUS
-#endif
-#include <pch.h>
+#include "pch.h"
 #include <Utility/Thread/ThWorkerJob.h>
 #include <IO_Core/ThWorkerJobPool.h>
 #include <IO_Metric/IO_Metric.h>
@@ -99,7 +95,14 @@ bool TCP_SessionBase::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
       auto ioError = m_recvContext.RecvComplete(workerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
         RaiseIOError(workerJob);
+#ifdef _DEBUG
+        {
+          std::lock_guard<std::mutex> lg{m_errLock};
+          m_errInfos.emplace_back(TCP_Session_STATE::RECV_ERR, ioError);
+        }
+#endif  // _DEBUG
       }
+
       IO_Metric::GetInstance().RecordRecv(ioByte);
       returnVal = true;
     } break;
@@ -107,6 +110,12 @@ bool TCP_SessionBase::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
       auto ioError = m_sendContext.SendComplete(workerJob, ioByte);  // thWorker외부 정리
       if (0 != ioError) {
         RaiseIOError(workerJob);
+#ifdef _DEBUG
+        {
+          std::lock_guard<std::mutex> lg{m_errLock};
+          m_errInfos.emplace_back(TCP_Session_STATE::SEND_ERR, ioError);
+        }
+#endif  // _DEBUG
       }
       IO_Metric::GetInstance().RecordSend(ioByte);
       returnVal = true;

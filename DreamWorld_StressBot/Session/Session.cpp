@@ -32,6 +32,7 @@ void Session::Init() {
 }
 
 void Session::OnDisconnect() {
+  auto id = GetUniqueNo();
   auto batchUpdater = SessionBatchUpdaters::GetInstance().GetBatchUpdater(GetUniqueNo());
   auto selfPtr = std::static_pointer_cast<Session>(shared_from_this());
   SessionManager::GetInstance().OnDisconnect(selfPtr);
@@ -43,6 +44,16 @@ void Session::OnDisconnect() {
     batchUpdater->DiscardSession(selfPtr);
   });
   batchUpdater->InsertJob(std::move(jobPtr));
+#ifdef _DEBUG
+  std::lock_guard<std::mutex> lg{m_errLock};
+  if (!m_errInfos.empty()) {
+    WRITE_LOG(logLevel::info, "{}({}) > Session Disconneted [uid:{}] [type:{}] [err:{}]!!", __FUNCTION__, __LINE__, id, static_cast<int>(m_errInfos.back().first), m_errInfos.back().second);
+  } else {
+    WRITE_LOG(logLevel::info, "{}({}) > Session Disconneted [uid:{}]!!", __FUNCTION__, __LINE__, id);
+  }
+#else
+  // WRITE_LOG(logLevel::info, "{}({}) > Session Disconneted [uid:{}]!!", __FUNCTION__, __LINE__, id);
+#endif  // _DEBUG
 }
 
 void Session::Update() {
@@ -79,6 +90,7 @@ void Session::DelayCheck() {
   auto nowTime = chrono_clock::now();
   if (m_isSendAbleDelayCheck && _chrono::duration_cast<_chrono::milliseconds>(nowTime - m_lastCheckTime).count() >= 1000) {
     m_isSendAbleDelayCheck = false;
+    // DreamWorld::CLIENT_PACKET::DelayTestPacket sendPacket{};  // 링버퍼 테스트
     DreamWorld::CLIENT_PACKET::NotifyPacket sendPacket(static_cast<char>(DreamWorld::CLIENT_PACKET::TYPE::STRESS_TEST_DELAY));
     m_lastCheckTime = nowTime;
     DoSend(&sendPacket);

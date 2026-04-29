@@ -11,9 +11,19 @@ namespace DreamWorld {
 void DreamWorld::RoomThreadPool::Init(const uint8_t threadNo) {
   sh::Utility::ThreadPool::Init(threadNo);
 }
+
+void RoomThreadPool::Init(HANDLE handle) {
+  m_isOtherHandle = true;
+  m_otherHandle = handle;
+}
+
 void RoomThreadPool::InsertRoomUpdateEvent(std::shared_ptr<RoomBase> roomPtr) {
   auto thWorkerJob = sh::IO_Engine::ThWorkerJobPool::GetInstance().GetObjectPtr(
       std::static_pointer_cast<sh::Utility::IWorkerItem>(roomPtr), sh::Utility::WORKER_TYPE::WORK);
+  if (m_isOtherHandle) {
+    PostQueuedCompletionStatus(m_otherHandle, 1, reinterpret_cast<ULONG_PTR>(roomPtr.get()), static_cast<LPOVERLAPPED>(thWorkerJob));
+    return;
+  }
   PostQueuedCompletionStatus(GetHandle(), 1, reinterpret_cast<ULONG_PTR>(roomPtr.get()), static_cast<LPOVERLAPPED>(thWorkerJob));
 }
 }  // namespace DreamWorld

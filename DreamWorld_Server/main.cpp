@@ -26,6 +26,7 @@ int main() {
   DreamWorld::DBThreadPool::GetInstance().Init(serverConfig.DBThreadNo);                                                                                                            // DB Thread
   DreamWorld::DBThreadPool::GetInstance().Start();
 
+  //DreamWorld::RoomThreadPool::GetInstance().Init(server.GetHandle()); // io,game 같은 풀 측정
   DreamWorld::RoomThreadPool::GetInstance().Init(serverConfig.roomThreadNo);  // Room Thread
   DreamWorld::RoomThreadPool::GetInstance().Start();
 

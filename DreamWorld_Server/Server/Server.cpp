@@ -21,12 +21,15 @@
 namespace DreamWorld {
 using logLevel = spdlog::level::level_enum;
 Server::Server(const uint8_t ioThreadNo /*= 0*/, const bool useIoMetric /* = false*/, const bool useMetric /* = false*/)
-    : m_ioCore(ioThreadNo, useIoMetric), m_acceptorCnt(2) {
+    : m_ioCore(ioThreadNo, 1500, 1500, useIoMetric), m_acceptorCnt(2) {
   MetricSlot::GetInstance().Init(useMetric);
 }
 
 void Server::Init(const uint8_t ioThreadNo /*= 0*/, const uint32_t thWorkerPoolSize /*= 1500*/, const uint32_t sendBufferPoolSize /*= 1500*/) {
   m_ioCore.Init(ioThreadNo, thWorkerPoolSize, sendBufferPoolSize);
+  //, int socketType = SOCK_STREAM, int protocolType = IPPROTO_TCP ;
+  uint32_t temp = 0;
+  inet_pton(AF_INET, "0.0.0.0", &temp);
   m_listener.Init(m_ioCore.GetHandle(), 9000, 0);
   m_ioCore;
   m_acceptor.Init(m_ioCore.GetHandle(), [&](SOCKET sock) { AcceptHandle(sock); }, m_acceptorCnt);
@@ -66,6 +69,15 @@ void Server::Start() {
           auto thWorkerTotal = ioMetric.thWorkerJobTotal.load();
           auto thWorkerAdded = ioMetric.thWorkerJobAdd.load();
           auto thWorkerUsing = ioMetric.thWorkerJobUsing.load();
+          auto recvElapsed = ioMetric.recvElapsed.load();  // micros
+          auto recvElapsedCnt = ioMetric.recvElasedCnt.load();
+          auto recvMergeCnt = ioMetric.recvMergeCnt.load();
+          auto recvMergeSize = ioMetric.recvMergeSize.load();
+          auto mergeElapsed = ioMetric.MergeElapsed.load();
+          uint64_t elapsed = 0;
+          if (recvElapsedCnt != 0) {
+            elapsed = recvElapsed / recvElapsedCnt;
+          }
           /*auto SendBufferTotal = ioMetric.sendBufferTotal.load();
           auto SendBufferAdded = ioMetric.sendBufferAdd.load();
           auto SendBufferUsing = ioMetric.sendBufferUsing.load();*/
@@ -74,6 +86,8 @@ void Server::Start() {
                     sendCompletion, sendByte, recvCompletion, recvByte, disconn);
           WRITE_LOG(logLevel::info, "{}({}) > IO Pool [thWorkerJobTotal:{}] [thWorkerJobAdd:{}] [thWorkerJobUsing:{}]", __FUNCTION__, __LINE__,
                     thWorkerTotal, thWorkerAdded, thWorkerUsing);
+          WRITE_LOG(logLevel::info, "{}({}) > RecvElapsedTime [processCnt: {}] [avgTime: {}us] [mergeCnt: {}] [total mergeByte: {}] [mergeElapsed: {}us]", __FUNCTION__, __LINE__, recvElapsedCnt, elapsed, recvMergeCnt, recvMergeSize, mergeElapsed);
+
           //[sendBufferTotal:{}] [sendBufferAdd:{}] [sendBufferUsing:{}]
           //, SendBufferTotal, SendBufferAdded, SendBufferUsing
         }
@@ -114,7 +128,7 @@ void Server::Start() {
                     jobTotal, jobAdd, jobUsing, timerJobTotal, timerJobAdd, timerJobUsing);
           WRITE_LOG(logLevel::info, "{}({}) > Server Pool [roomTotal:{}] [roomAdd:{}] [roomUsing:{}]] [playerLoginTotal:{}] [playerLoginAdd:{}] [playerLoginUsing:{}] ", __FUNCTION__, __LINE__,
                     roomTotal, roomAdd, roomUsing, playerLoginTotal, playerLoginAdd, playerLoginUsing);
-          WRITE_LOG(logLevel::info, "{}({}) > Server Poo [warriorSize:{}] [archerSize:{}]] [tankerSize:{}] [mageSize:{}]", __FUNCTION__, __LINE__,
+          WRITE_LOG(logLevel::info, "{}({}) > Server Pool [warriorSize:{}] [archerSize:{}]] [tankerSize:{}] [mageSize:{}]", __FUNCTION__, __LINE__,
                     warriorSize, archerSize, tankerSize, mageSize);
         }
         prevMetricLoggingTime = nowTime;
@@ -141,7 +155,7 @@ void Server::Start() {
         }
       }
     }
-    Sleep(100);
+    Sleep(500);
   }
 }
 

@@ -1,7 +1,8 @@
 #include <WinSock2.h>
-#include <Windows.h>
+#include <cstdint>
 #include <functional>
 #include <memory>
+#include <string>
 
 namespace sh::IO_Engine {
 #ifndef IO_ENGINE_DEFINE
@@ -68,6 +69,13 @@ struct ConnectInfo {
     ZeroMemory(remoteInfo, sizeof(SOCKADDR) + 16);
   }
 };
+inline thread_local std::string tlsString;
+inline std::string& GetThreadString() {
+  if (tlsString.size() < MAX_RECV_BUF_SIZE) {
+    tlsString.resize(MAX_RECV_BUF_SIZE);
+  }
+  return tlsString;
+}
 #endif  // !IO_ENGINE_DEFINE
 
 }  // namespace sh::IO_Engine

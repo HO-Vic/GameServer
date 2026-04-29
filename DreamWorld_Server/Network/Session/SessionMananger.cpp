@@ -13,10 +13,29 @@ void SessionMananger::Init() {
 
 void SessionMananger::OnAccept(SOCKET sock, sh::IO_Engine::IO_TYPE ioType, sh::IO_Engine::TCP_RecvHandler recvHandle, HANDLE iocpHandle) {
   auto userRef = m_userPool.MakeShared(sock, ioType, std::move(recvHandle), iocpHandle, m_uniqueNo++);
+
+  //{
+  //  uint64_t size = 2;
+  //  int len = sizeof(size);
+  //  if (setsockopt(sock, SOL_SOCKET, SO_RCVBUF,
+  //                 (const char*)&size, sizeof(size)) != 0) {
+  //    WRITE_LOG(logLevel::info, "{}({}) > Fail Set SO_RCVBUF: {}!!", __FUNCTION__, __LINE__, size);
+  //  }
+  //}
   if (NULL == CreateIoCompletionPort(reinterpret_cast<HANDLE>(sock), iocpHandle, reinterpret_cast<uint64_t>(userRef.get()), 0)) {
     WRITE_LOG(logLevel::err, "{}({}) > Can not Regist sock To ioHandle!!", __FUNCTION__, __LINE__);
     return;
   }
+
+  //static volatile bool temp = false;
+  //if (!temp) {
+  //  uint64_t size = 0;
+  //  int len = sizeof(size);
+  //  if (getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char*)&size, &len) == 0) {
+  //    WRITE_LOG(logLevel::info, "{}({}) > SO_RCVBUF: {}!!", __FUNCTION__, __LINE__, size);
+  //  }
+  //  temp = true;
+  //}
 
   {
     std::lock_guard<std::mutex> lg(m_lock);
