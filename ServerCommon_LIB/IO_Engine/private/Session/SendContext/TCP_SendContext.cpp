@@ -1,5 +1,6 @@
 #include <pch.h>
 #include <Session/SendContext/TCP_SendContext.h>
+#include <Session/TCP_SessionBase.h>
 #include <Utility/Pool/ObjectPool.h>
 #include <Buffer/SendBufferPool.h>
 #include <Utility/Thread/ThWorkerJob.h>
@@ -19,21 +20,35 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<Send
   // 1. 16번 라인에서 true였지만, 이미 false가 될 수 도 있고
   // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
-  if (isSendAbleThread) {
-    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-    auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
-    if (0 != errorNo) {
-      auto ioError = WSAGetLastError();
-      if (WSA_IO_PENDING == ioError) {
-        errorNo = 0;
-      } else {
-        errorNo = ioError;
-        ThWorkerJobPool::GetInstance().Release(workerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
-      }
-    }
-    return errorNo;
+  if (!isSendAbleThread) {
+    return 0;
+  }
+
+  // CAS 성공한 단일 쓰레드만 도달. 게임 쓰레드에서 직접 WSASend 하지 않고,
+  // IO IOCP에 SEND_REQ로 PQCS 위임 -> IO 쓰레드가 OnSendRequest()로 실제 WSASend
+  auto* sessionRaw = static_cast<TCP_SessionBase*>(session.get());
+  auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND_REQ);
+  if (!PostQueuedCompletionStatus(sessionRaw->GetIOCPHandle(), 1, 0, reinterpret_cast<LPOVERLAPPED>(workerJob))) {
+    ThWorkerJobPool::GetInstance().Release(workerJob);
+    m_isSendAble = true;  // CAS 되돌리기 - 다른 쓰레드가 재시도 가능하도록
   }
   return 0;
+}
+
+int32_t TCP_SendContext::OnSendRequest(Utility::ThWorkerJob* workerJob) {
+  // SEND_REQ -> SEND 로 전환
+  workerJob->SetType(Utility::WORKER_TYPE::SEND);
+  auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
+  if (0 != errorNo) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
+      errorNo = 0;
+    } else {
+      errorNo = ioError;
+      // workerJob 해제는 caller(Execute)에서 RaiseIOError(workerJob)로 재사용
+    }
+  }
+  return errorNo;
 }
 
 int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) {

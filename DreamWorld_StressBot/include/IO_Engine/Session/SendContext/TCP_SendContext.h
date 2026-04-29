@@ -50,6 +50,9 @@ class TCP_SendContext final {
 
   int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
+  // SEND_REQ를 IO 스레드가 디스패치 시 호출. 큐 swap 후 WSASend 수행.
+  int32_t OnSendRequest(Utility::ThWorkerJob* workerJob);
+
  private:
   // m_sendBuffer와 batchSendBuffers와 swap해야해서 참조형으로
   int32_t SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batchSendBuffers);

@@ -23,3 +23,5 @@
 *.ipdb
 *.iobj
 /**/StressTestLogs/*.txt
+CLAUDE.md
+.claude

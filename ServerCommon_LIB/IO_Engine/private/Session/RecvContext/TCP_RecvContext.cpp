@@ -11,37 +11,37 @@ int32_t TCP_RecvContext::RecvComplete(Utility::ThWorkerJob* workerJob, DWORD ioS
   RecvTimeRaii tmp{};
   // 선형 버퍼 복사
 
-  //{
-  //  uint32_t remainSize = ioSize + m_remainLen;
-  //  BYTE* bufferPosition = m_buffer;
+  {
+    uint32_t remainSize = ioSize + m_remainLen;
+    BYTE* bufferPosition = m_buffer;
 
-  //  while (remainSize > sizeof(PacketHeader::size)) {
-  //    // PacketHeader* currentPacket = reinterpret_cast<PacketHeader*>(bufferPosition);
-  //    PacketHeader currentPacket{&bufferPosition[0], &bufferPosition[1]};
-  //    if (currentPacket.size > remainSize) {
-  //      // 완성된 패킷이 만들어지지 않음.
-  //      break;
-  //    }
-  //    // 완성된 패킷
-  //    m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), currentPacket.size, bufferPosition + 2);
-  //    // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
-  //    remainSize -= currentPacket.size;
-  //    bufferPosition = bufferPosition + currentPacket.size;
-  //  }
+    while (remainSize > sizeof(PacketHeader::size)) {
+      // PacketHeader* currentPacket = reinterpret_cast<PacketHeader*>(bufferPosition);
+      PacketHeader currentPacket{&bufferPosition[0], &bufferPosition[1]};
+      if (currentPacket.size > remainSize) {
+        // 완성된 패킷이 만들어지지 않음.
+        break;
+      }
+      // 완성된 패킷
+      m_recvHandler(std::static_pointer_cast<TCP_SessionBase>(workerJob->GetWorkerItem()), currentPacket.size, bufferPosition + 2);
+      // 남은 퍼버 크기 최신화, 현재 버퍼 위치 다음 패킷 시작 위치로
+      remainSize -= currentPacket.size;
+      bufferPosition = bufferPosition + currentPacket.size;
+    }
 
-  //  // 현재 남은 데이터 크기 저장
-  //  m_remainLen = remainSize;
-  //  // 남은 패킷 데이터가 있다면, 맨 앞으로 당기기
-  //  if (remainSize > 0) {
-  //    MergeTimeRaii tmp2{};
-  //    memcpy(m_buffer, bufferPosition, remainSize);
-  //    IO_Metric::GetInstance().RecordRecvMerge(remainSize);
-  //  };
-  //  // return InternalDoRecv(workerJob, reinterpret_cast<char*>(m_buffer + remainSize), MAX_RECV_BUF_SIZE - remainSize, nullptr, 0, 1);
+    // 현재 남은 데이터 크기 저장
+    m_remainLen = remainSize;
+    // 남은 패킷 데이터가 있다면, 맨 앞으로 당기기
+    if (remainSize > 0) {
+      MergeTimeRaii tmp2{};
+      memcpy(m_buffer, bufferPosition, remainSize);
+      IO_Metric::GetInstance().RecordRecvMerge(remainSize);
+    };
+    return InternalDoRecv(workerJob, reinterpret_cast<char*>(m_buffer + remainSize), MAX_RECV_BUF_SIZE - remainSize, nullptr, 0, 1);
 
-  //  auto idx = (m_maxRecvByteIdx++) % (sizeof(m_maxRecvByte) / 4);
-  //  return InternalDoRecv(workerJob, reinterpret_cast<char*>(m_buffer + remainSize), min((MAX_RECV_BUF_SIZE - remainSize), m_maxRecvByte[idx]), nullptr, 0, 1);
-  //}
+    // auto idx = (m_maxRecvByteIdx++) % (sizeof(m_maxRecvByte) / 4);
+    // return InternalDoRecv(workerJob, reinterpret_cast<char*>(m_buffer + remainSize), min((MAX_RECV_BUF_SIZE - remainSize), m_maxRecvByte[idx]), nullptr, 0, 1);
+  }
 #ifdef _DEBUG
   debugLogger.emplace_back(ioSize);
 #endif  // _DEBUG

@@ -18,6 +18,7 @@ enum WORKER_TYPE : uint8_t {
   TERMINATE = 7,      // 쓰레드 풀 종료
   FORCE_DISCONN = 8,  // 동접 모듈용 클라이언트 강제 연결 해제
   DESTROY = 9,        // UDP_Session 파괴용
+  SEND_REQ = 10,      // Game→IO PQCS 위임용. IO 스레드가 받으면 SEND로 전환 후 WSASend
 };
 class IWorkerItem;
 using WokerPtr = std::shared_ptr<IWorkerItem>;

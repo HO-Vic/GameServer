@@ -54,6 +54,10 @@ class TCP_SessionBase
 
   bool IsDisconnected() const;
 
+  HANDLE GetIOCPHandle() const {
+    return m_iocpHandle;
+  }
+
  private:
   void RaiseIOError();
 

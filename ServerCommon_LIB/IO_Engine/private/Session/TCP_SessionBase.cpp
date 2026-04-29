@@ -120,6 +120,20 @@ bool TCP_SessionBase::Execute(Utility::ThWorkerJob* workerJob, const DWORD ioByt
       IO_Metric::GetInstance().RecordSend(ioByte);
       returnVal = true;
     } break;
+    case Utility::WORKER_TYPE::SEND_REQ: {
+      // 게임 쓰레드 DoSend()에서 PQCS로 위임된 송신 요청. IO 쓰레드가 처리.
+      auto ioError = m_sendContext.OnSendRequest(workerJob);
+      if (0 != ioError) {
+        RaiseIOError(workerJob);
+#ifdef _DEBUG
+        {
+          std::lock_guard<std::mutex> lg{m_errLock};
+          m_errInfos.emplace_back(TCP_Session_STATE::SEND_ERR, ioError);
+        }
+#endif  // _DEBUG
+      }
+      returnVal = true;
+    } break;
     case Utility::WORKER_TYPE::DISCONN: {
       if (m_isDisconnnected.compare_exchange_strong(expectedDisconn, DESIRE_DISCONNECT)) {  // 연결이 끊겼을 때, 여러 곳에서 Disconnect가 호출되더라도 오직 하나만 성공
         OnDisconnect();

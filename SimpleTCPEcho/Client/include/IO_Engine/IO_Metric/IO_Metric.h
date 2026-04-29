@@ -1,9 +1,26 @@
 #pragma once
-#include <Windows.h>
+#include <cstdint>
 #include <atomic>
+#include <chrono>
 #include <Utility/SingletonBase/Singleton.h>
 
 namespace sh::IO_Engine {
+struct RecvTimeRaii {
+  RecvTimeRaii()
+      : startTime(std::chrono::steady_clock::now()) {
+  }
+  ~RecvTimeRaii();
+  std::chrono::steady_clock::time_point startTime;
+};
+
+struct MergeTimeRaii {
+  MergeTimeRaii()
+      : startTime(std::chrono::steady_clock::now()) {
+  }
+  ~MergeTimeRaii();
+  std::chrono::steady_clock::time_point startTime;
+};
+
 struct IO_MetricSlot {
   std::atomic_uint64_t sendCompletion = 0;
   std::atomic_uint64_t recvCompletion = 0;
@@ -37,6 +54,12 @@ struct IO_MetricSlot {
 
   std::atomic_uint32_t totalReq = 0;
 
+  std::atomic_uint64_t recvElapsed = 0;
+  std::atomic_uint64_t recvElasedCnt = 0;
+  std::atomic_uint64_t recvMergeCnt = 0;
+  std::atomic_uint64_t recvMergeSize = 0;
+  std::atomic_uint64_t MergeElapsed = 0;
+
   void Reset() {
     sendCompletion = 0;
     recvCompletion = 0;
@@ -44,6 +67,11 @@ struct IO_MetricSlot {
     recvByte = 0;
     disconn = 0;
     totalReq = 0;
+    recvElapsed = 0;
+    recvElasedCnt = 0;
+    recvMergeCnt = 0;
+    recvMergeSize = 0;
+    MergeElapsed = 0;
   }
 };
 
@@ -65,6 +93,12 @@ class IO_Metric final
   void RecordDynamicSendBuffer();
 
   void RecordDisconn();
+
+  void RecordRecvElapsed(uint64_t time);
+
+  void RecordMergeElapsed(uint64_t time);
+
+  void RecordRecvMerge(uint64_t mergeByte);
 
  private:
   IO_MetricSlot m_metics[2];

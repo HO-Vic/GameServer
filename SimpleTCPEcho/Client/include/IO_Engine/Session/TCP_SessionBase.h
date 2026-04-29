@@ -54,6 +54,10 @@ class TCP_SessionBase
 
   bool IsDisconnected() const;
 
+  HANDLE GetIOCPHandle() const {
+    return m_iocpHandle;
+  }
+
  private:
   void RaiseIOError();
 
@@ -76,5 +80,11 @@ class TCP_SessionBase
   SOCKET m_sock;
   std::atomic<TCP_Session_STATE> m_state;
   std::atomic_bool m_isDisconnnected;
+
+#ifdef _DEBUG
+ protected:
+  std::mutex m_errLock;
+  std::vector<std::pair<TCP_Session_STATE, int>> m_errInfos;
+#endif  // _DEBUG
 };
 }  // namespace sh::IO_Engine
