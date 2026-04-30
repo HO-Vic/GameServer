@@ -28,7 +28,7 @@ class NetworkModule final
 
   ~NetworkModule() = default;
 
-  void Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t maxDelayThreshold, const uint64_t adjustConnectDelayThreadshold);
+  void Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t sustainedDelayMs, const uint64_t burstDelayMs, const uint64_t sustainedWindowMs, const uint64_t adjustConnectDelayThreadshold);
 
   void InitMsgDispatcher();
 
@@ -62,7 +62,9 @@ class NetworkModule final
   MS m_connectDelayTick = MS(10);
   TIME::time_point m_lastTryConnTime;
 
-  uint64_t m_maxDelayThreshold;
+  uint64_t m_sustainedDelayMs;
+  uint64_t m_burstDelayMs;
+  MS m_sustainedWindow{0};
   uint64_t m_adjustConnectDelayThreadshold;
 
  public:

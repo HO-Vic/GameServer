@@ -14,7 +14,7 @@ int main() {
   Stress::InitGlobalObjectPool();
   Stress::SessionBatchUpdaters::GetInstance().Init(config.batchUpdaterThreadNo, config.batchUpdaterCnt, config.timerThreadNo);
   auto& netModule = Stress::NetworkModule::GetInstance();
-  netModule.Init(config.ip, config.port, config.ioThreadNo, config.decUserMaxDelayMs, config.adjustConnDelayMs);
+  netModule.Init(config.ip, config.port, config.ioThreadNo, config.sustainedDelayMs, config.burstDelayMs, config.sustainedWindowMs, config.adjustConnDelayMs);
   
   std::thread thread([&config, &netModule]() {
     netModule.Start();

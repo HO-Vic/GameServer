@@ -11,8 +11,13 @@
 <Properties>
   <Log LogLevel="2" LogMode="ConsoleFile"/>
 
-  <!--유저 디스 커넥트 최대 딜레이, 커넥트 틱 조정 최대 딜레이 -->
-  <Threshold DdcUserMaxDelayMs="150" adjustConnDelayMs="80"/>
+  <!--
+    SustainedDelayMs : 이 값 이상이 SustainedWindowMs 동안 지속되면 점진적 disconn
+    BurstDelayMs     : 이 값 한 번이라도 넘기면 즉시 disconn (지속 게이팅 무시) //평균 딜레이가 이 값 이상이라면
+    SustainedWindowMs: 지속 임계 판정 시간(ms) // ms동안 SustainedDelayMs 이상의 평균 딜레이가 지속 된다면
+    adjustConnDelayMs: 이 값 이상이면 connect tick 늘려서 연결 속도 조절 // ms이상의 평균 딜레이라면 conn 속도 조절
+  -->
+  <Threshold SustainedDelayMs="150" BurstDelayMs="250" SustainedWindowMs="1000" adjustConnDelayMs="80"/>
 </Properties>
 
 <Stress>

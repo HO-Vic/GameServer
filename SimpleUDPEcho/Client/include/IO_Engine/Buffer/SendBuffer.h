@@ -2,7 +2,6 @@
 #include <cassert>
 #include <cstdint>
 #include <memory>
-#include <Windows.h>
 #include <Winsock2.h>
 #include <ws2def.h>
 #include "Utility/Thread/IWorkerItem.h"

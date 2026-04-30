@@ -22,7 +22,9 @@ class Config
   uint8_t timerThreadNo;
   uint8_t batchUpdaterCnt;
 
-  uint64_t decUserMaxDelayMs;
+  uint64_t sustainedDelayMs;
+  uint64_t burstDelayMs;
+  uint64_t sustainedWindowMs;
   uint64_t adjustConnDelayMs;
 
   std::string logMode;
