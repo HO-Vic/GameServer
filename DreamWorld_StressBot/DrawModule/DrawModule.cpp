@@ -147,7 +147,7 @@ int DrawGLScene(GLvoid)  // Here's Where We Do All The Drawing
   static uint64_t prevMaxDelay = 0;
   uint64_t maxDelay = netModule.g_maxDelayTime;
   if (prevMaxDelay != maxDelay) {
-    WRITE_LOG(Stress::logLevel::info, "[maxDelay: {}]", maxDelay);
+    //WRITE_LOG(Stress::logLevel::info, "[maxDelay: {}]", maxDelay);
     prevMaxDelay = maxDelay;
   }
   // glRasterPos2f(-0.67f, 0.65f);

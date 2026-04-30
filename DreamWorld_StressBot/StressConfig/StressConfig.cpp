@@ -38,8 +38,12 @@ void Config::LoadXML(const char* configFile) {
               }
             } else if (strcmp(node->name(), "Threshold") == 0) {
               for (auto attr = node->first_attribute(); attr != nullptr; attr = attr->next_attribute()) {
-                if (strcmp(attr->name(), "DdcUserMaxDelayMs") == 0) {
-                  decUserMaxDelayMs = std::stoull(attr->value(), nullptr);
+                if (strcmp(attr->name(), "SustainedDelayMs") == 0) {
+                  sustainedDelayMs = std::stoull(attr->value(), nullptr);
+                } else if (strcmp(attr->name(), "BurstDelayMs") == 0) {
+                  burstDelayMs = std::stoull(attr->value(), nullptr);
+                } else if (strcmp(attr->name(), "SustainedWindowMs") == 0) {
+                  sustainedWindowMs = std::stoull(attr->value(), nullptr);
                 } else if (strcmp(attr->name(), "adjustConnDelayMs") == 0) {
                   adjustConnDelayMs = std::stoull(attr->value(), nullptr);
                 }
