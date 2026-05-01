@@ -21,5 +21,9 @@
 </Properties>
 
 <Stress>
-  <DreamWorldStress ip="127.0.0.1" port="9000" ioThreadNo="4" batchUpdaterThreadNo="2" timerThreadNo="1" batchUpdaterCnt="4"/>
+  <!--
+    useRender: true면 OpenGL 창 렌더링, false면 콘솔/로그만. 측정 시에는 false 권장.
+               false일 때 NetworkModule 1초 status 로그에 세션 상태별 카운트가 함께 출력됨.
+  -->
+  <DreamWorldStress ip="127.0.0.1" port="9000" ioThreadNo="3" batchUpdaterThreadNo="2" timerThreadNo="1" batchUpdaterCnt="2" useRender="false"/>
 </Stress>

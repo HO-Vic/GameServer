@@ -222,8 +222,16 @@ std::list<XMFLOAT3> NavMapData::GetAstarNode(const XMFLOAT3& startPosition, cons
   std::shared_ptr<NavMesh::TriangleNavMesh> startMesh = m_navMeshQuadTree.GetOnPositionNavMesh(startPosition);
   std::shared_ptr<NavMesh::TriangleNavMesh> destinationMesh = m_navMeshQuadTree.GetOnPositionNavMesh(destinationPosition);
 
+  if (!startMesh || !destinationMesh) {
+    spdlog::warn("NavMapData::GetAstarNode() - position outside NavMesh");
+    spdlog::warn("NavMapData::GetAstarNode() - start outside NavMesh [{}, {}, {}]",
+                 startPosition.x, startPosition.y, startPosition.z);
+    spdlog::warn("NavMapData::GetAstarNode() - destination outside NavMesh [{}, {}, {}]",
+                 destinationPosition.x, destinationPosition.y, destinationPosition.z);
+    return {};
+  }
   if (startMesh == destinationMesh) {
-    return std::list<XMFLOAT3>{};
+    return {};
   }
 
   closeList.try_emplace(startMesh, NavMesh::AstarNode(startMesh, 0, 0));

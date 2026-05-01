@@ -28,7 +28,7 @@ class NetworkModule final
 
   ~NetworkModule() = default;
 
-  void Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t sustainedDelayMs, const uint64_t burstDelayMs, const uint64_t sustainedWindowMs, const uint64_t adjustConnectDelayThreadshold);
+  void Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t sustainedDelayMs, const uint64_t burstDelayMs, const uint64_t sustainedWindowMs, const uint64_t adjustConnectDelayThreadshold, const bool useRender);
 
   void InitMsgDispatcher();
 
@@ -66,6 +66,7 @@ class NetworkModule final
   uint64_t m_burstDelayMs;
   MS m_sustainedWindow{0};
   uint64_t m_adjustConnectDelayThreadshold;
+  bool m_useRender{false};
 
  public:
   std::atomic_uint32_t g_connectUserCnt{};

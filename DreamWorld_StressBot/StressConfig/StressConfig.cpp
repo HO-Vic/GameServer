@@ -8,7 +8,7 @@
 
 namespace Stress {
 Config::Config()
-    : ip("127.0.0.1"), port(9000), ioThreadNo(4), ipAddr(0), batchUpdaterThreadNo(2), timerThreadNo(1), batchUpdaterCnt(4), logLevel(1), logMode("ConsoleFile") {
+    : ip("127.0.0.1"), port(9000), ioThreadNo(4), ipAddr(0), batchUpdaterThreadNo(2), timerThreadNo(1), batchUpdaterCnt(4), logLevel(1), logMode("ConsoleFile"), useRender(false) {
 }
 
 void Config::LoadXML(const char* configFile) {
@@ -68,6 +68,8 @@ void Config::LoadXML(const char* configFile) {
                   timerThreadNo = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
                 } else if (strcmp(attr->name(), "batchUpdaterCnt") == 0) {
                   batchUpdaterCnt = static_cast<uint8_t>(std::stoi(attr->value(), nullptr));
+                } else if (strcmp(attr->name(), "useRender") == 0) {
+                  useRender = (strcmp(attr->value(), "true") == 0 || strcmp(attr->value(), "1") == 0);
                 }
               }
             }

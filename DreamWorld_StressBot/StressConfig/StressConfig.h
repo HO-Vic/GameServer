@@ -27,6 +27,8 @@ class Config
   uint64_t sustainedWindowMs;
   uint64_t adjustConnDelayMs;
 
+  bool useRender;
+
   std::string logMode;
   uint8_t logLevel;
 };

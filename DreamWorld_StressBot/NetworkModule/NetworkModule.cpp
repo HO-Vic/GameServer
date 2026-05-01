@@ -17,7 +17,7 @@
 #include "../GlobalObjectPool/GlobalObjectPool.h"
 
 namespace Stress {
-void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t sustainedDelayMs, const uint64_t burstDelayMs, const uint64_t sustainedWindowMs, const uint64_t adjustConnectDelayThreadshold) {
+void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t ioThreadNo, const uint64_t sustainedDelayMs, const uint64_t burstDelayMs, const uint64_t sustainedWindowMs, const uint64_t adjustConnectDelayThreadshold, const bool useRender) {
   InitMsgDispatcher();
   g_connectUserCnt = 0;
   g_ActiveUserCnt = 0;
@@ -30,6 +30,7 @@ void NetworkModule::Init(const std::string& ipAddr, uint16_t port, const uint8_t
   m_burstDelayMs = burstDelayMs;
   m_sustainedWindow = MS(sustainedWindowMs);
   m_adjustConnectDelayThreadshold = adjustConnectDelayThreadshold;
+  m_useRender = useRender;
 }
 
 void NetworkModule::Start() {
@@ -72,6 +73,47 @@ void NetworkModule::Start() {
                   g_maxDelayTime.load(),
                   adjustUserCnt,
                   cycleArmed ? 1 : 0);
+
+        // render off 모드에서는 DrawGLScene이 돌지 않으므로 세션 상태별 카운트를 로그로 남김.
+        // GetSessionForRender()는 단일 소비자 전제 — render on이면 DrawModule이 호출하므로 여기서는 호출하지 않는다.
+        if (!m_useRender) {
+          uint32_t bossCnt = 0;
+          uint32_t stageCnt = 0;
+          uint32_t ingameCnt = 0;
+          uint32_t matchCnt = 0;
+          uint32_t loginCnt = 0;
+          const auto& sessions = SessionManager::GetInstance().GetSessionForRender();
+          for (const auto& [id, session] : sessions) {
+            switch (session->GetSessionState()) {
+              case Session::SESSION_STATE::LOGIN:
+                loginCnt++;
+                break;
+              case Session::SESSION_STATE::MATCH:
+                matchCnt++;
+                break;
+              case Session::SESSION_STATE::INGAME: {
+                auto position = session->GetPosition();
+                if (position.first < 400.0f && position.first > -400.0f && position.second < 400.0f && position.second > -400.0f) {
+                  bossCnt++;
+                } else {
+                  stageCnt++;
+                }
+                ingameCnt++;
+              } break;
+              default:
+                break;
+            }
+          }
+          WRITE_LOG(logLevel::info, "{}({}) StateCnt [Conn:{}, MaxConn:{}, Login:{}, Match:{}, InGame:{}(Stage:{}/Boss:{})]",
+                    __FUNCTION__, __LINE__,
+                    g_connectUserCnt.load(),
+                    g_maxConnectUserCnt.load(),
+                    loginCnt,
+                    matchCnt,
+                    ingameCnt,
+                    stageCnt,
+                    bossCnt);
+        }
       }
 
       // 1) Burst : 평균이 burst 임계 한 번이라도 넘으면 즉시 disconn
