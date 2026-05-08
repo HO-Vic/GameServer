@@ -1,6 +1,7 @@
 #pragma once
 #include <atomic>
 #include <memory>
+#include <vector>
 #include "Utility/Thread/IWorkerItem.h"
 #include "../CommonDefine.h"
 #include "SendContext/TCP_SendContext.h"
@@ -41,7 +42,13 @@ class TCP_SessionBase
 
   // 외부에서 ptr에 데이터 정보 다 넣는 경우
   // 외부에서 msg.Serialize(&sendBuffer);해야하는 경우에, 미리 할당하고 sendBuffer로 내릴 수 있게
-  void DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer);
+  void DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer, SendPolicy policy = SendPolicy::Immediate);
+
+  // 일괄 적재. mutex 1회. Flush() 별도 호출 필요.
+  void PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers);
+
+  // 적재된 SendBuffer 송신 트리거. CAS 단일 송신권 그대로.
+  void Flush();
 
   template <class T>
   void DoSend(const T* data) {  // dataPtr을 라이브러리 내부에서 복사하여 Send하는 경우 사용

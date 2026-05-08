@@ -14,6 +14,11 @@ using WorkerPtr = std::shared_ptr<IWorkerItem>;
 }  // namespace sh::Utility
 
 namespace sh::IO_Engine {
+enum class SendPolicy {
+  Immediate,  // 적재 후 즉시 Flush 시도 (기존 동작)
+  Deferred,   // 적재만. Flush 시도 없음. 호출자가 Flush() 또는 PushBatch+Flush로 트리거.
+};
+
 class SendBufferBase;
 class OverlappedEx;
 class TCP_SendContext final {
@@ -24,6 +29,8 @@ class TCP_SendContext final {
     }
 
     void InsertSendBuffer(std::shared_ptr<SendBufferBase>&&);
+
+    void InsertBatch(std::vector<std::shared_ptr<SendBufferBase>>&&);
 
     std::vector<std::shared_ptr<SendBufferBase>>& SwapAndLoad();
 
@@ -46,11 +53,20 @@ class TCP_SendContext final {
     m_socket = sock;
   }
 
-  int32_t DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer);
+  int32_t DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer, SendPolicy policy = SendPolicy::Immediate);
+
+  // 일괄 적재. mutex 1회로 vector 전체 push. Flush 자동 호출 안 함.
+  void PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers);
+
+  // 송신 트리거. CAS 단일 송신권 보장. 멀티스레드/중복 호출 무해.
+  int32_t Flush(Utility::WorkerPtr session);
 
   int32_t SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte);
 
  private:
+  // CAS 시도 + SendExecute 호출. DoSend(Immediate) / Flush()의 공통 경로.
+  int32_t TryFlush(Utility::WorkerPtr session);
+
   // m_sendBuffer와 batchSendBuffers와 swap해야해서 참조형으로
   int32_t SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batchSendBuffers);
 

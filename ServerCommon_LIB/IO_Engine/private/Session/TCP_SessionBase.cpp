@@ -61,11 +61,28 @@ void TCP_SessionBase::InternalSend(const BYTE* data, const uint32_t len) {
 void TCP_SessionBase::Disconnect() {
 }
 
-void TCP_SessionBase::DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer) {
+void TCP_SessionBase::DoSend(std::shared_ptr<SendBufferBase>&& sendBuffer, SendPolicy policy) {
   if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
     return;
   }
-  auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendBuffer));  // 실패시 Thworker는 내부 정리
+  auto ioError = m_sendContext.DoSend(shared_from_this(), std::move(sendBuffer), policy);  // 실패시 Thworker는 내부 정리
+  if (0 != ioError) {
+    RaiseIOError();
+  }
+}
+
+void TCP_SessionBase::PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+  m_sendContext.PushBatch(std::move(buffers));
+}
+
+void TCP_SessionBase::Flush() {
+  if (m_state == TCP_Session_STATE::DISCONNECT_STATE) {
+    return;
+  }
+  auto ioError = m_sendContext.Flush(shared_from_this());
   if (0 != ioError) {
     RaiseIOError();
   }

@@ -7,8 +7,23 @@
 #include <IO_Core/ThWorkerJobPool.h>
 
 namespace sh::IO_Engine {
-int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer) {
+int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer, SendPolicy policy) {
   m_doubleQueue.InsertSendBuffer(std::move(buffer));
+  if (policy == SendPolicy::Deferred) {
+    return 0;
+  }
+  return TryFlush(std::move(session));
+}
+
+void TCP_SendContext::PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
+  m_doubleQueue.InsertBatch(std::move(buffers));
+}
+
+int32_t TCP_SendContext::Flush(Utility::WorkerPtr session) {
+  return TryFlush(std::move(session));
+}
+
+int32_t TCP_SendContext::TryFlush(Utility::WorkerPtr session) {
   static constexpr bool SEND_DESIRE = false;
   if (!m_isSendAble) {
     return 0;
@@ -16,24 +31,25 @@ int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<Send
 
   bool expectedValue = true;
   // Send가 다중 쓰레드에서 호출되더라도, 하나의 Send 시도 쓰레드만 Send
-  // 1. 16번 라인에서 true였지만, 이미 false가 될 수 도 있고
+  // 1. 위에서 true였지만, 이미 false가 될 수 도 있고
   // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
   bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
-  if (isSendAbleThread) {
-    auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-    auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
-    if (0 != errorNo) {
-      auto ioError = WSAGetLastError();
-      if (WSA_IO_PENDING == ioError) {
-        errorNo = 0;
-      } else {
-        errorNo = ioError;
-        ThWorkerJobPool::GetInstance().Release(workerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
-      }
-    }
-    return errorNo;
+  if (!isSendAbleThread) {
+    return 0;
   }
-  return 0;
+
+  auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
+  auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
+  if (0 != errorNo) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
+      errorNo = 0;
+    } else {
+      errorNo = ioError;
+      ThWorkerJobPool::GetInstance().Release(workerJob);  // SendErr났을 때, workJob을 다시 반납해야 됨
+    }
+  }
+  return errorNo;
 }
 
 int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) {
@@ -100,6 +116,22 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vecto
 void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBufferBase>&& buffer) {
   std::lock_guard<std::mutex> lg{m_lock};
   m_sendQueues[m_activeIdx].push_back(std::move(buffer));
+}
+
+void TCP_SendContext::InternalDoubleBufferQueue::InsertBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
+  if (buffers.empty()) {
+    return;
+  }
+  std::lock_guard<std::mutex> lg{m_lock};
+  auto& active = m_sendQueues[m_activeIdx];
+  if (active.empty()) {
+    active = std::move(buffers);
+    return;
+  }
+  active.reserve(active.size() + buffers.size());
+  active.insert(active.end(),
+                std::make_move_iterator(buffers.begin()),
+                std::make_move_iterator(buffers.end()));
 }
 
 std::vector<std::shared_ptr<SendBufferBase>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
