@@ -8,38 +8,19 @@
 
 namespace sh::IO_Engine {
 int32_t TCP_SendContext::DoSend(Utility::WorkerPtr session, std::shared_ptr<SendBufferBase>&& buffer, SendPolicy policy) {
-  m_doubleQueue.InsertSendBuffer(std::move(buffer));
-  if (policy == SendPolicy::Deferred) {
-    return 0;
+  {
+    std::lock_guard<std::mutex> lg{m_lock};
+    m_doubleQueue.InsertSendBuffer(std::move(buffer));
+    if (policy == SendPolicy::Deferred || !m_isSendAble) { // 다른 스레드가 송신 중. 위에서 push한 버퍼는 다음 SendComplete의 SwapBuffer에서 같이 송신됨.
+      return 0;
+    }
+    // push + claim + swap이 같은 critical section. SendComplete의 release와 race 없음.
+    m_isSendAble = false;
+    m_doubleQueue.SwapBuffer();
   }
-  return TryFlush(std::move(session));
-}
-
-void TCP_SendContext::PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
-  m_doubleQueue.InsertBatch(std::move(buffers));
-}
-
-int32_t TCP_SendContext::Flush(Utility::WorkerPtr session) {
-  return TryFlush(std::move(session));
-}
-
-int32_t TCP_SendContext::TryFlush(Utility::WorkerPtr session) {
-  static constexpr bool SEND_DESIRE = false;
-  if (!m_isSendAble) {
-    return 0;
-  }
-
-  bool expectedValue = true;
-  // Send가 다중 쓰레드에서 호출되더라도, 하나의 Send 시도 쓰레드만 Send
-  // 1. 위에서 true였지만, 이미 false가 될 수 도 있고
-  // 2. true를 유지했다면, 타 쓰레드가 변경 성공 시 포기
-  bool isSendAbleThread = m_isSendAble.compare_exchange_strong(expectedValue, SEND_DESIRE);
-  if (!isSendAbleThread) {
-    return 0;
-  }
-
-  auto workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
-  auto errorNo = SendExecute(workerJob, m_doubleQueue.SwapAndLoad());
+  Utility::ThWorkerJob* workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
+  // claim 보유 중이므로 Consume 버퍼는 안정. 직전 push로 비어있지 않음.
+  auto errorNo = SendExecute(workerJob, m_doubleQueue.Consume());
   if (0 != errorNo) {
     auto ioError = WSAGetLastError();
     if (WSA_IO_PENDING == ioError) {
@@ -52,22 +33,60 @@ int32_t TCP_SendContext::TryFlush(Utility::WorkerPtr session) {
   return errorNo;
 }
 
+void TCP_SendContext::PushBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
+  if (buffers.empty()) {
+    return;
+  }
+  std::lock_guard<std::mutex> lg{m_lock};
+  m_doubleQueue.InsertBatch(std::move(buffers));
+}
+
+int32_t TCP_SendContext::Flush(Utility::WorkerPtr session) {
+  Utility::ThWorkerJob* workerJob = nullptr;
+  {
+    std::lock_guard<std::mutex> lg{m_lock};
+    if (!m_isSendAble) {
+      return 0;
+    }
+    m_doubleQueue.SwapBuffer();
+    if (m_doubleQueue.Consume().empty()) {
+      // 빈 swap. claim 안 함. idx flip은 다음 cycle에서 자연스레 회복.
+      return 0;
+    }
+    m_isSendAble = false;
+    workerJob = ThWorkerJobPool::GetInstance().GetObjectPtr(session, Utility::WORKER_TYPE::SEND);
+  }
+  auto errorNo = SendExecute(workerJob, m_doubleQueue.Consume());
+  if (0 != errorNo) {
+    auto ioError = WSAGetLastError();
+    if (WSA_IO_PENDING == ioError) {
+      errorNo = 0;
+    } else {
+      errorNo = ioError;
+      ThWorkerJobPool::GetInstance().Release(workerJob);
+    }
+  }
+  return errorNo;
+}
+
 int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const size_t ioByte) {
-  // 여기서는 보낼게 없을 때만, sendAble을 변경하고
-  // 보낼게 있다면 그대로 상태 유지
+  // 직전 송신분 해제
   m_sendBuffer.clear();
-  auto& batchSendBuffers = m_doubleQueue.SwapAndLoad();
-  if (batchSendBuffers.empty()) {
-    m_isSendAble = true;
-    // **4/13 25ff04d커밋에서 옛날 잔재 주석** 보낼게 없다면 overlappedEx 반납
-    // 이전 코드에서는 lock_guard scope안에서 return했다가, shared_ptr<TCP_SessionBase >::strong ref 1->0
-    // ~TCP_SessionBase() 호출 -> ~TCP_SendContext() -> m_queueLock invalid -> unlock 크래시 발생
-    // lock scope 외부에서 해제
-    ThWorkerJobPool::GetInstance().Release(workerJob);
-    return 0;
+
+  {
+    std::lock_guard<std::mutex> lg{m_lock};
+    m_doubleQueue.SwapBuffer();
+    if (m_doubleQueue.Consume().empty()) {
+      // 같은 critical section에서 송신권 release.
+      // 직후 다른 스레드의 InsertSendBuffer가 들어오면 그쪽이 claim 가능 → race window 없음.
+      m_isSendAble = true;
+      ThWorkerJobPool::GetInstance().Release(workerJob);
+      return 0;
+    }
+    // 보낼 게 있으면 m_isSendAble은 false 유지(연속 송신)
   }
 
-  auto errorNo = SendExecute(workerJob, batchSendBuffers);
+  auto errorNo = SendExecute(workerJob, m_doubleQueue.Consume());
   if (0 != errorNo) {
     auto ioError = WSAGetLastError();
     if (WSA_IO_PENDING == ioError) {
@@ -79,11 +98,8 @@ int32_t TCP_SendContext::SendComplete(Utility::ThWorkerJob* workerJob, const siz
   return errorNo;
 }
 
-int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batchSendBuffers) {
-  // this thread context switched + other thread already sended queue!!
-  // DoSend() sendQeuue.push() -> thread sleep ..th1
-  // DoSend() -> CAS -> Send -> SendCompletion -> sendQeue.empty() ..th2(th1에서 push한 버퍼도 송신)
-  // th1 wake -> CAS -> send -> send Queue Empty -> m_isSendAble=true
+int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vector<std::shared_ptr<SendBufferBase>>& batch) {
+  // 호출자가 batch 비어있지 않음을 보장 (lock 안 empty 체크 후 호출)
 
   // lf-queue에 대한 코드 입니다.(지금은 안씀)
   /*auto queueSize = m_sendQueue.unsafe_size();
@@ -96,15 +112,7 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vecto
     m_sendBuffer.push_back(std::move(currentBuf));
   }*/
 
-  // m_sendBuffer는 SendComplete에서 clear()
-  // m_sendBuffer는 빈 vector이고, batchSendBuffers는 전송 버퍼들이 있었지만, 교환하여
-  if (batchSendBuffers.empty()) {  // 69번줄 설명의 콘텍스트 스위칭으로 인해서 97번줄 WSASend()에서 3번째 인자 0들어가서 오류 발생
-    m_isSendAble = true;           // 그래서 여기서 한 번 더 확인하는 절차 추가
-    ThWorkerJobPool::GetInstance().Release(workerJob);
-    return 0;
-  }
-
-  m_sendBuffer.swap(batchSendBuffers);
+  m_sendBuffer.swap(batch);
   m_wsaBuffers.clear();
   m_wsaBuffers.reserve(m_sendBuffer.size());
   for (const auto& sendBuffer : m_sendBuffer) {
@@ -114,15 +122,15 @@ int32_t TCP_SendContext::SendExecute(Utility::ThWorkerJob* workerJob, std::vecto
 }
 
 void TCP_SendContext::InternalDoubleBufferQueue::InsertSendBuffer(std::shared_ptr<SendBufferBase>&& buffer) {
-  std::lock_guard<std::mutex> lg{m_lock};
+  // caller holds m_lock
   m_sendQueues[m_activeIdx].push_back(std::move(buffer));
 }
 
 void TCP_SendContext::InternalDoubleBufferQueue::InsertBatch(std::vector<std::shared_ptr<SendBufferBase>>&& buffers) {
+  // caller holds m_lock
   if (buffers.empty()) {
     return;
   }
-  std::lock_guard<std::mutex> lg{m_lock};
   auto& active = m_sendQueues[m_activeIdx];
   if (active.empty()) {
     active = std::move(buffers);
@@ -134,11 +142,12 @@ void TCP_SendContext::InternalDoubleBufferQueue::InsertBatch(std::vector<std::sh
                 std::make_move_iterator(buffers.end()));
 }
 
-std::vector<std::shared_ptr<SendBufferBase>>& TCP_SendContext::InternalDoubleBufferQueue::SwapAndLoad() {
-  {
-    std::lock_guard<std::mutex> lg{m_lock};
-    m_activeIdx = !m_activeIdx;
-  }
+void TCP_SendContext::InternalDoubleBufferQueue::SwapBuffer() {
+  // caller holds m_lock
+  m_activeIdx = !m_activeIdx;
+}
+
+std::vector<std::shared_ptr<SendBufferBase>>& TCP_SendContext::InternalDoubleBufferQueue::Consume() {
   return m_sendQueues[!m_activeIdx];
 }
 }  // namespace sh::IO_Engine
